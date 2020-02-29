@@ -1,0 +1,24 @@
+{
+    "info": {
+        "title": "文件权限"
+    },
+    "class": {
+        "index": {
+            "title": "上传权限",
+            "level": {
+                "img": {
+                    "title": "上传图片",
+                    "menu": 0
+                },
+                "delimg": {
+                    "title": "删除图片",
+                    "menu": 0
+                },
+                "file": {
+                    "title": "上传文件",
+                    "menu": 0
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,1 @@
+$('.lcms-form-date').each(function(index){var that=this,id='LCMSLAYDATE'+index,data=$(this).data();$(this).find('input').attr('id',id);layui.laydate.render({elem:'#'+id,value:data.value,type:data.type,trigger:'click',range:data.range,min:data.min?data.min:'1900-1-1',max:data.max?data.max:'2099-12-31',theme:'#5FB878',calendar:true})});

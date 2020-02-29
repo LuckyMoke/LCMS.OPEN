@@ -1,0 +1,59 @@
+<template "ui/head"/>
+<if $update>
+    <div class="check-update hide"></div>
+</if>
+<div class="layui-fluid" style="padding:0">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6 layui-col-xs12">
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th colspan="2">服务器信息</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td width="100px">服务器系统</td>
+                        <td>{{ $info['os'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>服务器环境</td>
+                        <td>{{ $info['sys'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>PHP版本</td>
+                        <td>{{ $info['php'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>数据库版本</td>
+                        <td>{{ $info['mysql'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Redis服务</td>
+                        <td>{{ $info['redis'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>非常感谢</td>
+                        <td>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Layui前端框架</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Amazeui前端框架</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Neditor富文本编辑器</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Mescroll滚动插件</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="layui-col-md6 layui-col-xs12">
+            <div class="layui-tab layui-tab-card">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">通知公告</li>
+                </ul>
+                <div class="layui-tab-content" style="height:220px;overflow-y:auto;">
+                    <div class="layui-tab-item layui-show">{{ echo base64_decode($_L['config']['admin']['gonggao']) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<template "ui/foot"/>

@@ -1,0 +1,1 @@
+$('.lcms-form-radio-tab').each(function(){if($(this).prop('checked')==true){var cname=$(this).attr('data-tab');$('.hidden').hide();$('.'+cname).show()}});layui.form.on('radio(lcms-form-radio-tab)',function(data){var cname=data.elem.dataset.tab;$('.hidden').hide();$('.'+cname).show()});

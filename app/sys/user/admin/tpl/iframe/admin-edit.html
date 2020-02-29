@@ -1,0 +1,29 @@
+<template "ui/head"/>
+<template "ui/iframe"/>
+<form class="layui-form layui-form-pane iframe-admin-edit" action="{{ $_L['url']['own_form'] }}{{ echo substr(L_ACTION, 2) }}&action=admin-save" method="post" target="_self">
+    <input type="hidden" name="LC[id]" value="{{ $admin['id'] }}"/>
+    <input type="hidden" name="LC[oldpass]" value="{{ $admin['pass'] }}"/>
+    <input type="hidden" name="LC[addtime]" value="{{ $admin['addtime']?$admin['addtime']:datenow(); }}"/>
+    {{ LAY::input(["title"=>"账号","name"=>"LC[name]","value"=>$admin['name'], "tips"=>"帐号用来登录，不能重复","verify"=>"required|name","disabled"=>$admin['name'] && $admin['type'] != "lcms"?"1":""]) }}
+    {{ LAY::input(["title"=>"用户名","name"=>"LC[title]","value"=>$admin['title'], "tips"=>"用户名字只做显示","verify"=>"required"]) }}
+    {{ LAY::input(["title"=>"密码","name"=>"LC[pass]","value"=>$admin['pass'],"type"=>"password", "placeholder"=>"请输入用户密码","verify"=>"required"]) }}
+    {{ LAY::input(["title"=>"重复密码","name"=>"repass","value"=>$admin['pass'],"type"=>"password", "placeholder"=>"请再次输入用户密码","verify"=>"required|pass"]) }}
+    <if $admin['id'] != $_L['LCMSADMIN']['id']>
+        {{ LAY::input(["title"=>"邮箱","name"=>"LC[email]","value"=>$admin['email']]) }}
+        {{ LAY::input(["title"=>"手机号","name"=>"LC[mobile]","value"=>$admin['mobile']]) }}
+    </if>
+    <if LCMS::SUPER() && $admin['id'] != $_L['LCMSADMIN']['id']>
+        {{ LAY::on(["title"=>"账号状态","name"=>"LC[status]","value"=>$admin['status'], "text"=>"启用|禁用"]) }}
+        {{ LAY::select(["title"=>"上级用户","name"=>"LC[lcms]","value"=>$admin['lcms']?$admin['lcms']:0,"option"=>$adminlist]) }}
+        <else>
+            <input type="hidden" name="LC[lcms]" value="{{ echo isset($admin['lcms'])?$admin['lcms']:$_L['LCMSADMIN']['id'] }}"/>
+        </else>
+    </if>
+    <if $admin['id'] != $_L['LCMSADMIN']['id']>
+        {{ LAY::title(["title"=>"权限设置"]) }}
+        {{ LAY::select(["title"=>"权限设置","name"=>"LC[type]","value"=>$admin['type'],"option"=>$levellist,"default"=>"请选择","tips"=>"先新建管理员权限再选择","verify"=>"required"]) }}
+        {{ LAY::date(["title"=>"到期时间","name"=>"LC[lasttime]","value"=>$admin['lasttime'],"option"=>$levellist,"tips"=>"到期不能登录","verify"=>"required","min"=>datenow(),"max"=>LCMS::SUPER()?"":($_L['LCMSADMIN']['lasttime']?$_L['LCMSADMIN']['lasttime']:"")]) }}
+    </if>
+    <ui btn("立即保存")/>
+</form>
+<template "ui/foot"/>

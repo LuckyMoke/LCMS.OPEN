@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>订单支付</title>
+        <meta name="renderer" content="webkit"/>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+        <meta content="yes" name="apple-mobile-web-app-capable"/>
+        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+        <meta content="telephone=no" name="format-detection"/>
+        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}amazeui/amazeui.min.css?{{ $_L['config']['admin']['ver'] }}"/>
+        <style type="text/css">
+        body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box{width:auto;margin:0 auto}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._qr{text-align:center;padding:0 0 20px 0;border-bottom:1px #ccc dashed}.pay-box ._qr img{width:220px;height:220px}.pay-box ._tips{text-align:center;color:#a0a0a0;margin-top:20px;padding-bottom:20px;border-bottom:1px #ccc dashed}.pay-box ._tips i{font-size:60px;line-height:60px;position:absolute;margin-left:-100px}.pay-box ._tips p{margin:0 0 0 100px;line-height:30px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}  
+        </style>
+    </head>
+    <body>
+        <div class="pay-box" data-check="{{ $_L['url']['own'] }}n=system&c=pay&a=check&order_no={{ $order['order']['order_no'] }}" data-goback="{{ $order['other']['return_url'] }}">
+            <div class="_title">
+                <img src="{{ $_L['url']['site'] }}core/plugin/payment/{{ $order['order']['paytype'] }}/icon.png"/>
+            </div>
+            <div class="_body">
+                <h1>
+                    ￥
+                    <span>{{ $result['money'] }}</span>
+                </h1>
+                <p style="color:red;text-align:center;">
+                    付款时请务必输入 {{ $result['money'] }} 元
+                    <br>
+                    支付完成后，不要立即关闭页面
+                    <br/>
+                    请等待自动确认订单状态！
+                </p>
+                <div class="_qr">
+                    <img src="{{ $result['qrcode'] }}"/>
+                </div>
+                <div class="_tips">
+                    <i class="am-icon-qrcode"> </i>
+                    {{ if($order['order']['paytype'] == "wechat") }}
+                    <p>
+                        请长按识别二维码
+                        <br/>
+                        输入上方金额进行支付
+                    </p>
+                    {{ else }}
+                    <p>
+                        请手动截图保存二维码
+                        <br/>
+                        打开支付宝扫一扫截图
+                    </p>
+                    {{ /if }}
+                    <div class="am-cf"> </div>
+                </div>
+                <div class="_info">
+                    <div>
+                        <p class="am-fl">商品名</p>
+                        <p class="am-fr">{{ $order['order']['body'] }}</p>
+                        <div class="am-cf"> </div>
+                    </div>
+                    <div>
+                        <p class="am-fl">订单金额</p>
+                        <p class="am-fr">￥{{ $result['money'] }}</p>
+                        <div class="am-cf"> </div>
+                    </div>
+                    <div>
+                        <p class="am-fl">商户单号</p>
+                        <p class="am-fr">{{ $order['other']['order_no_own'] }}</p>
+                        <div class="am-cf"> </div>
+                    </div>
+                    <div>
+                        <p class="am-fl">交易单号</p>
+                        <p class="am-fr">{{ $order['order']['order_no'] }}</p>
+                        <div class="am-cf"> </div>
+                    </div>
+                    <div>
+                        <p class="am-fl">下单时间</p>
+                        <p class="am-fr">{{ $order['order']['addtime'] }}</p>
+                        <div class="am-cf"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}jquery.min.js"></script>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/mlayer.js?{{ $_L['config']['admin']['ver'] }}"></script>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['admin']['ver'] }}"></script>
+        <script type="text/javascript">
+            var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);
+        </script>
+    </body>
+</html>

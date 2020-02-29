@@ -1,0 +1,33 @@
+{
+    "info": {
+        "title": "用户中心"
+    },
+    "class": {
+        "normal": {
+            "title": "用户",
+            "level": {
+                "index": {
+                    "title": "用户列表",
+                    "menu": 1
+                }
+            }
+        },
+        "admin": {
+            "title": "管理员",
+            "level": {
+                "index": {
+                    "title": "管理员列表",
+                    "menu": 1
+                },
+                "level": {
+                    "title": "管理员权限",
+                    "menu": 1
+                },
+                "config": {
+                    "title": "管理员设置",
+                    "menu": 1
+                }
+            }
+        }
+    }
+}

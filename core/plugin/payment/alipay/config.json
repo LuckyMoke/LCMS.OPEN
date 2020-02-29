@@ -1,0 +1,65 @@
+{
+    "info": {
+        "title": "支付宝",
+        "name": "alipay"
+    },
+    "form": [{
+        "layui": "radio",
+        "title": "运行环境",
+        "name": "LC[alipay][gatewayurl]",
+        "value": "gatewayurl",
+        "cname": "hidden payment_alipay",
+        "radio": [{
+            "title": "正式环境",
+            "value": "0"
+        }, {
+            "title": "沙箱环境",
+            "value": "1"
+        }]
+    }, {
+        "layui": "radio",
+        "title": "花呗付款",
+        "name": "LC[alipay][huabei]",
+        "value": "huabei",
+        "cname": "hidden payment_alipay",
+        "tips": "需申请接口支持",
+        "radio": [{
+            "title": "关闭",
+            "value": "0"
+        }, {
+            "title": "开启",
+            "value": "1"
+        }]
+    }, {
+        "layui": "radio",
+        "title": "花呗手续费",
+        "name": "LC[alipay][huabei_sxf]",
+        "value": "huabei_sxf",
+        "cname": "hidden payment_alipay",
+        "radio": [{
+            "title": "客户承担",
+            "value": "0"
+        }, {
+            "title": "商家承担",
+            "value": "1"
+        }]
+    }, {
+        "layui": "input",
+        "title": "APPID",
+        "name": "LC[alipay][appid]",
+        "value": "appid",
+        "cname": "hidden payment_alipay"
+    }, {
+        "layui": "textarea",
+        "title": "支付宝公钥",
+        "name": "LC[alipay][publickey]",
+        "value": "publickey",
+        "cname": "hidden payment_alipay"
+    }, {
+        "layui": "textarea",
+        "title": "应用私钥",
+        "name": "LC[alipay][privatekey]",
+        "value": "privatekey",
+        "cname": "hidden payment_alipay"
+    }]
+}

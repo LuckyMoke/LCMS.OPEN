@@ -1,0 +1,11 @@
+<template "ui/head"/>
+<template "ui/iframe"/>
+<form class="layui-form layui-form-pane iframe-normal-edit" action="{{ $_L['url']['own_form'] }}iframe&action=normal-{{ $normal?'save':'register' }}" method="post" target="_self">
+    <input type="hidden" name="LC[id]" value="{{ $normal['id'] }}"/>
+    <input type="hidden" name="LC[lcms]" value="{{ $normal['lcms'] }}"/>
+    <input type="hidden" name="LC[balance]" value="10.22"/>
+    <input type="hidden" name="oldpass" value="{{ $normal['pass'] }}"/>
+    <input type="hidden" name="LC[addtime]" value="{{ $normal['addtime']?$normal['addtime']:datenow(); }}"/>
+    <ui form($form)/>
+</form>
+<template "ui/foot"/>

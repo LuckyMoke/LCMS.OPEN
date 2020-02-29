@@ -1,0 +1,10 @@
+<template "ui/head"/>
+<template "ui/css"/>
+<form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}plugin&action=save" method="post" target="_self">
+    <ui form($email)/>
+    <div class="email-test">
+        <a href="javascript:;" class="layui-btn layui-btn-normal plugin-test-btn" lay-submit lay-filter="plugin_test" data-url="{{ $_L['url']['own_form'] }}plugin&action=test_eamil">检测邮箱配置</a>
+    </div>
+    <ui form($alisms)/>
+</form>
+<template "ui/foot"/>

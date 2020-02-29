@@ -1,0 +1,9 @@
+<template "ui/head"/>
+<template "ui/iframe"/>
+<form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}payment&action=payment-save" method="post" target="_self">
+    <input type="hidden" name="LC[id]" value="{{ $payment['id'] }}"/>
+    <loop $form,$val>
+        <ui form($val)/>
+    </loop>
+</form>
+<template "ui/foot"/>

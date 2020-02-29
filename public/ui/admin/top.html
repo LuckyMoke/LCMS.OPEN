@@ -1,0 +1,40 @@
+<ul id="NAVTOP" class="layui-nav" lay-filter="">
+    <li class="__nav">
+        <div class="layui-breadcrumb">
+            <a href="{{ $_L['url']['admin'] }}" target="_parent">{{ $_L['config']['admin']['title'] }}</a>
+            <if $_L['APP']['menu']>
+                <a href="javascript:;">{{ $_L['APP']['info']['title'] }}</a>
+                <if count($_L['APP']['menu']) gt 1>
+                    <a href="javascript:;" class="__more">
+                        {{ $_L['APP']['menu'][L_CLASS]['title'] }}
+                        <span class="layui-nav-more"></span>
+                        <div class="hide layui-anim layui-anim-upbit __mored">
+                            <dl class="layui-nav-child">
+                                <loop $_L['APP']['menu'],$val,$key>
+                                    <dd data-url="{{ $_L['APP']['url'][$key] }}">{{ $val['title'] }}</dd>
+                                </loop>
+                            </dl>
+                        </div>
+                    </a>
+                    <else>
+                        <a href="{{ $_L['APP']['url'][L_CLASS] }}" class="__blk">{{ $_L['APP']['menu'][L_CLASS]['title'] }}</a>
+                    </else>
+                </if>
+                <else>
+                    <a href="{{ $_L['APP']['url']['all'] }}" class="__blk">{{ $_L['APP']['info']['title'] }}</a>
+                </else>
+            </if>
+        </div>
+    </li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">用户：{{ $_L['LCMSADMIN']['title'] }}</a>
+        <dl class="layui-nav-child">
+            <dd>
+                <div style="cursor:pointer;" onclick="LJS._iframe('{{ $_L[url][admin] }}?n=user&c=admin&a=profile&action=admin-edit', '个人中心')">个人中心</div>
+            </dd>
+            <dd>
+                <a href="{{ $_L['url']['admin'] }}?n=login&a=loginout" target="_parent">退出</a>
+            </dd>
+        </dl>
+    </li>
+</ul>

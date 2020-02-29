@@ -1,0 +1,32 @@
+{
+    "info": {
+        "title": "应用中心",
+        "description": "",
+        "ver": "1.0.2",
+        "author": "运城市盘石网络科技有限公司"
+    },
+    "class": {
+        "local": {
+            "title": "本地应用",
+            "level": {
+                "index": {
+                    "title": "应用列表",
+                    "menu": 0
+                }
+            }
+        },
+        "store": {
+            "title": "应用商店",
+            "level": {
+                "index": {
+                    "title": "应用列表",
+                    "menu": 1
+                },
+                "log": {
+                    "title": "订单日志",
+                    "menu": 1
+                }
+            }
+        }
+    }
+}

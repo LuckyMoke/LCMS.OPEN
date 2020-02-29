@@ -1,0 +1,1 @@
+$('.lcms-form-slider').each(function(index){var that=this,id='LCMSSLIDER'+index,data=$(this).data();$(this).find('._slider').attr('id',id);layui.slider.render({elem:'#'+id,value:data.value,min:data.min,max:data.max,step:data.step,theme:'#5FB878',setTips:function(value){return value+data.settips},change:function(value){$(that).children('input').val(parseInt(value))}})});

@@ -1,0 +1,50 @@
+<template "ui/head"/>
+<template "ui/iframe"/>
+<form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}iframe&action=admin-level-save" method="post" target="_self">
+    <input type="hidden" name="LC[id]" value="{{ $level['id'] }}"/>
+    <input type="hidden" name="LC[uid]" value="{{ $level['uid']?$level['uid']:$_L['LCMSADMIN']['id'] }}"/>
+    {{ $html }}
+    {{ LAY::input(["title"=>"权限名","name"=>"LC[name]","value"=>$level['name'], "placehplder"=>"请输入权限名","verify"=>"required"]) }}
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">系统模块</h2>
+            <div class="layui-colla-content layui-show">
+                <div class="layui-collapse">
+                    <loop $level['sys'],$val,$name>
+                        <if $val['class']>
+                            <div class="layui-colla-item">
+                                <h2 class="layui-colla-title">{{ $val['title'] }}</h2>
+                                <div class="layui-colla-content layui-show">
+                                    <loop $val['class'],$val,$class>
+                                        <if $val['select']>{{ LAY::checkbox(["title"=>$val['title'],"name"=>"LC[sys][{$name}][{$class}]","value"=>$level['sys'][$name][$class],"checkbox"=>$val['select']]) }}</if>
+                                    </loop>
+                                </div>
+                            </div>
+                        </if>
+                    </loop>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">开放模块</h2>
+            <div class="layui-colla-content layui-show">
+                <div class="layui-collapse">
+                    <loop $level['open'],$val,$name>
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">{{ $val['title'] }}</h2>
+                            <div class="layui-colla-content layui-show">
+                                <loop $val['class'],$val,$class>{{ LAY::checkbox(["title"=>$val['title'],"name"=>"LC[open][{$name}][{$class}]","value"=>$level['open'][$name][$class],"checkbox"=>$val['select']]) }}</loop>
+                            </div>
+                        </div>
+                    </loop>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <ui btn("立即保存")/>
+</form>
+<template "ui/foot"/>

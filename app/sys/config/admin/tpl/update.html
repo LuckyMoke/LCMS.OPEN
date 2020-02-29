@@ -1,0 +1,69 @@
+<template "ui/head"/>
+<template "ui/css"/>
+<table class="layui-table update-center" lay-even>
+    <tbody>
+        <tr>
+            <td width="100px">当前域名：</td>
+            <td>
+                {{ echo HTTP_HOST }}
+                <a style="cursor:pointer;color:red;padding-left:10px;" class="update-buy" data-url="{{ $buyurl }}">购买在线更新服务</a>
+            </td>
+        </tr>
+        <tr>
+            <td>授权状态：</td>
+            <td>
+                <if $info && $info['lasttime'] gte datenow()>
+                    <span class="layui-badge layui-bg-blue">在线更新服务</span>
+                    <else>
+                        <span class="layui-badge update-type">无在线更新服务</span>
+                    </else>
+                </if>
+                <if $info && $info['isbusiness']>
+                    <span class="layui-badge layui-bg-blue">商业授权</span>
+                    <else>
+                        <span class="layui-badge">非商业授权</span>
+                    </else>
+                </if>
+            </td>
+        </tr>
+        <tr>
+            <td>到期时间：</td>
+            <td>
+                <if $info && $info['lasttime'] gte datenow()>
+                    <span class="layui-badge layui-bg-blue">{{ $info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime'] }}</span>
+                    <else>
+                        <span class="layui-badge">0000-00-00 00:00:00</span>
+                    </else>
+                </if>
+            </td>
+        </tr>
+        <tr>
+            <td>当前版本：</td>
+            <td>
+                V{{ $_L['config']['admin']['ver'] }}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="layui-btn layui-btn-xs update-btn hide">立即更新</button>
+            </td>
+        </tr>
+        <tr>
+            <td>最新版本：</td>
+            <td class="update-status">
+                <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
+                正在检测更新
+            </td>
+        </tr>
+        <tr>
+            <td>更新日志：</td>
+            <td class="update-log"></td>
+        </tr>
+    </tbody>
+</table>
+<div class="install-bg hide">
+    <div class="install-progress">
+        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="download">
+            <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+        </div>
+    </div>
+    <div class="install-tips"></div>
+</div>
+<template "ui/foot"/>

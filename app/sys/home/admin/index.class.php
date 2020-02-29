@@ -1,0 +1,19 @@
+<?php
+defined('IN_LCMS') or exit('No permission');
+load::sys_class('adminbase');
+load::sys_class('level');
+class index extends adminbase
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+    public function doindex()
+    {
+        global $_L;
+        $info   = server_info();
+        $level  = level::app('config');
+        $update = $level['url']['update'] ? "1" : "0";
+        require LCMS::template("own/index");
+    }
+};

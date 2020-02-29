@@ -1,0 +1,20 @@
+{
+    "info": {
+        "title": "菜单设置"
+    },
+    "class": {
+        "admin": {
+            "title": "后台",
+            "level": {
+                "sys": {
+                    "title": "系统菜单",
+                    "menu": 1
+                },
+                "open": {
+                    "title": "应用菜单",
+                    "menu": 1
+                }
+            }
+        }
+    }
+}

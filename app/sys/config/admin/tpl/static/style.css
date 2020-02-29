@@ -1,0 +1,27 @@
+.email-test {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.install-bg {
+    background: url(./download.gif) center center no-repeat;
+    background-size: 60%;
+    width: 100%;
+}
+.install-progress {
+    width: 300px;
+    padding: 400px 0 0 0;
+    margin: 0 auto;
+}
+.install-tips {
+    margin: 20px 0;
+    text-align: center;
+    color: red
+}
+.update-pay-tips {
+    background: #009688;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 18px
+}

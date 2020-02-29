@@ -1,0 +1,23 @@
+{
+    "info": {
+        "title": "免签codepay",
+        "name": "codepay"
+    },
+    "form": [{
+        "layui": "des",
+        "title": "无需企业资质，0手续费即时到账。注册地址： <a href='https://codepay.fateqq.com/i/206913' target='_blank'>https://codepay.fateqq.com/</a>",
+        "cname": "hidden payment_codepay"
+    }, {
+        "layui": "input",
+        "title": "码支付ID",
+        "name": "LC[codepay][appid]",
+        "value": "appid",
+        "cname": "hidden payment_codepay"
+    }, {
+        "layui": "input",
+        "title": "通信密钥",
+        "name": "LC[codepay][appsecret]",
+        "value": "appsecret",
+        "cname": "hidden payment_codepay"
+    }]
+}

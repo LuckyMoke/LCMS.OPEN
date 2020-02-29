@@ -1,0 +1,66 @@
+{
+    "info": {
+        "title": "微信支付-服务商",
+        "name": "wechat_agent"
+    },
+    "form": [{
+        "layui": "input",
+        "title": "服务商开发者ID",
+        "name": "LC[wechat_agent][appid]",
+        "value": "appid",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "服务商开发者密码",
+        "name": "LC[wechat_agent][appsecret]",
+        "value": "appsecret",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "服务商授权借调",
+        "name": "LC[wechat_agent][oauth]",
+        "value": "oauth",
+        "tips": "不借调不要填写内容",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "服务商商户号",
+        "name": "LC[wechat_agent][mch_id]",
+        "value": "mch_id",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "服务商支付密钥",
+        "name": "LC[wechat_agent][key]",
+        "value": "key",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "子商户号",
+        "name": "LC[wechat_agent][sub_mch_id]",
+        "value": "sub_mch_id",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "input",
+        "title": "服务商支付密钥",
+        "name": "LC[wechat_agent][sub_appid]",
+        "value": "sub_appid",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "title",
+        "title": "证书信息",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "textarea",
+        "title": "apiclient_cert",
+        "name": "LC[wechat_agent][apiclient_cert]",
+        "value": "apiclient_cert",
+        "cname": "hidden payment_wechat_agent"
+    }, {
+        "layui": "textarea",
+        "title": "apiclient_key",
+        "name": "LC[wechat_agent][apiclient_key]",
+        "value": "apiclient_key",
+        "cname": "hidden payment_wechat_agent"
+    }]
+}

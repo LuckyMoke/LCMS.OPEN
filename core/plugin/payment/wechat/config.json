@@ -1,0 +1,67 @@
+{
+    "info": {
+        "title": "微信支付",
+        "name": "wechat"
+    },
+    "form": [{
+        "layui": "radio",
+        "title": "发红包方式",
+        "name": "LC[wechat][paytotype]",
+        "value": "paytotype",
+        "cname": "hidden payment_wechat",
+        "radio": [{
+            "title": "企业现金红包-手动领取",
+            "value": "0"
+        }, {
+            "title": "企业付款到零钱-自动到零钱",
+            "value": "1"
+        }]
+    }, {
+        "layui": "input",
+        "title": "开发者ID",
+        "name": "LC[wechat][appid]",
+        "value": "appid",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "input",
+        "title": "开发者密码",
+        "name": "LC[wechat][appsecret]",
+        "value": "appsecret",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "input",
+        "title": "授权借调",
+        "name": "LC[wechat][oauth]",
+        "value": "oauth",
+        "tips": "不借调不要填写内容",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "input",
+        "title": "商户号",
+        "name": "LC[wechat][mch_id]",
+        "value": "mch_id",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "input",
+        "title": "支付密钥",
+        "name": "LC[wechat][key]",
+        "value": "key",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "title",
+        "title": "证书信息",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "textarea",
+        "title": "apiclient_cert",
+        "name": "LC[wechat][apiclient_cert]",
+        "value": "apiclient_cert",
+        "cname": "hidden payment_wechat"
+    }, {
+        "layui": "textarea",
+        "title": "apiclient_key",
+        "name": "LC[wechat][apiclient_key]",
+        "value": "apiclient_key",
+        "cname": "hidden payment_wechat"
+    }]
+}

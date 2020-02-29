@@ -1,0 +1,43 @@
+<template "ui/head"/>
+<template "ui/css"/>
+<template "ui/iframe"/>
+<style type="text/css">
+    <if $_L['form']['editor']>
+        #LCONTENT{padding:0 15px}
+    </if>
+</style>
+<div class="lcms-form-upload-gallery" data-many="{{ $_L['form']['many'] }}" data-id="{{ $_L['form']['id'] }}" data-editor="{{ $_L['form']['editor'] }}">
+    <div class="_topbar">
+        <div class="_pos">upload/images/</div>
+        <div class="_btn">
+            <button class="layui-btn layui-btn-sm layui-btn-warm _bak">返回</button>
+            <if !$_L['form']['editor']>
+                <button class="layui-btn layui-btn-normal layui-btn-sm _ok">确认</button>
+            </if>
+        </div>
+    </div>
+    <div class="_gallery"></div>
+    <div class="clear"></div>
+    <div class="_pager" id="lcms-form-upload-gallery-pager"></div>
+</div>
+<script type="text/html" class="tpl-folder">
+    <div class="layui-col-xs3">
+        <div class="_bg _folder" data-dir="{dir}">
+            <img src="{{ $_L['url']['static'] }}images/folder.png"/>
+            <div class="_name">{name}</div>
+            <div class="_tips">双击打开</div>
+        </div>
+    </div>
+</script>
+<script type="text/html" class="tpl-file">
+    <div class="layui-col-xs3">
+        <div class="_bg _img" data-src="{src}">
+            <img src="{src}"/>
+            <div class="_name">{size}</div>
+            <div class="_tips">点击选择</div>
+            <div class="_ok"><i class="layui-icon layui-icon-ok"></i></div>
+            <div class="_del" data-src="{src}" data-dir="{dir}"><i class="layui-icon layui-icon-delete"></i></div>
+        </div>
+    </div>
+</script>
+<template "ui/foot"/>
