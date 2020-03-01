@@ -156,7 +156,7 @@ class install
         $query = "insert  into `{$db['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','{$admin['pass']}',NULL,NULL,'lcms','0.00','2019-01-01 00:00:00',NULL,NULL,'',NULL,0);";
         DB::query($query);
         self::addLock();
-        if (!sql_error()) {
+        if (!DB::error()) {
             self::delInstall();
         }
     }
