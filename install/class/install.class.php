@@ -136,9 +136,9 @@ class install
         $mysql = explode(";\n", trim($mysql));
         foreach ($mysql as $key => $val) {
             DB::query("{$val};");
-            if (sql_error()) {
+            if (DB::error()) {
                 break;
-                ajaxout(0, sql_error());
+                ajaxout(0, DB::error());
             };
         }
         self::addConfig($db);
