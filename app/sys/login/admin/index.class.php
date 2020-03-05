@@ -24,11 +24,6 @@ class index extends adminbase
                     $captcha = new CAPTCHA($_L['config']['admin']['login_code']['luosimao']);
                     $yzcode  = $captcha->get();
                     break;
-                case 'tencent':
-                    load::plugin("Tencent/captcha");
-                    $captcha = new CAPTCHA($_L['config']['admin']['login_code']['tencent']);
-                    $yzcode  = $captcha->get();
-                    break;
             }
         }
         require LCMS::template("own/index");
@@ -43,15 +38,6 @@ class index extends adminbase
                         load::plugin("Luosimao/captcha");
                         $captcha = new CAPTCHA($_L['config']['admin']['login_code']['luosimao']);
                         $captcha->check($_L['form']['luotest_response']) ? "" : ajaxout(0, "人机验证失败");
-                    } else {
-                        ajaxout(0, "请进行人机验证");
-                    }
-                    break;
-                case 'tencent':
-                    if ($_L['form']['tencent_randstr'] && $_L['form']['tencent_ticket']) {
-                        load::plugin("Tencent/captcha");
-                        $captcha = new CAPTCHA($_L['config']['admin']['login_code']['tencent']);
-                        $captcha->check($_L['form']['tencent_ticket'], $_L['form']['tencent_randstr']) ? "" : ajaxout(0, "人机验证失败");
                     } else {
                         ajaxout(0, "请进行人机验证");
                     }

@@ -85,13 +85,10 @@ class admin extends adminbase
                     ["layui" => "radio", "title" => "登陆验证码", "name" => "LC[login_code][type]", "value" => $config['login_code']['type'] != null ? $config['login_code']['type'] : "0", "radio" => [
                         ["title" => "普通验证码", "value" => "0", "tab" => "login_code"],
                         ["title" => "Luosimao人机验证", "value" => "luosimao", "tab" => "login_code_luosimao"],
-                        ["title" => "腾讯人机验证", "value" => "tencent", "tab" => "login_code_tencent"],
                     ]],
                     ["layui" => "input", "title" => "使用域名", "name" => "LC[login_code][domain]", "value" => $config['login_code']['domain'], "cname" => "hidden login_code_luosimao login_code_tencent", "placeholder" => "请填写主域名，二级域名均可调用！", "tips" => "请填写主域名，二级域名均可调用！"],
                     ["layui" => "input", "title" => "site_key", "name" => "LC[login_code][luosimao][site_key]", "value" => $config['login_code']['luosimao']['site_key'], "cname" => "hidden login_code_luosimao"],
                     ["layui" => "input", "title" => "api_key", "name" => "LC[login_code][luosimao][api_key]", "value" => $config['login_code']['luosimao']['api_key'], "cname" => "hidden login_code_luosimao"],
-                    ["layui" => "input", "title" => "App ID", "name" => "LC[login_code][tencent][appid]", "value" => $config['login_code']['tencent']['appid'], "cname" => "hidden login_code_tencent"],
-                    ["layui" => "input", "title" => "App Secret", "name" => "LC[login_code][tencent][appsecret]", "value" => $config['login_code']['tencent']['appsecret'], "cname" => "hidden login_code_tencent"],
                     ["layui" => "title", "title" => "其它安全"],
                     ["layui" => "input", "title" => "上传大小", "name" => "LC[attsize]", "value" => $config['attsize'], "tips" => "限制上传文件的大小，单位KB", "verify" => "required"],
                     ["layui" => "tags", "title" => "格式白名单", "name" => "LC[mimelist]", "value" => $config['mimelist'], "tips" => "允许上传白名单里的文件格式", "verify" => "required"],
