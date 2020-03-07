@@ -103,10 +103,12 @@ class PAYS
         global $_L;
         $order = $para['order_no'] ? self::order_info($para['order_no']) : self::order(["body" => $para['body'], "pay" => $para['pay'], "paytype" => $para['paytype'], "payid" => $para['payid']]);
         if ($order) {
+            dump($para);
             $paycode = urlencode(base64_encode(json_encode_ex([
                 "order_no"     => $order['order_no'],
                 "order_no_own" => $para['order_no_own'],
                 "payid"        => $order['payid'],
+                "parameter"    => $para['parameter'],
                 "goback"       => $para['goback'],
             ])));
             $url = "{$_L['url']['sys']['own']}n=system&c=pay&paycode={$paycode}";
@@ -127,6 +129,7 @@ class PAYS
         if ($order['status'] == "0") {
             $order['openid'] = $openid ? $openid : false;
             load::plugin("payment/{$order['payment']}/AutoPay");
+            $order  = $paycode['parameter'] ? array_merge($order, $paycode['parameter']) : $order;
             $result = AutoPay::order([
                 "payment" => $payment[$order['payment']],
                 "order"   => $order,

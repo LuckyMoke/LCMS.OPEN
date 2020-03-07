@@ -25,46 +25,50 @@
                     <div>
                         <p class="am-fl">商品名</p>
                         <p class="am-fr">{{ $order['order']['body'] }}</p>
-                        <div class="am-cf"> </div>
+                        <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">订单金额</p>
                         <p class="am-fr">￥{{ $order['order']['pay'] }}</p>
-                        <div class="am-cf"> </div>
+                        <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">商户单号</p>
                         <p class="am-fr">{{ $order['other']['order_no_own'] }}</p>
-                        <div class="am-cf"> </div>
+                        <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">交易单号</p>
                         <p class="am-fr">{{ $order['order']['order_no'] }}</p>
-                        <div class="am-cf"> </div>
+                        <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">下单时间</p>
                         <p class="am-fr">{{ $order['order']['addtime'] }}</p>
-                        <div class="am-cf"> </div>
+                        <div class="am-cf"></div>
                     </div>
                 </div>
             </div>
             {{ if($config->$get['huabei'] == "1" && $config->$get['huabei_sxf'] == "1") }}
             <div class="fenqi">
-                <h3>选择花呗分期</h3>
-                <ul class="am-avg-sm-4 am-text-center">
+                <h3>选择花呗免息分期</h3>
+                <ul class="am-avg-sm-{{ $huabei == 3 ? '2' : ($huabei == 6 ? '3' : '4') }} am-text-center">
                     <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
+                        <a class="am-btn am-btn-{{ $huabei_fq == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
                     </li>
                     <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
+                        <a class="am-btn am-btn-{{ $huabei_fq == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
                     </li>
-                    <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
-                    </li>
-                    <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
-                    </li>
+                    <if $huabei gte 6>
+                        <li>
+                            <a class="am-btn am-btn-{{ $huabei_fq == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
+                        </li>
+                    </if>
+                    <if $huabei gte 12>
+                        <li>
+                            <a class="am-btn am-btn-{{ $huabei_fq == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
+                        </li>
+                    </if>
                 </ul>
             </div>
             {{ /if }}
@@ -73,7 +77,7 @@
                     {{ foreach ($result['data'] as $key=>$val) }}
                     <input type="hidden" name="{{ $key }}" value='{{ $val }}'/>
                     {{ /foreach }}
-                    <br>
+                    <br/>
                     <button class="am-btn am-btn-primary am-btn-block" type='submit'>立即支付</button>
                 </form>
             </div>
@@ -82,7 +86,7 @@
         <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/layer.js?{{ $_L['config']['admin']['ver'] }}"></script>
         <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['admin']['ver'] }}"></script>
         <script type="text/javascript">
-        	var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);layer.alert('支付超时<br>点击确定刷新订单',function(){location.reload()})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){window.location.href=goback})}},'json')}},2000);$('.pay-btn button').on('click',function(){layer.confirm('是否支付？',{btn:['重新支付','我已支付']},function(index){layer.close(index)},function(){location.reload()})});
+            var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);layer.alert('支付超时<br>点击确定刷新订单',function(){location.reload()})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){window.location.href=goback})}},'json')}},2000);$('.pay-btn button').on('click',function(){layer.confirm('是否支付？',{btn:['重新支付','我已支付']},function(index){layer.close(index)},function(){location.reload()})});
         </script>
     </body>
 </html>

@@ -179,12 +179,13 @@ class LAY
         $para            = self::start($para);
         $para['text']    = $para['text'] ? $para['text'] : "开|关";
         $para['checked'] = $para['value'] ? " checked" : "";
+        $para['value']   = $para['value'] ? $para['value'] : 1;
         $para['url']     = $para['url'] ? " data-url='{$para['url']}'" : "";
         $html            = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-switch{$para['tipsbox']}'>
-                    <input type='checkbox' name='{$para['name']}' value='1' lay-skin='switch' lay-filter='lcms-form-switch' lay-text='{$para['text']}'{$para['url']}{$para['disabled']}{$para['checked']}>
+                    <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' lay-text='{$para['text']}'{$para['url']}{$para['disabled']}{$para['checked']}>
                 </div>
             </div>";
         echo $html;

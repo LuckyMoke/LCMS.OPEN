@@ -23,14 +23,15 @@ class AutoPay
         global $_L;
         $order = self::cfg($order);
         load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
+        $config    = new AliPayConfig($order['payment']);
+        $huabei    = $order['order']['huabei'] ? $order['order']['huabei'] : "12";
+        $huabei_fq = $order['order']['fenqi'] = $_L['form']['fenqi'] == "3" ? "3" : ($_L['form']['fenqi'] == "6" ? "6" : ($_L['form']['fenqi'] == "12" ? "12" : ""));
         switch ($order['order']['paytype']) {
             case 'h5':
             case 'jsapi':
                 load::plugin("payment/alipay/type/AliPay.H5");
-                $AliPayH5                = new AliPayH5();
-                $order['order']['fenqi'] = $_L['form']['fenqi'] == "3" ? "3" : ($_L['form']['fenqi'] == "6" ? "6" : ($_L['form']['fenqi'] == "12" ? "12" : ""));
-                $result                  = $AliPayH5->Order($config, $order['order']);
+                $AliPayH5 = new AliPayH5();
+                $result   = $AliPayH5->Order($config, $order['order']);
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'QQ/') !== false) {
                     $newwindows = true;
                 }
@@ -55,9 +56,8 @@ class AutoPay
                 break;
             case 'pc':
                 load::plugin("payment/alipay/type/AliPay.Pc");
-                $AliPayPc                = new AliPayPc();
-                $order['order']['fenqi'] = $_L['form']['fenqi'] == "3" ? "3" : ($_L['form']['fenqi'] == "6" ? "6" : ($_L['form']['fenqi'] == "12" ? "12" : ""));
-                $result                  = $AliPayPc->Order($config, $order['order']);
+                $AliPayPc = new AliPayPc();
+                $result   = $AliPayPc->Order($config, $order['order']);
                 require LCMS::template(PATH_CORE_PLUGIN . "payment/alipay/tpl/pc");
                 break;
         }

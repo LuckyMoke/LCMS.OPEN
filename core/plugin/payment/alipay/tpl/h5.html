@@ -27,52 +27,60 @@
                         ￥
                         <span>{{ $order['order']['pay'] }}</span>
                     </h1>
-                    <p style="color:red;text-align:center;">支付完成后，不要立即关闭页面<br>请等待自动确认订单状态！</p>
+                    <p style="color:red;text-align:center;">
+                        支付完成后，不要立即关闭页面
+                        <br/>
+                        请等待自动确认订单状态！
+                    </p>
                     <div class="_info">
                         <div>
                             <p class="am-fl">商品名</p>
                             <p class="am-fr">{{ $order['order']['body'] }}</p>
-                            <div class="am-cf"> </div>
+                            <div class="am-cf"></div>
                         </div>
                         <div>
                             <p class="am-fl">订单金额</p>
                             <p class="am-fr">￥{{ $order['order']['pay'] }}</p>
-                            <div class="am-cf"> </div>
+                            <div class="am-cf"></div>
                         </div>
                         <div>
                             <p class="am-fl">商户单号</p>
                             <p class="am-fr">{{ $order['other']['order_no_own'] }}</p>
-                            <div class="am-cf"> </div>
+                            <div class="am-cf"></div>
                         </div>
                         <div>
                             <p class="am-fl">交易单号</p>
                             <p class="am-fr">{{ $order['order']['order_no'] }}</p>
-                            <div class="am-cf"> </div>
+                            <div class="am-cf"></div>
                         </div>
                         <div>
                             <p class="am-fl">下单时间</p>
                             <p class="am-fr">{{ $order['order']['addtime'] }}</p>
-                            <div class="am-cf"> </div>
+                            <div class="am-cf"></div>
                         </div>
                     </div>
                 </div>
             </div>
             {{ if($config->$get['huabei'] == "1" && $config->$get['huabei_sxf'] == "1") }}
             <div class="fenqi">
-                <h3>选择花呗分期</h3>
-                <ul class="am-avg-sm-4 am-text-center">
+                <h3>选择花呗免息分期</h3>
+                <ul class="am-avg-sm-{{ $huabei == 3 ? '2' : ($huabei == 6 ? '3' : '4') }} am-text-center">
                     <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
+                        <a class="am-btn am-btn-{{ $huabei_fq == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
                     </li>
                     <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
+                        <a class="am-btn am-btn-{{ $huabei_fq == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
                     </li>
-                    <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
-                    </li>
-                    <li>
-                        <a class="am-btn am-btn-{{ $order['order']['fenqi'] == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
-                    </li>
+                    <if $huabei gte 6>
+                        <li>
+                            <a class="am-btn am-btn-{{ $huabei_fq == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
+                        </li>
+                    </if>
+                    <if $huabei gte 12>
+                        <li>
+                            <a class="am-btn am-btn-{{ $huabei_fq == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
+                        </li>
+                    </if>
                 </ul>
             </div>
             {{ /if }}
@@ -90,7 +98,7 @@
             </div>
             {{ if($newwindows == true) }}
             <div id="newwindows">
-                <div class="_bg"> </div>
+                <div class="_bg"></div>
                 <div class="_img">
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN0AAAEdCAYAAACIW2IaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzhDRTFGODM4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzhDRTFGODI4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6N0M0RjJGNDQ0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6N0M0RjJGNDU0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7BNHupAAAM2klEQVR42uzd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"/>
                 </div>
