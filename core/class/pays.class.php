@@ -103,7 +103,6 @@ class PAYS
         global $_L;
         $order = $para['order_no'] ? self::order_info($para['order_no']) : self::order(["body" => $para['body'], "pay" => $para['pay'], "paytype" => $para['paytype'], "payid" => $para['payid']]);
         if ($order) {
-            dump($para);
             $paycode = urlencode(base64_encode(json_encode_ex([
                 "order_no"     => $order['order_no'],
                 "order_no_own" => $para['order_no_own'],
