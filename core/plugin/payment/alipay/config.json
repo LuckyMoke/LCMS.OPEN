@@ -31,19 +31,6 @@
             "value": "1"
         }]
     }, {
-        "layui": "radio",
-        "title": "花呗手续费",
-        "name": "LC[alipay][huabei_sxf]",
-        "value": "huabei_sxf",
-        "cname": "hidden payment_alipay",
-        "radio": [{
-            "title": "客户承担",
-            "value": "0"
-        }, {
-            "title": "商家承担",
-            "value": "1"
-        }]
-    }, {
         "layui": "input",
         "title": "APPID",
         "name": "LC[alipay][appid]",

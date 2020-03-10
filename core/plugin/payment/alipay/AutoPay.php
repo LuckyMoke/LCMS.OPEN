@@ -23,6 +23,9 @@ class AutoPay
         global $_L;
         $order = self::cfg($order);
         load::plugin("payment/alipay/Config");
+        if ($order['order']['huabei'] > 0) {
+            $order['payment']['huabei_sxf'] = "1";
+        }
         $config    = new AliPayConfig($order['payment']);
         $huabei    = $order['order']['huabei'] ? $order['order']['huabei'] : "12";
         $huabei_fq = $order['order']['fenqi'] = $_L['form']['fenqi'] == "3" ? "3" : ($_L['form']['fenqi'] == "6" ? "6" : ($_L['form']['fenqi'] == "12" ? "12" : ""));
