@@ -32,7 +32,7 @@ class admin extends adminbase
                 )),
             ),
             "toolbar" => array(
-                array("title" => "添加管理员", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"),
+                array("title" => "添加用户", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"),
                 array("title" => "批量删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"),
             ),
             "search"  => array(
@@ -168,7 +168,7 @@ class admin extends adminbase
             case 'admin-level-list-del':
                 $adminlist = sql_getall(["admin", "type = '{$form[id]}'"]);
                 if ($adminlist) {
-                    ajaxout(0, "有管理员使用此权限");
+                    ajaxout(0, "有用户使用此权限");
                 } else {
                     if (table::del("admin_level")) {
                         ajaxout(1, "删除成功");
@@ -352,7 +352,7 @@ class admin extends adminbase
                     "lcms" => true,
                 ));
                 $form = array(
-                    array("layui" => "on", "title" => "管理员注册", "name" => "LC[reg]", "value" => $config['reg'], "text" => "开启|关闭"),
+                    array("layui" => "on", "title" => "用户注册", "name" => "LC[reg]", "value" => $config['reg'], "text" => "开启|关闭"),
                     array("layui" => "input", "title" => "默认权限ID", "name" => "LC[default_level]", "value" => $config['default_level'], "verify" => "required"),
                     array("layui" => "btn", "title" => "立即保存"),
                 );

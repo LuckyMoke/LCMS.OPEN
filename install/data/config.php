@@ -1,7 +1,7 @@
 <?php
 /* 数据库配置 */
 $_L['mysql']['host']    = "[db_host]";
-$_L['mysql']['port']    = "[db_port]";
+$_L['mysql']['port']    = [db_port];
 $_L['mysql']['user']    = "[db_user]";
 $_L['mysql']['pass']    = "[db_pass]";
 $_L['mysql']['name']    = "[db_name]";
