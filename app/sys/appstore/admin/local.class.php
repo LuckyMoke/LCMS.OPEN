@@ -27,7 +27,7 @@ class local extends adminbase
         global $_L;
         $dir = PATH_APP . "open/{$_L['form']['app']}/";
         if (is_file($dir . "uninstall.sql")) {
-            $this->updatesql(file_get_contents($dir . "uninstall.sql"));
+            $this->updatesql(str_replace("[TABLE_PRE]", $_L['mysql']['pre'], file_get_contents($dir . "uninstall.sql")));
         }
         deldir($dir);
         ajaxout(1, 'success');
