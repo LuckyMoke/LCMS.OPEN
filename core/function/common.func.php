@@ -220,6 +220,7 @@ function url_clear($url, $keys)
     $url .= $urls['port'] ? ":{$urls['port']}" : "";
     $url .= $urls['path'] ? $urls['path'] : "";
     $url .= $qry ? "?{$qry}" : "";
+    $url .= $urls['fragment'] ? "#{$urls['fragment']}" : "";
     return $url;
 }
 /**
