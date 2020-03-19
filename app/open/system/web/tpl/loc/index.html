@@ -17,12 +17,12 @@
         </style>
     </head>
     <body>
-        <div class="body am-text-center" data-goback="{{ $goback }}" data-callback="{{ $callback }}">
-            <i class="am-icon-btn am-icon-location-arrow"> </i>
+        <div class="body am-text-center" data-goback="{{ $goback }}">
+            <i class="am-icon-btn am-icon-location-arrow"></i>
             <div class="info">{{ $info }}</div>
             <button class="am-btn am-btn-primary am-round normal" data-key="{{ $key }}">确认授权</button>
             <button class="am-btn am-btn-default am-round loading" style="display:none;">
-                <i class="am-icon-spinner am-icon-spin"> </i>
+                <i class="am-icon-spinner am-icon-spin"></i>
                 授权中
             </button>
         </div>
@@ -30,56 +30,46 @@
         <script type="text/javascript" src="{{ $_L['url']['static'] }}amazeui/amazeui.min.js?{{ $_L['config']['admin']['ver'] }}"></script>
         <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/mlayer.js?{{ $_L['config']['admin']['ver'] }}"></script>
         <script type="text/javascript" src="{{ $_L['url']['public'] }}ui/web/static/ljs.js?{{ $_L['config']['admin']['ver'] }}"></script>
-        <script type="text/javascript" src="https://map.qq.com/api/js?v=2.exp&key={{$key}}"></script>
-        <script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+        <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key={{$key}}"></script>
         <script type="text/javascript">
-            var redo = $('.body').data();
-            var postData = function(loc) {
+            var para = $('.body').data();
+            var postData = function(result) {
                 $('button.loading').hide(0);
                 $('button.normal').show(0);
-                if (redo.goback) {
-                    set_cookie(loc);
-                } else if (redo.callback) {
-                    window.parent.postMessage(loc, '*');
+                if (para.goback) {
+                    set_cookie(result);
+                } else {
+                    parent.postMessage(result, '*');
                 }
             };
-            var get_by_ip = function(lbs_key) {
-                LJS._get('{{$_L['url']['own_form']}}iploc&key=' + lbs_key, function (res) {
-                    if (res.code == '1') {
-                        postData(res.data);
-                    } else {
-                        mlayer.alert({
-                            title: '提示',
-                            content: res.msg,
-                            btn: '我知道了',
-                            yes: function(index){
-                                if (redo.goback) {
-                                    set_cookie({'code':0});
-                                }
-                            }
-                        });
-                    }
-                }, 'json');
-            };
             var get_by_loc = function (lbs_key) {
-                var geolocation = new qq.maps.Geolocation(lbs_key, "lcmsloc");
-                geolocation.getLocation(function (loc) {
-                    if (loc.province && loc.city && loc.district) {
-                        postData(loc);
-                    } else {
-                        get_by_ip(lbs_key);
-                    }
-                }, function (loc) {
-                    get_by_ip(lbs_key);
-                }, {
-                    failTipFlag: true
+                AMap.plugin('AMap.Geolocation', function () {
+                    var geolocation = new AMap.Geolocation({
+                        timeout: 3000,
+                        enableHighAccuracy: false
+                    });
+                    geolocation.getCurrentPosition(function(status, result) {
+                        if (status == 'complete') {
+                            postData({
+                                gps: {
+                                    lat: result.position.lat,
+                                    lng: result.position.lng
+                                },
+                                info: result.addressComponent,
+                                addr: result.formattedAddress
+                            });
+                        } else {
+                            LJS._tips('定位失败', 0);
+                        }
+                    });
                 });
             };
-            var set_cookie = function(loc) {
+            var set_cookie = function(result) {
                 LJS._post('{{$_L['url']['own_form']}}code', {
-                    loc: loc,
-                    goback: redo.goback
+                    loc: result,
+                    goback: para.goback
                 }, function (res) {
+                    LJS._tips('定位成功');
                     window.location.href = res.data;
                 }, 'json');
             };

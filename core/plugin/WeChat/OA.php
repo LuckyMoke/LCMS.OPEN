@@ -1,7 +1,7 @@
 <?php
 class OA
 {
-    public $cfg = array();
+    public static $cfg = array();
     /**
      * [config 获取基本appid和appsecret]
      * @return [type] [description]
@@ -10,11 +10,12 @@ class OA
     {
         global $_L;
         if (!$this->$cfg['appid'] || !$this->$cfg['appsecret']) {
-            $config     = LCMS::config(array("name" => "wechat"));
-            $this->$cfg = array(
-                "appid"     => $config['appid'],
-                "appsecret" => $config['appsecret'],
-            );
+            $config     = LCMS::config(["name" => "wechat"]);
+            $this->$cfg = [
+                "appid"      => $config['appid'],
+                "appsecret"  => $config['appsecret'],
+                "access_api" => $config['mode'] == "other" ? $config['access_api'] : "",
+            ];
         };
     }
     /**
@@ -48,20 +49,33 @@ class OA
     {
         $this->cache();
         if (!$this->$cfg['access_token']['token'] || $this->$cfg['access_token']['expires'] < time()) {
-            $query = http_build_query(array(
-                "appid"      => $this->$cfg['appid'],
-                "secret"     => $this->$cfg['appsecret'],
-                "grant_type" => "client_credential",
-            ));
-            $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-            if ($token['errcode']) {
-                return $token;
+            if ($this->$cfg['access_api']) {
+                $token = json_decode(http::get($this->$cfg['access_api']), true);
+                if ($token['code'] == "1" && $token['access_token'] && $token['expires_in']) {
+                    $this->$cfg['access_token'] = array(
+                        "token"   => $token['access_token'],
+                        "expires" => $token['expires_in'],
+                    );
+                    $this->cache("save");
+                } else {
+                    return $token;
+                }
             } else {
-                $this->$cfg['access_token'] = array(
-                    "token"   => $token['access_token'],
-                    "expires" => time() + 3600,
-                );
-                $this->cache("save");
+                $query = http_build_query(array(
+                    "appid"      => $this->$cfg['appid'],
+                    "secret"     => $this->$cfg['appsecret'],
+                    "grant_type" => "client_credential",
+                ));
+                $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
+                if ($token['errcode']) {
+                    return $token;
+                } else {
+                    $this->$cfg['access_token'] = array(
+                        "token"   => $token['access_token'],
+                        "expires" => time() + 3600,
+                    );
+                    $this->cache("save");
+                }
             }
         }
         return $this->$cfg['access_token']['token'];
@@ -248,12 +262,6 @@ class OA
             $wechat = $wechat ? $wechat : sql_get(["open_wechat_user", "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'"]);
             if ($wechat) {
                 $userinfo['wechat'] = $para['wechat'] ? array_merge($wechat, $para['wechat']) : $wechat;
-            }
-            if ($userinfo['wechat']['uid'] > "0") {
-                $user = sql_get(["user", "id = '{$userinfo['wechat']['uid']}' AND lcms = '{$_L['ROOTID']}'"]);
-                if ($user) {
-                    $userinfo['user'] = $user;
-                }
             }
             return $userinfo;
         } else {

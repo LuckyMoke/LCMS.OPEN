@@ -38,20 +38,4 @@ class pay extends webbase
         }
         echo "success";
     }
-    public function dotest()
-    {
-        global $_L;
-        // $paytoid = "3";
-        // load::plugin("payment/wechat/AutoPay");
-        // $result = AutoPay::payto([
-        //     "payment" => PAYS::payment_info($paytoid),
-        //     "order"   => [
-        //         "order_no" => "TEST20190812001",
-        //         "openid"   => "o2BSos4QdExrTlVixwxa9cKoqzsg",
-        //         "pay"      => "0.30",
-        //         "desc"     => "活动赠送 - 来自盘石科技",
-        //     ],
-        // ]);
-        // dump($result);
-    }
 }
