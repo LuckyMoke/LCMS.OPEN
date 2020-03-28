@@ -11,6 +11,9 @@ class index extends adminbase
     public function doindex()
     {
         global $_L;
+        if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST) {
+            okinfo(str_replace(HTTP_HOST, $_L['config']['admin']['domain'], $_L['url']['now']));
+        }
         $config = LCMS::config(array(
             "name" => "user",
             "type" => "sys",

@@ -17,9 +17,10 @@
 
 浏览器访问 http://你的域名/install/ 开始安装
 
-#### 下载地址
+#### 安装方式
 
-[码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
+ - 方式一： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
+ - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装
 
 #### QQ讨论群
 

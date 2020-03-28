@@ -2,6 +2,8 @@
 defined('IN_LCMS') or exit('No permission');
 class SQLPDO
 {
+    private $pdo;
+    private $psm;
     /**
      * [__construct 连接数据库]
      * @param  [type] $db [数据库信息]
@@ -31,10 +33,10 @@ class SQLPDO
      */
     public function prepare($sql)
     {
-        $psm = $this->pdo->prepare($sql);
-        if ($psm) {
-            $psm->execute();
-            return $psm;
+        $this->psm = $this->pdo->prepare($sql);
+        if ($this->psm) {
+            $this->psm->execute();
+            return $this->psm;
         } else {
             LCMS::X($this->errno(), $this->error());
         }
@@ -112,6 +114,9 @@ class SQLPDO
      */
     public function insert($sql)
     {
+        // $this->prepare($sql)->rowCount();
+        // $error = $this->pdo->errorInfo();
+        // dump($sql);
         return $this->prepare($sql)->rowCount();
     }
     /**
@@ -165,7 +170,7 @@ class SQLPDO
      */
     public function error()
     {
-        $error = $this->pdo->errorInfo();
+        $error = $this->psm->errorInfo();
         if ($error[0] !== 00000 && $error[1]) {
             return "[{$error[1]}] {$error[2]}";
         }
@@ -176,7 +181,7 @@ class SQLPDO
      */
     public function errno()
     {
-        return $this->pdo->errorCode();
+        return $this->psm->errorCode();
     }
     /**
      * [close 关闭数据库连接]

@@ -27,7 +27,7 @@ class adminbase extends common
         $_L['url']['upload']   = $_L['url']['site'] . 'upload/';
         $_L['url']['cache']    = $_L['url']['site'] . 'cache/';
         $_L['url']['app']      = $_L['url']['site'] . 'app/';
-        $_L['url']['own']      = $_L['url']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
+        $_L['url']['own']      = $_L['url']['admin'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
         $_L['url']['own_path'] = $_L['url']['site'] . 'app/' . L_TYPE . '/' . L_NAME . '/';
         $_L['url']['own_form'] = $_L['url']['admin'] . "index.php?t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=";
     }

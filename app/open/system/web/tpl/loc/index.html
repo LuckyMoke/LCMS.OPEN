@@ -59,6 +59,31 @@
                                 addr: result.formattedAddress
                             });
                         } else {
+                            console.log(result);
+                            get_by_city(lbs_key);
+                        }
+                    });
+                });
+            };
+            var get_by_city = function (lbs_key) {
+                AMap.plugin('AMap.CitySearch', function () {
+                    var citysearch = new AMap.CitySearch();
+                     citysearch.getLocalCity(function(status, result) {
+                        if (status === 'complete' && result.info === 'OK') {
+                            if (result && result.city && result.bounds) {
+                                var gps = result.rectangle.split(';')[0].split(',');
+                                postData({
+                                    gps: {
+                                        lat: gps[1],
+                                        lng: gps[0]
+                                    },
+                                    addr: result.province + result.city
+                                });
+                            }
+                        } else {
+                            console.log(result);
+                            $('button.loading').hide(0);
+                            $('button.normal').show(0);
                             LJS._tips('定位失败', 0);
                         }
                     });
