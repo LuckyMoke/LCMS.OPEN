@@ -1,10 +1,13 @@
 <?php
 class MP
 {
-    public $cfg = array();
+    public $cfg;
     public function __construct($config)
     {
-        $this->$cfg = $config;
+        $this->cfg = [
+            "appid"     => $config['appid'],
+            "appsecret" => $config['appsecret'],
+        ];
         $this->cache();
     }
     /**
@@ -14,18 +17,20 @@ class MP
      */
     public function cache($type = "get")
     {
-        if ($this->$cfg['appid'] && $this->$cfg['appsecret']) {
-            $cachename = md5($this->$cfg['appid'] . $this->$cfg['appsecret']);
+        if ($this->cfg['appid'] && $this->cfg['appsecret']) {
+            $cname = md5($this->cfg['appid'] . $this->cfg['appsecret']);
         } else {
             return false;
         }
         switch ($type) {
             case 'save':
-                LCMS::cfg(["name" => $cachename, "data" => $this->$cfg]);
+                LCMS::cfg(["name" => $cname, "data" => $this->cfg]);
                 break;
             default:
-                $cache      = LCMS::cfg(["name" => $cachename]);
-                $this->$cfg = is_array($cache) ? array_merge($this->$cfg, $cache) : $this->$cfg;
+                $arr = LCMS::cfg(["name" => $cname]);
+                if (is_array($arr)) {
+                    $this->cfg = array_merge($arr, $this->cfg);
+                }
                 break;
         }
     }
@@ -37,8 +42,8 @@ class MP
     public function openid($js_code)
     {
         $query = http_build_query([
-            "appId"      => $this->$cfg['appid'],
-            "secret"     => $this->$cfg['appsecret'],
+            "appId"      => $this->cfg['appid'],
+            "secret"     => $this->cfg['appsecret'],
             "js_code"    => $js_code,
             "grant_type" => "authorization_code",
         ]);
@@ -51,17 +56,17 @@ class MP
      */
     public function access_token()
     {
-        if (!$this->$cfg['access_token']['token'] || $this->$cfg['access_token']['expires'] < time()) {
+        if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
             $query = http_build_query(array(
-                "appid"      => $this->$cfg['appid'],
-                "secret"     => $this->$cfg['appsecret'],
+                "appid"      => $this->cfg['appid'],
+                "secret"     => $this->cfg['appsecret'],
                 "grant_type" => "client_credential",
             ));
             $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
             if ($token['errcode']) {
                 return $token;
             } else {
-                $this->$cfg['access_token'] = [
+                $this->cfg['access_token'] = [
                     "token"   => $token['access_token'],
                     "expires" => time() + 3600,
                 ];
@@ -78,7 +83,7 @@ class MP
     public function qrcode($path, $scene = "")
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->$cfg['access_token']['token']}", json_encode_ex([
+        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
             "scene" => $scene,
             "path"  => $path,
         ]));
@@ -95,7 +100,7 @@ class MP
     public function send_tpl($para = [])
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->$cfg['access_token']['token']}", json_encode_ex($para));
+        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result;
     }
@@ -107,7 +112,7 @@ class MP
     public function send_unitpl($para = [])
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->$cfg['access_token']['token']}", json_encode_ex($para));
+        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result;
     }

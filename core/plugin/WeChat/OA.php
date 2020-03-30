@@ -2,21 +2,23 @@
 class OA
 {
     public $cfg;
-    /**
-     * [config 获取基本appid和appsecret]
-     * @return [type] [description]
-     */
-    public function config()
+    public function __construct($config = [])
     {
-        global $_L;
-        if (!$this->cfg['appid'] || !$this->cfg['appsecret']) {
+        if (!$config) {
             $config    = LCMS::config(["name" => "wechat"]);
             $this->cfg = [
-                "appid"      => $config['appid'],
-                "appsecret"  => $config['appsecret'],
-                "access_api" => $config['mode'] == "other" ? $config['access_api'] : "",
+                "appid"     => $config['appid'],
+                "appsecret" => $config['appsecret'],
+                "thirdurl"  => $config['mode'] == "other" ? $config['access_api'] : "",
+            ];
+        } else {
+            $this->cfg = [
+                "appid"     => $config['appid'],
+                "appsecret" => $config['appsecret'],
+                "thirdurl"  => $config['thirdurl'],
             ];
         };
+        $this->cache();
     }
     /**
      * [cache 数据缓存读取与保存]
@@ -25,7 +27,6 @@ class OA
      */
     public function cache($type = "get")
     {
-        $this->config();
         if ($this->cfg['appid'] && $this->cfg['appsecret']) {
             $cname = md5($this->cfg['appid'] . $this->cfg['appsecret']);
         } else {
@@ -51,8 +52,8 @@ class OA
     {
         $this->cache();
         if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
-            if ($this->cfg['access_api']) {
-                $token = json_decode(http::get($this->cfg['access_api']), true);
+            if ($this->cfg['thirdurl']) {
+                $token = json_decode(http::get($this->cfg['thirdurl']), true);
                 if ($token['code'] == "1" && $token['access_token'] && $token['expires_in']) {
                     $this->cfg['access_token'] = array(
                         "token"   => $token['access_token'],
@@ -169,7 +170,6 @@ class OA
                 $userinfo = $this->user(array("do" => "save", "openid" => $userinfo['openid'], "wechat" => $userinfo));
             }
         } else {
-            $this->config();
             $userinfo = session::get($this->cfg['appid'] . "_WeChat_userinfo");
             if (!$userinfo['wechat']['openid'] || $userinfo['errcode']) {
                 if ($_L['form']['wechatoauthopenid']) {
