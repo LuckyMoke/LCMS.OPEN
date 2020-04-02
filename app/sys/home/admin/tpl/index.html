@@ -3,8 +3,11 @@
     <div class="check-update hide"></div>
 </if>
 <div class="layui-fluid" style="padding:0">
+    <if $lasttime && $lasttime lt 15>
+        <blockquote class="layui-elem-quote" style="background:#ffdcdc;border:none;">友情提示：您的账号将于 {{ $_L['LCMSADMIN']['lasttime'] }} 到期，为避免影响使用，请及时处理！</blockquote>
+    </if>
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-md6 layui-col-xs12">
+        <div class="layui-col-md{{$_L['config']['admin']['gonggao']?'6':'12'}} layui-col-xs12">
             <table class="layui-table">
                 <thead>
                     <tr>
@@ -33,27 +36,30 @@
                         <td>{{ $info['redis'] }}</td>
                     </tr>
                     <tr>
-                        <td>非常感谢</td>
+                        <td>开源组件</td>
                         <td>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Layui前端框架</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Amazeui前端框架</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Neditor富文本编辑器</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Mescroll滚动插件</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Layui</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Neditor</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Eruda</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Chart</a>
+                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Lrz4</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="layui-col-md6 layui-col-xs12">
-            <div class="layui-tab layui-tab-card">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">通知公告</li>
-                </ul>
-                <div class="layui-tab-content" style="height:220px;overflow-y:auto;">
-                    <div class="layui-tab-item layui-show">{{ echo base64_decode($_L['config']['admin']['gonggao']) }}</div>
+        <if $_L['config']['admin']['gonggao']>
+            <div class="layui-col-md6 layui-col-xs12">
+                <div class="layui-tab layui-tab-card">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">通知公告</li>
+                    </ul>
+                    <div class="layui-tab-content" style="height:220px;overflow-y:auto;">
+                        <div class="layui-tab-item layui-show">{{ echo base64_decode($_L['config']['admin']['gonggao']) }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </if>
     </div>
 </div>
 <template "ui/foot"/>

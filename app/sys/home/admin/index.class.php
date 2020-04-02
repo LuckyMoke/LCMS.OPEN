@@ -14,6 +14,9 @@ class index extends adminbase
         $info   = server_info();
         $level  = level::app('config');
         $update = $level['url']['update'] ? "1" : "0";
+        if ($_L['LCMSADMIN']['lasttime']) {
+            $lasttime = (strtotime($_L['LCMSADMIN']['lasttime']) - time()) / 86400;
+        }
         require LCMS::template("own/index");
     }
 };

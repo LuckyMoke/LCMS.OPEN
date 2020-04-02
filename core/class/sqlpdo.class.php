@@ -38,7 +38,7 @@ class SQLPDO
             $this->psm->execute();
             return $this->psm;
         } else {
-            LCMS::X($this->errno(), $this->error());
+            LCMS::X(500, "数据错误");
         }
     }
     /**
