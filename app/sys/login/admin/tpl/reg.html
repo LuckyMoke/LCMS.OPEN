@@ -15,11 +15,7 @@
         <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['admin']['ver'] }}"/>
         <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['admin']['ver'] }}"/>
         <script type="text/javascript">
-            var LCMS = {
-                url: {
-                    static: "{{$_L['url']['static']}}",
-                }
-            };
+           var LCMS = {"url":{{ echo json_encode($_L['url']) }}};
         </script>
     </head>
     <body>
@@ -27,12 +23,12 @@
             <div class="layui-row">
                 <div class="loginbox regbox layui-col-xs12 layui-col-sm6 layui-col-md6 layui-col-sm-offset3 layui-col-md-offset3">
                     <h1>{{ $_L['config']['admin']['title'] }}</h1>
-                    <form class="layui-form layui-form-pane" action="?n=login&c=reg&a=check" method="post" target="_self">
+                    <form class="layui-form layui-form-pane" action="?n=login&c=reg&a={{ $config['reg']['on'] }}" method="post" target="_self">
                         <input type="hidden" name="go" value="{{ $_L['form']['go'] }}"/>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">用户名</label>
+                            <label class="layui-form-label">账号</label>
                             <div class="layui-input-block">
-                                <input type="text" name="user" required lay-verify="required|isname" placeholder="请输入用户名" autocomplete="off" class="layui-input __user"/>
+                                <input type="text" name="name" required lay-verify="required|isname" placeholder="账号用来登陆" autocomplete="off" class="layui-input __name"/>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -41,17 +37,36 @@
                                 <input type="password" name="pass" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input"/>
                             </div>
                         </div>
-                        <div class="layui-form-item _email">
-                            <label class="layui-form-label">邮箱</label>
-                            <div class="layui-input-block">
-                                <input type="email" name="email" required lay-verify="required|email|isemail" placeholder="请输入邮箱账号" autocomplete="off" class="layui-input __email"/>
-                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="email">发送验证码</button>
+                        <if $config['reg']['input_title']>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" required lay-verify="required" placeholder="用户名只做显示使用" autocomplete="off" class="layui-input"/>
+                                </div>
                             </div>
-                        </div>
+                        </if>
+                        <if $config['reg']['on'] == "mobile">
+                            <div class="layui-form-item _mobile">
+                                <label class="layui-form-label">手机号</label>
+                                <div class="layui-input-block">
+                                    <input type="phone" name="mobile" required lay-verify="required|phone|ismobile" placeholder="请输入手机号" autocomplete="off" class="layui-input __mobile"/>
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="code_send">发送验证码</button>
+                                </div>
+                            </div>
+                        </if>
+                        <if $config['reg']['on'] == "email">
+                            <div class="layui-form-item _email">
+                                <label class="layui-form-label">邮箱</label>
+                                <div class="layui-input-block">
+                                    <input type="email" name="email" required lay-verify="required|email|isemail" placeholder="请输入邮箱账号" autocomplete="off" class="layui-input __email"/>
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="code_send">发送验证码</button>
+                                </div>
+                            </div>
+                        </if>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">邮箱验证码</label>
+                            <label class="layui-form-label">验证码</label>
                             <div class="layui-input-block">
-                                <input type="text" name="emailcode" placeholder="请输入邮箱验证码" autocomplete="off" class="layui-input"/>
+                                <input type="text" name="code" placeholder="请输入接收到的验证码" autocomplete="off" class="layui-input"/>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -60,7 +75,7 @@
                         <div class="layui-form-item">
                             <a class="layui-btn layui-btn-primary layui-btn-fluid" href="?n=login">我有账号？返回登陆</a>
                         </div>
-                        <div class="clear"> </div>
+                        <div class="clear"></div>
                     </form>
                     <div id="LCMSFOOT">&copy {{ echo date("Y") }} {{ $_L['config']['admin']['developer'] }} 版权所有 翻版必究</div>
                 </div>
@@ -70,7 +85,7 @@
             <div style="padding:20px;">
                 <p><img style="width:100%;height:65px;" src="../app/index.php?n=system&c=pin" title="点击刷新" onclick="this.src='../app/index.php?n=system&c=pin&' + Math.random()"/></p><br>
                 <input type="text" name="code" placeholder="请输入验证码" autocomplete="off" class="layui-input __code" maxlength="4"/><br>
-                <a class="layui-btn layui-btn-fluid __sendemailcode">发送邮箱验证码</a>
+                <a class="layui-btn layui-btn-fluid __sendcode">发送验证码</a>
             </div>
         </script>
         <script type="text/javascript" src="{{ $_L['url']['static'] }}layui/layui.js?{{ $_L['config']['admin']['ver'] }}"></script>

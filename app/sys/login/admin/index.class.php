@@ -54,9 +54,10 @@ class index extends adminbase
                 ajaxout(0, "请输入验证码");
             };
         };
-        $user      = $_L['form']['user'];
         $pass      = md5($_L['form']['pass']);
-        $admininfo = sql_get(["admin", "name = '{$user}' AND pass = '{$pass}'"]);
+        $admininfo = sql_get(["admin", "(name = ':name' OR email = ':name' OR mobile = ':name') AND pass = '{$pass}'", "id DESC", [
+            ":name" => $_L['form']['name'],
+        ]]);
         if ($admininfo) {
             if ($admininfo['status'] == '1') {
                 if ($admininfo['lasttime'] > "0000-00-00 00:00:00" && $admininfo['lasttime'] < datenow()) {

@@ -7,11 +7,11 @@
         <blockquote class="layui-elem-quote" style="background:#ffdcdc;border:none;">友情提示：您的账号将于 {{ $_L['LCMSADMIN']['lasttime'] }} 到期，为避免影响使用，请及时处理！</blockquote>
     </if>
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-md{{$_L['config']['admin']['gonggao']?'6':'12'}} layui-col-xs12">
+        <div class="layui-col-md{{ $_L['config']['admin']['gonggao']?'6':'12' }} layui-col-xs12">
             <table class="layui-table">
                 <thead>
                     <tr>
-                        <th colspan="2">服务器信息</th>
+                        <th colspan="2">环境信息</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,18 +32,15 @@
                         <td>{{ $info['mysql'] }}</td>
                     </tr>
                     <tr>
-                        <td>Redis服务</td>
-                        <td>{{ $info['redis'] }}</td>
+                        <td>PHP扩展</td>
+                        <td>
+                            <span style="padding-right:2px;color:{{ $info['redis']?'green':'red'; }}">[Redis]</span>
+                            <span style="padding-right:2px;color:{{ $info['memcached']?'green':'red'; }}">[Memcached]</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>开源组件</td>
-                        <td>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Layui</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Neditor</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Eruda</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Chart</a>
-                            <a class="layui-btn layui-btn-xs" style="margin:0 10px 10px 0;">Lrz4</a>
-                        </td>
+                        <td>Layui、Neditor、Eruda、Chart、Lrz4</td>
                     </tr>
                 </tbody>
             </table>

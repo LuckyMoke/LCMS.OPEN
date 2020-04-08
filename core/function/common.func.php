@@ -527,11 +527,12 @@ function html_editor($str = "")
  */
 function server_info()
 {
-    $serverinfo['os']    = php_uname('s');
-    $serverinfo['sys']   = $_SERVER["SERVER_SOFTWARE"];
-    $serverinfo['php']   = PHP_VERSION;
-    $serverinfo['mysql'] = "Mysql " . DB::$mysql->version();
-    $serverinfo['redis'] = !class_exists("Redis") ? "未安装" : "已安装";
+    $serverinfo['os']        = php_uname('s');
+    $serverinfo['sys']       = $_SERVER["SERVER_SOFTWARE"];
+    $serverinfo['php']       = PHP_VERSION;
+    $serverinfo['mysql']     = "Mysql " . DB::$mysql->version();
+    $serverinfo['redis']     = !class_exists("Redis") ? false : true;
+    $serverinfo['memcached'] = !class_exists("Memcached") ? false : true;
     return $serverinfo;
 }
 /**

@@ -14,30 +14,31 @@ class admin extends adminbase
         global $_L;
         $table = array(
             "url"     => $_L['url']['own_form'] . "ajax&action=admin-list",
-            "cols"    => array(
-                array("checkbox" => "checkbox", "width" => 80),
-                array("title" => "ID", "field" => "id", "width" => 80, "align" => "center"),
-                array("title" => "帐号", "field" => "name", "minWidth" => 100),
-                array("title" => "用户名", "field" => "title", "edit" => "text", "minWidth" => 150),
-                array("title" => "账户余额", "field" => "balance", "width" => 100, "edit" => "text"),
-                array("title" => "用户权限", "field" => "type"),
-                array("title" => "上级用户", "field" => "lcms", "minWidth" => 150),
-                array("title" => "最后登录时间", "field" => "logintime", "minWidth" => 180),
-                array("title" => "最后登录IP", "field" => "ip", "width" => 150),
-                array("title" => "到期时间", "field" => "lasttime", "minWidth" => 180),
-                array("title" => "账号状态", "field" => "status", "width" => 100, "align" => "center"),
-                array("title" => "操作", "field" => "do", "width" => 120, "align" => "center", "toolbar" => array(
-                    array("title" => "编辑", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"),
-                    array("title" => "删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"),
-                )),
-            ),
-            "toolbar" => array(
-                array("title" => "添加用户", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"),
-                array("title" => "批量删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"),
-            ),
-            "search"  => array(
-                array("title" => "请输入用户名查找", "name" => "name"),
-            ),
+            "cols"    => [
+                ["checkbox" => "checkbox", "width" => 80],
+                ["title" => "ID", "field" => "id", "width" => 80, "align" => "center"],
+                ["title" => "帐号", "field" => "name", "minWidth" => 90],
+                ["title" => "用户名", "field" => "title", "edit" => "text", "width" => 150],
+                ["title" => "邮箱", "field" => "email", "width" => 120],
+                ["title" => "手机号", "field" => "mobile", "width" => 120],
+                ["title" => "用户权限", "field" => "type", "width" => 120],
+                ["title" => "上级用户", "field" => "lcms", "width" => 120],
+                ["title" => "最后登录时间", "field" => "logintime", "width" => 180],
+                ["title" => "最后登录IP", "field" => "ip", "width" => 150],
+                ["title" => "到期时间", "field" => "lasttime", "width" => 180],
+                ["title" => "账号状态", "field" => "status", "width" => 100, "align" => "center"],
+                ["title" => "操作", "field" => "do", "width" => 110, "align" => "center", "toolbar" => [
+                    ["title" => "编辑", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"],
+                    ["title" => "删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"],
+                ]],
+            ],
+            "toolbar" => [
+                ["title" => "添加用户", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"],
+                ["title" => "批量删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"],
+            ],
+            "search"  => [
+                ["title" => "账号/用户名/邮箱/手机", "name" => "name"],
+            ],
         );
         require LCMS::template("own/admin-list");
     }
@@ -70,8 +71,8 @@ class admin extends adminbase
         $form = $_L['form']['LC'];
         switch ($_L['form']['action']) {
             case 'admin-list':
-                $where     = $form['name'] ? " AND (name LIKE '%{$form[name]}%' OR title LIKE '%{$form[name]}%')" : "";
-                $data      = LCMS::SUPER() ? table::data("admin", "id != 0" . $where, "id ASC") : table::data("admin", "(lcms = '{$_L[LCMSADMIN][id]}' OR id = '{$_L[LCMSADMIN][id]}')" . $where, "id ASC");
+                $where     = $form['name'] ? " AND (name LIKE '%{$form['name']}%' OR title LIKE '%{$form['name']}%' OR email LIKE '%{$form['name']}%' OR mobile LIKE '%{$form['name']}%')" : "";
+                $data      = LCMS::SUPER() ? TABLE::data("admin", "id != 0" . $where, "id ASC") : TABLE::data("admin", "(lcms = '{$_L[LCMSADMIN][id]}' OR id = '{$_L[LCMSADMIN][id]}')" . $where, "id ASC");
                 $adminlist = sql_getall(["admin"]);
                 $levellist = sql_getall(["admin_level"]);
                 foreach ($data['data'] as $key => $val) {
@@ -94,7 +95,7 @@ class admin extends adminbase
                         continue;
                     }
                 }
-                table::out($data);
+                TABLE::out($data);
                 break;
             case 'admin-list-save':
                 sql_update(["admin", [
@@ -118,7 +119,7 @@ class admin extends adminbase
                         }
                     }
                 }
-                if (table::del("admin")) {
+                if (TABLE::del("admin")) {
                     ajaxout(1, "删除成功");
                 } else {
                     ajaxout(0, "删除失败");
@@ -185,27 +186,28 @@ class admin extends adminbase
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
-        $form = $_L['form']['LC'];
         switch ($_L['form']['action']) {
             case 'admin-edit':
-                $admin = $_L['form']['id'] ? LCMS::form(array(
+                $admin = LCMS::form([
                     "do"    => "get",
                     "table" => "admin",
                     "id"    => $_L['form']['id'],
-                )) : array();
-                $adminall = LCMS::SUPER() ? sql_getall(["admin", "lcms = '0' AND lasttime > now() AND type != 'lcms'", "id ASC"]) : sql_getall(["admin", "lasttime > now() AND lcms = '{$_L[LCMSADMIN][id]}'", "id ASC"]);
-                $levelall = sql_getall(["admin_level", "uid = '{$_L[LCMSADMIN][id]}' OR id = '{$admin[type]}'"]);
+                ]);
+                $adminall = LCMS::SUPER() ? sql_getall(["admin", "lcms = '0' AND type != 'lcms'", "id ASC"]) : sql_getall(["admin", "lcms = '{$_L['LCMSADMIN']['id']}'", "id ASC"]);
+                $levelall = sql_getall(["admin_level", "uid = '{$_L['LCMSADMIN']['id']}' OR id = '{$admin['type']}'"]);
                 if (LCMS::SUPER()) {
                     $adminlist[] = array(
                         "value" => "0",
-                        "title" => "超级管理员",
+                        "title" => $_L['LCMSADMIN']['title'] . " - [{$_L['LCMSADMIN']['name']}]",
                     );
                 }
                 foreach ($adminall as $key => $val) {
                     if ($val['id'] != $_L['form']['id']) {
+                        $val['title'] .= " - [{$val['name']}]";
+                        $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
                         $adminlist[] = array(
                             "value" => $val['id'],
-                            "title" => $val['title'] . "[" . $val['name'] . "]",
+                            "title" => $val['title'],
                         );
                     }
                 }
@@ -215,27 +217,123 @@ class admin extends adminbase
                         "title" => $val['name'] . " - [ID" . $val['id'] . "]",
                     );
                 }
+                $form['base'] = [
+                    ["layui"      => "input", "title" => "账号",
+                        "name"        => "LC[name]",
+                        "value"       => $admin['name'],
+                        "placeholder" => "帐号用来登录，不能重复",
+                        "verify"      => "required|name",
+                        "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? "1" : "",
+                    ],
+                    ["layui"      => "input", "title" => "用户名",
+                        "name"        => "LC[title]",
+                        "value"       => $admin['title'],
+                        "placeholder" => "用户名字只做显示",
+                        "verify"      => "required",
+                    ],
+                    ["layui"      => "input", "title" => "密码",
+                        "name"        => "LC[pass]",
+                        "value"       => $admin['pass'],
+                        "placeholder" => "请输入用户密码",
+                        "verify"      => "required",
+                        "type"        => "password",
+                    ],
+                    ["layui"      => "input", "title" => "重复密码",
+                        "name"        => "repass",
+                        "value"       => $admin['pass'],
+                        "placeholder" => "请再次输入用户密码",
+                        "verify"      => "required|pass",
+                        "type"        => "password",
+                    ],
+                    ["layui" => "input", "title" => "邮箱",
+                        "name"   => "LC[email]",
+                        "value"  => $admin['email'],
+                        "type"   => "email",
+                    ],
+                    ["layui" => "input", "title" => "手机号",
+                        "name"   => "LC[mobile]",
+                        "value"  => $admin['mobile'],
+                        "type"   => "phone",
+                    ],
+                ];
+                $form['status'] = [
+                    ["layui" => "on", "title" => "账号状态",
+                        "name"   => "LC[status]",
+                        "value"  => $admin['status'],
+                        "text"   => "启用|禁用",
+                    ],
+                    ["layui" => "select", "title" => "上级用户",
+                        "name"   => "LC[lcms]",
+                        "value"  => $admin['lcms'] ? $admin['lcms'] : 0,
+                        "option" => $adminlist,
+                    ],
+                ];
+                $form['level'] = [
+                    ["layui" => "title", "title" => "权限设置"],
+                    ["layui" => "select", "title" => "权限设置",
+                        "name"   => "LC[type]",
+                        "value"  => $admin['type'],
+                        "tips"   => "先新建管理员权限再选择",
+                        "verify" => "required",
+                        "option" => $levellist,
+                    ],
+                    ["layui" => "date", "title" => "到期时间",
+                        "name"   => "LC[lasttime]",
+                        "value"  => $admin['lasttime'],
+                        "tips"   => "到期不能登录",
+                        "min"    => datenow(),
+                        "max"    => LCMS::SUPER() ? "" : ($_L['LCMSADMIN']['lasttime'] ? $_L['LCMSADMIN']['lasttime'] : ""),
+                    ],
+                ];
                 require LCMS::template("own/iframe/admin-edit");
                 break;
             case 'admin-check-name':
-                $admin = sql_get(["admin", "name = '{$_L[form][name]}'"]);
-                if ($admin) {
-                    ajaxout(0, "用户名重复！");
+                $admininfo = sql_get(["admin", "name = ':name' OR email = ':name' OR mobile = ':name'", "id DESC", [
+                    ":name" => $_L['form']['name'],
+                ]]);
+                if ($admininfo) {
+                    ajaxout(0, "账号已存在");
                 };
                 break;
             case 'admin-save':
-                if ($form['oldpass'] != $form['pass']) {
-                    $_L['form']['LC']['pass'] = md5($form['pass']);
+                if ($_L['form']['LC']['oldpass'] != $_L['form']['LC']['pass']) {
+                    $_L['form']['LC']['pass'] = md5($_L['form']['LC']['pass']);
                 }
-                if ($form['id']) {
-                    if (!LCMS::SUPER() && $form['id'] == $_L['LCMSADMIN']['id']) {
+                if ($_L['form']['LC']['id']) {
+                    if (!LCMS::SUPER()) {
                         unset($_L['form']['LC']['name']);
                     }
+                    $where = " AND id NOT IN({$_L['form']['LC']['id']})";
+                }
+                if ($_L['form']['LC']['name']) {
+                    $admininfo = sql_get(["admin", "(name = ':name' OR email = ':name' OR mobile = ':name'){$where}", "id DESC", [
+                        ":name" => $_L['form']['LC']['name'],
+                    ]]);
+                    if ($admininfo) {
+                        ajaxout(0, "账号已存在");
+                    };
+                }
+                if ($_L['form']['LC']['email']) {
+                    $admininfo = sql_get(["admin", "(name = ':email' OR email = ':email' OR mobile = ':email'){$where}", "id DESC", [
+                        ":email" => $_L['form']['LC']['email'],
+                    ]]);
+                    if ($admininfo) {
+                        ajaxout(0, "邮箱地址已存在");
+                    };
+                }
+                if ($_L['form']['LC']['mobile']) {
+                    $admininfo = sql_get(["admin", "(name = ':mobile' OR email = ':mobile' OR mobile = ':mobile'){$where}", "id DESC", [
+                        ":mobile" => $_L['form']['LC']['mobile'],
+                    ]]);
+                    if ($admininfo) {
+                        ajaxout(0, "手机号已存在");
+                    };
                 }
                 unset($_L['form']['LC']['oldpass']);
-                LCMS::form(array(
-                    "table" => "admin",
-                ));
+                if (!$_L['form']['LC']['lasttime']) {
+                    unset($_L['form']['LC']['lasttime']);
+                }
+                LCMS::form(["table" => "admin"]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败", "", sql_error());
                 } else {
@@ -300,26 +398,66 @@ class admin extends adminbase
     public function doprofile()
     {
         global $_L;
-        $form = $_L['form']['LC'];
         switch ($_L['form']['action']) {
             case 'admin-edit':
-                $admin = LCMS::form(array(
+                $admin = LCMS::form([
                     "do"    => "get",
                     "table" => "admin",
                     "id"    => $_L['LCMSADMIN']['id'],
-                ));
+                ]);
+                $form['base'] = [
+                    ["layui"      => "input", "title" => "账号",
+                        "name"        => "LC[name]",
+                        "value"       => $admin['name'],
+                        "placeholder" => "帐号用来登录，不能重复",
+                        "verify"      => "required|name",
+                        "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? "1" : "",
+                    ],
+                    ["layui"      => "input", "title" => "用户名",
+                        "name"        => "LC[title]",
+                        "value"       => $admin['title'],
+                        "placeholder" => "用户名字只做显示",
+                        "verify"      => "required",
+                    ],
+                    ["layui"      => "input", "title" => "密码",
+                        "name"        => "LC[pass]",
+                        "value"       => $admin['pass'],
+                        "placeholder" => "请输入用户密码",
+                        "verify"      => "required",
+                        "type"        => "password",
+                    ],
+                    ["layui"      => "input", "title" => "重复密码",
+                        "name"        => "repass",
+                        "value"       => $admin['pass'],
+                        "placeholder" => "请再次输入用户密码",
+                        "verify"      => "required|pass",
+                        "type"        => "password",
+                    ],
+                    ["layui"   => "input", "title" => "邮箱",
+                        "name"     => "email",
+                        "value"    => $admin['email'],
+                        "type"     => "email",
+                        "disabled" => $admin['type'] != "lcms" ? "1" : "",
+                    ],
+                    ["layui"   => "input", "title" => "手机号",
+                        "name"     => "mobile",
+                        "value"    => $admin['mobile'],
+                        "type"     => "phone",
+                        "disabled" => $admin['type'] != "lcms" ? "1" : "",
+                    ],
+                ];
                 require LCMS::template("own/iframe/admin-edit");
                 break;
             case 'admin-save':
-                if ($form['oldpass'] != $form['pass']) {
-                    $_L['form']['LC']['pass'] = md5($form['pass']);
+                if ($_L['form']['LC']['oldpass'] != $_L['form']['LC']['pass']) {
+                    $_L['form']['LC']['pass'] = md5($_L['form']['LC']['pass']);
                 }
-                if ($form['id']) {
-                    if (!LCMS::SUPER() && $form['id'] == $_L['LCMSADMIN']['id']) {
-                        unset($_L['form']['LC']['name']);
-                    }
+                if ($_L['form']['LC']['id'] && !LCMS::SUPER()) {
+                    unset($_L['form']['LC']['name']);
                 }
                 unset($_L['form']['LC']['oldpass']);
+                unset($_L['form']['LC']['email']);
+                unset($_L['form']['LC']['mobile']);
                 $_SESSION['LCMSADMIN']['title'] = $_L['form']['LC']['title'];
                 LCMS::form(array(
                     "table" => "admin",
@@ -335,29 +473,111 @@ class admin extends adminbase
     public function doconfig()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "没有权限访问");
+        }
         switch ($_L['form']['action']) {
             case 'save':
-                LCMS::config(array(
+                LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "admin",
                     "lcms" => true,
-                ));
+                ]);
                 ajaxout(1, "保存成功");
                 break;
             default:
-                $config = LCMS::config(array(
+                $config = LCMS::config([
                     "type" => "sys",
                     "cate" => "admin",
                     "lcms" => true,
-                ));
-                $form = array(
-                    array("layui" => "on", "title" => "用户注册", "name" => "LC[reg]", "value" => $config['reg'], "text" => "开启|关闭"),
-                    array("layui" => "input", "title" => "默认权限ID", "name" => "LC[default_level]", "value" => $config['default_level'], "verify" => "required"),
-                    array("layui" => "btn", "title" => "立即保存"),
-                );
+                ]);
+                $form = [
+                    ["layui" => "radio", "title" => "用户注册",
+                        "name"   => "LC[reg][on]",
+                        "value"  => $config['reg']['on'] ? $config['reg']['on'] : "0",
+                        "radio"  => [
+                            ["title" => "关闭", "value" => "0", "tab" => "tab0"],
+                            ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
+                            ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
+                        ],
+                    ],
+                    ["layui" => "radio", "title" => "注册审核",
+                        "name"   => "LC[reg][status]",
+                        "value"  => $config['reg']['status'] ? $config['reg']['status'] : "0",
+                        "radio"  => [
+                            ["title" => "手动审核", "value" => "0"],
+                            ["title" => "自动审核", "value" => "1"],
+                        ],
+                    ],
+                    ["layui" => "input", "title" => "短信ID",
+                        "name"   => "LC[reg][sms_tplcode]",
+                        "value"  => $config['reg']['sms_tplcode'],
+                        "cname"  => "hidden tab_mobile",
+                        "tips"   => "请先到全局设置中配置短信插件",
+                    ],
+                    ["layui" => "select", "title" => "默认上级",
+                        "name"   => "LC[reg][lcms]",
+                        "value"  => $config['reg']['lcms'],
+                        "verify" => "required",
+                        "option" => $this->get_adminall(),
+                    ],
+                    ["layui" => "select", "title" => "默认权限",
+                        "name"   => "LC[reg][level]",
+                        "value"  => $config['reg']['level'],
+                        "verify" => "required",
+                        "option" => $this->get_levelall(),
+                    ],
+                    ["layui"   => "checkbox", "title" => "注册字段",
+                        "checkbox" => [
+                            ["title" => "用户名",
+                                "name"   => "LC[reg][input_title]",
+                                "value"  => $config['reg']['input_title']],
+                        ],
+                    ],
+                    ["layui" => "btn", "title" => "立即保存"],
+                ];
                 require LCMS::template("own/admin-config");
                 break;
         }
+    }
+    private function get_adminall()
+    {
+        global $_L;
+        if (LCMS::SUPER()) {
+            if (LCMS::SUPER()) {
+                $list[] = array(
+                    "value" => "0",
+                    "title" => $_L['LCMSADMIN']['title'] . " - [{$_L['LCMSADMIN']['name']}]",
+                );
+            }
+            $admin = sql_getall(["admin", "lcms = '0' AND type != 'lcms'", "id ASC"]);
+        } else {
+            $admin = sql_getall(["admin", "id = '{$_L['LCMSADMIN']['id']}'", "id DESC"]);
+        }
+        foreach ($admin as $key => $val) {
+            $val['title'] .= " - [{$val['name']}]";
+            $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
+            $list[] = [
+                "value" => $val['id'],
+                "title" => $val['title'],
+            ];
+        }
+        return $list;
+    }private function get_levelall()
+    {
+        global $_L;
+        if (LCMS::SUPER()) {
+            $level = sql_getall(["admin_level", "", "id DESC"]);
+        } else {
+            $level = sql_getall(["admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id DESC"]);
+        }
+        foreach ($level as $key => $val) {
+            $list[] = [
+                "value" => $val['id'],
+                "title" => $val['name'] . " - [ID:{$val['id']}]",
+            ];
+        }
+        return $list;
     }
 }

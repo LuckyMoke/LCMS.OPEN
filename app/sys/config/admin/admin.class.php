@@ -164,17 +164,18 @@ class admin extends adminbase
                 $email = $_L['form']['LC']['email'];
                 if ($email) {
                     load::sys_class("email");
-                    $r = email::send(array(
+                    $r = EMAIL::send([
+                        "to"       => $email['from'],
+                        "toname"   => "发送测试",
+                        "subject"  => "邮件发送测试",
+                        "body"     => "恭喜您！邮件服务配置成功！",
                         "fromname" => $email['fromname'],
                         "from"     => $email['from'],
                         "pass"     => $email['pass'],
                         "smtp"     => $email['smtp'],
                         "ssl"      => $email['ssl'],
                         "port"     => $email['port'],
-                        "to"       => $email['from'],
-                        "subject"  => "邮件发送测试",
-                        "body"     => "恭喜您！邮件服务配置成功！",
-                    ));
+                    ]);
                 }
                 if ($r['code'] == "1") {
                     ajaxout(1, "邮件服务配置成功");

@@ -15,11 +15,7 @@
         <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['admin']['ver'] }}"/>
         <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['admin']['ver'] }}"/>
         <script type="text/javascript">
-            var LCMS = {
-                url: {
-                    static: "{{$_L['url']['static']}}",
-                }
-            };
+            var LCMS = {"url":{{ echo json_encode($_L['url']) }}};
         </script>
     </head>
     <body>
@@ -30,9 +26,9 @@
                     <form class="layui-form layui-form-pane" action="?n=login&a=check" method="post" target="_self">
                         <input type="hidden" name="go" value="{{ $_L['form']['go'] }}"/>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">用户名</label>
+                            <label class="layui-form-label">账号</label>
                             <div class="layui-input-block">
-                                <input type="text" name="user" required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input"/>
+                                <input type="text" name="name" required lay-verify="required" placeholder="账号/邮箱/手机号" autocomplete="off" class="layui-input"/>
                             </div>
                         </div>
                         <div class="layui-form-item">

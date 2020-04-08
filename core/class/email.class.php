@@ -6,56 +6,44 @@ load::plugin("PHPMailer/SMTP");
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class EAMIL
+class EMAIL
 {
-    public static $lcms = "";
     public static function cfg()
     {
         global $_L;
-        $plugin = LCMS::config(array(
+        $config = LCMS::config([
             "type" => "sys",
             "name" => "config",
             "cate" => "plugin",
-            "lcms" => self::$lcms ? self::$lcms : $_L['ROOTID'],
-        ));
-        $config = $plugin['email'];
-        return $config;
+        ]);
+        return $config['email'];
     }
     public static function send($para)
     {
         global $_L;
-        $config = self::cfg();
-        $config = array(
-            "fromname" => $para['fromname'] ? $para['fromname'] : $config['fromname'],
-            "from"     => $para['from'] ? $para['from'] : $config['from'],
-            "pass"     => $para['pass'] ? $para['pass'] : $config['pass'],
-            "smtp"     => $para['smtp'] ? $para['smtp'] : $config['smtp'],
-            "ssl"      => $para['ssl'] ? $para['ssl'] : $config['ssl'],
-            "port"     => $para['port'] ? $para['port'] : $config['port'],
-        );
-        $email = new PHPMailer(true);
+        $config = array_merge(self::cfg(), $para);
+        $email  = new PHPMailer(true);
         $email->setLanguage('zh_cn', PATH_CORE_PLUGIN . 'PHPMailer/language/');
-        $email->SMTPDebug = 0; //是否开启DEBUG模式
-        $email->isSMTP(); //使用SMTP发送邮件
-        $email->Host       = $config['smtp']; //SMTP服务器地址
-        $email->SMTPAuth   = true; //SMTP验证
-        $email->Username   = $config['from']; //邮箱地址
-        $email->Password   = $config['pass']; //邮箱密码
-        $email->SMTPSecure = $config['ssl'] ? 'ssl' : 'tls'; //TLS还是SSL
-        $email->Port       = $config['port']; //端口号
-        $email->Timeout    = 30; //超时设置
+        $email->SMTPDebug = 0;
+        $email->isSMTP();
+        $email->Host       = $config['smtp'];
+        $email->SMTPAuth   = true;
+        $email->Username   = $config['from'];
+        $email->Password   = $config['pass'];
+        $email->SMTPSecure = $config['ssl'] ? 'ssl' : 'tls';
+        $email->Port       = $config['port'];
+        $email->Timeout    = 30;
         try {
-            //邮箱设置
             $email->setFrom($config['from'], $config['fromname']);
-            $email->addAddress($para['to'], $para['toname']);
-            //附件设置 可多个
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');
-            //邮件内容
-            $email->isHTML(true); //以HTML方式发送
-            $email->Subject = $para['subject'] ? $para['subject'] : "邮件主题"; //邮件主题
-            $email->Body    = $para['body'] ? $para['body'] : "邮件内容"; //邮件内容
-            // $email->AltBody = $para['altbody']; //不支持html的邮件显示
+            $email->addAddress($config['to'], $config['toname']);
+            if ($config['attachment']) {
+                foreach ($config['attachment'] as $key => $val) {
+                    $mail->addAttachment($val['path'], $val['title']);
+                }
+            }
+            $email->isHTML(true);
+            $email->Subject = $config['subject'] ? $config['subject'] : "邮件主题";
+            $email->Body    = $config['body'] ? $config['body'] : "邮件内容";
             $email->send();
             return array("code" => 1, "msg" => "发送成功");
         } catch (Exception $e) {

@@ -13,9 +13,9 @@ $_L['redis']['host'] = "127.0.0.1";
 $_L['redis']['port'] = 6379;
 $_L["redis"]["pass"] = "";
 
-/* Memcache配置 */
-$_L['memcache']['host']     = "127.0.0.1";
-$_L['memcache']['port']     = 11211;
-$_L['memcache']['pconnect'] = 1;
-$_L['memcache']['timeout']  = 30;
-$_L['memcache']['session']  = 1;
+/* Memcached配置 */
+$_L['memcached']['host']     = "127.0.0.1";
+$_L['memcached']['port']     = 11211;
+$_L['memcached']['pconnect'] = 1;
+$_L['memcached']['timeout']  = 30;
+$_L['memcached']['session']  = 1;
