@@ -176,7 +176,7 @@ function sql_counter($sql = [])
  */
 function sql_query($sql = "")
 {
-    DB::$mysql->query($sql);
+    return DB::$mysql->query($sql);
 }
 /**
  * [sql_insert_id 获取插入的最后一个ID]

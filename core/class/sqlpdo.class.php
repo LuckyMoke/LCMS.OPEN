@@ -114,9 +114,6 @@ class SQLPDO
      */
     public function insert($sql)
     {
-        // $this->prepare($sql)->rowCount();
-        // $error = $this->pdo->errorInfo();
-        // dump($sql);
         return $this->prepare($sql)->rowCount();
     }
     /**
@@ -133,11 +130,17 @@ class SQLPDO
      * @param  [type] $sql [description]
      * @return [type]      [description]
      */
-    public function query($sql)
+    public function query($sql, $result_type = PDO::FETCH_ASSOC)
     {
-
         $this->psm = $this->pdo->query($sql);
-        return $this->psm;
+        if (strtoupper(substr($sql, 0, 6)) === "SELECT") {
+            $rows = self::affected_rows();
+            if ($rows > 1) {
+                return $this->psm->fetchAll($result_type);
+            } elseif ($rows == 1) {
+                return $this->psm->fetch($result_type);
+            }
+        }
     }
     /**
      * [counter 查询数据库条数]
@@ -162,7 +165,9 @@ class SQLPDO
      */
     public function affected_rows()
     {
-        return $this->psm->rowCount();
+        if (gettype($this->psm) == "object") {
+            return $this->psm->rowCount();
+        }
     }
     /**
      * [error 返回最后一次操作的错误信息]
@@ -170,8 +175,12 @@ class SQLPDO
      */
     public function error()
     {
-        $error = $this->psm->errorInfo();
-        if ($error[0] !== 00000 && $error[1]) {
+        if (gettype($this->psm) == "object") {
+            $error = $this->psm->errorInfo();
+        } else {
+            $error = $this->pdo->errorInfo();
+        }
+        if ($error[0] != 00000 && $error[1]) {
             return "[{$error[1]}] {$error[2]}";
         }
     }
@@ -181,7 +190,11 @@ class SQLPDO
      */
     public function errno()
     {
-        return $this->psm->errorCode();
+        if (gettype($this->psm) == "object") {
+            $error = $this->psm->errorCode();
+        } else {
+            $error = $this->pdo->errorCode();
+        }
     }
     /**
      * [close 关闭数据库连接]
