@@ -101,7 +101,6 @@ class reg extends adminbase
     {
         global $_L;
         $config = $this->config;
-        dump($config);
         switch ($_L['form']['action']) {
             case 'code_ready':
                 if ($this->is_email($_L['form']['email'])) {
