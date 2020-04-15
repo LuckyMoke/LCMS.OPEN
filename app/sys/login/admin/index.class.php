@@ -14,12 +14,16 @@ class index extends adminbase
         if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST) {
             okinfo(str_replace(HTTP_HOST, $_L['config']['admin']['domain'], $_L['url']['now']));
         }
-        $config = LCMS::config(array(
+        $rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : 0;
+        $config = LCMS::config([
             "name" => "user",
             "type" => "sys",
             "cate" => "admin",
-            "lcms" => true,
-        ));
+            "lcms" => $rootid,
+        ]);
+        if ($rootid != 0 && !$config) {
+            LCMS::X("404", "未找到页面");
+        }
         if ($_L['config']['admin']['login_code']['type'] && $_L['config']['admin']['login_code']['type'] != "0" && stripos(HTTP_HOST, $_L['config']['admin']['login_code']['domain']) !== false) {
             switch ($_L['config']['admin']['login_code']['type']) {
                 case 'luosimao':

@@ -2,21 +2,35 @@
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class("captcha");
+load::sys_class("email");
+load::plugin("Aliyun/dysms");
 class reg extends adminbase
 {
     public function __construct()
     {
         global $_L;
         parent::__construct();
+        $this->rootid = SESSION::get("LCMSREGROOTID");
+        $this->rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : ($this->rootid != null ? $this->rootid : 0);
         $this->config = LCMS::config([
             "name" => "user",
             "type" => "sys",
             "cate" => "admin",
-            "lcms" => true,
+            "lcms" => $this->rootid,
         ]);
+        if ($this->rootid != 0 && !$this->config) {
+            LCMS::X("404", "未找到页面");
+        }
         if ($this->config['reg']['on'] == null || $this->config['reg']['on'] == "0") {
             LCMS::X(403, "未开启用户注册功能");
         }
+        $this->plugin = LCMS::config([
+            "name" => "config",
+            "type" => "sys",
+            "cate" => "plugin",
+            "lcms" => $this->rootid,
+        ]);
+        SESSION::set("LCMSREGROOTID", $this->rootid);
     }
     public function doindex()
     {
@@ -54,8 +68,11 @@ class reg extends adminbase
                             $sendcode = randstr(6);
                             SESSION::set("LCMSREGMOBILE", $_L['form']['mobile']);
                             SESSION::set("LCMSREGSENDCODE", $sendcode);
-                            load::plugin("Aliyun/dysms");
-                            $dysms  = new DYSMS();
+                            $dysms = new DYSMS([
+                                "id"     => $this->plugin['alisms']['id'],
+                                "secret" => $this->plugin['alisms']['secret'],
+                                "sign"   => $this->plugin['alisms']['sign'],
+                            ]);
                             $result = $dysms->send($config['reg']['sms_tplcode'], $_L['form']['mobile'], [
                                 "code" => $sendcode,
                             ]);
@@ -84,6 +101,7 @@ class reg extends adminbase
     {
         global $_L;
         $config = $this->config;
+        dump($config);
         switch ($_L['form']['action']) {
             case 'code_ready':
                 if ($this->is_email($_L['form']['email'])) {
@@ -111,12 +129,17 @@ class reg extends adminbase
                         $sendcode = randstr(6);
                         SESSION::set("LCMSREGEMAIL", $_L['form']['email']);
                         SESSION::set("LCMSREGSENDCODE", $sendcode);
-                        load::sys_class("email");
                         $result = EMAIL::send([
-                            "to"      => $_L['form']['email'],
-                            "toname"  => $_L['form']['name'],
-                            "subject" => "邮箱验证码",
-                            "body"    => "验证码：{$sendcode}，5分钟有效！",
+                            "to"       => $_L['form']['email'],
+                            "toname"   => $_L['form']['name'],
+                            "subject"  => "邮箱验证码",
+                            "body"     => "验证码：{$sendcode}，5分钟有效！",
+                            "fromname" => $this->plugin['email']['fromname'],
+                            "from"     => $this->plugin['email']['from'],
+                            "pass"     => $this->plugin['email']['pass'],
+                            "smtp"     => $this->plugin['email']['smtp'],
+                            "ssl"      => $this->plugin['email']['ssl'],
+                            "port"     => $this->plugin['email']['port'],
                         ]);
                         if ($result['code'] == 1) {
                             SESSION::set("LCMSREGCODETIME", time() + 120);

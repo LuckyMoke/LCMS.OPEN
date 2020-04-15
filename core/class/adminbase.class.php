@@ -52,7 +52,7 @@ class adminbase extends common
                 $_L['LCMSADMIN']['level'] = sql2arr($level['parameter']);
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == "0" ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
-            $_L['ROOTID'] = $_L['config']['admin']['lcmsmode'] ? (LCMS::SUPER() ? "0" : $_L['ROOTID']) : "0";
+            $_L['ROOTID'] = LCMS::SUPER() ? "0" : $_L['ROOTID'];
         }
     }
     protected function load_web_url($domain = "", $secure = "")

@@ -23,7 +23,7 @@ class SESSION
             self::$redis = new RDS();
             $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSESSIONTIME");
             if ($expire_time && $expire_time < time()) {
-                self::$redis->$do->delete(self::$userid);
+                self::$redis->$do->hDel(self::$userid, "LCMSADMIN");
             }
             self::$redis->$do->hSet(self::$userid, "LCMSSESSIONTIME", time() + intval($session_time));
         } else {
@@ -31,7 +31,7 @@ class SESSION
             session_start();
             $expire_time = $_SESSION['LCMSSESSIONTIME'];
             if ($expire_time && $expire_time < time()) {
-                $_SESSION = [];
+                unset($_SESSION["LCMSADMIN"]);
             }
             $_SESSION['LCMSSESSIONTIME'] = time() + intval($session_time);
         }

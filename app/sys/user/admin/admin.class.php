@@ -255,13 +255,13 @@ class admin extends adminbase
                         "value"  => $admin['mobile'],
                         "type"   => "phone",
                     ],
-                ];
-                $form['status'] = [
                     ["layui" => "on", "title" => "账号状态",
                         "name"   => "LC[status]",
                         "value"  => $admin['status'],
                         "text"   => "启用|禁用",
                     ],
+                ];
+                $form['status'] = [
                     ["layui" => "select", "title" => "上级用户",
                         "name"   => "LC[lcms]",
                         "value"  => $admin['lcms'] ? $admin['lcms'] : 0,
@@ -376,6 +376,9 @@ class admin extends adminbase
                         foreach ($li['class'] as $class => $val) {
                             if (empty($val['select'])) {
                                 unset($level[$type][$name]['class'][$class]);
+                                if (empty($level[$type][$name]['class'])) {
+                                    unset($level[$type][$name]);
+                                }
                             }
                         }
                     }
@@ -474,8 +477,8 @@ class admin extends adminbase
     public function doconfig()
     {
         global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "没有权限访问");
+        if ($_L['LCMSADMIN']['lcms'] != "0") {
+            LCMS::X(403, "没有权限，禁止访问");
         }
         switch ($_L['form']['action']) {
             case 'save':
@@ -483,7 +486,6 @@ class admin extends adminbase
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "admin",
-                    "lcms" => true,
                 ]);
                 ajaxout(1, "保存成功");
                 break;
@@ -491,9 +493,18 @@ class admin extends adminbase
                 $config = LCMS::config([
                     "type" => "sys",
                     "cate" => "admin",
-                    "lcms" => true,
                 ]);
                 $form = [
+                    ["layui"   => "input", "title" => "登陆地址",
+                        "name"     => "login_url",
+                        "value"    => "{$_L['url']['admin']}?n=login&rootid={$_L['ROOTID']}",
+                        "disabled" => true,
+                    ],
+                    ["layui"   => "input", "title" => "注册地址",
+                        "name"     => "login_url",
+                        "value"    => "{$_L['url']['admin']}?n=login&c=reg&rootid={$_L['ROOTID']}",
+                        "disabled" => true,
+                    ],
                     ["layui" => "radio", "title" => "用户注册",
                         "name"   => "LC[reg][on]",
                         "value"  => $config['reg']['on'] ? $config['reg']['on'] : "0",
@@ -546,12 +557,10 @@ class admin extends adminbase
     {
         global $_L;
         if (LCMS::SUPER()) {
-            if (LCMS::SUPER()) {
-                $list[] = array(
-                    "value" => "0",
-                    "title" => $_L['LCMSADMIN']['title'] . " - [{$_L['LCMSADMIN']['name']}]",
-                );
-            }
+            $list[] = [
+                "value" => "0",
+                "title" => "{$_L['LCMSADMIN']['title']} - [{$_L['LCMSADMIN']['name']}]",
+            ];
             $admin = sql_getall(["admin", "lcms = '0' AND type != 'lcms'", "id ASC"]);
         } else {
             $admin = sql_getall(["admin", "id = '{$_L['LCMSADMIN']['id']}'", "id DESC"]);

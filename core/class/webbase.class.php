@@ -14,7 +14,7 @@ class webbase extends common
     public function load_web_config()
     {
         global $_L;
-        $_L['ROOTID'] = $_L['config']['admin']['lcmsmode'] ? ($_L['form']['rootid'] !== false ? $_L['form']['rootid'] : LCMS::X(403, "缺少必要参数，禁止访问")) : "0";
+        $_L['ROOTID'] = $_L['form']['rootid'] !== false ? $_L['form']['rootid'] : LCMS::X(403, "缺少必要参数，禁止访问");
     }
     public function load_web_url($domain = "", $secure = "")
     {
