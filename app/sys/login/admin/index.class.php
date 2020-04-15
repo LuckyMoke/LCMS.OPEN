@@ -67,7 +67,7 @@ class index extends adminbase
                     unset($admininfo['pass']);
                     $logintime              = datenow();
                     $admininfo['logintime'] = $logintime;
-                    session::set("LCMSADMIN", $admininfo);
+                    SESSION::set("LCMSADMIN", $admininfo);
                     sql_update(["admin", ["logintime" => $logintime, "ip" => CLIENT_IP], "id = '{$admininfo[id]}'"]);
                     ajaxout(1, "登录成功", $_L['form']['go'] ? $_L['form']['go'] : $_L['url']['admin']);
                 }
@@ -81,7 +81,7 @@ class index extends adminbase
     public function dologinout()
     {
         global $_L;
-        session::del("LCMSADMIN");
+        SESSION::del("LCMSADMIN");
         okinfo($_L['url']['admin'] . "index.php?n=login");
     }
 }

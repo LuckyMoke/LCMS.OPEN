@@ -49,9 +49,9 @@ class admin extends adminbase
             "url"     => $_L['url']['own_form'] . "ajax&action=admin-level-list",
             "cols"    => array(
                 array("title" => "ID", "field" => "id", "width" => 80, "align" => "center"),
-                array("title" => "权限名", "field" => "name", "edit" => "text"),
-                array("title" => "添加人", "field" => "uid"),
-                array("title" => "操作", "field" => "do", "width" => 120, "align" => "center", "toolbar" => array(
+                array("title" => "权限名", "field" => "name", "width" => 200, "edit" => "text"),
+                array("title" => "添加人", "field" => "uid", "width" => 300),
+                array("title" => "操作", "field" => "do", "minWidth" => 120, "toolbar" => array(
                     array("title" => "编辑", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-level-edit", "color" => "default"),
                     array("title" => "删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-level-list-del", "color" => "danger", "tips" => "确认删除？"),
                 )),
@@ -458,7 +458,8 @@ class admin extends adminbase
                 unset($_L['form']['LC']['oldpass']);
                 unset($_L['form']['LC']['email']);
                 unset($_L['form']['LC']['mobile']);
-                $_SESSION['LCMSADMIN']['title'] = $_L['form']['LC']['title'];
+                $_L['LCMSADMIN']['title'] = $_L['form']['LC']['title'];
+                SESSION::set("LCMSADMIN", $_L['LCMSADMIN']);
                 LCMS::form(array(
                     "table" => "admin",
                 ));

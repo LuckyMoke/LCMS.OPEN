@@ -34,17 +34,17 @@ class adminbase extends common
     protected function check_login()
     {
         global $_L;
-        $_L['LCMSADMIN'] = session::get("LCMSADMIN");
+        $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
         if (stristr(HTTP_QUERY, "?n=login") === false && !$_L['LCMSADMIN']) {
             okinfo($_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
         } else {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
-            if ($admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
-                session::del("LCMSADMIN");
+            if ($_L['config']['admin']['login_limit'] == "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
+                SESSION::del("LCMSADMIN");
                 LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
-                session::del("LCMSADMIN");
+                SESSION::del("LCMSADMIN");
                 LCMS::X(403, "系统权限已修改，请重新登陆", $_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {

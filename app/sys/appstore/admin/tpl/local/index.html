@@ -1,18 +1,18 @@
 <template "ui/head"/>
 <template "ui/css"/>
-<table class="layui-table">
+<table class="layui-table app-local">
     <thead>
         <tr>
             <th width="50px">图标</th>
             <th width="200px">应用名</th>
-            <th width="200px">开发者</th>
-            <th width="100px" style="text-align:center;">本地版本</th>
+            <th width="200px" class="layui-hide-xs">开发者</th>
+            <th width="100px" class="layui-hide-xs" style="text-align:center;">本地版本</th>
             <if $level['url']['store']>
-                <th width="100px" style="text-align:center;">最新版本</th>
+                <th width="100px" class="layui-hide-xs app-hide-sm" style="text-align:center;">最新版本</th>
             </if>
-            <th class="layui-hide-xs">应用描述</th>
+            <th class="layui-hide-xs app-hide-sm">应用描述</th>
             <if $level['url']['store']>
-                <th width="{{ echo LCMS::SUPER()?'130px':'80px' }}">操作</th>
+                <th class="layui-hide-xs" width="{{ echo LCMS::SUPER()?'120px':'80px' }}">操作</th>
             </if>
         </tr>
     </thead>
@@ -32,18 +32,20 @@
                 <td>
                     <a href="{{ $applist['open'][$app]['url']['all'] }}" title="{{ $applist['open'][$app]['info']['title'] }}">{{ $applist['open'][$app]['info']['title'] }}</a>
                 </td>
-                <td>{{ $applist['open'][$app]['info']['author'] }}</td>
-                <td style="text-align:center;">V{{ $applist['open'][$app]['info']['ver'] }}</td>
+                <td class="layui-hide-xs">{{ $applist['open'][$app]['info']['author'] }}</td>
+                <td class="layui-hide-xs" style="text-align:center;">V{{ $applist['open'][$app]['info']['ver'] }}</td>
                 <if $level['url']['store']>
-                    <td class="newver" style="text-align:center;"></td>
+                    <td class="layui-hide-xs app-hide-sm newver" style="text-align:center;"></td>
                 </if>
-                <td class="layui-hide-xs">{{ $applist['open'][$app]['info']['description'] }}</td>
+                <td class="layui-hide-xs app-hide-sm">{{ $applist['open'][$app]['info']['description'] }}</td>
                 <if $level['url']['store']>
-                    <td>
-                        <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
-                        <if LCMS::SUPER()>
-                            <button class="layui-btn layui-btn-sm layui-btn-danger app-uninstall" data-url="{{ $_L['url']['own_form'] }}uninstall&app={{ $app }}">卸载</button>
-                        </if>
+                    <td class="layui-hide-xs">
+                        <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
+                            <if LCMS::SUPER()>
+                                <button class="layui-btn layui-btn-sm layui-btn-danger app-uninstall" data-url="{{ $_L['url']['own_form'] }}uninstall&app={{ $app }}">卸载</button>
+                            </if>
+                        </div>
                     </td>
                 </if>
             </tr>

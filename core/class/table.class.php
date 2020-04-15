@@ -93,7 +93,7 @@ class TABLE
                         break;
                 }
             }
-            return '<form class="lcms-form-table-toolbar-search layui-form"><div class="__form">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLESEARCH">搜索</button><button class="layui-btn layui-btn-primary LCMSTABLESEARCHRESET" lay-submit lay-filter="LCMSTABLESEARCH">重置</button></div><div class="__icon LCMSTABLESEARCHICON"><i class="layui-icon layui-icon-search"></i></div></form>';
+            return '<form class="lcms-form-table-toolbar-search layui-form"><div class="__form"><i class="__close hide layui-icon layui-icon-close-fill"></i><h3 class="hide">搜索</h3>' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLESEARCH">搜索</button><button class="layui-btn layui-btn-primary LCMSTABLESEARCHRESET" lay-submit lay-filter="LCMSTABLESEARCH">重置</button></div><div class="__icon LCMSTABLESEARCHICON"><i class="layui-icon layui-icon-search"></i></div></form>';
         }
     }
     /**
