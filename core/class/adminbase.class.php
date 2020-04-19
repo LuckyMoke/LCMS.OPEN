@@ -82,7 +82,7 @@ class adminbase extends common
             LCMS::X(403, "没有权限，禁止访问");
         }
     }
-    protected function domain($domain = "", $secure = "", $autodomain = true)
+    public static function domain($domain = "", $secure = "", $autodomain = true)
     {
         global $_L;
         if ($domain && $autodomain) {

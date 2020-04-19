@@ -13,9 +13,6 @@ class admin extends adminbase
         global $_L;
         switch ($_L['form']['action']) {
             case 'save':
-                if ($_L['form']['LC']['logo'] && $_L['form']['LC']['logo'] != "../public/static/images/logo.png") {
-                    copyfile($_L['form']['LC']['logo'], "../public/static/images/logo.png");
-                }
                 LCMS::config(array(
                     "do"   => "save",
                     "type" => "sys",
@@ -65,7 +62,7 @@ class admin extends adminbase
                     ["layui" => "upload",
                         "title"  => "后台LOGO",
                         "name"   => "LC[logo]",
-                        "value"  => "../public/static/images/logo.png?" . time(),
+                        "value"  => $config['logo'],
                     ],
                     ["layui" => "title", "title" => "通知公告"],
                     ["layui" => "editor", "title" => "后台公告",
