@@ -34,18 +34,19 @@ class adminbase extends common
     protected function check_login()
     {
         global $_L;
+        $loginrootid     = SESSION::get("LCMSLOGINROOTID");
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
         if (stristr(HTTP_QUERY, "?n=login") === false && !$_L['LCMSADMIN']) {
-            okinfo($_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
+            okinfo($_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
         } else {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
-            if ($_L['config']['admin']['login_limit'] == "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
+            if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "系统权限已修改，请重新登陆", $_L['url']['admin'] . "index.php?n=login&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "系统权限已修改，请重新登陆", $_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L[LCMSADMIN][type]}'"]);
@@ -82,9 +83,14 @@ class adminbase extends common
             LCMS::X(403, "没有权限，禁止访问");
         }
     }
-    public static function domain($domain = "", $secure = "", $autodomain = true)
+    public static function domain($domain = "", $secure = "", $autodomain = false)
     {
         global $_L;
+        if (stripos($domain, "://") !== false) {
+            $domain = parse_url($domain);
+            $secure = $domain['scheme'] == "https" ? "https://" : "http://";
+            $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+        }
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         };

@@ -3,8 +3,8 @@
 <form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}iframe&action=admin-level-save" method="post" target="_self">
     <input type="hidden" name="LC[id]" value="{{ $level['id'] }}"/>
     <input type="hidden" name="LC[uid]" value="{{ $level['uid']?$level['uid']:$_L['LCMSADMIN']['id'] }}"/>
-    {{ $html }}
-    {{ LAY::input(["title"=>"权限名","name"=>"LC[name]","value"=>$level['name'], "placehplder"=>"请输入权限名","verify"=>"required"]) }}
+    <input type="hidden" name="level" value="{{ $hide }}"/>
+    <ui form($form)/>
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <h2 class="layui-colla-title">系统模块</h2>

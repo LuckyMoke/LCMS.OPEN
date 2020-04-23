@@ -70,9 +70,14 @@ class webbase extends common
             TPL::getui($paths);
         }
     }
-    public static function domain($domain = "", $secure = "", $autodomain = true)
+    public static function domain($domain = "", $secure = "", $autodomain = false)
     {
         global $_L;
+        if (stripos($domain, "://") !== false) {
+            $domain = parse_url($domain);
+            $secure = $domain['scheme'] == "https" ? "https://" : "http://";
+            $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+        }
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         }

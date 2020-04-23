@@ -14,6 +14,9 @@ class index extends adminbase
         if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST) {
             okinfo(str_replace(HTTP_HOST, $_L['config']['admin']['domain'], $_L['url']['now']));
         }
+        if ($_L['LCMSADMIN'] && $_L['LCMSADMIN']['id'] && $_L['LCMSADMIN']['name']) {
+            okinfo($_L['url']['admin']);
+        }
         $rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : 0;
         $config = LCMS::config([
             "name" => "user",
@@ -24,6 +27,7 @@ class index extends adminbase
         if ($rootid != 0 && !$config) {
             LCMS::X("404", "未找到页面");
         }
+        SESSION::set("LCMSLOGINROOTID", $rootid);
         if ($_L['config']['admin']['login_code']['type'] && $_L['config']['admin']['login_code']['type'] != "0" && stripos(HTTP_HOST, $_L['config']['admin']['login_code']['domain']) !== false) {
             switch ($_L['config']['admin']['login_code']['type']) {
                 case 'luosimao':
@@ -85,7 +89,8 @@ class index extends adminbase
     public function dologinout()
     {
         global $_L;
+        $rootid = SESSION::get("LCMSLOGINROOTID");
         SESSION::del("LCMSADMIN");
-        okinfo($_L['url']['admin'] . "index.php?n=login");
+        okinfo("{$_L['url']['admin']}index.php?n=login&rootid={$rootid}");
     }
 }

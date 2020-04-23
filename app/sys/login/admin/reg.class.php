@@ -10,8 +10,7 @@ class reg extends adminbase
     {
         global $_L;
         parent::__construct();
-        $this->rootid = SESSION::get("LCMSREGROOTID");
-        $this->rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : ($this->rootid != null ? $this->rootid : 0);
+        $this->rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : 0;
         $this->config = LCMS::config([
             "name" => "user",
             "type" => "sys",
@@ -30,11 +29,13 @@ class reg extends adminbase
             "cate" => "plugin",
             "lcms" => $this->rootid,
         ]);
-        SESSION::set("LCMSREGROOTID", $this->rootid);
     }
     public function doindex()
     {
         global $_L;
+        if ($_L['LCMSADMIN'] && $_L['LCMSADMIN']['id'] && $_L['LCMSADMIN']['name']) {
+            okinfo($_L['url']['admin']);
+        }
         $config = $this->config;
         require LCMS::template("own/reg");
     }

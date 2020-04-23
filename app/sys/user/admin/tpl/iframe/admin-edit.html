@@ -5,12 +5,6 @@
     <input type="hidden" name="LC[oldpass]" value="{{ $admin['pass'] }}"/>
     <input type="hidden" name="LC[addtime]" value="{{ $admin['addtime']?$admin['addtime']:datenow(); }}"/>
     <ui form($form['base'])/>
-    <if LCMS::SUPER() && $admin['id'] != $_L['LCMSADMIN']['id']>
-        <ui form($form['status'])/>
-        <else>
-            <input type="hidden" name="LC[lcms]" value="{{ echo isset($admin['lcms'])?$admin['lcms']:$_L['LCMSADMIN']['id'] }}"/>
-        </else>
-    </if>
     <if $admin['id'] != $_L['LCMSADMIN']['id']>
         <ui form($form['level'])/>
     </if>

@@ -187,17 +187,17 @@ class admin extends adminbase
                 ));
                 $email = array(
                     array("layui" => "title", "title" => "邮箱配置"),
-                    array("layui" => "input", "title" => "发件人", "name" => "LC[email][fromname]", "value" => $plugin['email']['fromname'], "verify" => "required"),
-                    array("layui" => "input", "title" => "邮箱账号", "name" => "LC[email][from]", "value" => $plugin['email']['from'], "verify" => "required"),
-                    array("layui" => "input", "title" => "SMTP密码", "name" => "LC[email][pass]", "value" => $plugin['email']['pass'], "type" => "password", "verify" => "required"),
-                    array("layui" => "input", "title" => "SMTP服务器", "name" => "LC[email][smtp]", "value" => $plugin['email']['smtp'], "verify" => "required"),
+                    array("layui" => "input", "title" => "发件人", "name" => "LC[email][fromname]", "value" => $plugin['email']['fromname']),
+                    array("layui" => "input", "title" => "邮箱账号", "name" => "LC[email][from]", "value" => $plugin['email']['from']),
+                    array("layui" => "input", "title" => "SMTP密码", "name" => "LC[email][pass]", "value" => $plugin['email']['pass'], "type" => "password"),
+                    array("layui" => "input", "title" => "SMTP服务器", "name" => "LC[email][smtp]", "value" => $plugin['email']['smtp']),
                     array("layui" => "on", "title" => "TLS/SSL", "name" => "LC[email][ssl]", "value" => $plugin['email']['ssl'], "text" => "SSL|TLS"),
-                    array("layui" => "input", "title" => "端口", "name" => "LC[email][port]", "value" => $plugin['email']['port'], "tips" => "一般情况下<br>SSL端口为465，TLS端口为25", "verify" => "required"),
+                    array("layui" => "input", "title" => "端口", "name" => "LC[email][port]", "value" => $plugin['email']['port'], "tips" => "一般情况下<br>SSL端口为465，TLS端口为25"),
 
                 );
                 $alisms = array(
                     array("layui" => "title", "title" => "阿里云短信配置"),
-                    array("layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/sms' target='_blank'>https://www.aliyun.com/product/sms</a>"),
+                    array("layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/sms?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/sms</a>"),
                     array("layui" => "input", "title" => "AccessKey ID", "name" => "LC[alisms][id]", "value" => $plugin['alisms']['id']),
                     array("layui" => "input", "title" => "Access Key Secret", "name" => "LC[alisms][secret]", "value" => $plugin['alisms']['secret']),
                     array("layui" => "input", "title" => "短信签名", "name" => "LC[alisms][sign]", "value" => $plugin['alisms']['sign']),
