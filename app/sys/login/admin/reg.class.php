@@ -10,7 +10,9 @@ class reg extends adminbase
     {
         global $_L;
         parent::__construct();
-        $this->rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : 0;
+        $rootid       = SESSION::get("LCMSLOGINROOTID");
+        $this->rootid = $_L['form']['rootid'] != null ? $_L['form']['rootid'] : ($rootid ? $rootid : 0);
+        SESSION::set("LCMSLOGINROOTID", $this->rootid);
         $this->config = LCMS::config([
             "name" => "user",
             "type" => "sys",
@@ -66,7 +68,7 @@ class reg extends adminbase
                 if (CAPTCHA::check($_L['form']['code'])) {
                     if ($config['reg']['sms_tplcode']) {
                         if (is_phone($_L['form']['mobile'])) {
-                            $sendcode = randstr(6);
+                            $sendcode = randstr(6, "num");
                             SESSION::set("LCMSREGMOBILE", $_L['form']['mobile']);
                             SESSION::set("LCMSREGSENDCODE", $sendcode);
                             $dysms = new DYSMS([
@@ -126,7 +128,7 @@ class reg extends adminbase
                     $email = explode("@", $_L['form']['email']);
                     $black = "yopmail.com";
                     if (stristr($black, $email[1]) === false && $this->is_email($_L['form']['email'])) {
-                        $sendcode = randstr(6);
+                        $sendcode = randstr(6, "num");
                         SESSION::set("LCMSREGEMAIL", $_L['form']['email']);
                         SESSION::set("LCMSREGSENDCODE", $sendcode);
                         $result = EMAIL::send([

@@ -402,7 +402,7 @@ class admin extends adminbase
                         "name"     => "LC[uid]",
                         "value"    => $level['uid'] ? $level['uid'] : $_L['LCMSADMIN']['id'],
                         "verify"   => "required",
-                        "option"   => $this->get_adminall(),
+                        "option"   => $this->get_adminall(true),
                         "disabled" => LCMS::SUPER() ? "" : true,
                     ],
                 ];
@@ -581,12 +581,12 @@ class admin extends adminbase
                 break;
         }
     }
-    private function get_adminall()
+    private function get_adminall($type = false)
     {
         global $_L;
         if (LCMS::SUPER()) {
             $list[] = [
-                "value" => "0",
+                "value" => $type ? $_L['LCMSADMIN']['id'] : "0",
                 "title" => "{$_L['LCMSADMIN']['title']} - [{$_L['LCMSADMIN']['name']}]",
             ];
             $admin = sql_getall(["admin", "lcms = '0' AND type != 'lcms'", "id ASC"]);

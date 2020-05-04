@@ -271,7 +271,7 @@ function goheader($url)
  */
 function gbk2utf8($str = "")
 {
-    return mb_convert_encoding($str, "UTF-8", "GBK2312, GBK, BIG5, ASCII");
+    return mb_convert_encoding($str, "UTF-8", "GBK, GB2312, BIG5, ASCII");
 }
 /**
  * [utf82gbk 编码转换]

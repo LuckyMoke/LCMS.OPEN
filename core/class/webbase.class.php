@@ -24,11 +24,10 @@ class webbase extends common
             LCMS::X(403, "请通过正确域名访问");
         }
         // 当前域名数据
-        $domain              = $domain ? $domain : (HTTP_HOST ? HTTP_HOST : $_L['config']['web']['domain']);
-        $_L['url']['secure'] = $secure ? $secure : ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
-        $_L['url']['site']   = $_L['url']['secure'] . $domain . "/";
-        $_L['url']['now']    = $_L['url']['secure'] . $domain . HTTP_QUERY;
-        // $_L['url']['admin']    = $_L['url']['site'] . ($_L['config']['admin']['dir'] ? $_L['config']['admin']['dir'] : "admin") . '/';
+        $domain                = $domain ? $domain : (HTTP_HOST ? HTTP_HOST : $_L['config']['web']['domain']);
+        $_L['url']['secure']   = $secure ? $secure : ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $_L['url']['site']     = $_L['url']['secure'] . $domain . "/";
+        $_L['url']['now']      = $_L['url']['secure'] . $domain . HTTP_QUERY;
         $_L['url']['public']   = $_L['url']['site'] . 'public/';
         $_L['url']['static']   = $_L['url']['site'] . 'public/static/';
         $_L['url']['upload']   = $_L['url']['site'] . 'upload/';
@@ -41,9 +40,8 @@ class webbase extends common
         $_L['url']['sys']['domain'] = $_L['config']['web']['domain'];
         $_L['url']['sys']['secure'] = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
         $_L['url']['sys']['site']   = $_L['url']['sys']['secure'] . $_L['config']['web']['domain'] . "/";
-        // $_L['url']['sys']['admin']  = $_L['url']['sys']['site'] . ($_L['config']['admin']['dir'] ? $_L['config']['admin']['dir'] : "admin") . '/';
-        $_L['url']['sys']['app'] = $_L['url']['sys']['site'] . "app/";
-        $_L['url']['sys']['own'] = $_L['url']['sys']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
+        $_L['url']['sys']['app']    = $_L['url']['sys']['site'] . "app/";
+        $_L['url']['sys']['own']    = $_L['url']['sys']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
     }
     public function check_level()
     {

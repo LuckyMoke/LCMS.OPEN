@@ -58,6 +58,10 @@
                                 <a class="layui-btn layui-btn-primary layui-btn-fluid" href="?n=login&c=reg&rootid={{ $rootid }}">注册账号</a>
                             </div>
                         </if>
+                        <a class="_findpass" href="?n=login&c=find&rootid={{ $rootid }}">
+                            <i class="layui-icon layui-icon-about"></i>
+                            找回密码
+                        </a>
                         <div class="clear"></div>
                     </form>
                     <div id="LCMSFOOT">&copy {{ echo date("Y") }} {{ $_L['config']['admin']['developer'] }} 版权所有 翻版必究</div>
