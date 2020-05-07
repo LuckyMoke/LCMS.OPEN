@@ -34,11 +34,11 @@ class adminbase extends common
     protected function check_login()
     {
         global $_L;
-        $loginrootid     = SESSION::get("LCMSLOGINROOTID");
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
+        $loginrootid     = SESSION::get("LCMSLOGINROOTID");
         if (stristr(HTTP_QUERY, "?n=login") === false && !$_L['LCMSADMIN']) {
             okinfo($_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
-        } else {
+        } elseif ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
                 SESSION::del("LCMSADMIN");

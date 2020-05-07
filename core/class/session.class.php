@@ -11,34 +11,33 @@ class SESSION
         self::$type   = $_L['config']['admin']['session_type'];
         $session_time = $_L['config']['admin']['sessiontime'];
         $session_time = $session_time > "0" ? $session_time * 60 : 86400;
-        if (!$_COOKIE['LCMSCOOKIEID'] || $_COOKIE['LCMSCOOKIEID'] == "" || $_COOKIE['LCMSCOOKIEID'] == null || $_COOKIE['LCMSCOOKIEID'] == " ") {
-            $cookie = md5(time() . randstr(32) . CLIENT_IP);
-            setcookie("LCMSCOOKIEID", $cookie, 0, "/", "", 0, true);
+        if (!$_COOKIE['LCMSSESSIONID'] || $_COOKIE['LCMSSESSIONID'] == "" || $_COOKIE['LCMSSESSIONID'] == null || $_COOKIE['LCMSSESSIONID'] == " ") {
+            $cookie = strtoupper(md5(time() . randstr(32) . CLIENT_IP));
+            setcookie("LCMSSESSIONID", $cookie, 0, "/", "", 0, true);
         } else {
-            $cookie = $_COOKIE['LCMSCOOKIEID'];
+            $cookie = $_COOKIE['LCMSSESSIONID'];
         }
-        self::$userid = "lcms-session-" . md5($_SERVER['HTTP_USER_AGENT'] . $cookie);
+        self::$userid = "LCMSSESSIONID" . strtoupper(md5($_SERVER['HTTP_USER_AGENT'] . $cookie));
         if (self::$type == "1") {
             load::plugin("Redis/rds");
             self::$redis = new RDS();
-            $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSESSIONTIME");
+            $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSESSIONIDTIME");
             if ($expire_time && $expire_time < time()) {
                 self::$redis->$do->hDel(self::$userid, "LCMSADMIN");
             }
-            self::$redis->$do->hSet(self::$userid, "LCMSSESSIONTIME", time() + intval($session_time));
+            self::$redis->$do->hSet(self::$userid, "LCMSSESSIONIDTIME", time() + intval($session_time));
         } else {
             session_id(self::$userid);
             session_start();
-            $expire_time = $_SESSION['LCMSSESSIONTIME'];
+            $expire_time = $_SESSION['LCMSSESSIONIDTIME'];
             if ($expire_time && $expire_time < time()) {
                 unset($_SESSION["LCMSADMIN"]);
             }
-            $_SESSION['LCMSSESSIONTIME'] = time() + intval($session_time);
+            $_SESSION['LCMSSESSIONIDTIME'] = time() + intval($session_time);
         }
     }
     public static function set($name, $value)
     {
-        self::start();
         if (self::$type == "1") {
             if (is_object($value) || is_array($value)) {
                 $value = serialize($value);
@@ -51,7 +50,6 @@ class SESSION
     }
     public static function get($name)
     {
-        self::start();
         if (self::$type == "1") {
             $value      = self::$redis->$do->hGet(self::$userid, $name);
             $value_serl = @unserialize($value);
@@ -65,7 +63,6 @@ class SESSION
     }
     public static function getall()
     {
-        self::start();
         if (self::$type == "1") {
             $arr = self::$redis->$do->hGetAll(self::$userid);
             foreach ($arr as $key => $val) {
@@ -83,7 +80,6 @@ class SESSION
     }
     public static function del($name)
     {
-        self::start();
         if (self::$type == "1") {
             self::$redis->$do->hDel(self::$userid, $name);
         } else {
@@ -92,7 +88,6 @@ class SESSION
     }
     public static function delall()
     {
-        self::start();
         if (self::$type == "1") {
             self::$redis->$do->delete(self::$userid);
         } else {
@@ -101,7 +96,6 @@ class SESSION
     }
     public static function getid()
     {
-        self::start();
         return self::$userid;
     }
 }

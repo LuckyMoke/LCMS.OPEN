@@ -18,7 +18,7 @@ class AliPayQr
                 'total_amount'    => $order['pay'],
                 'subject'         => $order['body'],
                 'timeout_express' => $config->$get['timeout_express'],
-            ] + ($config->$get['huabei'] == "1" && $order['huabei']['qishu'] ? ['extend_params' => ["hb_fq_num" => ($order['huabei']['qishu'] ? $order['huabei']['qishu'] : "3"), "hb_fq_seller_percent" => ($order['huabei']['shouxufei'] ? $order['huabei']['shouxufei'] : "100")]] : [])),
+            ] + ($order['fenqi'] > 0 ? ['extend_params' => ["hb_fq_num" => $order['fenqi'], "hb_fq_seller_percent" => "100"]] : [])),
         ];
         $input  = AliPayApi::unifiedOrder($config, $input);
         $result = AliPayApi::post($config->$get['gatewayurl'], $input);

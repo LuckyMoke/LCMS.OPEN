@@ -61,29 +61,29 @@
                     </div>
                 </div>
             </div>
-            {{ if($config->$get['huabei'] == "1" && $config->$get['huabei_sxf'] == "1") }}
-            <div class="fenqi">
-                <h3>选择花呗免息分期</h3>
-                <ul class="am-avg-sm-{{ $huabei == 3 ? '2' : ($huabei == 6 ? '3' : '4') }} am-text-center">
-                    <li>
-                        <a class="am-btn am-btn-{{ $huabei_fq == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
-                    </li>
-                    <li>
-                        <a class="am-btn am-btn-{{ $huabei_fq == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
-                    </li>
-                    <if $huabei gte 6>
+            <if $huabei>
+                <div class="fenqi">
+                    <h3>选择花呗免息分期</h3>
+                    <ul class="am-avg-sm-{{ $huabei == 3 ? '2' : ($huabei == 6 ? '3' : '4') }} am-text-center">
                         <li>
-                            <a class="am-btn am-btn-{{ $huabei_fq == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
+                            <a class="am-btn am-btn-{{ $fenqi == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
                         </li>
-                    </if>
-                    <if $huabei gte 12>
                         <li>
-                            <a class="am-btn am-btn-{{ $huabei_fq == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
+                            <a class="am-btn am-btn-{{ $fenqi == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
                         </li>
-                    </if>
-                </ul>
-            </div>
-            {{ /if }}
+                        <if $huabei gte 6>
+                            <li>
+                                <a class="am-btn am-btn-{{ $fenqi == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
+                            </li>
+                        </if>
+                        <if $huabei gte 12>
+                            <li>
+                                <a class="am-btn am-btn-{{ $fenqi == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
+                            </li>
+                        </if>
+                    </ul>
+                </div>
+            </if>
             <div class="pay-btn">
                 <form method='POST' action="{{ $result['url'] }}">
                     {{ foreach ($result['data'] as $key=>$val) }}

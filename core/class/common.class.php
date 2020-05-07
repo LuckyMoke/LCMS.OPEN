@@ -11,10 +11,12 @@ class common
      */
     public function __construct()
     {
+        global $_L;
         $this->load_common_mysql();
         $this->load_common_form();
         $this->load_common_tables();
         $this->load_common_config();
+        SESSION::start();
     }
     /**
      * [load_common_mysql 加载数据库]

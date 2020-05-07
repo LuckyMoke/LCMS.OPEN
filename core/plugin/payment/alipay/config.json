@@ -17,20 +17,6 @@
             "value": "1"
         }]
     }, {
-        "layui": "radio",
-        "title": "花呗付款",
-        "name": "LC[alipay][huabei]",
-        "value": "huabei",
-        "cname": "hidden payment_alipay",
-        "tips": "需申请接口支持",
-        "radio": [{
-            "title": "关闭",
-            "value": "0"
-        }, {
-            "title": "开启",
-            "value": "1"
-        }]
-    }, {
         "layui": "input",
         "title": "APPID",
         "name": "LC[alipay][appid]",

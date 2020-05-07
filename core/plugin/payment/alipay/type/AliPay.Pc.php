@@ -19,7 +19,7 @@ class AliPayPc
                 'product_code' => "FAST_INSTANT_TRADE_PAY",
                 'total_amount' => $order['pay'],
                 'subject'      => $order['body'],
-            ] + ($config->$get['huabei'] == "1" && $config->$get['huabei_sxf'] == "1" && $order['fenqi'] != "" ? ['extend_params' => ["hb_fq_num" => $order['fenqi'], "hb_fq_seller_percent" => "100"]] : [])),
+            ] + ($order['fenqi'] > 0 ? ['extend_params' => ["hb_fq_num" => $order['fenqi'], "hb_fq_seller_percent" => "100"]] : [])),
         ];
         $input = AliPayApi::unifiedOrder($config, $input);
         return $this->buildRequestJson($config, $input);
