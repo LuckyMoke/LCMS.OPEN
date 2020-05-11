@@ -2,6 +2,35 @@
 defined('IN_LCMS') or exit('No permission');
 class TABLE
 {
+    public static $count;
+    /**
+     * [set 新版获取表格数据]
+     * @param  [type] $table [description]
+     * @param  string $where [description]
+     * @param  string $order [description]
+     * @param  [type] $para  [description]
+     * @param  [type] $field [description]
+     * @return [type]        [description]
+     */
+    public static function set($table, $where = "", $order = "", $para = [], $field = null)
+    {
+        global $_L;
+        $page     = $_L['form']['page'];
+        $limit    = $_L['form']['limit'];
+        $count    = sql_counter([$table, $where, $para]);
+        $page_max = ceil($count / $limit);
+        if ($page <= $page_max) {
+            $min  = ($page - 1) * $limit;
+            $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
+        }
+        self::$count = $count;
+        return $data;
+    }
+    /**
+     * [html 生成数据表格html]
+     * @param  string $table [description]
+     * @return [type]        [description]
+     */
     public static function html($table = "")
     {
         global $_L;
@@ -143,13 +172,11 @@ class TABLE
             $min  = ($page - 1) * $limit;
             $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
         }
-        $r = [
-            "count" => $count,
-            "data"  => $data,
-            "code"  => 0,
-            "msg"   => "ok",
+        self::$count = $count;
+        $result      = [
+            "data" => $data,
         ];
-        return $r;
+        return $result;
     }
     /**
      * [del 删除表格数据]
@@ -233,7 +260,29 @@ class TABLE
     public static function out($arr)
     {
         global $_L;
-        echo json_encode_ex($arr);
+        $arr = $arr['data'] ? $arr['data'] : $arr;
+        // 处理数据表格中的操作组件
+        foreach ($arr as $index => $list) {
+            foreach ($list as $key => $val) {
+                if (is_array($val)) {
+                    $val['url']  = stristr($val['url'], "://") ? $val['url'] : "{$_L['url']['own_form']}{$val['url']}";
+                    $val['url']  = stristr($val['url'], "name=") ? $val['url'] : "{$val['url']}&name={$key}";
+                    $val['text'] = $val['text'] ? $val['text'] : "启用|关闭";
+                    $checked     = $val['value'] > 0 ? "checked" : "";
+                    switch ($val['type']) {
+                        case 'switch':
+                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' lay-skin='switch' lay-text='{$val['text']}' {$checked}>";
+                            break;
+                    }
+                }
+            }
+        }
+        echo json_encode_ex([
+            "count" => self::$count,
+            "data"  => $arr,
+            "code"  => 0,
+            "msg"   => "ok",
+        ]);
         die;
     }
 }
