@@ -261,6 +261,7 @@ class TABLE
     {
         global $_L;
         $arr = $arr['data'] ? $arr['data'] : $arr;
+        unset($arr['data']);
         // 处理数据表格中的操作组件
         foreach ($arr as $index => $list) {
             foreach ($list as $key => $val) {
