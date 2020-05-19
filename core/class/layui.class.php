@@ -30,7 +30,7 @@ class LAY
     {
         $para          = self::start($para);
         $para['title'] = $para['title'] ? $para['title'] : "标题栏";
-        echo "<p class='layui-bg-green lcms-form-des{$para['cname']}'>{$para['title']}</p>";
+        echo "<p class='lcms-form-des{$para['cname']}'>{$para['title']}</p>";
     }
     public static function input($para)
     {

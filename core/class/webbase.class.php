@@ -40,6 +40,7 @@ class webbase extends common
         $_L['url']['sys']['domain'] = $_L['config']['web']['domain'];
         $_L['url']['sys']['secure'] = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
         $_L['url']['sys']['site']   = $_L['url']['sys']['secure'] . $_L['config']['web']['domain'] . "/";
+        $_L['url']['sys']['api']    = $_L['config']['web']['domain_api'];
         $_L['url']['sys']['app']    = $_L['url']['sys']['site'] . "app/";
         $_L['url']['sys']['own']    = $_L['url']['sys']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
     }

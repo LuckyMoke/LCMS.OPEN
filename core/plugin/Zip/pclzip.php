@@ -80,7 +80,7 @@ class PclZip
     public $error_code   = 1;
     public $error_string = '';
     public $magic_quotes_status;
-    public function PclZip($p_zipname)
+    public function __construct($p_zipname)
     {
         if (!function_exists('gzopen')) {
             die('Abort ' . basename(__FILE__) . ' : Missing zlib extensions');

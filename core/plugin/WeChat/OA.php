@@ -439,24 +439,18 @@ class OA
             'wma'  => 'audio/x-ms-wma',
         ];
         if ($mime) {
-            $fileinfo = [
-                'filename'     => $fileinfo['basename'],
-                'content-type' => $mime[$fileinfo['extension']],
-                'filelength'   => filesize($file),
-            ];
             clearstatcache();
+            $media = new CURLFile($file, $mime[$fileinfo['extension']], $fileinfo['basename']);
             if ($para['temp']) {
                 //临时素材
-                $result = http::post("https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", array(
-                    "media"     => new CURLFile($file),
-                    "form-data" => $fileinfo,
-                ));
+                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", [
+                    "media" => $media,
+                ], true);
             } else {
                 //永久素材
-                $result = http::post("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", array(
-                    "media"     => new CURLFile($file),
-                    "form-data" => $fileinfo,
-                ));
+                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", [
+                    "media" => $media,
+                ]);
             }
             return json_decode($result, true);
         } else {

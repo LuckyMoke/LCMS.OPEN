@@ -62,6 +62,7 @@ class adminbase extends common
         $domain                       = $domain ? $domain : ($_L['config']['web']['domain'] ? $_L['config']['web']['domain'] : HTTP_HOST);
         $_L['url']['web']['secure']   = $secure ? $secure : ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
         $_L['url']['web']['site']     = $_L['url']['web']['secure'] . $domain . "/";
+        $_L['url']['web']['api']      = $_L['config']['web']['domain_api'];
         $_L['url']['web']['public']   = $_L['url']['web']['site'] . 'public/';
         $_L['url']['web']['static']   = $_L['url']['web']['site'] . 'public/static/';
         $_L['url']['web']['upload']   = $_L['url']['web']['site'] . 'upload/';
