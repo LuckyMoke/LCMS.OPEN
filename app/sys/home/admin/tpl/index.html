@@ -4,7 +4,10 @@
 </if>
 <div class="layui-fluid" style="padding:0">
     <if $lasttime && $lasttime lt 15>
-        <blockquote class="layui-elem-quote" style="background:#ffdcdc;border:none;">友情提示：您的账号将于 {{ $_L['LCMSADMIN']['lasttime'] }} 到期，为避免影响使用，请及时处理！</blockquote>
+        <blockquote class="layui-elem-quote" style="background:#fdf6ec;color:#e6a23c;border:none;">
+            <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i>
+            友情提示：您的账号将于 {{ $_L['LCMSADMIN']['lasttime'] }} 到期，为避免影响使用，请及时处理！
+        </blockquote>
     </if>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md{{ $_L['config']['admin']['gonggao']?'6':'12' }} layui-col-xs12">

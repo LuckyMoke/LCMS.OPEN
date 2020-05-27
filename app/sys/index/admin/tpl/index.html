@@ -24,16 +24,16 @@
     <body>
         <div id="LCMS">
             <div class="__showbox"></div>
-            <div class="__mobnavbtn">
+            <div class="layui-bg-cyan __mobnavbtn">
                 <i class="layui-icon layui-icon-spread-left"></i>
             </div>
-            <div class="__box_l">
+            <div class="__box_l layui-bg-cyan">
                 <div class="__box_logo">
                     <a href="{{ $_L['url']['admin'] }}">
                         <img src="{{ $_L['config']['admin']['logo'] }}" width="100%" />
                     </a>
                 </div>
-                <ul class="layui-nav layui-nav-tree" lay-filter="lcmsleftnav">
+                <ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="lcmsleftnav">
                     <loop $open,$list>
                         <if $list['menu']>
                             <li class="layui-nav-item layui-nav-itemed">
