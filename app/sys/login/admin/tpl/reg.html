@@ -62,12 +62,23 @@
                                 </div>
                             </div>
                         </if>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">验证码</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="code" placeholder="请输入接收到的验证码" autocomplete="off" class="layui-input"/>
+                        <if $config['reg']['on'] == "justuser">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">验证码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input" maxlength="4"/>
+                                    <img class="__code" src="{{ $_L['url']['app'] }}index.php?n=system&c=pin" title="点击刷新" onclick="this.src='{{ $_L['url']['app'] }}index.php?n=system&c=pin&'+Math.random()"/>
+                                </div>
                             </div>
-                        </div>
+                        </if>
+                        <if $config['reg']['on'] == "email" || $config['reg']['on'] == "mobile">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">验证码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="code" placeholder="请输入接收到的验证码" autocomplete="off" class="layui-input"/>
+                                </div>
+                            </div>
+                        </if>
                         <div class="layui-form-item">
                             <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="reg">立即注册</button>
                         </div>

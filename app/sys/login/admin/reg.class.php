@@ -41,6 +41,16 @@ class reg extends adminbase
         $config = $this->config;
         require LCMS::template("own/reg");
     }
+    public function dojustuser()
+    {
+        global $_L;
+        $config = $this->config;
+        if (CAPTCHA::check($_L['form']['code'])) {
+            $this->reg($config['reg']['on']);
+        } else {
+            ajaxout(0, "验证码错误");
+        }
+    }
     public function domobile()
     {
         global $_L;
@@ -96,7 +106,7 @@ class reg extends adminbase
                 }
                 break;
             default:
-                $this->reg("mobile");
+                $this->reg($config['reg']['on']);
                 break;
         }
     }
@@ -157,7 +167,7 @@ class reg extends adminbase
                 }
                 break;
             default:
-                $this->reg("email");
+                $this->reg($config['reg']['on']);
                 break;
         }
     }
@@ -168,43 +178,50 @@ class reg extends adminbase
         if (mb_strlen($_L['form']['pass'], "UTF8") < 6) {
             ajaxout(0, "密码不能少于6位");
         }
-        $sendcode = SESSION::get("LCMSREGSENDCODE");
-        if ($sendcode && $_L['form']['code'] && $sendcode == strtoupper($_L['form']['code'])) {
-            $admininfo = [
-                "name"    => $_L['form']['name'],
-                "title"   => $_L['form']['title'] ? $_L['form']['title'] : $_L['form']['name'],
-                "pass"    => md5($_L['form']['pass']),
-                "status"  => $config['reg']['status'],
-                "addtime" => datenow(),
-                "type"    => $config['reg']['level'],
-                "lcms"    => $config['reg']['lcms'],
-            ];
-            if ($type == "mobile") {
-                $mobile = SESSION::get("LCMSREGMOBILE");
-                if ($mobile) {
-                    $admininfo['mobile'] = $mobile;
+        $sendcode  = SESSION::get("LCMSREGSENDCODE");
+        $admininfo = [
+            "name"    => $_L['form']['name'],
+            "title"   => $_L['form']['title'] ? $_L['form']['title'] : $_L['form']['name'],
+            "pass"    => md5($_L['form']['pass']),
+            "status"  => $config['reg']['status'],
+            "addtime" => datenow(),
+            "type"    => $config['reg']['level'],
+            "lcms"    => $config['reg']['lcms'],
+        ];
+        switch ($type) {
+            case 'mobile':
+                if ($sendcode && $sendcode == strtoupper($_L['form']['code'])) {
+                    $mobile = SESSION::get("LCMSREGMOBILE");
+                    if ($mobile) {
+                        $admininfo['mobile'] = $mobile;
+                    } else {
+                        ajaxout(0, "缺少手机号");
+                    }
                 } else {
-                    ajaxout(0, "缺少手机号");
+                    ajaxout(0, "验证码错误");
                 }
-            } else {
-                $email = SESSION::get("LCMSREGEMAIL");
-                if ($email) {
-                    $admininfo['email'] = $email;
+                break;
+            case 'email':
+                if ($sendcode && $sendcode == strtoupper($_L['form']['code'])) {
+                    $email = SESSION::get("LCMSREGEMAIL");
+                    if ($email) {
+                        $admininfo['email'] = $email;
+                    } else {
+                        ajaxout(0, "缺少邮箱地址");
+                    }
                 } else {
-                    ajaxout(0, "缺少邮箱地址");
+                    ajaxout(0, "验证码错误");
                 }
-            }
-            sql_insert(["admin", $admininfo]);
-            SESSION::del("LCMSREGSENDCODE");
-            SESSION::del("LCMSREGMOBILE");
-            SESSION::del("LCMSREGEMAIL");
-            if (sql_error()) {
-                ajaxout(0, "注册失败，请联系管理员");
-            } else {
-                ajaxout(1, "注册成功，请登陆");
-            }
+                break;
+        }
+        sql_insert(["admin", $admininfo]);
+        SESSION::del("LCMSREGSENDCODE");
+        SESSION::del("LCMSREGMOBILE");
+        SESSION::del("LCMSREGEMAIL");
+        if (sql_error()) {
+            ajaxout(0, "注册失败，请联系管理员");
         } else {
-            ajaxout(0, "验证码错误");
+            ajaxout(1, "注册成功，请登陆");
         }
     }
     public function docheck()

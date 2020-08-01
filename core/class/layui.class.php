@@ -35,13 +35,14 @@ class LAY
     public static function input($para)
     {
         $para                = self::start($para);
+        $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
         echo $html;
@@ -49,6 +50,7 @@ class LAY
     public static function input_sort($para)
     {
         $para                = self::start($para);
+        $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         $html                = "
@@ -56,7 +58,7 @@ class LAY
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='layui-input' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='layui-input' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
@@ -66,12 +68,13 @@ class LAY
     public static function textarea($para)
     {
         $para                = self::start($para);
+        $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
         $html                = "
         <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='layui-textarea{$para['tipsbox']}' style='border-top:none;border-right:none;border-bottom:none;border-left:1px solid #e6e6e6'{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
+                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='layui-textarea{$para['tipsbox']}' style='border-top:none;border-right:none;border-bottom:none;border-left:1px solid #e6e6e6'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
                 </div>
             </div>";
         echo $html;

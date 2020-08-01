@@ -538,6 +538,7 @@ class admin extends adminbase
                         "value"  => $config['reg']['on'] ? $config['reg']['on'] : "0",
                         "radio"  => [
                             ["title" => "关闭", "value" => "0", "tab" => "tab0"],
+                            ["title" => "账号验证", "value" => "justuser", "tab" => "tab_justuser"],
                             ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
                             ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
                         ],

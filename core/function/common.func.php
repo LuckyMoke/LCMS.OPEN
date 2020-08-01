@@ -498,7 +498,7 @@ function is_base64($str = "")
 function is_phone($phone)
 {
     if (strlen($phone) == 11) {
-        if ($phone && preg_match("/^1[3456789]{1}\d{9}$/", $phone)) {
+        if ($phone && preg_match("/^1[3-9]\d{9}$/", $phone)) {
             $flag = true;
         } else {
             $flag = false;
@@ -507,6 +507,17 @@ function is_phone($phone)
         $flag = false;
     }
     return $flag;
+}
+/**
+ * [is_https 判断一个链接是否为https]
+ * @param  [type]  $url [description]
+ * @return boolean      [description]
+ */
+function is_https($url)
+{
+    if (stristr($url, "https://") !== false) {
+        return true;
+    }
 }
 /**
  * [html_editor HTML内容解码懒加载]
