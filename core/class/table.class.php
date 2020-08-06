@@ -282,7 +282,7 @@ class TABLE
             "count" => self::$count,
             "data"  => $arr,
             "code"  => 0,
-            "msg"   => "ok",
+            "msg"   => self::$count > 0 ? "success" : "无数据",
         ]);
         die;
     }
