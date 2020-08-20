@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-08-09 16:53:38
+ * @Description: mysql数据库操作方法
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 /**
  * [sql_tablename 获取表名]
@@ -93,6 +100,7 @@ function sql_update($sql = [])
             if ($sql[4][$key]) {
                 $data[] = "{$key} = {$key} {$sql[4][$key]} {$val}";
             } else {
+                $val    = $val !== 0 && $val !== '0' && empty($val) ? "[LCMSSQLNULL]" : $val;
                 $data[] = "{$key} = '{$val}'";
             }
         }
@@ -107,6 +115,7 @@ function sql_update($sql = [])
                 $where = str_replace($key, $val, $where);
             }
         }
+        $data  = str_replace("'[LCMSSQLNULL]'", "NULL", $data);
         $query = "UPDATE {$table} SET {$data}{$where}";
         DB::$mysql->update($query);
     }
@@ -121,14 +130,19 @@ function sql_insert($sql = [])
     $table = sql_tablename($sql[0]);
     if ($sql[1][0]) {
         foreach ($sql[1] as $val) {
-            $sql_key   = array_keys($val);
+            $sql_key = array_keys($val);
+            foreach ($val as $index => $v) {
+                $val[$index] = $val !== 0 && $v !== '0' && empty($v) ? "[LCMSSQLNULL]" : $v;
+            }
             $sql_val[] = implode("','", array_values($val));
         }
         $sql_val = "('" . implode("'),('", $sql_val) . "')";
     } else {
         $sql_key = array_keys($sql[1]);
-        $sql_val = array_values($sql[1]);
-        $sql_val = "('" . implode("','", $sql_val) . "')";
+        foreach ($sql[1] as $index => $v) {
+            $sql[1][$index] = $val !== 0 && $v !== '0' && empty($v) ? "[LCMSSQLNULL]" : $v;
+        }
+        $sql_val = "('" . implode("','", array_values($sql[1])) . "')";
     }
     $sql_key = "(" . implode(",", $sql_key) . ")";
     if ($sql[2] && is_array($sql[2])) {
@@ -136,7 +150,8 @@ function sql_insert($sql = [])
             $sql_val = str_replace($key, $val, $sql_val);
         }
     }
-    $query = "INSERT IGNORE INTO {$table} {$sql_key} VALUES {$sql_val}";
+    $sql_val = str_replace("'[LCMSSQLNULL]'", "NULL", $sql_val);
+    $query   = "INSERT IGNORE INTO {$table} {$sql_key} VALUES {$sql_val}";
     DB::$mysql->insert($query);
     return sql_insert_id();
 }

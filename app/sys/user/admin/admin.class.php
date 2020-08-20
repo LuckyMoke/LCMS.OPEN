@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-08-09 16:48:25
+ * @Description: 用户管理
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class('table');
@@ -329,9 +336,6 @@ class admin extends adminbase
                     };
                 }
                 unset($_L['form']['LC']['oldpass']);
-                if (!$_L['form']['LC']['lasttime']) {
-                    unset($_L['form']['LC']['lasttime']);
-                }
                 if ($_L['form']['admin_level']) {
                     $level = explode("/", $_L['form']['admin_level']);
                     if (!$level[1]) {

@@ -36,7 +36,7 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
+        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
@@ -51,7 +51,7 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
+        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
@@ -69,7 +69,7 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入内容";
+        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $html                = "
         <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label'>{$para['title']}</label>
@@ -170,7 +170,7 @@ class LAY
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-date' data-value='{$para['value']}' data-type='{$para['type']}' data-range='{$para['range']}' data-min='{$para['min']}' data-max='{$para['max']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' class='layui-input' autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
+                        <input type='text' name='{$para['name']}' class='layui-input' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>

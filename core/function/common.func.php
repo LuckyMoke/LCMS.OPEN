@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-08-08 18:31:42
+ * @Description: 全局方法
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 /**
  * [dump 输出字符串或数组]
@@ -30,7 +37,7 @@ function dump($vars, $label = '', $return = false)
  */
 function json_encode_ex($value)
 {
-    return json_encode($value, JSON_UNESCAPED_UNICODE);
+    return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
 }
 /**
  * [ajaxout AJAX输出的标准数据]
