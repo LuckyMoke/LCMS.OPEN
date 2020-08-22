@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-08-09 16:53:38
+ * @LastEditTime: 2020-08-22 22:01:36
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -100,7 +100,7 @@ function sql_update($sql = [])
             if ($sql[4][$key]) {
                 $data[] = "{$key} = {$key} {$sql[4][$key]} {$val}";
             } else {
-                $val    = $val !== 0 && $val !== '0' && empty($val) ? "[LCMSSQLNULL]" : $val;
+                $val    = $val === null ? "[LCMSSQLNULL]" : $val;
                 $data[] = "{$key} = '{$val}'";
             }
         }
@@ -132,7 +132,7 @@ function sql_insert($sql = [])
         foreach ($sql[1] as $val) {
             $sql_key = array_keys($val);
             foreach ($val as $index => $v) {
-                $val[$index] = $val !== 0 && $v !== '0' && empty($v) ? "[LCMSSQLNULL]" : $v;
+                $val[$index] = $v === null ? "[LCMSSQLNULL]" : $v;
             }
             $sql_val[] = implode("','", array_values($val));
         }
@@ -140,7 +140,7 @@ function sql_insert($sql = [])
     } else {
         $sql_key = array_keys($sql[1]);
         foreach ($sql[1] as $index => $v) {
-            $sql[1][$index] = $val !== 0 && $v !== '0' && empty($v) ? "[LCMSSQLNULL]" : $v;
+            $sql[1][$index] = $v === null ? "[LCMSSQLNULL]" : $v;
         }
         $sql_val = "('" . implode("','", array_values($sql[1])) . "')";
     }

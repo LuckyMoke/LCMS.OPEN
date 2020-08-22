@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-08-09 16:48:25
+ * @LastEditTime: 2020-08-22 22:09:59
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,12 +13,13 @@ class admin extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LC;
         parent::__construct();
+        $LC = $_L['form']['LC'];
     }
     public function doindex()
     {
-        global $_L;
+        global $_L, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
@@ -54,7 +55,7 @@ class admin extends adminbase
     }
     public function dolevel()
     {
-        global $_L;
+        global $_L, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
@@ -77,11 +78,10 @@ class admin extends adminbase
     }
     public function doajax()
     {
-        global $_L;
-        $form = $_L['form']['LC'];
+        global $_L, $LC;
         switch ($_L['form']['action']) {
             case 'admin-list':
-                $where     = $form['name'] ? " AND (name LIKE '%{$form['name']}%' OR title LIKE '%{$form['name']}%' OR email LIKE '%{$form['name']}%' OR mobile LIKE '%{$form['name']}%')" : "";
+                $where     = $LC['name'] ? " AND (name LIKE '%{$LC['name']}%' OR title LIKE '%{$LC['name']}%' OR email LIKE '%{$LC['name']}%' OR mobile LIKE '%{$LC['name']}%')" : "";
                 $data      = LCMS::SUPER() ? TABLE::data("admin", "id != 0" . $where, "id ASC") : TABLE::data("admin", "(lcms = '{$_L[LCMSADMIN][id]}' OR id = '{$_L[LCMSADMIN][id]}')" . $where, "id ASC");
                 $adminlist = sql_getall(["admin"]);
                 $levellist = sql_getall(["admin_level"]);
@@ -109,8 +109,8 @@ class admin extends adminbase
                 break;
             case 'admin-list-save':
                 sql_update(["admin", [
-                    $form['name'] => $form['value'],
-                ], "id = '{$form[id]}'"]);
+                    $LC['name'] => $LC['value'],
+                ], "id = '{$LC['id']}'"]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
                 } else {
@@ -118,11 +118,11 @@ class admin extends adminbase
                 }
                 break;
             case 'admin-list-del':
-                if ($form['id'] == $_L['LCMSADMIN']['id']) {
+                if ($LC['id'] == $_L['LCMSADMIN']['id']) {
                     ajaxout(0, "禁止删除");
                     exit;
-                } elseif ($form[0]['id']) {
-                    foreach ($form as $key => $val) {
+                } elseif ($LC[0]['id']) {
+                    foreach ($LC as $key => $val) {
                         if ($val['id'] == $_L['LCMSADMIN']['id']) {
                             ajaxout(0, "禁止删除");
                             exit;
@@ -141,7 +141,7 @@ class admin extends adminbase
                     exit;
                 }
                 sql_update(["admin", [
-                    "status" => $form['value'] ? "1" : "0",
+                    "status" => $LC['value'] ? "1" : "0",
                 ], "id = '{$_L['form']['id']}'"]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
@@ -168,8 +168,8 @@ class admin extends adminbase
                 break;
             case 'admin-level-list-save':
                 sql_update(["admin_level", [
-                    $form['name'] => $form['value'],
-                ], "id = '{$form[id]}'"]);
+                    $LC['name'] => $LC['value'],
+                ], "id = '{$LC['id']}'"]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
                 } else {
@@ -177,7 +177,7 @@ class admin extends adminbase
                 }
                 break;
             case 'admin-level-list-del':
-                $adminlist = sql_getall(["admin", "type = '{$form[id]}'"]);
+                $adminlist = sql_getall(["admin", "type = '{$LC[id]}'"]);
                 if ($adminlist) {
                     ajaxout(0, "有用户使用此权限");
                 } else {
@@ -213,7 +213,7 @@ class admin extends adminbase
     }
     public function doiframe()
     {
-        global $_L;
+        global $_L, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
@@ -299,41 +299,44 @@ class admin extends adminbase
                 };
                 break;
             case 'admin-save':
-                if ($_L['form']['LC']['id'] == $_L['LCMSADMIN']['id']) {
+                if ($LC['id'] == $_L['LCMSADMIN']['id']) {
                     unset($_L['form']['LC']['status']);
                 }
-                if ($_L['form']['LC']['oldpass'] != $_L['form']['LC']['pass']) {
-                    $_L['form']['LC']['pass'] = md5($_L['form']['LC']['pass']);
+                if ($LC['oldpass'] != $LC['pass']) {
+                    $_L['form']['LC']['pass'] = md5($LC['pass']);
                 }
-                if ($_L['form']['LC']['id']) {
+                if ($LC['id']) {
                     if (!LCMS::SUPER()) {
                         unset($_L['form']['LC']['name']);
                     }
-                    $where = " AND id NOT IN({$_L['form']['LC']['id']})";
+                    $where = " AND id NOT IN({$LC['id']})";
                 }
-                if ($_L['form']['LC']['name']) {
+                if ($LC['name']) {
                     $admininfo = sql_get(["admin", "(name = ':name' OR email = ':name' OR mobile = ':name'){$where}", "id DESC", [
-                        ":name" => $_L['form']['LC']['name'],
+                        ":name" => $LC['name'],
                     ]]);
                     if ($admininfo) {
                         ajaxout(0, "账号已存在");
                     };
                 }
-                if ($_L['form']['LC']['email']) {
+                if ($LC['email']) {
                     $admininfo = sql_get(["admin", "(name = ':email' OR email = ':email' OR mobile = ':email'){$where}", "id DESC", [
-                        ":email" => $_L['form']['LC']['email'],
+                        ":email" => $LC['email'],
                     ]]);
                     if ($admininfo) {
                         ajaxout(0, "邮箱地址已存在");
                     };
                 }
-                if ($_L['form']['LC']['mobile']) {
+                if ($LC['mobile']) {
                     $admininfo = sql_get(["admin", "(name = ':mobile' OR email = ':mobile' OR mobile = ':mobile'){$where}", "id DESC", [
-                        ":mobile" => $_L['form']['LC']['mobile'],
+                        ":mobile" => $LC['mobile'],
                     ]]);
                     if ($admininfo) {
                         ajaxout(0, "手机号已存在");
                     };
+                }
+                if (!$LC['lasttime']) {
+                    $_L['form']['LC']['lasttime'] = null;
                 }
                 unset($_L['form']['LC']['oldpass']);
                 if ($_L['form']['admin_level']) {
@@ -417,7 +420,7 @@ class admin extends adminbase
                 if ($_L['form']['level']) {
                     $level = json_decode(base64_decode($_L['form']['level']), true);
                     if (is_array($level)) {
-                        $_L['form']['LC'] = array_merge_recursive($level, $_L['form']['LC']);
+                        $_L['form']['LC'] = array_merge_recursive($level, $LC);
                     }
                 }
                 LCMS::form([
@@ -434,7 +437,7 @@ class admin extends adminbase
     }
     public function doprofile()
     {
-        global $_L;
+        global $_L, $LC;
         switch ($_L['form']['action']) {
             case 'admin-edit':
                 $admin = LCMS::form([
@@ -486,16 +489,16 @@ class admin extends adminbase
                 require LCMS::template("own/iframe/admin-edit");
                 break;
             case 'admin-save':
-                if ($_L['form']['LC']['oldpass'] != $_L['form']['LC']['pass']) {
-                    $_L['form']['LC']['pass'] = md5($_L['form']['LC']['pass']);
+                if ($LC['oldpass'] != $LC['pass']) {
+                    $_L['form']['LC']['pass'] = md5($LC['pass']);
                 }
-                if ($_L['form']['LC']['id'] && !LCMS::SUPER()) {
+                if ($LC['id'] && !LCMS::SUPER()) {
                     unset($_L['form']['LC']['name']);
                 }
                 unset($_L['form']['LC']['oldpass']);
                 unset($_L['form']['LC']['email']);
                 unset($_L['form']['LC']['mobile']);
-                $_L['LCMSADMIN']['title'] = $_L['form']['LC']['title'];
+                $_L['LCMSADMIN']['title'] = $LC['title'];
                 SESSION::set("LCMSADMIN", $_L['LCMSADMIN']);
                 LCMS::form(["table" => "admin"]);
                 if (sql_error()) {
@@ -508,7 +511,7 @@ class admin extends adminbase
     }
     public function doconfig()
     {
-        global $_L;
+        global $_L, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
