@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-08-22 22:09:59
+ * @LastEditTime: 2020-08-24 17:51:16
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -532,12 +532,12 @@ class admin extends adminbase
                 $form = [
                     ["layui"   => "input", "title" => "登陆地址",
                         "name"     => "login_url",
-                        "value"    => "{$_L['url']['admin']}index.php?n=login&rootid={$_L['ROOTID']}",
+                        "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
                         "disabled" => true,
                     ],
                     ["layui"   => "input", "title" => "注册地址",
                         "name"     => "login_url",
-                        "value"    => "{$_L['url']['admin']}index.php?n=login&c=reg&rootid={$_L['ROOTID']}",
+                        "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                         "disabled" => true,
                     ],
                     ["layui" => "radio", "title" => "用户注册",

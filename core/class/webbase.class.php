@@ -15,7 +15,7 @@ class webbase extends common
     public function load_web_config()
     {
         global $_L;
-        $_L['ROOTID'] = $_L['form']['rootid'] !== false ? $_L['form']['rootid'] : LCMS::X(403, "缺少必要参数，禁止访问");
+        $_L['ROOTID'] = $_L['form']['rootid'] ?: "0";
     }
     public function load_web_url($domain = "", $secure = "")
     {
@@ -24,25 +24,35 @@ class webbase extends common
             LCMS::X(403, "请通过正确域名访问");
         }
         // 当前域名数据
-        $domain                = $domain ? $domain : (HTTP_HOST ? HTTP_HOST : $_L['config']['web']['domain']);
-        $_L['url']['secure']   = $secure ? $secure : ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
-        $_L['url']['site']     = $_L['url']['secure'] . $domain . "/";
-        $_L['url']['now']      = $_L['url']['secure'] . $domain . HTTP_QUERY;
-        $_L['url']['public']   = $_L['url']['site'] . 'public/';
-        $_L['url']['static']   = $_L['url']['site'] . 'public/static/';
-        $_L['url']['upload']   = $_L['url']['site'] . 'upload/';
-        $_L['url']['cache']    = $_L['url']['site'] . 'cache/';
-        $_L['url']['app']      = $_L['url']['site'] . 'app/';
-        $_L['url']['own']      = $_L['url']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
-        $_L['url']['own_path'] = $_L['url']['app'] . L_TYPE . '/' . L_NAME . '/';
-        $_L['url']['own_form'] = $_L['url']['own'] . "n=" . L_NAME . "&c=" . L_CLASS . "&a=";
-        // 系统域名数据
-        $_L['url']['sys']['domain'] = $_L['config']['web']['domain'];
-        $_L['url']['sys']['secure'] = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
-        $_L['url']['sys']['site']   = $_L['url']['sys']['secure'] . $_L['config']['web']['domain'] . "/";
-        $_L['url']['sys']['api']    = $_L['config']['web']['domain_api'];
-        $_L['url']['sys']['app']    = $_L['url']['sys']['site'] . "app/";
-        $_L['url']['sys']['own']    = $_L['url']['sys']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
+        $domain    = $domain ?: (HTTP_HOST ?: $_L['config']['web']['domain']);
+        $secure    = $secure ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $url_site  = "{$secure}{$domain}/";
+        $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&";
+        $_L['url'] = [
+            "secure"   => $secure,
+            "site"     => $url_site,
+            "now"      => "{$url_site}" . HTTP_QUERY,
+            "public"   => "{$url_site}public/",
+            "static"   => "{$url_site}public/static/",
+            "upload"   => "{$url_site}upload/",
+            "cache"    => "{$url_site}cache/",
+            "app"      => "{$url_site}app/",
+            "own"      => "{$url_own}",
+            "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
+            "own_form" => "{$url_own}n=" . L_NAME . "&c=" . L_CLASS . "&a=",
+        ];
+        // 系统URL参数
+        $secure   = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
+        $url_site = "{$secure}{$_L['config']['web']['domain']}/";
+
+        $_L['url']['sys'] = [
+            "secure" => $secure,
+            "domain" => $_L['config']['web']['domain'],
+            "site"   => $url_site,
+            "api"    => $_L['config']['web']['domain_api'],
+            "app"    => "{$url_site}app/",
+            "own"    => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&",
+        ];
     }
     public function check_level()
     {

@@ -18,35 +18,41 @@ class adminbase extends common
     protected function load_admin_url()
     {
         global $_L;
-        $_L['url']['secure']   = $_L['config']['admin']['https'] ? "https://" : ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://");
-        $_L['url']['site']     = $_L['url']['secure'] . HTTP_HOST . "/";
-        $_L['url']['now']      = $_L['url']['secure'] . HTTP_HOST . HTTP_QUERY;
-        $_L['url']['admin']    = $_L['url']['site'] . ($_L['config']['admin']['dir'] ? $_L['config']['admin']['dir'] : "admin") . '/';
-        $_L['url']['public']   = $_L['url']['site'] . 'public/';
-        $_L['url']['static']   = $_L['url']['site'] . 'public/static/';
-        $_L['url']['upload']   = $_L['url']['site'] . 'upload/';
-        $_L['url']['cache']    = $_L['url']['site'] . 'cache/';
-        $_L['url']['app']      = $_L['url']['site'] . 'app/';
-        $_L['url']['own']      = $_L['url']['admin'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
-        $_L['url']['own_path'] = $_L['url']['site'] . 'app/' . L_TYPE . '/' . L_NAME . '/';
-        $_L['url']['own_form'] = $_L['url']['admin'] . "index.php?t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=";
+        $secure    = $_L['config']['admin']['https'] ? "https://" : ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://");
+        $url_site  = $secure . HTTP_HOST . "/";
+        $url_now   = $secure . HTTP_HOST . HTTP_QUERY;
+        $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
+        $_L['url'] = [
+            "secure"   => $secure,
+            "site"     => $url_site,
+            "now"      => $url_now,
+            "admin"    => $url_admin,
+            "public"   => "{$url_site}public/",
+            "static"   => "{$url_site}public/static/",
+            "upload"   => "{$url_site}upload/",
+            "cache"    => "{$url_site}cache/",
+            "app"      => "{$url_site}app/",
+            "own"      => "{$url_admin}index.php?",
+            "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
+            "own_form" => "{$url_admin}index.php?t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",
+        ];
     }
     protected function check_login()
     {
         global $_L;
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
         $loginrootid     = SESSION::get("LCMSLOGINROOTID");
-        if (stristr(HTTP_QUERY, "?n=login") === false && !$_L['LCMSADMIN']) {
-            okinfo($_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
+        if (stristr(HTTP_QUERY, "n=login") === false && !$_L['LCMSADMIN']) {
+            okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
         } elseif ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "系统权限已修改，请重新登陆", $_L['url']['admin'] . "index.php?n=login&rootid={$loginrootid}&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "系统权限已修改，请重新登陆", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L[LCMSADMIN][type]}'"]);
@@ -59,17 +65,21 @@ class adminbase extends common
     protected function load_web_url($domain = "", $secure = "")
     {
         global $_L;
-        $domain                       = $domain ? $domain : ($_L['config']['web']['domain'] ? $_L['config']['web']['domain'] : HTTP_HOST);
-        $_L['url']['web']['secure']   = $secure ? $secure : ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
-        $_L['url']['web']['site']     = $_L['url']['web']['secure'] . $domain . "/";
-        $_L['url']['web']['api']      = $_L['config']['web']['domain_api'];
-        $_L['url']['web']['public']   = $_L['url']['web']['site'] . 'public/';
-        $_L['url']['web']['static']   = $_L['url']['web']['site'] . 'public/static/';
-        $_L['url']['web']['upload']   = $_L['url']['web']['site'] . 'upload/';
-        $_L['url']['web']['cache']    = $_L['url']['web']['site'] . 'cache/';
-        $_L['url']['web']['app']      = $_L['url']['web']['site'] . 'app/';
-        $_L['url']['web']['own']      = $_L['url']['web']['app'] . "index.php?" . ($_L['ROOTID'] > '0' ? 'rootid=' . $_L['ROOTID'] . '&' : '');
-        $_L['url']['web']['own_path'] = $_L['url']['web']['site'] . 'app/' . L_TYPE . '/' . L_NAME . '/';
+        $domain           = $domain ?: ($_L['config']['web']['domain'] ?: HTTP_HOST);
+        $secure           = $secure ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $url_site         = "{$secure}{$domain}/";
+        $_L['url']['web'] = [
+            "secure"   => $secure,
+            "site"     => $url_site,
+            "api"      => $_L['config']['web']['domain_api'],
+            "public"   => "{$url_site}public/",
+            "static"   => "{$url_site}public/static/",
+            "upload"   => "{$url_site}upload/",
+            "cache"    => "{$url_site}cache/",
+            "app"      => "{$url_site}app/",
+            "own"      => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&",
+            "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
+        ];
     }
     protected function load_app_info()
     {
