@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-09-04 12:05:40
+ * @Description: UI组件
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class LAY
 {
@@ -81,6 +88,7 @@ class LAY
     }
     public static function select($para)
     {
+        global $_L;
         $para         = self::start($para);
         $para['many'] = $para['many'] ? "" : "xm-select-radio";
         $default      = $para['default'] ? "<option value=''>{$para['default']}</option>" : "";
@@ -88,6 +96,9 @@ class LAY
             $selected = $val['value'] == $para['value'] ? " selected" : "";
             $disabled = $val['disabled'] ? " disabled='disabled'" : "";
             $option .= "<option value='{$val['value']}'{$selected}{$disabled}>{$val['title']}</option>";
+        }
+        if ($para['url'] && !stristr($para['url'], "://")) {
+            $para['url'] = $_L['url']['own_form'] . $para['url'];
         }
         $html = "
             <div class='layui-form-item{$para['cname']}'>
@@ -102,7 +113,11 @@ class LAY
     }
     public static function selectN($para)
     {
+        global $_L;
         $para = self::start($para);
+        if ($para['url'] && !stristr($para['url'], "://")) {
+            $para['url'] = $_L['url']['own_form'] . $para['url'];
+        }
         $html = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label'>{$para['title']}</label>
@@ -179,12 +194,18 @@ class LAY
     }
     public static function on($para)
     {
+        global $_L;
         $para            = self::start($para);
         $para['text']    = $para['text'] ? $para['text'] : "开|关";
         $para['checked'] = $para['value'] ? " checked" : "";
         $para['value']   = $para['value'] ? $para['value'] : 1;
-        $para['url']     = $para['url'] ? " data-url='{$para['url']}'" : "";
-        $html            = "
+        if ($para['url']) {
+            if (!stristr($para['url'], "://")) {
+                $para['url'] = $_L['url']['own_form'] . $para['url'];
+            }
+            $para['url'] = " data-url='{$para['url']}'";
+        }
+        $html = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-switch{$para['tipsbox']}'>
@@ -311,10 +332,12 @@ class LAY
                     <button class='layui-btn layui-btn-fluid' lay-submit lay-filter='lcmsformsubmit'>{$para['title']}</button>
                 </div>";
         } else {
-            $html = "
-                <div class='layui-form-item{$para['cname']}'>
-                    <div class='layui-input-block'>
-                        <button class='layui-btn' lay-submit lay-filter='lcmsformsubmit'>{$para['title']}</button>
+            $display = $para['fixed'] ? " style='height:0;min-height:0;margin:0;'" : "";
+            $fixed   = $para['fixed'] ? " style='position:fixed;bottom:20px;width:98%;left:1%;margin-left:0;z-index:2'" : "";
+            $html    = "
+                <div class='layui-form-item{$para['cname']}'{$display}>
+                    <div class='layui-input-block'{$display}>
+                        <button class='layui-btn' lay-submit lay-filter='lcmsformsubmit'{$fixed}>{$para['title']}</button>
                     </div>
                 </div>";
         }

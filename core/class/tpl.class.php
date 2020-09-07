@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-09-04 12:07:27
+ * @Description: 前端模板静态文件处理
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class TPL
 {
@@ -100,8 +107,8 @@ class TPL
             $adurl = "../../" . dirname($path) . '/';
             preg_match_all("/(?<=url\()[^\)]+/i", $code, $urls);
             foreach ($urls[0] as $url) {
-                if (strpos($url, "data:image") === false) {
-                    $code  = str_replace($url, "{$adurl}{$url}", $code);
+                if (stristr($url, "data:") === false) {
+                    $code = str_replace($url, "{$adurl}{$url}", $code);
                 }
             }
         }

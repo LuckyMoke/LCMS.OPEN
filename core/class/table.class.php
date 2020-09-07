@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-09-04 15:04:27
+ * @Description: 数据表格组件
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class TABLE
 {
@@ -49,7 +56,7 @@ class TABLE
             }
         }
         $arr = [
-            "url"            => $table['url'],
+            "url"            => stristr($table['url'], "://") !== false ? $table['url'] : $_L['url']['own_form'] . $table['url'],
             "defaultToolbar" => ['filter', 'print', 'exports'],
             "toolbar"        => $toolbar,
             "totalRow"       => $totalRow ? true : false,
@@ -72,6 +79,7 @@ class TABLE
         if ($toolbar) {
             if (is_array($toolbar)) {
                 foreach ($toolbar as $key => $val) {
+                    $val['url'] = stristr($val['url'], "://") !== false ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                     $laytpl .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
                 }
                 $laytpl  = "<script type='text/html' id='{$toolbarid}'>{$laytpl}<div class='clear'></div></script>";
@@ -138,6 +146,7 @@ class TABLE
             $laytpl    = "";
             $colsbarid = "COLSBAR" . randstr(6);
             foreach ($colsbar as $key => $val) {
+                $val['url'] = stristr($val['url'], "://") !== false ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
@@ -205,6 +214,7 @@ class TABLE
         global $_L;
         $laytpl = "";
         foreach ($tree['toolbar'] as $key => $val) {
+            $val['url'] = stristr($val['url'], "://") !== false ? $val['url'] : $_L['url']['own_form'] . $val['url'];
             $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
         }
         $toolbar .= "<button class='layui-btn layui-btn-primary lcms-form-table-tree-openall'>展开或折叠全部</button>";
@@ -217,7 +227,7 @@ class TABLE
             }
         }
         $tree = [
-            "url"  => $tree['url'],
+            "url"  => stristr($tree['url'], "://") !== false ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
             "id"   => $tree['id'] ? $tree['id'] : "",
             "top"  => $tree['top'],
             "cols" => $tree['cols'],
@@ -238,6 +248,7 @@ class TABLE
             $laytpl    = "";
             $colsbarid = "TREECOLSBAR" . randstr(6);
             foreach ($colsbar as $key => $val) {
+                $val['url'] = stristr($val['url'], "://") !== false ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
@@ -266,13 +277,21 @@ class TABLE
         foreach ($arr as $index => $list) {
             foreach ($list as $key => $val) {
                 if (is_array($val)) {
-                    $val['url']  = stristr($val['url'], "://") ? $val['url'] : "{$_L['url']['own_form']}{$val['url']}";
-                    $val['url']  = stristr($val['url'], "name=") ? $val['url'] : "{$val['url']}&name={$key}";
-                    $val['text'] = $val['text'] ? $val['text'] : "启用|关闭";
-                    $checked     = $val['value'] > 0 ? "checked" : "";
                     switch ($val['type']) {
                         case 'switch':
+                            if (stristr($val['url'], "://") === false) {
+                                $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
+                            }
+                            if (stristr($val['url'], "name=") === false) {
+                                $val['url'] .= "&name={$key}";
+                            }
+                            $val['text']       = $val['text'] ?: "启用|关闭";
+                            $checked           = $val['value'] > 0 ? "checked" : "";
                             $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' lay-skin='switch' lay-text='{$val['text']}' {$checked}>";
+                            break;
+                        case 'image':
+                            $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";
+                            $arr[$index][$key] = $val['src'] ? "<img src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='max-width:none;{$val['style']}'/>" : "";
                             break;
                     }
                 }

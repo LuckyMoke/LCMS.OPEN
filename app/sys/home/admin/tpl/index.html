@@ -1,4 +1,4 @@
-<template "ui/head"/>
+<template "ui/head" />
 <if $update>
     <div class="check-update hide"></div>
 </if>
@@ -49,17 +49,18 @@
             </table>
         </div>
         <if $_L['config']['admin']['gonggao']>
+            <link rel="stylesheet" href="{{$_L['url']['public']}}ui/web/static/editor.css?{{$_L['config']['admin']['ver']}}">
             <div class="layui-col-md6 layui-col-xs12">
                 <div class="layui-tab layui-tab-card">
                     <ul class="layui-tab-title">
                         <li class="layui-this">通知公告</li>
                     </ul>
                     <div class="layui-tab-content" style="height:210px;overflow-y:auto;">
-                        <div class="layui-tab-item layui-show">{{ echo base64_decode($_L['config']['admin']['gonggao']) }}</div>
+                        <div class="layui-tab-item layui-show lcms-editor">{{base64_decode($_L['config']['admin']['gonggao'])}}</div>
                     </div>
                 </div>
             </div>
         </if>
     </div>
 </div>
-<template "ui/foot"/>
+<template "ui/foot" />

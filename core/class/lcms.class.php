@@ -159,7 +159,7 @@ class LCMS
             // if (1) {
             $html = file_get_contents($file);
             preg_match_all("/{{(.*?)}}/i", $html, $match);
-            preg_match_all("/<(.*?)(\/||'')>/i", $html, $tags);
+            preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
             // 新版模板标签处理
             foreach ($tags[0] as $index => $tag) {
                 switch (self::tpltags($tag)) {
@@ -178,7 +178,7 @@ class LCMS
                         $html = str_replace($tag, '<?php ' . $str . '{ ?>', $html);
                         break;
                     case 'if':
-                        $str  = str_replace(["if ", " gte ", " lte ", " gt ", " lt "], ["if (", " >= ", " <= ", " > ", " < "], $tags[1][$index]);
+                        $str  = str_replace(["if ", " gte ", " lte ", " gt ", " lt "], ["if (", ">=", "<=", ">", "<"], $tags[1][$index]);
                         $html = str_replace($tag, "<?php {$str}){ ?>", $html);
                         break;
                     case 'elseif':
@@ -256,6 +256,9 @@ class LCMS
                     $html = str_replace($val, '<?php ' . $match[1][$key] . ';?>', $html);
                 } elseif (stristr($newval, '{{table::')) {
                     $html = str_replace($val, '<?php ' . $match[1][$key] . ';?>', $html);
+                } elseif (stristr($newval, '{{#') === false) {
+                    $match[1][$key] = str_replace("echo ", "", $match[1][$key]);
+                    $html           = str_replace($val, "<?php echo {$match[1][$key]} ?>", $html);
                 }
             }
             if (!file_exists(PATH_CACHE . "tpl/")) {
