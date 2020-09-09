@@ -41,6 +41,9 @@
                 <div style="cursor:pointer;" onclick="LJS._iframe('{{ $_L[url][admin] }}?n=user&c=admin&a=profile&action=admin-edit', '个人中心')">个人中心</div>
             </dd>
             <dd>
+                <div style="cursor:pointer;" onclick="LJS._iframe('{{$_L[url][admin]}}?n=config&c=admin&a=clear&action=admin-edit', '清除缓存')">清除缓存</div>
+            </dd>
+            <dd>
                 <a href="{{ $_L['url']['admin'] }}?n=login&a=loginout" target="_parent">退出</a>
             </dd>
         </dl>

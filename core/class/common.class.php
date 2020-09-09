@@ -72,19 +72,26 @@ class common
     protected function load_common_config()
     {
         global $_L;
-        $_L['config']['admin'] = LCMS::config(array(
+        $_L['config']['admin'] = LCMS::config([
             "name" => "config",
             "type" => "sys",
             "cate" => "admin",
             "lcms" => true,
-        ));
-        $_L['config']['web'] = LCMS::config(array(
+        ]);
+        $_L['config']['web'] = LCMS::config([
             "name" => "config",
             "type" => "sys",
             "cate" => "web",
             "lcms" => true,
-        ));
-        $_L['config']['admin']['ver'] = $_L['config']['admin']['ver'] == "{time}" ? time() : $_L['config']['admin']['ver'];
+        ]);
+        if ($_L['development']) {
+            $_L['config']['ver'] = time();
+        } else {
+            $version = PATH_CORE . "version";
+            if (is_file($version)) {
+                $_L['config']['ver'] = file_get_contents($version);
+            }
+        }
     }
     public function __destruct()
     {

@@ -9,14 +9,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
         <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['admin']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['admin']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['admin']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}"/>
         <script type="text/javascript">
             var LCMS = {
                 url: {{ echo json_encode($_L['url']) }},
                 config: {
-                    ver: "{{$_L['config']['admin']['ver']}}"
+                    ver: "{{$_L['config']['ver']}}"
                 }
             };
         </script>
@@ -112,7 +112,7 @@
                 <iframe id="LBOX" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto"></iframe>
             </div>
         </div>
-        <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.all.js?{{$_L['config']['admin']['ver']}}"></script>
-        <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?{{$_L['config']['admin']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.all.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?{{$_L['config']['ver']}}"></script>
     </body>
 </html>

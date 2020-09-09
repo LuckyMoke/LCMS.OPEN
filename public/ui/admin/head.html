@@ -12,15 +12,15 @@
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
         </if>
         <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['admin']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['admin']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}"/>
         <script type="text/javascript">
             var LCMS = {
-                url: {{ echo json_encode($_L['url']) }},
+                url: {{json_encode($_L['url'])}},
                 config: {
-                    ver: "{{$_L['config']['admin']['ver']}}"
+                    ver: "{{$_L['config']['ver']}}"
                 },
-                app: {{ echo json_encode($_L['APP']['info']) }}
+                app: {{json_encode($_L['APP']['info'])}}
             };
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="'+LCMS['url']['static']+'eruda/eruda.min.js?ver='+LCMS['config']['ver']+'"></scr'+'ipt>');

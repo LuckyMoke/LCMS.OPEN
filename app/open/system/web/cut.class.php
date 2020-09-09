@@ -15,6 +15,7 @@ class cut extends webbase
         if (!$_L['form']['para']) {
             LCMS::X(403, "缺少必要参数");
         }
+        header("cache-control: max-age=3600");
         $para = stristr($_L['form']['para'], ".", true);
         $para = $para ? $para : $_L['form']['para'];
         $para = explode("|", ssl_decode($para));
@@ -22,6 +23,6 @@ class cut extends webbase
         if (!is_file($path) || is_dir($path)) {
             $path = $_L['config']['web']['image_default'] ? path_absolute($_L['config']['web']['image_default']) : LCMS::X(404, "图片不存在");
         }
-        thumb::create($path, $para[1], $para[2]);
+        THUMB::create($path, $para[1], $para[2]);
     }
 };

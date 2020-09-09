@@ -6,7 +6,7 @@
     <if $lasttime && $lasttime lt 15>
         <blockquote class="layui-elem-quote" style="background:#fdf6ec;color:#e6a23c;border:none;">
             <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i>
-            友情提示：您的账号将于 {{ $_L['LCMSADMIN']['lasttime'] }} 到期，为避免影响使用，请及时处理！
+            友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
         </blockquote>
     </if>
     <div class="layui-row layui-col-space15">
@@ -49,7 +49,7 @@
             </table>
         </div>
         <if $_L['config']['admin']['gonggao']>
-            <link rel="stylesheet" href="{{$_L['url']['public']}}ui/web/static/editor.css?{{$_L['config']['admin']['ver']}}">
+            <link rel="stylesheet" href="{{$_L['url']['public']}}ui/web/static/editor.css?{{$_L['config']['ver']}}" />
             <div class="layui-col-md6 layui-col-xs12">
                 <div class="layui-tab layui-tab-card">
                     <ul class="layui-tab-title">

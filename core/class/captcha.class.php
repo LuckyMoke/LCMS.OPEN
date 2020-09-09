@@ -29,7 +29,7 @@ class CAPTCHA
         $tmpC2    = mt_rand(100, 255);
         $buttum_c = ImageColorAllocate($im, $tmpC0, $tmpC1, $tmpC2);
         imagefill($im, 16, 13, $buttum_c);
-        $font = PATH_PUBLIC . 'static/fonts/FiraCode.ttf';
+        $font = PATH_PUBLIC . 'static/fonts/English.ttf';
         for ($i = 0; $i < strlen($text); $i++) {
             $tmp   = substr($text, $i, 1);
             $array = array(-1, 1);

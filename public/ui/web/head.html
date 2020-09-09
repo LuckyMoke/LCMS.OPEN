@@ -17,11 +17,11 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
         <link rel="icon" href="data:image/ico;base64,aWNv"/>
-        <link rel="stylesheet" href="{{ echo str_replace(PATH_WEB, $_L['url']['site'], TPL::cachename()) . '.css?' }}{{ $_L['config']['admin']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ echo str_replace(PATH_WEB, $_L['url']['site'], TPL::cachename()) . '.css?' }}{{ $_L['config']['ver'] }}"/>
         <script type="text/javascript">
-            var LCMS = {"url":{{ echo json_encode($_L['url']) }}};
+            var LCMS = {"url":{{json_encode($_L['url'])}} };
             if (window.location.href.search('console=true') != -1) {
-                document.write('<scr'+'ipt src="'+LCMS['url']['static']+'eruda/eruda.min.js?ver={{ $_L['config']['admin']['ver'] }}"></scr'+'ipt>');
+                document.write('<scr'+'ipt src="'+LCMS['url']['static']+'eruda/eruda.min.js?ver={{ $_L['config']['ver'] }}"></scr'+'ipt>');
             };
         </script>
     </head>

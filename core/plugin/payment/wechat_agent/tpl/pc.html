@@ -10,7 +10,7 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
         <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}amazeui/amazeui.min.css?{{ $_L['config']['admin']['ver'] }}"/>
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}amazeui/amazeui.min.css?{{ $_L['config']['ver'] }}"/>
         <style type="text/css">
         body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box{max-width:600px;margin:0 auto}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._qr{text-align:center;padding:0 0 20px 0;border-bottom:1px #ccc dashed}.pay-box ._qr img{width:220px;height:220px}.pay-box ._tips{text-align:center;color:#a0a0a0;margin-top:20px;padding-bottom:20px;border-bottom:1px #ccc dashed}.pay-box ._tips i{font-size:60px;line-height:60px;position:absolute;margin-left:-100px}.pay-box ._tips p{margin:0 0 0 100px;line-height:30px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0} 
         </style>
@@ -67,8 +67,8 @@
             </div>
         </div>
         <script type="text/javascript" src="{{ $_L['url']['static'] }}jquery.min.js"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/layer.js?{{ $_L['config']['admin']['ver'] }}"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['admin']['ver'] }}"></script>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/layer.js?{{ $_L['config']['ver'] }}"></script>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['ver'] }}"></script>
         <script type="text/javascript">
             var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);layer.alert('支付超时<br>点击确定刷新订单',function(){location.reload()})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){window.location.href=goback})}},'json')}},2000);
         </script>

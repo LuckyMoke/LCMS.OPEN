@@ -23,11 +23,11 @@
           rel="shortcut icon"
           type="image/x-icon" />
     <link rel="stylesheet"
-          href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['admin']['ver'] }}" />
+          href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}" />
     <link rel="stylesheet"
-          href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['admin']['ver'] }}" />
+          href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}" />
     <script type="text/javascript">
-        var LCMS = {"url": {{echo json_encode($_L['url'])}}};
+        var LCMS = {"url":{{json_encode($_L['url'])}} };
     </script>
 </head>
 <body>
@@ -113,9 +113,9 @@
         </div>
     </div>
     <script type="text/javascript"
-            src="{{ $_L['url']['static'] }}layui/layui.js?{{ $_L['config']['admin']['ver'] }}"></script>
+            src="{{ $_L['url']['static'] }}layui/layui.js?{{ $_L['config']['ver'] }}"></script>
     <script type="text/javascript"
-            src="{{ $_L['url']['own_path'] }}admin/tpl/static/fun.js?v1.0.2&{{ $_L['config']['admin']['ver'] }}"></script>
+            src="{{ $_L['url']['own_path'] }}admin/tpl/static/fun.js?v1.0.2&{{ $_L['config']['ver'] }}"></script>
     {{ $_L['config']['web']['tongji'] }}
 </body>
 </html>

@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-08-01 18:52:16
+ * @LastEditTime: 2020-09-09 17:42:12
+ * @Description: 全局设置
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 class admin extends adminbase
@@ -33,11 +40,6 @@ class admin extends adminbase
                     ["layui" => "input", "title" => "系统名称",
                         "name"   => "LC[title]",
                         "value"  => $config['title'],
-                        "verify" => "required",
-                    ],
-                    ["layui" => "input", "title" => "系统版本号",
-                        "name"   => "LC[ver]",
-                        "value"  => $config['ver'],
                         "verify" => "required",
                     ],
                     ["layui" => "radio", "title" => "后台协议",
@@ -285,6 +287,37 @@ class admin extends adminbase
                     ),
                 );
                 require LCMS::template("own/payment-list");
+                break;
+        }
+    }
+    public function doclear()
+    {
+        global $_L;
+        switch ($_L['form']['action']) {
+            case 'save':
+                if ($_L['form']['tpl']) {
+                    deldir(PATH_CACHE . "tpl");
+                }
+                if ($_L['form']['static']) {
+                    deldir(PATH_CACHE . "static");
+                }
+                if ($_L['form']['cfg']) {
+                    deldir(PATH_CACHE . "cfg");
+                }
+                ajaxout(1, "清除成功", "close");
+                break;
+            default:
+                $form = [
+                    ["layui"   => "checkbox", "title" => "缓存类型",
+                        "checkbox" => [
+                            ["title" => "页面缓存", "name" => "tpl", "value" => "1"],
+                            ["title" => "CSS/JS缓存", "name" => "static", "value" => "0"],
+                            ["title" => "临时配置", "name" => "cfg", "value" => "0"],
+                        ],
+                    ],
+                    ["layui" => "btn", "title" => "立即清除"],
+                ];
+                require LCMS::template("own/clear");
                 break;
         }
     }
