@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-08-24 17:51:16
+ * @LastEditTime: 2020-09-11 16:20:08
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -273,17 +273,18 @@ class admin extends adminbase
                 ];
                 $form['level'] = [
                     ["layui" => "title", "title" => "权限设置"],
-                    ["layui" => "selectN", "title" => "用户权限",
-                        "name"   => "admin_level",
-                        "value"  => "{$admin['lcms']}/{$admin['type']}",
-                        "tips"   => "先新建管理员权限再选择",
-                        "verify" => "required",
-                        "url"    => "{$_L['url']['own_form']}ajax&action=admin-level",
+                    ["layui"  => "selectN", "title" => "用户权限",
+                        "name"    => "admin_level",
+                        "value"   => "{$admin['lcms']}/{$admin['type']}",
+                        "tips"    => "先新建用户权限再选择",
+                        "default" => "上级用户|用户权限",
+                        "verify"  => "required",
+                        "url"     => "{$_L['url']['own_form']}ajax&action=admin-level",
                     ],
                     ["layui" => "date", "title" => "到期时间",
                         "name"   => "LC[lasttime]",
                         "value"  => $admin['lasttime'],
-                        "tips"   => "到期不能登录",
+                        "tips"   => "到期不能登录，为空不限制",
                         "min"    => datenow(),
                         "max"    => LCMS::SUPER() ? "" : ($_L['LCMSADMIN']['lasttime'] ? $_L['LCMSADMIN']['lasttime'] : ""),
                     ],
@@ -405,7 +406,7 @@ class admin extends adminbase
                         "placehplder" => "请输入权限名",
                         "verify"      => "required",
                     ],
-                    ["layui"   => "select", "title" => "所属用户",
+                    ["layui"   => "select", "title" => "创建人",
                         "name"     => "LC[uid]",
                         "value"    => $level['uid'] ? $level['uid'] : $_L['LCMSADMIN']['id'],
                         "verify"   => "required",
