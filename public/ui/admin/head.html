@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html>
+    <html>
     <head>
-        <title>{{ $_L['config']['admin']['title'] }}</title>
-        <meta name="generator" content="盘企®PHP开发框架"/>
-        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com"/>
-        <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <if $_L['url']['secure'] == "https://">
-            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+        <title>{{$_L['config']['admin']['title']}}</title>
+        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <if $_L['url']['secure']=="https://">
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
-        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}"/>
+        <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?{{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?{{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {
                 url: {{json_encode($_L['url'])}},
@@ -28,6 +28,24 @@
         </script>
     </head>
     <body>
-        <template "ui/top"/>
-        <template "ui/tab"/>
-        <div id="LCONTENT">
+        <template "ui/top" />
+        <div id="APPIFRAME" style="padding-left:{{$_L['form']['t']=='open'&&count($_L['APP']['menu'])>1?'150px':'0'}};">
+            <if $_L['form']['t']=="open" && count($_L['APP']['menu']) gt 1>
+                <div id="APPNAV">
+                    <div>
+                        <i class="layui-icon layui-icon-spread-left"></i>
+                        应用菜单
+                    </div>
+                    <ul>
+                        <loop $_L['APP']['menu'],$val,$cname>
+                            <li class="{{$_L['form']['c']==$cname?'active':''}}">
+                                <a href="{{$_L['APP']['url'][$cname]}}">
+                                    {{$val['title']}}
+                                </a>
+                            </li>
+                        </loop>
+                    </ul>
+                </div>
+            </if>
+            <template "ui/tab" />
+            <div id="LCONTENT">

@@ -84,7 +84,7 @@ class adminbase extends common
     protected function load_app_info()
     {
         global $_L;
-        $_L['APP'] = level::app();
+        $_L['APP'] = LEVEL::app();
     }
     protected function check_level()
     {

@@ -1,11 +1,13 @@
-<template "ui/head"/>
-<template "ui/css"/>
+<template "ui/head" />
+<template "ui/css" />
 <table class="layui-table app-local">
     <thead>
         <tr>
             <th width="50px">图标</th>
             <th width="200px">应用名</th>
-            <th width="200px" class="layui-hide-xs">开发者</th>
+            <if $level['url']['store']>
+                <th width="200px" class="layui-hide-xs">开发者</th>
+            </if>
             <th width="100px" class="layui-hide-xs" style="text-align:center;">本地版本</th>
             <if $level['url']['store']>
                 <th width="100px" class="layui-hide-xs app-hide-sm" style="text-align:center;">最新版本</th>
@@ -21,18 +23,18 @@
             <tr data-name="{{ $app }}" data-ver="{{ $applist['open'][$app]['info']['ver'] }}">
                 <td>
                     <a href="{{ $url }}" title="{{ $applist['open'][$app]['info']['title'] }}">
-                        <if is_file(PATH_APP."open/".$app."/icon.gif")>
-                            <img src="{{ $_L['url']['app'] }}open/{{ $app }}/icon.gif?ver={{ $applist['open'][$app]['info']['ver'] }}" width="50px" height="50px"/>
-                            <else>
-                                <img src="{{ $_L['url']['static'] }}images/appicon.gif" width="50px" height="50px"/>
-                            </else>
+                        <if is_file(PATH_APP."open/{$app}/icon.gif")> <img src="{{ $_L['url']['app'] }}open/{{ $app }}/icon.gif?ver={{$applist['open'][$app]['info']['ver']}}" width="50px" height="50px" />
+                        <else />
+                        <img src="{{ $_L['url']['static'] }}images/appicon.gif" width="50px" height="50px" />
                         </if>
                     </a>
                 </td>
                 <td>
                     <a href="{{ $applist['open'][$app]['url']['all'] }}" title="{{ $applist['open'][$app]['info']['title'] }}">{{ $applist['open'][$app]['info']['title'] }}</a>
                 </td>
-                <td class="layui-hide-xs">{{ $applist['open'][$app]['info']['author'] }}</td>
+                <if $level['url']['store']>
+                    <td class="layui-hide-xs">{{ $applist['open'][$app]['info']['author'] }}</td>
+                </if>
                 <td class="layui-hide-xs" style="text-align:center;">V{{ $applist['open'][$app]['info']['ver'] }}</td>
                 <if $level['url']['store']>
                     <td class="layui-hide-xs app-hide-sm newver" style="text-align:center;"></td>
@@ -52,4 +54,4 @@
         </loop>
     </tbody>
 </table>
-<template "ui/foot"/>
+<template "ui/foot" />

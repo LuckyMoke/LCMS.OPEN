@@ -71,7 +71,7 @@ class LEVEL
         }
         foreach ($open['dir'] as $dir) {
             $info = self::app($dir, "open");
-            if ($info) {
+            if ($info && $info['info']['title']) {
                 $appinfo['open'][$dir] = $info;
             }
         }

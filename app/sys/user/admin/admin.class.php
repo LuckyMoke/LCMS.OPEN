@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-11 16:20:08
+ * @LastEditTime: 2020-09-13 14:51:32
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -364,7 +364,7 @@ class admin extends adminbase
                 )) : array();
                 ksort($level['sys']);
                 ksort($level['open']);
-                $appall = level::appall();
+                $appall = LEVEL::appall();
                 foreach ($appall as $type => $val) {
                     foreach ($val as $name => $info) {
                         if (!empty($info['class'])) {

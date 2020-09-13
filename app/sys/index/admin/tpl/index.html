@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html>
+    <html>
     <head>
         <title>{{ $_L['config']['admin']['title'] }}</title>
-        <meta name="generator" content="盘企®PHP开发框架"/>
-        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com"/>
-        <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}"/>
+        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}" />
+        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}" />
+        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}" />
         <script type="text/javascript">
             var LCMS = {
                 url: {{ echo json_encode($_L['url']) }},
@@ -34,38 +34,24 @@
                     </a>
                 </div>
                 <ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="lcmsleftnav">
-                    <loop $open,$list>
-                        <if $list['menu']>
+                    <loop $open,$list,$index>
+                        <if $list['menu']||$index==0>
                             <li class="layui-nav-item layui-nav-itemed">
                                 <a href="javascript:;">{{ $list['title'] }}</a>
                                 <dl class="layui-nav-child">
                                     <loop $list['menu'],$li,$name>
                                         <dd>
-                                            <if count($li['menu']) gt 1>
-                                                <a href="javascript:;">
-                                                    <i class="layui-icon layui-icon-right"></i>
-                                                    {{ $li['title'] }}
-                                                </a>
-                                                <dl class="layui-nav-child">
-                                                    <loop $li['menu'],$a>
-                                                        <dd>
-                                                            <a href="javascript:;" data-url="{{ $a['url'] }}">
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <i class="layui-icon layui-icon-triangle-r"></i>
-                                                                {{ $a['title'] }}
-                                                            </a>
-                                                        </dd>
-                                                    </loop>
-                                                </dl>
-                                                <else/>
-                                                    <a href="javascript:;" data-url="{{ $li['url'] }}">
-                                                        <i class="layui-icon layui-icon-right"></i>
-                                                        {{ $li['title'] }}
-                                                    </a>
-                                                </else>
-                                            </if>
+                                            <a href="javascript:;" data-url="{{$li['url']}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
                                         </dd>
                                     </loop>
+                                    <if $index==0&&(LCMS::SUPER()||$_L['LCMSADMIN']['id']==$_L['ROOTID'])>
+                                        <dd class="__add-app">
+                                            <a href="javascript:;" data-url="{{$_L['url']['admin']}}index.php?t=sys&n=menu&c=index&a=index">
+                                                <i class="layui-icon layui-icon-add-1"></i>
+                                                设置常用应用
+                                            </a>
+                                        </dd>
+                                    </if>
                                 </dl>
                             </li>
                         </if>
@@ -73,7 +59,7 @@
                     <loop $sys,$list>
                         <if $list['menu']>
                             <li class="layui-nav-item layui-nav-itemed">
-                                <a href="javascript:;">{{ $list['title'] }}</a>
+                                <a href="javascript:;">{{$list['title']}}</a>
                                 <dl class="layui-nav-child">
                                     <loop $list['menu'],$li,$name>
                                         <dd>
@@ -85,19 +71,12 @@
                                                 <dl class="layui-nav-child">
                                                     <loop $li['menu'],$a>
                                                         <dd>
-                                                            <a href="javascript:;" data-url="{{ $a['url'] }}">
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <i class="layui-icon layui-icon-triangle-r"></i>
-                                                                {{ $a['title'] }}
-                                                            </a>
+                                                            <a href="javascript:;" data-url="{{ $a['url'] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$a['title']}}</a>
                                                         </dd>
                                                     </loop>
                                                 </dl>
                                                 <else>
-                                                    <a href="javascript:;" data-url="{{ $li['url'] }}">
-                                                        <i class="layui-icon layui-icon-right"></i>
-                                                        {{ $li['title'] }}
-                                                    </a>
+                                                    <a href="javascript:;" data-url="{{ $li['url'] }}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
                                                 </else>
                                             </if>
                                         </dd>
@@ -115,4 +94,4 @@
         <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.all.js?{{$_L['config']['ver']}}"></script>
         <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?{{$_L['config']['ver']}}"></script>
     </body>
-</html>
+    </html>
