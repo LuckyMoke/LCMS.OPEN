@@ -11,7 +11,7 @@ class index extends adminbase
     public function doindex()
     {
         global $_L;
-        if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST) {
+        if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST && !$_L['form']['fixed']) {
             okinfo(str_replace(HTTP_HOST, $_L['config']['admin']['domain'], $_L['url']['now']));
         }
         if ($_L['LCMSADMIN'] && $_L['LCMSADMIN']['id'] && $_L['LCMSADMIN']['name']) {

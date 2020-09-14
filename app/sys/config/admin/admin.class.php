@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-14 13:06:29
+ * @LastEditTime: 2020-09-14 17:38:21
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,6 +20,7 @@ class admin extends adminbase
         global $_L;
         switch ($_L['form']['action']) {
             case 'save':
+                $_L['form']['LC']['domain'] = str_replace(["http://", "https://", "/"], "", $_L['form']['LC']['domain']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
@@ -29,11 +30,11 @@ class admin extends adminbase
                 ajaxout(1, "保存成功");
                 break;
             default:
-                $config = LCMS::config(array(
+                $config = LCMS::config([
                     "type" => "sys",
                     "cate" => "admin",
                     "lcms" => true,
-                ));
+                ]);
                 $config['oauth_code'] = $config['oauth_code'] ? $config['oauth_code'] : strtoupper(md5(HTTP_HOST)) . randstr(32);
                 $form                 = array(
                     ["layui" => "title", "title" => "基础信息"],
@@ -140,7 +141,7 @@ class admin extends adminbase
                     ],
                     ["layui" => "btn", "title" => "立即保存"],
                 );
-                require LCMS::template("own/web_index");
+                require LCMS::template("own/admin_web");
                 break;
         }
     }

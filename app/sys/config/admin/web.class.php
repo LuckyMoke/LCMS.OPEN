@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-14 13:07:23
+ * @LastEditTime: 2020-09-14 17:36:34
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -95,7 +95,7 @@ class web extends adminbase
                         "value"  => $plugin['alisms']['sign']],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];
-                require LCMS::template("own/admin_plugin");
+                require LCMS::template("own/web_plugin");
                 break;
         }
     }
