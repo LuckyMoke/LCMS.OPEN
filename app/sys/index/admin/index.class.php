@@ -117,7 +117,7 @@ class index extends adminbase
                             );
                         }
                     }
-                } else {
+                } elseif ($list['menu'][$name]) {
                     $open[$index]['menu'][$name] = [
                         "title" => $app[$name]['info']['title'],
                         "url"   => $app[$name]['url']['all'],

@@ -7,13 +7,23 @@
             "title": "全局设置",
             "level": {
                 "index": {
-                    "title": "基本设置",
+                    "title": "后台设置",
+                    "menu": 1
+                },
+                "web": {
+                    "title": "前台设置",
                     "menu": 1
                 },
                 "safe": {
                     "title": "安全设置",
                     "menu": 1
-                },
+                }
+
+            }
+        },
+        "web": {
+            "title": "基本设置",
+            "level": {
                 "plugin": {
                     "title": "插件设置",
                     "menu": 1
@@ -21,15 +31,6 @@
                 "payment": {
                     "title": "支付设置",
                     "menu": 1
-                }
-            }
-        },
-        "web": {
-            "title": "前台设置",
-            "level": {
-                "index": {
-                    "title": "基本设置",
-                    "menu": 0
                 }
             }
         },

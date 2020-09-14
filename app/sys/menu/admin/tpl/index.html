@@ -2,18 +2,21 @@
 <template "ui/css" />
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
     <input type="hidden" name="LC[open][0][title]" value="常用应用" />
-    <loop $applist,$app,$name>
-        <if $app['title']>
-            <div class="applist">
-                <if is_file(PATH_APP."open/{$name}/icon.gif")>
-                    <img src="{{$_L['url']['app']}}open/{{$name}}/icon.gif?ver={{$app['ver']}}" />
-                <else />
-                    <img src="{{$_L['url']['static']}}images/appicon.gif" />
-                </if>
-                <input type="checkbox" name="LC[open][0][menu][{{$name}}]" title="{{$app['title']}}" lay-skin="primary" {{$config[$name]?'checked':''}} />
-            </div>
-        </if>
-    </loop>
+    <p class="lcms-form-des">单击选择常用的应用，然后点击 “立即保存” 即可！</p>
+    <div>
+        <loop $applist,$app,$name>
+            <if $app['title']>
+                <div class="applist">
+                    <if is_file(PATH_APP."open/{$name}/icon.gif")> 
+                        <img src="{{$_L['url']['app']}}open/{{$name}}/icon.gif?ver={{$app['ver']}}" />
+                    <else />
+                        <img src="{{$_L['url']['static']}}images/appicon.gif" />
+                    </if>
+                    <input type="checkbox" name="LC[open][0][menu][{{$name}}]" title="{{$app['title']}}" lay-skin="primary" {{$config[$name]?'checked':''}} />
+                </div>
+            </if>
+        </loop>
+    </div>
     <div class="clear"></div>
     <ui btn("立即保存") />
 </form>
