@@ -21,7 +21,7 @@
         <script type="text/javascript">
             var LCMS = {"url":{{json_encode($_L['url'])}} };
             if (window.location.href.search('console=true') != -1) {
-                document.write('<scr'+'ipt src="'+LCMS['url']['static']+'eruda/eruda.min.js?ver={{ $_L['config']['ver'] }}"></scr'+'ipt>');
+                document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.min.js?ver={{$_L['config']['ver']}}"></scr'+'ipt>');
             };
         </script>
     </head>

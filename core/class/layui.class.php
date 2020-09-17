@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-11 16:19:04
+ * @LastEditTime: 2020-09-15 16:02:10
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -65,7 +65,7 @@ class LAY
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='layui-input' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
@@ -149,7 +149,7 @@ class LAY
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-colorpicker' data-value='{$para['value']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input' autocomplete='off' placeholder='{$para['placeholder']}' />
+                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' />
                     </div>
                     <div class='_color'></div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
@@ -280,7 +280,7 @@ class LAY
             <div class='layui-form-item lcms-form-upload-file{$para['cname']}'>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='text' name='{$para['name']}' class='layui-input' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                    <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     <div class='layui-btn-group lcms-form-upload-file-btn'>
                         <a class='layui-btn layui-btn-normal layui-btn-xl _up' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传</a>
                     </div>
