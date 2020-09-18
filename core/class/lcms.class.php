@@ -18,7 +18,7 @@ class LCMS
     {
         $X["code"] = $errcode ? $errcode : 403;
         $X["msg"]  = $errmsg ? $errmsg : "拒绝访问！";
-        require self::template("ui/X");
+        require self::template(PATH_PUBLIC . "ui/admin/X");
         exit;
     }
     public static function SUPER()

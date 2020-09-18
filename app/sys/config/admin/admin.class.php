@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-14 17:38:21
+ * @LastEditTime: 2020-09-18 15:56:32
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -220,7 +220,7 @@ class admin extends adminbase
                         "name"   => "LC[login_code][luosimao][api_key]",
                         "value"  => $config['login_code']['luosimao']['api_key'],
                         "cname"  => "hidden login_code_luosimao"],
-                    ["layui" => "title", "title" => "其它安全"],
+                    ["layui" => "title", "title" => "上传安全"],
                     ["layui" => "input", "title" => "上传大小",
                         "name"   => "LC[attsize]",
                         "value"  => $config['attsize'],
@@ -232,6 +232,13 @@ class admin extends adminbase
                         "tips"   => "允许上传白名单里的文件格式",
                         "verify" => "required"],
                     ["layui" => "title", "title" => "性能优化"],
+                    ["layui" => "radio", "title" => "开发模式",
+                        "name"   => "LC[development]",
+                        "value"  => $config['development'] ?: "0",
+                        "radio"  => [
+                            ["title" => "打开", "value" => 1],
+                            ["title" => "关闭", "value" => 0],
+                        ]],
                     ["layui" => "on", "title" => "SESSION",
                         "name"   => "LC[session_type]",
                         "value"  => $config['session_type'] ?: "0",

@@ -84,7 +84,7 @@ class common
             "cate" => "web",
             "lcms" => true,
         ]);
-        if ($_L['development']) {
+        if ($_L['config']['admin']['development']) {
             $_L['config']['ver'] = time();
         } else {
             $version = PATH_CORE . "version";
@@ -102,3 +102,4 @@ class common
         exit;
     }
 }
+load::sys_class('developer');
