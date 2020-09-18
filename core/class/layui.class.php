@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-15 16:02:10
+ * @LastEditTime: 2020-09-18 19:06:11
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -16,7 +16,7 @@ class LAY
         $para['cname']     = $para['cname'] ? " {$para['cname']}" : "";
         $para['disabled']  = $para['disabled'] ? " disabled" : "";
         $para['verifybox'] = $para['verify'] ? " required lay-verify='{$para['verify']}'" : "";
-        $para['tipsbox']   = $para['tips'] ? " lcms-form-tips' data-tips='{$para['tips']}" : "";
+        $para['tipsbox']   = $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "";
         return $para;
     }
     public static function form($list)

@@ -16,9 +16,13 @@ class LCMS
     }
     public static function X($errcode, $errmsg, $go = "")
     {
-        $X["code"] = $errcode ? $errcode : 403;
-        $X["msg"]  = $errmsg ? $errmsg : "拒绝访问！";
-        require self::template(PATH_PUBLIC . "ui/admin/X");
+        if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") {
+            ajaxout(0, $errmsg ?: "拒绝访问！");
+        } else {
+            $X["code"] = $errcode ?: 403;
+            $X["msg"]  = $errmsg ?: "拒绝访问！";
+            require self::template(PATH_PUBLIC . "ui/admin/X");
+        }
         exit;
     }
     public static function SUPER()
