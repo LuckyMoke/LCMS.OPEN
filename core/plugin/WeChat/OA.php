@@ -55,7 +55,8 @@ class OA
         $this->cache();
         if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
             if ($this->cfg['thirdapi']) {
-                $token = json_decode(http::get($this->cfg['thirdapi']), true);
+                // 如果启用第三方接口
+                $token = json_decode(http::get($this->cfg['thirdapi'] . "accesstoken"), true);
                 if ($token['code'] == "1" && $token['data']['access_token'] && $token['data']['expires_in']) {
                     $this->cfg['access_token'] = [
                         "token"   => $token['data']['access_token'],
@@ -66,6 +67,7 @@ class OA
                     return $token;
                 }
             } else {
+                // 系统自处理
                 $query = http_build_query([
                     "appid"      => $this->cfg['appid'],
                     "secret"     => $this->cfg['appsecret'],
@@ -117,7 +119,7 @@ class OA
             return $openid;
         } else {
             if ($_L['form']['wechatoauthopenid']) {
-                // 借权获取
+                // 设置数据Session
                 $userinfo = $this->user([
                     "openid" => $_L['form']['wechatoauthopenid'],
                 ]);
@@ -126,34 +128,42 @@ class OA
                     okinfo(url_clear($_L['url']['now'], "wechatoauthopenid"));
                 }
             } else {
-                if ($_L['config']['web']['domain'] && $_L['config']['web']['domain'] != HTTP_HOST) {
+                if ($this->cfg['thirdapi']) {
+                    // 如果启用第三方接口，跳转到第三方接口
                     $goback = urlencode($_L['url']['now']);
-                    okinfo("{$_L['url']['sys']['own']}n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
-                    exit();
-                }
-                // 用户授权登陆，获取code
-                $code = $_L['form']['code'];
-                if (!isset($code)) {
-                    $query = http_build_query([
-                        "appid"         => $this->cfg['appid'],
-                        "redirect_uri"  => $_L['url']['now'],
-                        "response_type" => "code",
-                        "scope"         => $scope,
-                    ]);
-                    $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
+                    okinfo($this->cfg['thirdapi'] . "oauth&scope={$scope}&goback={$goback}&key=wechatoauthopenid");
                     exit();
                 } else {
-                    // 使用code获取用户数据
-                    $openid = $this->getOpenidFromMp($code);
-                    if ($openid['openid']) {
-                        $this->user([
-                            "do"     => "save",
-                            "openid" => $openid['openid'],
-                            "wechat" => ["openid" => $openid['openid']],
+                    // 使用系统主前端域名进行授权
+                    if ($_L['config']['web']['domain'] && $_L['config']['web']['domain'] != HTTP_HOST) {
+                        $goback = urlencode($_L['url']['now']);
+                        okinfo("{$_L['url']['sys']['own']}n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
+                        exit();
+                    }
+                    // 用户授权登陆，获取code
+                    $code = $_L['form']['code'];
+                    if (!isset($code)) {
+                        $query = http_build_query([
+                            "appid"         => $this->cfg['appid'],
+                            "redirect_uri"  => $_L['url']['now'],
+                            "response_type" => "code",
+                            "scope"         => $scope,
                         ]);
-                        $openid['expires_time'] = time() + 3600;
-                        SESSION::set($this->session . $scope, $openid);
-                        okinfo(url_clear($_L['url']['now'], "code|state"));
+                        $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
+                        exit();
+                    } else {
+                        // 使用code获取用户数据
+                        $openid = $this->getOpenidFromMp($code);
+                        if ($openid['openid']) {
+                            $this->user([
+                                "do"     => "save",
+                                "openid" => $openid['openid'],
+                                "wechat" => ["openid" => $openid['openid']],
+                            ]);
+                            $openid['expires_time'] = time() + 3600;
+                            SESSION::set($this->session . $scope, $openid);
+                            okinfo(url_clear($_L['url']['now'], "code|state"));
+                        }
                     }
                 }
             }
@@ -167,6 +177,7 @@ class OA
     {
         global $_L;
         if ($para['type'] == "subscribe") {
+            // 用户关注后获取用户信息
             $this->access_token();
             $query = http_build_query([
                 "access_token" => $this->cfg['access_token']['token'],
@@ -185,10 +196,24 @@ class OA
             $userinfo = SESSION::get($this->session . "userinfo");
             if (!$userinfo['openid'] || $userinfo['errcode']) {
                 if ($_L['form']['wechatoauthopenid']) {
-                    // 借权获取
-                    $userinfo = $this->user([
-                        "openid" => $_L['form']['wechatoauthopenid'],
-                    ]);
+                    // 跳转获取用户信息
+                    if ($this->cfg['thirdapi']) {
+                        // 如果启用第三方接口
+                        $user = json_decode(http::get($this->cfg['thirdapi'] . "userinfo&openid={$_L['form']['wechatoauthopenid']}"), true);
+                        if ($user['code'] == 1 && $user['data']['openid']) {
+                            $userinfo = $this->user([
+                                "do"     => "save",
+                                "openid" => $user['data']['openid'],
+                                "wechat" => $user['data'],
+                            ]);
+                        } else {
+                            return $user;
+                        }
+                    } else {
+                        $userinfo = $this->user([
+                            "openid" => $_L['form']['wechatoauthopenid'],
+                        ]);
+                    }
                     if ($userinfo['openid']) {
                         SESSION::set($this->session . "userinfo", $userinfo);
                         okinfo(url_clear($_L['url']['now'], "wechatoauthopenid"));
@@ -276,20 +301,34 @@ class OA
     {
         $this->cache();
         if (!$this->cfg['jsapi_ticket']['ticket'] || $this->cfg['jsapi_ticket']['expires'] < time()) {
-            $this->access_token();
-            $query = http_build_query([
-                "access_token" => $this->cfg['access_token']['token'],
-                "type"         => "jsapi",
-            ]);
-            $ticket = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
-            if ($ticket['errcode']) {
-                return $ticket;
+            if ($this->cfg['thirdapi']) {
+                // 如果启用第三方接口
+                $token = json_decode(http::get($this->cfg['thirdapi'] . "jsapiticket"), true);
+                if ($token['code'] == "1" && $token['data']['ticket'] && $token['data']['expires_in']) {
+                    $this->cfg['jsapi_ticket'] = [
+                        "ticket"  => $token['data']['ticket'],
+                        "expires" => $token['data']['expires_in'],
+                    ];
+                    $this->cache("save");
+                } else {
+                    return $token;
+                }
             } else {
-                $this->cfg['jsapi_ticket'] = [
-                    "ticket"  => $ticket['ticket'],
-                    "expires" => time() + 7000,
-                ];
-                $this->cache("save");
+                $this->access_token();
+                $query = http_build_query([
+                    "access_token" => $this->cfg['access_token']['token'],
+                    "type"         => "jsapi",
+                ]);
+                $ticket = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
+                if ($ticket['errcode']) {
+                    return $ticket;
+                } else {
+                    $this->cfg['jsapi_ticket'] = [
+                        "ticket"  => $ticket['ticket'],
+                        "expires" => time() + 7000,
+                    ];
+                    $this->cache("save");
+                }
             }
         }
         return $this->cfg['jsapi_ticket']['ticket'];
@@ -440,12 +479,12 @@ class OA
         ];
         if ($mime) {
             clearstatcache();
-            $media = new CURLFile($file, $mime[$fileinfo['extension']], $fileinfo['basename']);
+            $media = new \CURLFile($file, $mime[$fileinfo['extension']], $fileinfo['basename']);
             if ($para['temp']) {
                 //临时素材
                 $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", [
                     "media" => $media,
-                ], true);
+                ]);
             } else {
                 //永久素材
                 $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$this->cfg['access_token']['token']}&type={$para['type']}", [

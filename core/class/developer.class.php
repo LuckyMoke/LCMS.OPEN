@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2020-09-18 15:59:35
+ * @LastEditTime: 2020-09-23 13:02:57
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,19 +20,39 @@ class developer
         set_exception_handler(function ($exception) {
             global $_L;
             if ($_L['config']['admin']['development']) {
-                $getLine = $this->getLine($exception->getFile(), $exception->getLine());
+                $message = $exception->getMessage();
+                $traces  = $this->getTrace($exception->getTrace());
+                if (stripos($message, "Too few arguments to") !== false) {
+                    $msg  = $traces[0]['class'] ? "{$traces[0]['class']}{$traces[0]['type']}{$traces[0]['function']}" : $traces[0]['function'];
+                    $main = [
+                        "msg"  => "Too few arguments to function {$msg}()",
+                        "path" => $traces[0]['path'],
+                        "file" => $traces[0]['file'],
+                        "line" => $traces[0]['line'],
+                    ];
+                    unset($traces[0]);
+                    $traces = array_values($traces);
+                } else {
+                    $main = [
+                        "msg"  => $message,
+                        "path" => $exception->getFile(),
+                        "file" => basename($exception->getFile()),
+                        "line" => $exception->getLine(),
+                    ];
+                }
+                $getLine = $this->getLine($main['path'], $main['line']);
                 $error   = [
                     "this"  => [
-                        "message" => $exception->getMessage(),
-                        "fanyi"   => $this->Fanyi($exception->getMessage()),
+                        "message" => $main['msg'],
+                        "fanyi"   => $this->Fanyi($main['msg']),
                         "code"    => $exception->getCode(),
-                        "path"    => $exception->getFile(),
-                        "file"    => basename($exception->getFile()),
-                        "line"    => $exception->getLine(),
+                        "path"    => $main['path'],
+                        "file"    => $main['file'],
+                        "line"    => $main['line'],
                         "start"   => $getLine['start'],
                         "content" => $getLine['content'],
                     ],
-                    "trace" => $this->getTrace($exception->getTrace()),
+                    "trace" => $traces,
                 ];
                 require LCMS::template(PATH_PUBLIC . "ui/admin/error");
             } else {
@@ -43,12 +63,13 @@ class developer
     private function Fanyi($message)
     {
         $elist = [
-            "Call to"   => "调用",
-            "undefined" => "未定义的",
-            "not found" => "未找到",
-            "function"  => "函数",
-            "class"     => "类",
-            "method"    => "方法",
+            "Too few arguments to function" => "缺少参数的函数",
+            "Call to "                      => "调用",
+            "undefined "                    => "未定义的",
+            "not found"                     => "未找到",
+            "function "                     => "函数",
+            "class "                        => "类",
+            "method "                       => "方法",
         ];
         $message = str_ireplace(array_keys($elist), array_values($elist), $message);
         return $message;
@@ -75,17 +96,17 @@ class developer
         $file  = new SplFileObject($filename, "r+");
         $start = $line - 10;
         $start = $start >= 0 ? $start : $line;
-        $end   = $line + 10;
         $file->seek($start);
         $result = "";
-        for ($i = 0; $i < $end; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $result .= $file->current();
             $file->next();
         }
         return [
             "start"   => $start,
-            "content" => $result,
+            "content" => rtrim($result, "\n"),
         ];
+
     }
 }
 new developer();

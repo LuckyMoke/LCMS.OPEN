@@ -19,6 +19,7 @@ class LCMS
         if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") {
             ajaxout(0, $errmsg ?: "拒绝访问！");
         } else {
+            global $_L;
             $X["code"] = $errcode ?: 403;
             $X["msg"]  = $errmsg ?: "拒绝访问！";
             require self::template(PATH_PUBLIC . "ui/admin/X");

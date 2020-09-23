@@ -85,7 +85,7 @@ class common
             "lcms" => true,
         ]);
         if ($_L['config']['admin']['development']) {
-            $_L['config']['ver'] = time();
+            $_L['config']['ver'] = "9999." . time();
         } else {
             $version = PATH_CORE . "version";
             if (is_file($version)) {

@@ -31,7 +31,7 @@ class webbase extends common
         $_L['url'] = [
             "secure"   => $secure,
             "site"     => $url_site,
-            "now"      => "{$url_site}" . HTTP_QUERY,
+            "now"      => "{$secure}{$domain}" . HTTP_QUERY,
             "public"   => "{$url_site}public/",
             "static"   => "{$url_site}public/static/",
             "upload"   => "{$url_site}upload/",
