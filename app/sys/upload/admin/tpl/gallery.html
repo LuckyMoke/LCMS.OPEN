@@ -1,12 +1,12 @@
-<template "ui/head"/>
-<template "ui/css"/>
-<template "ui/iframe"/>
-<style type="text/css">
-    <if $_L['form']['editor']>
-        #LCONTENT{padding:0 15px}
-    </if>
-</style>
-<div class="lcms-form-upload-gallery" data-many="{{ $_L['form']['many'] }}" data-id="{{ $_L['form']['id'] }}" data-editor="{{ $_L['form']['editor'] }}">
+<template "ui/head" />
+<template "ui/css" />
+<template "ui/iframe" />
+<if $_L['form']['editor']>
+    <style type="text/css">
+        #LCONTENT{padding:0 15px}.lcms-form-upload-gallery ._gallery ._bg{height:80px}.lcms-form-upload-gallery ._gallery ._bg ._tips{line-height:80px}
+    </style>
+</if>
+<div class="lcms-form-upload-gallery" data-many="{{$_L['form']['many']}}" data-id="{{$_L['form']['id']}}" data-editor="{{$_L['form']['editor']}}">
     <div class="_topbar">
         <div class="_pos">upload/images/</div>
         <div class="_btn">
@@ -23,7 +23,7 @@
 <script type="text/html" class="tpl-folder">
     <div class="layui-col-xs3">
         <div class="_bg _folder" data-dir="{dir}">
-            <img src="{{ $_L['url']['static'] }}images/folder.png"/>
+            <img src="{{$_L['url']['static']}}images/folder.png"/>
             <div class="_name">{name}</div>
             <div class="_tips">双击打开</div>
         </div>
@@ -40,4 +40,4 @@
         </div>
     </div>
 </script>
-<template "ui/foot"/>
+<template "ui/foot" />

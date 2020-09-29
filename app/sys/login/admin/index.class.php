@@ -5,14 +5,15 @@ class index extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $CFGA;
         parent::__construct();
+        $CFGA = $_L['config']['admin'];
     }
     public function doindex()
     {
-        global $_L;
-        if ($_L['config']['admin']['domain'] && $_L['config']['admin']['domain'] != HTTP_HOST && !$_L['form']['fixed']) {
-            okinfo(str_replace(HTTP_HOST, $_L['config']['admin']['domain'], $_L['url']['now']));
+        global $_L, $CFGA;
+        if ($CFGA['domain'] && $CFGA['domain'] != HTTP_HOST && !$_L['form']['fixed']) {
+            okinfo(str_replace(HTTP_HOST, $CFGA['domain'], $_L['url']['now']));
         }
         if ($_L['LCMSADMIN'] && $_L['LCMSADMIN']['id'] && $_L['LCMSADMIN']['name']) {
             okinfo($_L['url']['admin']);
@@ -28,11 +29,11 @@ class index extends adminbase
             LCMS::X("404", "未找到页面");
         }
         SESSION::set("LCMSLOGINROOTID", $rootid);
-        if ($_L['config']['admin']['login_code']['type'] && $_L['config']['admin']['login_code']['type'] != "0" && stripos(HTTP_HOST, $_L['config']['admin']['login_code']['domain']) !== false) {
-            switch ($_L['config']['admin']['login_code']['type']) {
+        if ($CFGA['login_code']['type'] && $CFGA['login_code']['type'] != "0" && stripos(HTTP_HOST, $CFGA['login_code']['domain']) !== false) {
+            switch ($CFGA['login_code']['type']) {
                 case 'luosimao':
                     load::plugin("Luosimao/captcha");
-                    $captcha = new CAPTCHA($_L['config']['admin']['login_code']['luosimao']);
+                    $captcha = new CAPTCHA($CFGA['login_code']['luosimao']);
                     $yzcode  = $captcha->get();
                     break;
             }
@@ -41,13 +42,13 @@ class index extends adminbase
     }
     public function docheck()
     {
-        global $_L;
-        if ($_L['config']['admin']['login_code']['type'] && $_L['config']['admin']['login_code']['type'] != "0" && stripos(HTTP_HOST, $_L['config']['admin']['login_code']['domain']) !== false) {
-            switch ($_L['config']['admin']['login_code']['type']) {
+        global $_L, $CFGA;
+        if ($CFGA['login_code']['type'] && $CFGA['login_code']['type'] != "0" && stripos(HTTP_HOST, $CFGA['login_code']['domain']) !== false) {
+            switch ($CFGA['login_code']['type']) {
                 case 'luosimao':
                     if ($_L['form']['luotest_response']) {
                         load::plugin("Luosimao/captcha");
-                        $captcha = new CAPTCHA($_L['config']['admin']['login_code']['luosimao']);
+                        $captcha = new CAPTCHA($CFGA['login_code']['luosimao']);
                         $captcha->check($_L['form']['luotest_response']) ? "" : ajaxout(0, "人机验证失败");
                     } else {
                         ajaxout(0, "请进行人机验证");

@@ -277,16 +277,28 @@ class OA
                 }
             }
             if ($userinfo && $form) {
-                sql_update(["open_wechat_user", $form, "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'"]);
+                sql_update([
+                    "open_wechat_user",
+                    $form,
+                    "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'",
+                ]);
             } elseif ($form) {
                 $form['openid'] = $para['wechat']['openid'];
                 $form['lcms']   = $_L['ROOTID'];
-                $userinfo['id'] = sql_insert(["open_wechat_user", $form]);
+                if ($form['openid']) {
+                    $userinfo['id'] = sql_insert([
+                        "open_wechat_user",
+                        $form,
+                    ]);
+                }
             }
             $userinfo = $userinfo && $form ? array_merge($userinfo, $form) : false;
         }
         if ($para['openid']) {
-            $userinfo = $userinfo ? $userinfo : sql_get(["open_wechat_user", "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'"]);
+            $userinfo = $userinfo ? $userinfo : sql_get([
+                "open_wechat_user",
+                "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'",
+            ]);
             if ($userinfo) {
                 $userinfo['wechat'] = $userinfo;
             }

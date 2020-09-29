@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-18 16:31:53
+ * @LastEditTime: 2020-09-28 17:28:32
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -203,7 +203,7 @@ class admin extends adminbase
                         "name"   => "LC[login_code][type]",
                         "value"  => $config['login_code']['type'] ?? "0",
                         "radio"  => [
-                            ["title" => "普通验证码", "value" => "0", "tab" => "login_code"],
+                            ["title" => "图片验证码", "value" => "0", "tab" => "login_code"],
                             ["title" => "Luosimao人机验证", "value" => "luosimao", "tab" => "login_code_luosimao"],
                         ]],
                     ["layui"      => "input", "title" => "使用域名",

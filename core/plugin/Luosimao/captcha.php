@@ -13,7 +13,7 @@ class CAPTCHA
     public function get($callback = "")
     {
         $callback = $callback ? ' data-callback="' . $callback . '"' : '';
-        $html     = '<div class="l-captcha" data-width="100%"' . $callback . ' data-site-key="' . $this->$cfg['site_key'] . '"></div><script type="text/javascript" src="//captcha.luosimao.com/static/dist/api.js" async defer></script>';
+        $html     = '<style>.l-captcha{position:relative;height:44px}.l-captcha:before{content:"\4eba\673a\9a8c\8bc1\542f\52a8\4e2d\002e\002e\002e";line-height:44px;text-align:center;color:rgba(0,0,0,.3);display:block;background:#f1f1f1;position:absolute;top:0;left:0;width:100%;z-index:0}.l-captcha iframe{position:relative;z-index:1}</style><div class="l-captcha" data-width="100%"' . $callback . ' data-site-key="' . $this->$cfg['site_key'] . '"></div><script type="text/javascript" src="https://captcha.luosimao.com/static/dist/api.js" async defer></script>';
         return $html;
     }
     /**
