@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-13 14:51:32
+ * @LastEditTime: 2020-10-12 17:36:05
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,9 +24,9 @@ class admin extends adminbase
             LCMS::X(403, "没有权限，禁止访问");
         }
         $table = array(
-            "url"     => $_L['url']['own_form'] . "ajax&action=admin-list",
+            "url"     => "ajax&action=admin-list",
             "cols"    => [
-                ["checkbox" => "checkbox", "width" => 80],
+                ["checkbox" => "checkbox", "width" => 50],
                 ["title" => "ID", "field" => "id", "width" => 80, "align" => "center"],
                 ["title" => "帐号", "field" => "name", "minWidth" => 90],
                 ["title" => "用户名", "field" => "title", "width" => 150],
@@ -37,15 +37,28 @@ class admin extends adminbase
                 ["title" => "最后登录时间", "field" => "logintime", "width" => 180],
                 ["title" => "最后登录IP", "field" => "ip", "width" => 150],
                 ["title" => "到期时间", "field" => "lasttime", "width" => 180],
-                ["title" => "账号状态", "field" => "status", "width" => 100, "align" => "center"],
-                ["title" => "操作", "field" => "do", "width" => 110, "align" => "center", "toolbar" => [
-                    ["title" => "编辑", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"],
-                    ["title" => "删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"],
-                ]],
+                ["title" => "账号状态", "field" => "status", "width" => 90, "align" => "center"],
+                ["title"  => "操作", "field" => "do", "width" => 90,
+                    "align"   => "center",
+                    "fixed"   => "right",
+                    "toolbar" => [
+                        ["title" => "编辑", "event" => "iframe",
+                            "url"    => "iframe&action=admin-edit",
+                            "color"  => "default"],
+                        ["title" => "删除", "event" => "ajax",
+                            "url"    => "ajax&action=admin-list-del",
+                            "color"  => "danger",
+                            "tips"   => "确认删除？"],
+                    ]],
             ],
             "toolbar" => [
-                ["title" => "添加用户", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-edit", "color" => "default"],
-                ["title" => "批量删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-list-del", "color" => "danger", "tips" => "确认删除？"],
+                ["title" => "添加用户", "event" => "iframe",
+                    "url"    => "iframe&action=admin-edit",
+                    "color"  => "default"],
+                ["title" => "批量删除", "event" => "ajax",
+                    "url"    => "ajax&action=admin-list-del",
+                    "color"  => "danger",
+                    "tips"   => "确认删除？"],
             ],
             "search"  => [
                 ["title" => "账号/用户名/邮箱/手机", "name" => "name"],
@@ -59,21 +72,36 @@ class admin extends adminbase
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
-        $table = array(
-            "url"     => $_L['url']['own_form'] . "ajax&action=admin-level-list",
-            "cols"    => array(
-                array("title" => "ID", "field" => "id", "width" => 80, "align" => "center"),
-                array("title" => "权限名", "field" => "name", "width" => 200, "edit" => "text"),
-                array("title" => "添加人", "field" => "uid", "width" => 300),
-                array("title" => "操作", "field" => "do", "minWidth" => 120, "toolbar" => array(
-                    array("title" => "编辑", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-level-edit", "color" => "default"),
-                    array("title" => "删除", "event" => "ajax", "url" => $_L['url']['own_form'] . "ajax&action=admin-level-list-del", "color" => "danger", "tips" => "确认删除？"),
-                )),
-            ),
-            "toolbar" => array(
-                array("title" => "添加权限", "event" => "iframe", "url" => $_L['url']['own_form'] . "iframe&action=admin-level-edit", "color" => "default"),
-            ),
-        );
+        $table = [
+            "url"     => "ajax&action=admin-level-list",
+            "cols"    => [
+                ["title" => "ID", "field" => "id",
+                    "width"  => 80,
+                    "align"  => "center"],
+                ["title" => "权限名", "field" => "name",
+                    "width"  => 200,
+                    "edit"   => "text"],
+                ["title" => "添加人", "field" => "uid",
+                    "width"  => 300],
+                ["title"   => "操作", "field" => "do",
+                    "minWidth" => 90,
+                    "fixed"    => "right",
+                    "toolbar"  => [
+                        ["title" => "编辑", "event" => "iframe",
+                            "url"    => "iframe&action=admin-level-edit",
+                            "color"  => "default"],
+                        ["title" => "删除", "event" => "ajax",
+                            "url"    => "ajax&action=admin-level-list-del",
+                            "color"  => "danger",
+                            "tips"   => "确认删除？"],
+                    ]],
+            ],
+            "toolbar" => [
+                ["title" => "添加权限", "event" => "iframe",
+                    "url"    => "iframe&action=admin-level-edit",
+                    "color"  => "default"],
+            ],
+        ];
         require LCMS::template("own/admin-list");
     }
     public function doajax()

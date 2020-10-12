@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-14 17:36:34
+ * @LastEditTime: 2020-10-12 17:36:36
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -184,10 +184,10 @@ class web extends adminbase
                 }
                 break;
             default:
-                $table = array(
+                $table = [
                     "url"     => "payment&action=payment-list",
                     "cols"    => [
-                        ["checkbox" => "checkbox", "width" => 80],
+                        ["checkbox" => "checkbox", "width" => 50],
                         ["title" => "ID", "field" => "id",
                             "width"  => 80,
                             "align"  => "center"],
@@ -195,15 +195,20 @@ class web extends adminbase
                             "width"  => 200],
                         ["title" => "支付方式", "field" => "payment",
                             "width"  => 200],
-                        ["title" => "操作", "field" => "do", "toolbar" => [
-                            ["title" => "编辑", "event" => "iframe",
-                                "url"    => "payment&action=payment-edit",
-                                "color"  => "default"],
-                            ["title" => "删除", "event" => "ajax",
-                                "url"    => "payment&action=payment-list-del",
-                                "color"  => "danger",
-                                "tips"   => "确认删除？"],
-                        ]],
+                        ["title"   => "操作", "field" => "do",
+                            "minWidth" => 90,
+                            "fixed"    => "right",
+                            "toolbar"  => [
+                                ["title" => "编辑",
+                                    "event"  => "iframe",
+                                    "url"    => "payment&action=payment-edit",
+                                    "color"  => "default"],
+                                ["title" => "删除",
+                                    "event"  => "ajax",
+                                    "url"    => "payment&action=payment-list-del",
+                                    "color"  => "danger",
+                                    "tips"   => "确认删除？"],
+                            ]],
                     ],
                     "toolbar" => [
                         ["title" => "添加支付", "event" => "iframe",
@@ -214,7 +219,7 @@ class web extends adminbase
                             "color"  => "danger",
                             "tips"   => "确认删除？"],
                     ],
-                );
+                ];
                 require LCMS::template("own/payment-list");
                 break;
         }
