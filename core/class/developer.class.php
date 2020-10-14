@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2020-09-23 13:02:57
+ * @LastEditTime: 2020-10-14 15:20:35
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -70,6 +70,7 @@ class developer
             "function "                     => "函数",
             "class "                        => "类",
             "method "                       => "方法",
+            "constant "                     => "常量",
         ];
         $message = str_ireplace(array_keys($elist), array_values($elist), $message);
         return $message;

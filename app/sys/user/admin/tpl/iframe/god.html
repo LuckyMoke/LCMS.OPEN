@@ -1,0 +1,10 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}god&action=save" method="post" target="_self">
+    <ui form($form) />
+</form>
+<h3>功能介绍：</h3>
+<br />
+<p>此功能允许超级管理员切换到任意用户登录状态，方便超级管理员帮助用户进行后台的设置。</p>
+<p>请和用户沟通好，防止同时使用后台造成冲突。</p>
+<template "ui/foot" />
