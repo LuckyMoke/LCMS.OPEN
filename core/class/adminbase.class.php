@@ -46,7 +46,7 @@ class adminbase extends common
             okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
         } elseif ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
-            if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime']) {
+            if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
                 SESSION::del("LCMSADMIN");
                 LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
             }
