@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-18 19:06:11
+ * @LastEditTime: 2020-10-28 13:48:23
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -97,7 +97,7 @@ class LAY
             $disabled = $val['disabled'] ? " disabled='disabled'" : "";
             $option .= "<option value='{$val['value']}'{$selected}{$disabled}>{$val['title']}</option>";
         }
-        if ($para['url'] && !stristr($para['url'], "://")) {
+        if ($para['url'] && !is_url($para['url'])) {
             $para['url'] = $_L['url']['own_form'] . $para['url'];
         }
         $html = "
@@ -115,7 +115,7 @@ class LAY
     {
         global $_L;
         $para = self::start($para);
-        if ($para['url'] && !stristr($para['url'], "://")) {
+        if ($para['url'] && !is_url($para['url'])) {
             $para['url'] = $_L['url']['own_form'] . $para['url'];
         }
         $html = "
@@ -200,7 +200,7 @@ class LAY
         $para['checked'] = $para['value'] ? " checked" : "";
         $para['value']   = $para['value'] ? $para['value'] : 1;
         if ($para['url']) {
-            if (!stristr($para['url'], "://")) {
+            if (!is_url($para['url'])) {
                 $para['url'] = $_L['url']['own_form'] . $para['url'];
             }
             $para['url'] = " data-url='{$para['url']}'";
@@ -321,7 +321,7 @@ class LAY
             </div>";
         echo $html;
     }
-    public static function btn($para)
+    public static function btn($para = "")
     {
         $para          = is_array($para) ? $para : array();
         $para['title'] = $para['title'] ? $para['title'] : "立即保存";

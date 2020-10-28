@@ -14,9 +14,13 @@ class index extends adminbase
         global $_L;
         $dir = PATH_UPLOAD . $_L['ROOTID'] . "/images/" . date("Ym") . "/";
         if ($_FILES['file']) {
-            $upload = upload::img($dir);
+            $upload = UPLOAD::file($dir);
             if ($upload['code'] == "1") {
-                ajaxout(1, $upload['msg'], "", array("dir" => $upload['dir'], "filename" => $upload['filename'], "src" => $upload['dir'] . $upload['filename']));
+                ajaxout(1, $upload['msg'], "", [
+                    "dir"      => $upload['dir'],
+                    "filename" => $upload['filename'],
+                    "src"      => $upload['dir'] . $upload['filename'],
+                ]);
             } else {
                 ajaxout(0, $upload['msg'], "", "");
             }
@@ -41,9 +45,13 @@ class index extends adminbase
         global $_L;
         $dir = PATH_UPLOAD . $_L['ROOTID'] . "/file/" . date("Ym") . "/";
         if ($_FILES['file']) {
-            $upload = upload::img($dir);
+            $upload = UPLOAD::file($dir);
             if ($upload['code'] == "1") {
-                ajaxout(1, $upload['msg'], "", array("dir" => $upload['dir'], "filename" => $upload['filename'], "src" => $upload['dir'] . $upload['filename']));
+                ajaxout(1, $upload['msg'], "", [
+                    "dir"      => $upload['dir'],
+                    "filename" => $upload['filename'],
+                    "src"      => $upload['dir'] . $upload['filename'],
+                ]);
             } else {
                 ajaxout(0, $upload['msg'], "", "");
             }
@@ -55,7 +63,7 @@ class index extends adminbase
         $dir = PATH_UPLOAD . $_L['ROOTID'] . "/images/" . date("Ym") . "/";
         if (!empty($_L['form']['files'])) {
             foreach ($_L['form']['files'] as $url) {
-                $upload = upload::img($dir, $url);
+                $upload = UPLOAD::file($dir, $url);
                 if ($upload['code'] == 1) {
                     $result[] = [
                         "state"  => "SUCCESS",

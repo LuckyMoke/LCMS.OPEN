@@ -2,33 +2,41 @@
 defined('IN_LCMS') or exit('No permission');
 class UPLOAD
 {
-    public static function img($dir, $url = "")
+    /**
+     * @文件上传:
+     * @param {*}
+     * @return {*}
+     */
+    public static function file($dir, $para = "", $mime = "")
     {
         global $_L;
         if (makedir($dir)) {
-            if ($url) {
-                $http = http::get($url, true);
-                if ($http['code'] == 200 && $http['length'] > 0) {
-                    $file    = $http['body'];
-                    $formart = str_replace("image/", "", $http['type']);
-                    $size    = round($http['length'] / 1024);
+            if (is_url($para)) {
+                // 如果文件地址是url链接，远程下载
+                $result = HTTP::get($para, true);
+                if ($result['code'] == 200 && $result['length'] > 0) {
+                    $file = $result['body'];
+                    $mime = $mime ? $mime : self::mime($result['type']);
+                    $size = round($result['length'] / 1024);
                 } else {
-                    self::out(0, "远程图片下载失败");
+                    self::out(0, "远程文件下载失败");
                 }
             } else {
-                $file    = $_FILES['file'];
-                $formart = substr($file['name'], strripos($file['name'], ".") + 1);
-                $size    = round($file['size'] / 1024);
+                // 如果文件地址是本地上传
+                $file = $para ? $para : $_FILES['file'];
+                $mime = substr($file['name'], strrpos($file['name'], ".") + 1);
+                $size = round($file['size'] / 1024);
             }
             if ($size > $_L['config']['admin']['attsize']) {
-                $return = self::out(0, "超过上传限制大小");
+                // 如果文件大小超过上传限制
+                $return = self::out(0, "超过上传大小限制");
             } else {
-                if (stristr($_L['config']['admin']['mimelist'], $formart) != "") {
-                    $filename = date("YmdHis") . microseconds() . "." . $formart;
-                    if ($url && file_put_contents($dir . $filename, $file)) {
-                        $return = self::out(1, "上传成功", path_relative($dir), $filename);
-                    } elseif (move_uploaded_file($file['tmp_name'], $dir . $filename)) {
-                        $return = self::out(1, "上传成功", path_relative($dir), $filename);
+                if (stripos($_L['config']['admin']['mimelist'], $mime) !== false) {
+                    $name = date("YmdHis") . microseconds() . ".{$mime}";
+                    if (is_url($para) && file_put_contents("{$dir}{$name}", $file)) {
+                        $return = self::out(1, "上传成功", path_relative($dir), $name);
+                    } elseif (move_uploaded_file($file['tmp_name'], "{$dir}{$name}")) {
+                        $return = self::out(1, "上传成功", path_relative($dir), $name);
                     } else {
                         $return = self::out(0, "上传失败");
                     }
@@ -41,8 +49,50 @@ class UPLOAD
         }
         return $return;
     }
+    /**
+     * @上传结果输出:
+     * @param {*}
+     * @return {*}
+     */
     public static function out($code, $msg, $dir = "", $filename = "")
     {
-        return array("code" => $code, "msg" => $msg, "dir" => $dir, "filename" => $filename);
+        return [
+            "code"     => $code,
+            "msg"      => $msg,
+            "dir"      => $dir,
+            "filename" => $filename,
+        ];
+    }
+    /**
+     * @获取文件格式和mime对应关系:
+     * @param {*}
+     * @return {*}
+     */
+    public static function mime($mime = "")
+    {
+        $allmime = [
+            "image/jpeg"                   => "jpeg",
+            "image/png"                    => "png",
+            "image/bmp"                    => "bmp",
+            "image/gif"                    => "gif",
+            "image/vnd.wap.wbmp"           => "wbmp",
+            "image/x-up-wpng"              => "wpng",
+            "image/x-icon"                 => "ico",
+            "image/svg+xml"                => "svg",
+            "image/tiff"                   => "tiff",
+            "audio/mpeg"                   => "mp3",
+            "audio/ogg"                    => "ogg",
+            "audio/x-wav"                  => "wav",
+            "audio/x-ms-wma"               => "wma",
+            "audio/x-ms-wmv"               => "wmv",
+            "video/mp4"                    => "mp4",
+            "video/mpeg"                   => "mpeg",
+            "video/quicktime"              => "mov",
+            "flv-application/octet-stream" => "flv",
+            "application/json"             => "json",
+            "application/octet-stream"     => "rar",
+            "application/x-cprplayer"      => "pdf",
+        ];
+        return $allmime[$mime];
     }
 }

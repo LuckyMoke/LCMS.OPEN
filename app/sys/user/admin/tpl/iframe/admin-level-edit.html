@@ -1,10 +1,10 @@
-<template "ui/head"/>
-<template "ui/iframe"/>
+<template "ui/head" />
+<template "ui/iframe" />
 <form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}iframe&action=admin-level-save" method="post" target="_self">
-    <input type="hidden" name="LC[id]" value="{{ $level['id'] }}"/>
-    <input type="hidden" name="LC[uid]" value="{{ $level['uid']?$level['uid']:$_L['LCMSADMIN']['id'] }}"/>
-    <input type="hidden" name="level" value="{{ $hide }}"/>
-    <ui form($form)/>
+    <input type="hidden" name="LC[id]" value="{{ $level['id'] }}" />
+    <input type="hidden" name="LC[uid]" value="{{ $level['uid']?$level['uid']:$_L['LCMSADMIN']['id'] }}" />
+    <input type="hidden" name="level" value="{{ $hide }}" />
+    <ui form($form) />
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <h2 class="layui-colla-title">系统模块</h2>
@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    <br/>
+    <br />
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <h2 class="layui-colla-title">开放模块</h2>
@@ -44,7 +44,8 @@
             </div>
         </div>
     </div>
-    <br/>
-    <ui btn("立即保存")/>
+    <br />
+    <div style="margin-bottom:50px;"></div>
+    {{LAY::btn(["title"=>"立即保存","fixed"=>true])}}
 </form>
-<template "ui/foot"/>
+<template "ui/foot" />

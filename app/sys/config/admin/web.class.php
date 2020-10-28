@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-12 17:36:36
+ * @LastEditTime: 2020-10-28 13:49:44
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -152,6 +152,7 @@ class web extends adminbase
                     "last" => [[
                         "layui" => "btn",
                         "title" => "立即保存",
+                        "fixed" => true,
                     ]],
                 ]);
                 require LCMS::template("own/payment-edit");

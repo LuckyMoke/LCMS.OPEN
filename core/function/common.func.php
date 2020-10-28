@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-07 15:42:14
+ * @LastEditTime: 2020-10-27 15:43:05
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,25 +10,14 @@ defined('IN_LCMS') or exit('No permission');
 /**
  * [dump 输出字符串或数组]
  * @param  [type]  $vars   [输出字符串或数组]
- * @param  string  $label  [提示标题]
- * @param  boolean $return [是否有返回值]
  * @return [type]          [description]
  */
-function dump($vars, $label = '', $return = false)
+function dump($vars)
 {
-    if (ini_get('html_errors')) {
-        $content = "<pre>\n";
-        if ($label != '') {
-            $content .= "<strong>{$label} :</strong>\n";
-        }
-        $content .= htmlspecialchars(print_r($vars, true), ENT_COMPAT, 'ISO-8859-1');
-        $content .= "\n</pre>\n";
-    } else {
-        $content = $label . " :\n" . print_r($vars, true);
-    }
-    if ($return) {return $content;}
+    $content = "<pre>\n";
+    $content .= htmlspecialchars(print_r($vars, true), ENT_COMPAT, 'ISO-8859-1');
+    $content .= "</pre>\n";
     echo $content;
-    return null;
 }
 /**
  * [json_encode_ex 数组转换为json，不转义中文]
@@ -520,9 +509,20 @@ function is_phone($phone)
  * @param  [type]  $url [description]
  * @return boolean      [description]
  */
-function is_https($url)
+function is_https($url = "")
 {
-    if (stristr($url, "https://") !== false) {
+    if (stripos($url, "https://") !== false) {
+        return true;
+    }
+}
+/**
+ * @判断一个字符串是否为url:
+ * @param {*}
+ * @return {*}
+ */
+function is_url($str = "")
+{
+    if (is_string($str) && strpos($str, "://") !== false) {
         return true;
     }
 }
