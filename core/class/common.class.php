@@ -41,14 +41,18 @@ class common
     {
         global $_L;
         isset($_REQUEST['GLOBALS']) && exit('Access Error');
-        foreach ($_COOKIE as $_key => $_value) {
-            $_key{0} != '_' && $_L['form'][$_key] = filterform($_value);
+        parse_str(substr(strstr(HTTP_QUERY, '?'), 1), $QUERY);
+        foreach ($QUERY as $k => $v) {
+            $k{0} != '_' && $_L['form'][$k] = filterform($v);
         }
-        foreach ($_POST as $_key => $_value) {
-            $_key{0} != '_' && $_L['form'][$_key] = filterform($_value);
+        foreach ($_COOKIE as $k => $v) {
+            $k{0} != '_' && $_L['form'][$k] = filterform($v);
         }
-        foreach ($_GET as $_key => $_value) {
-            $_key{0} != '_' && $_L['form'][$_key] = filterform($_value);
+        foreach ($_POST as $k => $v) {
+            $k{0} != '_' && $_L['form'][$k] = filterform($v);
+        }
+        foreach ($_GET as $k => $v) {
+            $k{0} != '_' && $_L['form'][$k] = filterform($v);
         }
     }
     /**

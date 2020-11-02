@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-28 17:28:32
+ * @LastEditTime: 2020-10-29 17:36:09
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -35,7 +35,7 @@ class admin extends adminbase
                     "cate" => "admin",
                     "lcms" => true,
                 ]);
-                $config['oauth_code'] = $config['oauth_code'] ? $config['oauth_code'] : strtoupper(md5(HTTP_HOST)) . randstr(32);
+                $config['oauth_code'] = $config['oauth_code'] ?: strtoupper(md5(HTTP_HOST)) . randstr(32);
                 $form                 = array(
                     ["layui" => "title", "title" => "基础信息"],
                     ["layui" => "input", "title" => "系统名称",
@@ -43,7 +43,7 @@ class admin extends adminbase
                         "value"  => $config['title'],
                         "verify" => "required",
                     ],
-                    ["layui" => "radio", "title" => "后台协议",
+                    ["layui" => "radio", "title" => "访问协议",
                         "name"   => "LC[https]",
                         "value"  => $config['https'] ? $config['https'] : "0",
                         "radio"  => [
@@ -52,7 +52,7 @@ class admin extends adminbase
                         ],
                         "tips"   => "如果使用了cdn半程加密，会用到",
                     ],
-                    ["layui"      => "input", "title" => "后台域名",
+                    ["layui"      => "input", "title" => "强制域名",
                         "name"        => "LC[domain]",
                         "value"       => $config['domain'],
                         "placeholder" => "不填任意域名可访问后台",
@@ -113,25 +113,25 @@ class admin extends adminbase
                             ["title" => "不限制域名", "value" => "0"],
                         ],
                     ],
-                    ["layui"      => "input", "title" => "网站域名",
+                    ["layui"      => "input", "title" => "默认前端域名",
                         "name"        => "LC[domain]",
                         "value"       => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
                         "placeholder" => "http://www.domain.com/",
                         "tips"        => "特别注意结尾的 / 斜杠",
                         "verify"      => "required",
                     ],
-                    ["layui"      => "input", "title" => "API域名",
+                    ["layui"      => "input", "title" => "默认API域名",
                         "name"        => "LC[domain_api]",
                         "value"       => $config['domain_api'],
                         "placeholder" => "http://www.domain.com/",
                         "tips"        => "特别注意结尾的 / 斜杠",
                         "verify"      => "required",
                     ],
-                    ["layui" => "input", "title" => "网站名称",
+                    ["layui" => "input", "title" => "默认前端Title",
                         "name"   => "LC[title]",
                         "value"  => $config['title'],
                     ],
-                    ["layui" => "upload", "title" => "前台默认图片",
+                    ["layui" => "upload", "title" => "默认前端图片",
                         "name"   => "LC[image_default]",
                         "value"  => $config['image_default'],
                     ],

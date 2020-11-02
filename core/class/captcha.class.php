@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-11-02 14:55:19
+ * @Description:验证码生成类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class CAPTCHA
 {
@@ -20,56 +27,36 @@ class CAPTCHA
     {
         self::setpin($text);
         ob_end_clean();
-        $im_x     = 160;
-        $im_y     = 40;
-        $im       = imagecreatetruecolor($im_x, $im_y);
-        $text_c   = ImageColorAllocate($im, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100));
-        $tmpC0    = mt_rand(100, 255);
-        $tmpC1    = mt_rand(100, 255);
-        $tmpC2    = mt_rand(100, 255);
-        $buttum_c = ImageColorAllocate($im, $tmpC0, $tmpC1, $tmpC2);
-        imagefill($im, 16, 13, $buttum_c);
-        $font = PATH_PUBLIC . 'static/fonts/English.ttf';
+        $im_x = 150;
+        $im_y = 40;
+        $im   = imagecreatetruecolor($im_x, $im_y);
+        imagefill($im, 16, 13, ImageColorAllocate($im, 226, 245, 255));
+        $font = PATH_PUBLIC . 'static/fonts/Chinese.ttf';
+
         for ($i = 0; $i < strlen($text); $i++) {
-            $tmp   = substr($text, $i, 1);
-            $array = array(-1, 1);
-            $p     = array_rand($array);
-            $an    = $array[$p] * mt_rand(1, 10);
-            $size  = 28;
-            imagettftext($im, $size, $an, 15 + $i * $size, 35, $text_c, $font, $tmp);
+            imagettftext($im, 28, mt_rand(1, 10), 25 + $i * 28, mt_rand(30, 40), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($text, $i, 1));
         }
-        $distortion_im = imagecreatetruecolor($im_x, $im_y);
-        imagefill($distortion_im, 16, 13, $buttum_c);
-        for ($i = 0; $i < $im_x; $i++) {
-            for ($j = 0; $j < $im_y; $j++) {
-                $rgb = imagecolorat($im, $i, $j);
-                if ((int) ($i + 20 + sin($j / $im_y * 2 * M_PI) * 10) <= imagesx($distortion_im) && (int) ($i + 20 + sin($j / $im_y * 2 * M_PI) * 10) >= 0) {
-                    imagesetpixel($distortion_im, (int) ($i + 10 + sin($j / $im_y * 2 * M_PI - M_PI * 0.1) * 4), $j, $rgb);
-                }
-            }
+        for ($i = 0; $i < 60; $i++) {
+            $randcolor = ImageColorAllocate($im, mt_rand(100, 255), mt_rand(100, 255), mt_rand(100, 255));
+            imagettftext($im, mt_rand(6, 12), mt_rand(1, 20), mt_rand(0, $im_x), mt_rand(0, $im_y), $randcolor, $font, randstr(1));
         }
-        $count = 160;
-        for ($i = 0; $i < $count; $i++) {
-            $randcolor = ImageColorallocate($distortion_im, mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255));
-            imagesetpixel($distortion_im, mt_rand() % $im_x, mt_rand() % $im_y, $randcolor);
-        }
-        $rand  = mt_rand(5, 30);
-        $rand1 = mt_rand(15, 25);
-        $rand2 = mt_rand(5, 10);
+        $rand  = mt_rand(16, 20);
+        $rand1 = mt_rand(10, 15);
+        $rand2 = mt_rand(5, 15);
+        $color = ImageColorAllocate($im, mt_rand(100, 200), 68, 139);
         for ($yy = $rand; $yy <= +$rand + 2; $yy++) {
-            for ($px = -80; $px <= 80; $px = $px + 0.1) {
+            for ($px = -60; $px <= 60; $px = $px + 1.2) {
                 $x = $px / $rand1;
                 if ($x != 0) {
                     $y = sin($x);
                 }
                 $py = $y * $rand2;
-                imagesetpixel($distortion_im, $px + 80, $py + $yy, $text_c);
+                imagesetpixel($im, $px + 75, $py + $yy, $color);
             }
         }
         ob_end_clean();
         header("content-type: image/jpeg");
-        imagejpeg($distortion_im);
-        ImageDestroy($distortion_im);
+        imagejpeg($im);
         ImageDestroy($im);
     }
     public static function setpin($str)

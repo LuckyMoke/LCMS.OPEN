@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2020-10-25 16:30:45
+ * @LastEditTime: 2020-10-29 15:36:53
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -50,7 +50,7 @@ class developer
                         "file"    => $main['file'],
                         "line"    => $main['line'],
                         "start"   => $getLine['start'],
-                        "content" => $getLine['content'],
+                        "content" => htmlspecialchars($getLine['content']),
                     ],
                     "trace" => $traces,
                 ];
@@ -66,12 +66,14 @@ class developer
         $elist = [
             "Too few arguments to function" => "缺少参数的函数",
             "Call to "                      => "调用",
+            "syntax error"                  => "语法错误",
             "undefined "                    => "未定义的",
             "not found"                     => "未找到",
             "function "                     => "函数",
             "class "                        => "类",
             "method "                       => "方法",
             "constant "                     => "常量",
+            "unexpected "                   => "意外的",
         ];
         $message = str_ireplace(array_keys($elist), array_values($elist), $message);
         return $message;

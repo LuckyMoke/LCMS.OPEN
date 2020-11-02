@@ -11,13 +11,18 @@ class SESSION
         self::$type   = $_L['config']['admin']['session_type'];
         $session_time = $_L['config']['admin']['sessiontime'];
         $session_time = $session_time > "0" ? $session_time * 60 : 86400;
-        if (!$_COOKIE['LCMSSESSIONID'] || $_COOKIE['LCMSSESSIONID'] == "" || $_COOKIE['LCMSSESSIONID'] == null || $_COOKIE['LCMSSESSIONID'] == " ") {
-            $cookie = strtoupper(md5(time() . randstr(32) . CLIENT_IP));
-            setcookie("LCMSSESSIONID", $cookie, 0, "/", "", 0, true);
+        if ($_L['form']['lcmscookie']) {
+            // 如果请求参数中含有lcmscookie字段内容，那么sessionID为指定的
+            self::$userid = "LCMSSESSIONID" . strtoupper(md5($_L['form']['lcmscookie']));
         } else {
-            $cookie = $_COOKIE['LCMSSESSIONID'];
+            if (!$_COOKIE['LCMSSESSIONID'] || $_COOKIE['LCMSSESSIONID'] == "" || $_COOKIE['LCMSSESSIONID'] == null || $_COOKIE['LCMSSESSIONID'] == " ") {
+                $cookie = strtoupper(md5(time() . randstr(32) . CLIENT_IP));
+                setcookie("LCMSSESSIONID", $cookie, 0, "/", "", 0, true);
+            } else {
+                $cookie = $_COOKIE['LCMSSESSIONID'];
+            }
+            self::$userid = "LCMSSESSIONID" . strtoupper(md5($_SERVER['HTTP_USER_AGENT'] . $cookie));
         }
-        self::$userid = "LCMSSESSIONID" . strtoupper(md5($_SERVER['HTTP_USER_AGENT'] . $cookie));
         if (self::$type == "1") {
             load::plugin("Redis/rds");
             self::$redis = new RDS();
