@@ -1,11 +1,13 @@
 <ul id="NAVTOP" class="layui-nav" lay-filter="">
     <li class="__nav">
         <div class="layui-breadcrumb">
-            <a href="{{ $_L['url']['admin'] }}" title="管理首页" target="_parent">
-                <svg t="1599965309585" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8604" width="16" height="16" style="vertical-align:middle;">
-                    <path d="M929.2 427c-2.5-2.9-5-5.7-7.8-8.4L608.7 105.8c-54.5-54.5-143-54.5-197.5 0L98.4 418.6c-2.7 2.7-5.3 5.5-7.8 8.4-63.2 74.3-5.4 189.1 92.1 189.1h16.4v218.3c0 68.7 55.7 124.3 124.3 124.3h62.2V794.2c0-68.7 55.7-124.3 124.3-124.3 68.7 0 124.3 55.7 124.3 124.3v164.5h62.2c68.7 0 124.3-55.7 124.3-124.3V616.1h16.4c97.5 0 155.3-114.8 92.1-189.1z" p-id="8605" fill="#2F4056"></path>
-                </svg>
-            </a>
+            <if strpos($_SERVER['HTTP_USER_AGENT'],"LCMSWindows")===false>
+                <a href="{{ $_L['url']['admin'] }}" title="管理首页" target="_parent" id="LCMSGOHOME">
+                    <svg t="1599965309585" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8604" width="16" height="16" style="vertical-align:middle;">
+                        <path d="M929.2 427c-2.5-2.9-5-5.7-7.8-8.4L608.7 105.8c-54.5-54.5-143-54.5-197.5 0L98.4 418.6c-2.7 2.7-5.3 5.5-7.8 8.4-63.2 74.3-5.4 189.1 92.1 189.1h16.4v218.3c0 68.7 55.7 124.3 124.3 124.3h62.2V794.2c0-68.7 55.7-124.3 124.3-124.3 68.7 0 124.3 55.7 124.3 124.3v164.5h62.2c68.7 0 124.3-55.7 124.3-124.3V616.1h16.4c97.5 0 155.3-114.8 92.1-189.1z" p-id="8605" fill="#2F4056"></path>
+                    </svg>
+                </a>
+            </if>
             <if $_L['APP']['menu']>
                 <a href="javascript:;">{{ $_L['APP']['info']['title'] }}</a>
                 <if count($_L['APP']['menu']) gt 1>
@@ -55,7 +57,7 @@
                 </dd>
             </if>
             <dd>
-                <a href="{{ $_L['url']['admin'] }}?n=login&a=loginout" target="_parent">退出</a>
+                <a href="" onclick="this.href='{{$_L['url']['admin']}}index.php?n=login&a=loginout&go='+encodeURIComponent(top.location.href)" target="_parent">退出</a>
             </dd>
         </dl>
     </li>

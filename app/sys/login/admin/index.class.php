@@ -92,6 +92,6 @@ class index extends adminbase
         global $_L;
         $rootid = SESSION::get("LCMSLOGINROOTID");
         SESSION::del("LCMSADMIN");
-        okinfo("{$_L['url']['admin']}index.php?rootid={$rootid}&n=login");
+        okinfo("{$_L['url']['admin']}index.php?rootid={$rootid}&n=login&go=" . urlencode($_L['form']['go']));
     }
 }
