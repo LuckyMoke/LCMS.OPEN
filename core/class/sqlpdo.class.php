@@ -133,7 +133,7 @@ class SQLPDO
     public function query($sql, $result_type = PDO::FETCH_ASSOC)
     {
         $this->psm = $this->pdo->query($sql);
-        if (strtoupper(substr($sql, 0, 6)) === "SELECT") {
+        if (strtoupper(substr($sql, 0, 6)) === "SELECT" || strtoupper(substr($sql, 0, 4)) === "SHOW") {
             $rows = self::affected_rows();
             if ($rows > 1) {
                 return $this->psm->fetchAll($result_type);

@@ -120,7 +120,7 @@ class install
      */
     public function installDb($db)
     {
-        $db['charset'] = "utf8";
+        $db['charset'] = "utf8mb4";
         self::checkDb($db);
         $data = DB::get_dbs();
         foreach ($data as $key => $val) {
@@ -128,7 +128,7 @@ class install
                 DB::query("DROP DATABASE {$db['name']}");
             }
         }
-        DB::query("CREATE DATABASE {$db['name']}");
+        DB::query("CREATE DATABASE {$db['name']} DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_general_ci");
         DB::$link->select_db($db['name']);
         $mysql = file_get_contents('data/data.sql');
         $mysql = str_replace("[_PRE]", $db['pre'], $mysql);

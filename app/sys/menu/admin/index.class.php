@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-13 15:04:34
+ * @LastEditTime: 2020-11-16 14:28:10
  * @Description: 常用应用设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -52,6 +52,12 @@ class index extends adminbase
                                         "admin"  => 1,
                                         "web"    => 1,
                                         "update" => 1,
+                                    ],
+                                ],
+                                "backup" => [
+                                    "class" => [
+                                        "database" => 1,
+                                        "optimize" => 1,
                                     ],
                                 ],
                             ],

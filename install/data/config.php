@@ -6,7 +6,7 @@ $_L['mysql']['user']    = "[db_user]";
 $_L['mysql']['pass']    = "[db_pass]";
 $_L['mysql']['name']    = "[db_name]";
 $_L['mysql']['pre']     = "[db_pre]";
-$_L['mysql']['charset'] = "utf8";
+$_L['mysql']['charset'] = "utf8mb4";
 
 /* Redis配置 */
 $_L['redis']['host'] = "127.0.0.1";

@@ -1,0 +1,38 @@
+<template "ui/head" />
+<p class="lcms-form-des">数据库将备份在网站根目录 <code>/backup</code> 目录下。恢复数据时，请在对应版本的框架下操作！</p>
+<button type="button" class="layui-btn backup">立即备份</button>
+<table class="layui-table" lay-even>
+    <colgroup>
+        <col />
+        <col width="100" />
+        <col width="180" />
+        <col width="150" />
+        <col width="130" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>文件名称</th>
+            <th style="text-align:center">文件大小</th>
+            <th style="text-align:center">备份时间</th>
+            <th style="text-align:center">框架版本</th>
+            <th style="text-align:center">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <loop $mysql,$info>
+            <tr>
+                <td><a href="{{$_L['url']['site']}}backup/mysql/{{$info['filename']}}" target="_blank">{{$info['filename']}}</a></td>
+                <td align="center">{{$info['size']}}MB</td>
+                <td align="center">{{$info['time']}}</td>
+                <td align="center">{{$info['ver']}}</td>
+                <td align="center">
+                    <div class="layui-btn-group">
+                        <button type="button" class="layui-btn layui-btn-xs backup-restore" data-info='{{json_encode_ex($info)}}'>恢复数据</button>
+                        <button type="button" class="layui-btn layui-btn-xs layui-btn-danger backup-del" data-info='{{json_encode_ex($info)}}'>删除</button>
+                    </div>
+                </td>
+            </tr>
+        </loop>
+    </tbody>
+</table>
+<template "ui/foot" />

@@ -56,29 +56,14 @@
                             </li>
                         </if>
                     </loop>
-                    <loop $sys,$list>
+                    <loop $sys,$list,$index>
                         <if $list['menu']>
                             <li class="layui-nav-item layui-nav-itemed">
                                 <a href="javascript:;">{{$list['title']}}</a>
                                 <dl class="layui-nav-child">
                                     <loop $list['menu'],$li,$name>
                                         <dd>
-                                            <if count($li['menu']) gt 1>
-                                                <a href="javascript:;">
-                                                    <i class="layui-icon layui-icon-right"></i>
-                                                    {{ $li['title'] }}
-                                                </a>
-                                                <dl class="layui-nav-child">
-                                                    <loop $li['menu'],$a>
-                                                        <dd>
-                                                            <a href="javascript:;" data-url="{{ $a['url'] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$a['title']}}</a>
-                                                        </dd>
-                                                    </loop>
-                                                </dl>
-                                                <else>
-                                                    <a href="javascript:;" data-url="{{ $li['url'] }}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
-                                                </else>
-                                            </if>
+                                            <a href="javascript:;" data-url="{{$li['url']}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
                                         </dd>
                                     </loop>
                                 </dl>

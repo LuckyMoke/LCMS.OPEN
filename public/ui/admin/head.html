@@ -29,12 +29,12 @@
     </head>
     <body>
         <template "ui/top" />
-        <div id="APPIFRAME" style="padding-left:{{$_L['form']['t']=='open'&&count($_L['APP']['menu'])>1?'150px':'0'}};">
-            <if $_L['form']['t']=="open" && count($_L['APP']['menu']) gt 1>
+        <div id="APPIFRAME" style="padding-left:{{$_L['form']['n']!='appstore'&&count($_L['APP']['menu'])>1?'150px':'0'}};">
+            <if $_L['form']['n']!="appstore" && count($_L['APP']['menu']) gt 1>
                 <div id="APPNAV">
                     <div>
                         <i class="layui-icon layui-icon-spread-left"></i>
-                        应用菜单
+                        子菜单
                     </div>
                     <ul>
                         <loop $_L['APP']['menu'],$val,$cname>
