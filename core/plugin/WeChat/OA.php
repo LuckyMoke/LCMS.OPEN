@@ -158,7 +158,9 @@ class OA
                             $this->user([
                                 "do"     => "save",
                                 "openid" => $openid['openid'],
-                                "wechat" => ["openid" => $openid['openid']],
+                                "wechat" => [
+                                    "openid" => $openid['openid'],
+                                ],
                             ]);
                             $openid['expires_time'] = time() + 3600;
                             SESSION::set($this->session . $scope, $openid);
@@ -252,6 +254,7 @@ class OA
         $userinfo = sql_get(["open_wechat_user", "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'"]);
         if ($para['do'] == "save") {
             $form = [
+                "openid"          => $para['wechat']['openid'],
                 "subscribe"       => $para['wechat']['subscribe'],
                 "nickname"        => $para['wechat']['nickname'],
                 "sex"             => $para['wechat']['sex'],
@@ -283,8 +286,7 @@ class OA
                     "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'",
                 ]);
             } elseif ($form) {
-                $form['openid'] = $para['wechat']['openid'];
-                $form['lcms']   = $_L['ROOTID'];
+                $form['lcms'] = $_L['ROOTID'];
                 if ($form['openid']) {
                     $userinfo['id'] = sql_insert([
                         "open_wechat_user",

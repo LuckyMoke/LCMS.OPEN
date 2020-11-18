@@ -283,18 +283,16 @@ function zipfile($filelist, $destination, $remove = "", $overWrite = true)
         $filelist[$index] = path_absolute($file);
     }
     $destination = path_absolute($destination);
-    if (substr($destination, -4) == ".zip") {
-        @clearstatcache();
-        if (!is_file($destination) || $overWrite) {
-            delfile($destination);
-            require_once PATH_CORE_PLUGIN . "Zip/pclzip.php";
-            $PclZip = new PclZip($destination);
-            $result = $PclZip->create(
-                $filelist,
-                PCLZIP_OPT_REMOVE_PATH, ($remove != "" ? path_absolute($remove) : PATH_WEB)
-            );
-            return $result == 0 ? false : true;
-        }
+    @clearstatcache();
+    if (!is_file($destination) || $overWrite) {
+        delfile($destination);
+        require_once PATH_CORE_PLUGIN . "Zip/pclzip.php";
+        $PclZip = new PclZip($destination);
+        $result = $PclZip->create(
+            $filelist,
+            PCLZIP_OPT_REMOVE_PATH, ($remove != "" ? path_absolute($remove) : PATH_WEB)
+        );
+        return $result == 0 ? false : true;
     }
 }
 /**

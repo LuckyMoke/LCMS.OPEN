@@ -35,7 +35,7 @@ class optimize extends adminbase
                 if ($_L['form']['name']) {
                     sql_query("TRUNCATE TABLE `{$_L['form']['name']}`");
                 }
-                ajaxout(1, "success");
+                ajaxout(1, "表数据已清空");
                 break;
             default:
                 $table = sql_query("SHOW TABLE STATUS");

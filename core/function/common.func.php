@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-27 15:43:05
+ * @LastEditTime: 2020-11-18 16:25:14
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -90,8 +90,12 @@ function arr2sql($old, $new = array(), $unarr = '')
  */
 function sql2arr($data)
 {
-    $arr = unserialize($data);
-    return $data != "N;" ? ($arr != "N;" ? $arr : "") : "";
+    if ($data != "N;") {
+        $arr = unserialize($data);
+        if ($arr != "N;" && $arr != "") {
+            return $arr;
+        }
+    }
 }
 /**
  * [timenow 获取当前时间]
@@ -290,26 +294,11 @@ function sqlinsert($string)
             $string[$key] = sqlinsert($val);
         }
     } else {
-        $string_old = $string;
-        $string     = str_ireplace("\\", "/", $string);
-        $string     = str_ireplace("\"", "/", $string);
-        $string     = str_ireplace("'", "/", $string);
-        $string     = str_ireplace("*", "/", $string);
-        $string     = str_ireplace("%5C", "/", $string);
-        $string     = str_ireplace("%22", "/", $string);
-        $string     = str_ireplace("%27", "/", $string);
-        $string     = str_ireplace("%2A", "/", $string);
-        $string     = str_ireplace("select", "\sel\ect", $string);
-        $string     = str_ireplace("insert", "\ins\ert", $string);
-        $string     = str_ireplace("update", "\up\date", $string);
-        $string     = str_ireplace("delete", "\de\lete", $string);
-        $string     = str_ireplace("union", "\un\ion", $string);
-        $string     = str_ireplace("into", "\in\to", $string);
-        $string     = str_ireplace("load_file", "\load\_\file", $string);
-        $string     = str_ireplace("outfile", "\out\file", $string);
-        $string     = str_ireplace("sleep", "\sle\ep", $string);
-        $string     = strip_tags($string);
-        if ($string_old != $string) {
+        $cache = str_ireplace([
+            "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
+        ], "/", $string);
+        $string = strip_tags($string);
+        if ($cache != $string) {
             $string = '';
         }
         $string = trim($string);
@@ -334,7 +323,19 @@ function filterform($string)
             $string = trim($string);
         }
     }
-    $string = stristr($string, "\\n") !== false ? $string : str_replace(array("\\n", "\\"), array("\n", ""), $string);
+    if ($string == strip_tags($string)) {
+        $string = str_replace([
+            "\\n", "\\", '"', "'",
+        ], [
+            "\n", "&#92;", "&#34;", '&#39;',
+        ], $string);
+    } else {
+        $string = str_replace([
+            "\\n", "\\", "'",
+        ], [
+            "\n", "&#92;", "&#39;",
+        ], $string);
+    }
     return $string;
 }
 /**
