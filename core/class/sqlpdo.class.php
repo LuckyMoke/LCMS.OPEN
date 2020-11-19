@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-11-19 15:36:23
+ * @Description:PDO数据库操作类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class SQLPDO
 {
@@ -28,14 +35,15 @@ class SQLPDO
     }
     /**
      * [prepare 数据库操作准备]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @param  [type] $sql     [description]
+     * @param  [type] $$params [description]
+     * @return [type]          [description]
      */
-    public function prepare($sql)
+    public function prepare($sql, $params = [])
     {
         $this->psm = $this->pdo->prepare($sql);
         if ($this->psm) {
-            $this->psm->execute();
+            $this->psm->execute($params);
             return $this->psm;
         } else {
             LCMS::X(500, "数据错误");
@@ -103,18 +111,18 @@ class SQLPDO
      * @param  [type] $sql [description]
      * @return [type]      [description]
      */
-    public function update($sql)
+    public function update($sql, $params = [])
     {
-        return $this->prepare($sql)->rowCount();
+        return $this->prepare($sql, $params)->rowCount();
     }
     /**
      * [insert 插入数据]
      * @param  [type] $sql [description]
      * @return [type]      [description]
      */
-    public function insert($sql)
+    public function insert($sql, $params = [])
     {
-        return $this->prepare($sql)->rowCount();
+        return $this->prepare($sql, $params)->rowCount();
     }
     /**
      * [delete 删除数据]

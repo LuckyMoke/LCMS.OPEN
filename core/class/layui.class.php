@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-28 13:48:23
+ * @LastEditTime: 2020-11-19 16:40:57
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -49,7 +49,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
         echo $html;
@@ -65,7 +65,7 @@ class LAY
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
@@ -81,7 +81,7 @@ class LAY
         <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='layui-textarea{$para['tipsbox']}' style='border-top:none;border-right:none;border-bottom:none;border-left:1px solid #e6e6e6'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
+                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='lcms-form-textarea layui-textarea{$para['tipsbox']}' style='border-top:none;border-right:none;border-bottom:none;border-left:1px solid #e6e6e6'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
                 </div>
             </div>";
         echo $html;

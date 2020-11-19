@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-11-18 12:03:45
+ * @LastEditTime: 2020-11-19 16:37:32
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -94,30 +94,34 @@ function sql_total($sql = [])
  */
 function sql_update($sql = [])
 {
-    $table = sql_tablename($sql[0]);
+    $params = [];
+    $index  = 0;
+    $table  = sql_tablename($sql[0]);
     if ($sql[1] && is_array($sql[1])) {
         foreach ($sql[1] as $key => $val) {
+            $nval = ":sqlval_{$index}";
             if ($sql[4][$key]) {
-                $data[] = "{$key} = {$key} {$sql[4][$key]} {$val}";
+                $data[] = "`{$key}` = {$nval}";
+
+                $params[$nval] = "{$key} {$sql[4][$key]} {$val}";
             } else {
-                $val    = $val === null ? "[LCMSSQLNULL]" : $val;
-                $data[] = "{$key} = '{$val}'";
+                $data[] = "`{$key}` = {$nval}";
+
+                $params[$nval] = $val;
             }
+            $index++;
         }
-        $data = implode(",", $data);
+        $data = implode(", ", $data);
     } else {
         $data = $sql[1];
     }
     if ($data) {
         $where = $sql[2] ? " WHERE {$sql[2]}" : "";
         if ($sql[3] && is_array($sql[3])) {
-            foreach ($sql[3] as $key => $val) {
-                $where = str_replace($key, $val, $where);
-            }
+            $params = array_merge($params, $sql[3]);
         }
-        $data  = str_replace("'[LCMSSQLNULL]'", "NULL", $data);
-        $query = "UPDATE {$table} SET {$data}{$where}";
-        DB::$mysql->update($query);
+        $query = "UPDATE `{$table}` SET {$data}{$where}";
+        DB::$mysql->update($query, $params);
     }
 }
 /**
@@ -127,32 +131,41 @@ function sql_update($sql = [])
  */
 function sql_insert($sql = [])
 {
-    $table = sql_tablename($sql[0]);
+    $params = [];
+    $index  = 0;
+    $table  = sql_tablename($sql[0]);
     if ($sql[1][0]) {
         foreach ($sql[1] as $val) {
             $sql_key = array_keys($val);
-            foreach ($val as $index => $v) {
-                $val[$index] = $v === null ? "[LCMSSQLNULL]" : $v;
+            $nkey    = [];
+            foreach ($val as $v) {
+                $nval   = ":sqlval_{$index}";
+                $nkey[] = $nval;
+
+                $params[$nval] = $v;
+                $index++;
             }
-            $sql_val[] = implode("','", array_values($val));
+            $sql_val[] = implode(", ", $nkey);
         }
-        $sql_val = "('" . implode("'),('", $sql_val) . "')";
+        $sql_val = "(" . implode("), (", $sql_val) . ")";
     } else {
         $sql_key = array_keys($sql[1]);
-        foreach ($sql[1] as $index => $v) {
-            $sql[1][$index] = $v === null ? "[LCMSSQLNULL]" : $v;
+        $nkey    = [];
+        foreach ($sql[1] as $v) {
+            $nval   = ":sqlval_{$index}";
+            $nkey[] = $nval;
+
+            $params[$nval] = $v;
+            $index++;
         }
-        $sql_val = "('" . implode("','", array_values($sql[1])) . "')";
+        $sql_val = "(" . implode(", ", $nkey) . ")";
     }
-    $sql_key = "(" . implode(",", $sql_key) . ")";
+    $sql_key = "(`" . implode("`, `", $sql_key) . "`)";
     if ($sql[2] && is_array($sql[2])) {
-        foreach ($sql[2] as $key => $val) {
-            $sql_val = str_replace($key, $val, $sql_val);
-        }
+        $params = array_merge($params, $sql[2]);
     }
-    $sql_val = str_replace("'[LCMSSQLNULL]'", "NULL", $sql_val);
-    $query   = "INSERT IGNORE INTO {$table} {$sql_key} VALUES {$sql_val}";
-    DB::$mysql->insert($query);
+    $query = "INSERT IGNORE INTO `{$table}` {$sql_key} VALUES {$sql_val}";
+    DB::$mysql->insert($query, $params);
     return sql_insert_id();
 }
 /**

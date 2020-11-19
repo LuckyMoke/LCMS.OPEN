@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-11-18 16:25:14
+ * @LastEditTime: 2020-11-19 17:06:09
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -54,34 +54,26 @@ function ajaxout($code = 1, $msg = "", $go = "", $data = "")
  * @param  string $unarr [description]
  * @return [type]        [description]
  */
-function arr2sql($old, $new = array(), $unarr = '')
+function arr2sql($old, $new = [], $unarr = '')
 {
-    if (is_array($new) && count($new) > 0) {
-        if ($old != "N;" && $old != "" && $old != " " && $old != null) {
-            $old = unserialize($old);
-            if ($old != "N;") {
-                $unarr = explode("|", $unarr);
-                foreach ($unarr as $str) {
-                    if ($str) {
-                        unset($old[$str]);
-                    }
-                }
-                $data = $new ? array_replace_recursive($old, $new) : $old;
-            } else {
-                $data = $new;
+    $old = sql2arr($old);
+    if ($old && is_array($new) && !empty($new)) {
+        // 新老数据合并
+        $unarr = explode("|", $unarr);
+        foreach ($unarr as $str) {
+            if ($str) {
+                unset($old[$str]);
             }
-        } else {
-            $data = $new;
         }
-        $sql = serialize($data);
-    } elseif ($old != "N;" && $old != "" && $old != " " && $old != null) {
+        $sql = serialize($new ? array_replace_recursive($old, $new) : $old);
+    } elseif ($old) {
+        // 使用老数据
         $sql = serialize($old);
-        $sql = $sql == "N;" ? "" : $sql;
     } else {
+        // 使用新数据
         $sql = serialize($new);
-        $sql = $sql == "N;" ? "" : $sql;
     }
-    return $sql;
+    return is_serialize($sql) ? $sql : "";
 }
 /**
  * [sql2arr 反序列化]
@@ -90,11 +82,22 @@ function arr2sql($old, $new = array(), $unarr = '')
  */
 function sql2arr($data)
 {
-    if ($data != "N;") {
-        $arr = unserialize($data);
-        if ($arr != "N;" && $arr != "") {
-            return $arr;
-        }
+    if (empty($data)) {
+        return false;
+    }
+    if (!is_serialize($data)) {
+        return false;
+    }
+    $result = unserialize($data, [
+        'allowed_classes' => false,
+    ]);
+    if (false === $result) {
+        $cache = preg_replace_callback('!s:(\d+):"(.*?)";!s', function ($matchs) {
+            return 's:' . strlen($matchs[2]) . ':"' . $matchs[2] . '";';
+        }, $data);
+        return unserialize($cache);
+    } else {
+        return $result;
     }
 }
 /**
@@ -295,12 +298,10 @@ function sqlinsert($string)
         }
     } else {
         $cache = str_ireplace([
-            "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
-        ], "/", $string);
-        $string = strip_tags($string);
-        if ($cache != $string) {
-            $string = '';
-        }
+            "\0", "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
+        ], [
+            "_", "_", "\*", "&#92;", "&#34;", "&#39;", "sel\ect", "ins\ert", "up\date", "del\ete", "un\ion", "in\to", "load\_file", "out\file", "sl\eep",
+        ], $string);
         $string = trim($string);
     }
     return $string;
@@ -322,19 +323,6 @@ function filterform($string)
         } else {
             $string = trim($string);
         }
-    }
-    if ($string == strip_tags($string)) {
-        $string = str_replace([
-            "\\n", "\\", '"', "'",
-        ], [
-            "\n", "&#92;", "&#34;", '&#39;',
-        ], $string);
-    } else {
-        $string = str_replace([
-            "\\n", "\\", "'",
-        ], [
-            "\n", "&#92;", "&#39;",
-        ], $string);
     }
     return $string;
 }
@@ -504,6 +492,39 @@ function is_phone($phone)
         $flag = false;
     }
     return $flag;
+}
+/**
+ * @判断是否为序列化:
+ * @param {*}
+ * @return {*}
+ */
+function is_serialize($data)
+{
+    if (!is_string($data)) {
+        return false;
+    }
+    $data = trim($data);
+    if ('N;' == $data) {
+        return false;
+    }
+    if (strlen($data) < 4) {
+        return false;
+    }
+    if (':' !== $data[1]) {
+        return false;
+    }
+    $semicolon = strpos($data, ';');
+    $brace     = strpos($data, '}');
+    if (false === $semicolon && false === $brace) {
+        return false;
+    }
+    if (false !== $semicolon && $semicolon < 3) {
+        return false;
+    }
+    if (false !== $brace && $brace < 4) {
+        return false;
+    }
+    return true;
 }
 /**
  * [is_https 判断一个链接是否为https]
