@@ -78,7 +78,7 @@ class index extends adminbase
                             $tempopen[$index]['menu'][$name][] = $cname;
                         }
                     }
-                } elseif ($cls == "on") {
+                } elseif ($cls) {
                     $tempopen[$index]['title']       = $list['title'];
                     $tempopen[$index]['menu'][$name] = 1;
                 }

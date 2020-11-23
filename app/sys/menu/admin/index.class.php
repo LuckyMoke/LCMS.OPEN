@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-11-16 14:28:10
+ * @LastEditTime: 2020-11-20 14:25:28
  * @Description: 常用应用设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -89,7 +89,10 @@ class index extends adminbase
                 }
                 if (LCMS::SUPER()) {
                     foreach ($open as $app) {
-                        $applist[$app] = LEVEL::app($app, "open")['info'];
+                        $info = LEVEL::app($app, "open")['info'];
+                        if ($info) {
+                            $applist[$app] = $info;
+                        }
                     }
                 } else {
                     $applist = $_L['LCMSADMIN']['level']['open'];
@@ -116,7 +119,21 @@ class index extends adminbase
                         }
                     }
                     foreach ($applist as $app => $val) {
-                        $applist[$app] = LEVEL::app($app, "open")['info'];
+                        $info = LEVEL::app($app, "open")['info'];
+                        if ($info) {
+                            $applist[$app] = $info;
+                        }
+                    }
+                }
+                $config = array_merge($config ?: [], array_diff_key($applist, $config ?: []));
+                foreach ($config as $name => $on) {
+                    if (is_array($on)) {
+                        $list[$name]       = $applist[$name];
+                        $list[$name]['on'] = 0;
+                    } elseif ($applist[$name]) {
+                        $list[$name] = array_merge([
+                            "on" => $on,
+                        ], $applist[$name]);
                     }
                 }
                 require LCMS::template("own/index");

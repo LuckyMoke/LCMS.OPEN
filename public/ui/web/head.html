@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html>
+    <html>
     <head>
-        <title>{{ $page['title']?$page['title']:$_L['config']['web']['title'] }}</title>
-        <meta name="keywords" content="{{ $page['keywords']?$page['keywords']:$_L['config']['web']['title'] }}"/>
-        <meta name="description" content="{{ $page['description']?$page['description']:$_L['config']['web']['title'] }}"/>
-        <meta name="generator" content="盘企®PHP开发框架"/>
-        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com"/>
-        <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <if $_L['url']['secure'] == "https://">
-            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+        <title>{{htmlspecialchars($page['title']?$page['title']:$_L['config']['web']['title'])}}</title>
+        <meta name="keywords" content="{{htmlspecialchars($page['keywords']?$page['keywords']:$_L['config']['web']['title'])}}" />
+        <meta name="description" content="{{htmlspecialchars($page['description']?$page['description']:$_L['config']['web']['title'])}}" />
+        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <if $_L['url']['secure']=="https://">
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
-        <meta content="yes" name="apple-mobile-web-app-capable"/>
-        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
-        <meta content="telephone=no" name="format-detection"/>
-        <link rel="icon" href="data:image/ico;base64,aWNv"/>
-        <link rel="stylesheet" href="{{ echo str_replace(PATH_WEB, $_L['url']['site'], TPL::cachename()) . '.css?' }}{{ $_L['config']['ver'] }}"/>
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <link rel="icon" href="data:image/ico;base64,aWNv" />
+        <link rel="stylesheet" href="{{ echo str_replace(PATH_WEB, $_L['url']['site'], TPL::cachename()) . '.css?' }}{{ $_L['config']['ver'] }}" />
         <script type="text/javascript">
             var LCMS = {"url":{{json_encode($_L['url'])}} };
             if (window.location.href.search('console=true') != -1) {
