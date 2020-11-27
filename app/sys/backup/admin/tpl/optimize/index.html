@@ -3,33 +3,35 @@
 <button type="button" class="layui-btn optimize" data-table='{{json_encode_ex($table)}}'>优化数据库</button>
 <span class="optimize-span" style="color:#f56c6c;padding-left:10px"></span>
 <div style="position:absolute;right:20px;margin-top:-30px;font-size:16px;">共计：{{count($table)}}个表</div>
-<table class="layui-table" lay-even>
-    <colgroup>
-        <col />
-        <col width="100" />
-        <col width="180" />
-        <col width="150" />
-        <col width="150" />
-        <col width="150" />
-        <col width="100" />
-        <col width="150" />
-        <col width="90" />
-    </colgroup>
-    <thead>
-        <tr>
-            <th>表名</th>
-            <th style="text-align:center">表类型</th>
-            <th style="text-align:center">排序规则</th>
-            <th style="text-align:center">记录数</th>
-            <th style="text-align:center">数据大小</th>
-            <th style="text-align:center">索引大小</th>
-            <th style="text-align:center">数据碎片</th>
-            <th>注释</th>
-            <th style="text-align:center">操作</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<div style="overflow-x:auto;">
+    <table class="layui-table" style="min-width:1400px;" lay-even>
+        <colgroup>
+            <col />
+            <col width="100" />
+            <col width="180" />
+            <col width="150" />
+            <col width="150" />
+            <col width="150" />
+            <col width="100" />
+            <col width="150" />
+            <col width="90" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>表名</th>
+                <th style="text-align:center">表类型</th>
+                <th style="text-align:center">排序规则</th>
+                <th style="text-align:center">记录数</th>
+                <th style="text-align:center">数据大小</th>
+                <th style="text-align:center">索引大小</th>
+                <th style="text-align:center">数据碎片</th>
+                <th>注释</th>
+                <th style="text-align:center">操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 <script class="optimize-tpl" type="text/html">
     <tr>
         <td>{Name}</td>

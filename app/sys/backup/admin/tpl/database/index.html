@@ -2,38 +2,40 @@
 <p class="lcms-form-des">数据库将备份在网站根目录 <code>/backup/data/</code> 目录下，请勿修改文件名称！！！恢复数据时，请在对应版本的框架下操作！如果数据量很大，此功能非常耗费系统资源！</p>
 <button type="button" class="layui-btn backup">立即备份</button>
 <span class="backup-span" style="color:#f56c6c;padding-left:10px"></span>
-<table class="layui-table" lay-even>
-    <colgroup>
-        <col />
-        <col width="100" />
-        <col width="180" />
-        <col width="150" />
-        <col width="130" />
-    </colgroup>
-    <thead>
-        <tr>
-            <th>备份名称</th>
-            <th style="text-align:center">文件大小</th>
-            <th style="text-align:center">备份时间</th>
-            <th style="text-align:center">框架版本</th>
-            <th style="text-align:center">操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        <loop $mysql,$info>
+<div style="overflow-x:auto;">
+    <table class="layui-table" style="min-width:1020px;" lay-even>
+        <colgroup>
+            <col />
+            <col width="100" />
+            <col width="180" />
+            <col width="150" />
+            <col width="130" />
+        </colgroup>
+        <thead>
             <tr>
-                <td><a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank">{{$info['name']}}</a></td>
-                <td align="center">{{$info['size']}}MB</td>
-                <td align="center">{{$info['time']}}</td>
-                <td align="center">{{$info['ver']}}</td>
-                <td align="center">
-                    <div class="layui-btn-group">
-                        <button type="button" class="layui-btn layui-btn-xs backup-restore" data-info='{{json_encode_ex($info)}}'>恢复数据</button>
-                        <button type="button" class="layui-btn layui-btn-xs layui-btn-danger backup-del" data-info='{{json_encode_ex($info)}}'>删除</button>
-                    </div>
-                </td>
+                <th>备份名称</th>
+                <th style="text-align:center">文件大小</th>
+                <th style="text-align:center">备份时间</th>
+                <th style="text-align:center">框架版本</th>
+                <th style="text-align:center">操作</th>
             </tr>
-        </loop>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <loop $mysql,$info>
+                <tr>
+                    <td><a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank">{{$info['name']}}</a></td>
+                    <td align="center">{{$info['size']}}MB</td>
+                    <td align="center">{{$info['time']}}</td>
+                    <td align="center">{{$info['ver']}}</td>
+                    <td align="center">
+                        <div class="layui-btn-group">
+                            <button type="button" class="layui-btn layui-btn-xs backup-restore" data-info='{{json_encode_ex($info)}}'>恢复数据</button>
+                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger backup-del" data-info='{{json_encode_ex($info)}}'>删除</button>
+                        </div>
+                    </td>
+                </tr>
+            </loop>
+        </tbody>
+    </table>
+</div>
 <template "ui/foot" />

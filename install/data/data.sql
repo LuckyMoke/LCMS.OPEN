@@ -12,7 +12,7 @@ CREATE TABLE `[_PRE]admin` (
   `addtime` datetime DEFAULT NULL COMMENT '添加时间',
   `lasttime` datetime DEFAULT NULL COMMENT '到期时间',
   `logintime` datetime DEFAULT NULL COMMENT '最后登陆时间',
-  `parameter` text COMMENT '套餐包',
+  `parameter` longtext COMMENT '套餐包',
   `ip` varchar(64) DEFAULT NULL COMMENT '登录IP',
   `lcms` int(11) NOT NULL DEFAULT 0 COMMENT '上级用户',
   PRIMARY KEY (`id`),
@@ -28,7 +28,7 @@ CREATE TABLE `[_PRE]admin_level` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) DEFAULT '0' COMMENT '上级是谁',
   `name` varchar(64) DEFAULT NULL COMMENT '权限名称',
-  `parameter` text COMMENT '权限内容',
+  `parameter` longtext COMMENT '权限内容',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员权限';
