@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-11-19 16:37:32
+ * @LastEditTime: 2020-11-27 22:01:39
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -101,9 +101,9 @@ function sql_update($sql = [])
         foreach ($sql[1] as $key => $val) {
             $nval = ":sqlval_{$index}";
             if ($sql[4][$key]) {
-                $data[] = "`{$key}` = {$nval}";
+                $data[] = "`{$key}` = {$key} {$sql[4][$key]} {$nval}";
 
-                $params[$nval] = "{$key} {$sql[4][$key]} {$val}";
+                $params[$nval] = "{$val}";
             } else {
                 $data[] = "`{$key}` = {$nval}";
 

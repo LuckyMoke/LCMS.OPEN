@@ -5,7 +5,7 @@ class CodePayCreat
     public function Order($config, $order)
     {
         global $_L;
-        $url   = "https://codepay.fateqq.com/creat_order/?";
+        $url   = "https://api.xiuxiu888.com/creat_order/?";
         $input = [
             "id"         => $config->$get['appid'],
             "page"       => $config->$get['page'],
@@ -18,7 +18,7 @@ class CodePayCreat
         if ($config->$get['appid'] && $config->$get['appsecret']) {
             $query = $this->buildRequestJson($config, $input);
             if ($config->$get['page'] == 4) {
-                $result = json_decode(http::get($url . $query), true);
+                $result = json_decode(HTTP::get($url . $query), true);
                 if ($result['status'] == "0") {
                     return ["code" => "1", "msg" => "success", "data" => $result];
                 }
