@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-14 15:23:05
+ * @LastEditTime: 2020-12-01 15:35:03
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -442,7 +442,7 @@ class admin extends adminbase
                         "disabled" => LCMS::SUPER() ? "" : true,
                     ],
                 ];
-                $hide = base64_encode(json_encode($hide));
+                $hide = $hide ? base64_encode(json_encode($hide)) : "";
                 require LCMS::template("own/iframe/admin-level-edit");
                 break;
             case 'admin-level-save':

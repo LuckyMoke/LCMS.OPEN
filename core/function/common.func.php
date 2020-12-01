@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-11-20 16:54:21
+ * @LastEditTime: 2020-12-01 15:37:25
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -82,6 +82,9 @@ function arr2sql($old, $new = [], $unarr = '')
  */
 function sql2arr($data)
 {
+    if (is_array($data)) {
+        return $data;
+    }
     if (empty($data)) {
         return false;
     }
