@@ -1,7 +1,19 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-03 13:11:19
+ * @Description:LCMS操作类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class LCMS
 {
+    /**
+     * @获取客户端真实IP
+     * @param {*}
+     * @return {*}
+     */
     public static function IP()
     {
         $iplib = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
@@ -14,6 +26,11 @@ class LCMS
         }
         return $ip;
     }
+    /**
+     * @输出错误提示页面
+     * @param {*}
+     * @return {*}
+     */
     public static function X($errcode, $errmsg, $go = "")
     {
         if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") {
@@ -26,6 +43,11 @@ class LCMS
         }
         exit;
     }
+    /**
+     * @判断是否为超级管理员
+     * @param {*}
+     * @return {*}
+     */
     public static function SUPER()
     {
         global $_L;
@@ -33,20 +55,28 @@ class LCMS
             return true;
         }
     }
-    public static function cfg($para = "")
+    /**
+     * @cache保存读取
+     * @param {*}
+     * @return {*}
+     */
+    public static function cache($para = [])
     {
         global $_L;
-        $file = PATH_CACHE . "cfg/" . md5($para['name'] . ($para['lcms'] == true ? "0" : $_L['ROOTID'])) . ".cfg";
-        if (!$para['data']) {
-            return is_file($file) ? sql2arr(base64_decode(file_get_contents($file))) : "";
-        } else {
-            if ($para['data']) {
-                makedir(PATH_CACHE . "cfg/");
-                file_put_contents($file, base64_encode(arr2sql($para['data'])));
-            }
+        $file = PATH_CACHE . "cfg/" . md5(L_NAME . $para['name'] . ($para['lcms'] == true ? "0" : $_L['ROOTID'])) . ".cache";
+        if (!$para['data'] && is_file($file)) {
+            return sql2arr(file_get_contents($file));
+        } elseif ($para['data']) {
+            makedir(PATH_CACHE . "cfg/");
+            file_put_contents($file, arr2sql($para['data']));
         }
     }
-    public static function config($paran = array())
+    /**
+     * @全自动序列化配置保存操作
+     * @param {*}
+     * @return {*}
+     */
+    public static function config($paran = [])
     {
         global $_L;
         $form = $_L['form']['LC'];
@@ -85,7 +115,7 @@ class LCMS
      * @param  string $arrkey [description]
      * @return [type]         [description]
      */
-    public static function form($paran = array())
+    public static function form($paran = [])
     {
         global $_L;
         $form = $_L['form']['LC'];
@@ -126,6 +156,11 @@ class LCMS
             sql_insert([$para['table'], $form]);
         }
     }
+    /**
+     * @模板标签处理
+     * @param {*}
+     * @return {*}
+     */
     private static function tpltags($tag)
     {
         $tags = ["php", "template", "ui", "loop", "if", "elseif", "else", "switch", "case", "default"];
@@ -139,6 +174,11 @@ class LCMS
             }
         }
     }
+    /**
+     * @模板处理
+     * @param {*}
+     * @return {*}
+     */
     public static function template($path, $ui = "")
     {
         global $_L;

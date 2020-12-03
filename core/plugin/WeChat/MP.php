@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-03 13:09:34
+ * @Description:微信小程序接口类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 class MP
 {
     public $cfg;
@@ -24,10 +31,15 @@ class MP
         }
         switch ($type) {
             case 'save':
-                LCMS::cfg(["name" => $cname, "data" => $this->cfg]);
+                LCMS::cache([
+                    "name" => $cname,
+                    "data" => $this->cfg,
+                ]);
                 break;
             default:
-                $arr = LCMS::cfg(["name" => $cname]);
+                $arr = LCMS::cache([
+                    "name" => $cname,
+                ]);
                 if (is_array($arr)) {
                     $this->cfg = array_merge($arr, $this->cfg);
                 }
