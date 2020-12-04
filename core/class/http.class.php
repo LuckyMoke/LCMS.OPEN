@@ -37,7 +37,7 @@ class HTTP
      * @param  boolean $build [是否进行 http_build_query]
      * @return [type]         [description]
      */
-    public function post($url, $data, $build = false)
+    public static function post($url, $data, $build = false)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, 0);

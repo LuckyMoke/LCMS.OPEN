@@ -1,46 +1,64 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-03 16:41:29
+ * @Description:SESSION操作类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class SESSION
 {
     private static $type = "0";
     private static $userid;
     private static $redis;
+    /**
+     * @启动SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function start()
     {
         global $_L;
         self::$type   = $_L['config']['admin']['session_type'];
         $session_time = $_L['config']['admin']['sessiontime'];
         $session_time = $session_time > "0" ? $session_time * 60 : 86400;
-        if ($_L['form']['lcmscookie']) {
-            // 如果请求参数中含有lcmscookie字段内容，那么sessionID为指定的
-            self::$userid = "LCMSSESSIONID" . strtoupper(md5($_L['form']['lcmscookie']));
+        if ($_L['form']['rootsid']) {
+            // 请确保rootsid在每个客户端唯一
+            self::$userid = "LCMS" . strtoupper($_L['form']['rootsid']);
         } else {
-            if (!$_COOKIE['LCMSSESSIONID'] || $_COOKIE['LCMSSESSIONID'] == "" || $_COOKIE['LCMSSESSIONID'] == null || $_COOKIE['LCMSSESSIONID'] == " ") {
-                $cookie = strtoupper(md5(time() . randstr(32) . CLIENT_IP));
-                setcookie("LCMSSESSIONID", $cookie, 0, "/", "", 0, true);
+            if (empty($_COOKIE['LCMSCID'])) {
+                $cookie = strtoupper(substr(md5(time() . randstr(6) . CLIENT_IP . $_SERVER['HTTP_USER_AGENT']), 8, 16)) . randstr(6);
+                setcookie("LCMSCID", $cookie, 0, "/", "", 0, true);
             } else {
-                $cookie = $_COOKIE['LCMSSESSIONID'];
+                $cookie = $_COOKIE['LCMSCID'];
             }
-            self::$userid = "LCMSSESSIONID" . strtoupper(md5($_SERVER['HTTP_USER_AGENT'] . $cookie));
+            self::$userid = "LCMS{$cookie}";
         }
         if (self::$type == "1") {
             load::plugin("Redis/rds");
             self::$redis = new RDS();
-            $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSESSIONIDTIME");
+            $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSIDTIME");
             if ($expire_time && $expire_time < time()) {
                 self::$redis->$do->hDel(self::$userid, "LCMSADMIN");
             }
-            self::$redis->$do->hSet(self::$userid, "LCMSSESSIONIDTIME", time() + intval($session_time));
+            self::$redis->$do->hSet(self::$userid, "LCMSSIDTIME", time() + intval($session_time));
         } else {
+            session_name("LCMSSID");
             session_id(self::$userid);
             session_start();
-            $expire_time = $_SESSION['LCMSSESSIONIDTIME'];
+            $expire_time = $_SESSION['LCMSSIDTIME'];
             if ($expire_time && $expire_time < time()) {
                 unset($_SESSION["LCMSADMIN"]);
             }
-            $_SESSION['LCMSSESSIONIDTIME'] = time() + intval($session_time);
+            $_SESSION['LCMSSIDTIME'] = time() + intval($session_time);
         }
     }
+    /**
+     * @设置SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function set($name, $value)
     {
         if (self::$type == "1") {
@@ -53,6 +71,11 @@ class SESSION
         }
         return $value;
     }
+    /**
+     * @获取SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function get($name)
     {
         if (self::$type == "1") {
@@ -66,6 +89,11 @@ class SESSION
         }
         return $value;
     }
+    /**
+     * @获取所有SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function getall()
     {
         if (self::$type == "1") {
@@ -83,6 +111,11 @@ class SESSION
         }
         return $arr;
     }
+    /**
+     * @删除SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function del($name)
     {
         if (self::$type == "1") {
@@ -91,6 +124,11 @@ class SESSION
             unset($_SESSION[$name]);
         }
     }
+    /**
+     * @删除所有SESSION
+     * @param {*}
+     * @return {*}
+     */
     public static function delall()
     {
         if (self::$type == "1") {
@@ -99,6 +137,11 @@ class SESSION
             session_destroy();
         }
     }
+    /**
+     * @获取SESSIONID
+     * @param {*}
+     * @return {*}
+     */
     public static function getid()
     {
         return self::$userid;

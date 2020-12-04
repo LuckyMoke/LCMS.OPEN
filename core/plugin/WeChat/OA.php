@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-03 13:10:11
+ * @LastEditTime: 2020-12-04 14:52:11
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -68,7 +68,7 @@ class OA
         if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
             if ($this->cfg['thirdapi']) {
                 // 如果启用第三方接口
-                $token = json_decode(http::get($this->cfg['thirdapi'] . "accesstoken"), true);
+                $token = json_decode(HTTP::get($this->cfg['thirdapi'] . "accesstoken"), true);
                 if ($token['code'] == "1" && $token['data']['access_token'] && $token['data']['expires_in']) {
                     $this->cfg['access_token'] = [
                         "token"   => $token['data']['access_token'],
@@ -85,7 +85,7 @@ class OA
                     "secret"     => $this->cfg['appsecret'],
                     "grant_type" => "client_credential",
                 ]);
-                $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
+                $token = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
                 if ($token['errcode']) {
                     return $token;
                 } else {
@@ -112,7 +112,7 @@ class OA
             "code"       => $code,
             "grant_type" => "authorization_code",
         ]);
-        return json_decode(http::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
+        return json_decode(HTTP::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
     }
     /**
      * [openid 微信登陆获取openid]
@@ -198,7 +198,7 @@ class OA
                 "openid"       => $para['openid'],
                 "lang"         => "zh_CN",
             ]);
-            $userinfo = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/user/info?{$query}"), true);
+            $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/user/info?{$query}"), true);
             if ($userinfo && !$userinfo['errcode']) {
                 $userinfo = $this->user([
                     "do"     => "save",
@@ -213,7 +213,7 @@ class OA
                     // 跳转获取用户信息
                     if ($this->cfg['thirdapi']) {
                         // 如果启用第三方接口
-                        $user = json_decode(http::get($this->cfg['thirdapi'] . "userinfo&openid={$_L['form']['wechatoauthopenid']}"), true);
+                        $user = json_decode(HTTP::get($this->cfg['thirdapi'] . "userinfo&openid={$_L['form']['wechatoauthopenid']}"), true);
                         if ($user['code'] == 1 && $user['data']['openid']) {
                             $userinfo = $this->user([
                                 "do"     => "save",
@@ -240,7 +240,7 @@ class OA
                         "openid"       => $openid['openid'],
                         "lang"         => "zh_CN",
                     ));
-                    $userinfo = json_decode(http::get("https://api.weixin.qq.com/sns/userinfo?{$query}"), true);
+                    $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/sns/userinfo?{$query}"), true);
                     if ($userinfo && !$userinfo['errcode']) {
                         $userinfo['nickname'] = filterEmoji($userinfo['nickname']);
                         $userinfo             = $this->user([
@@ -329,7 +329,7 @@ class OA
         if (!$this->cfg['jsapi_ticket']['ticket'] || $this->cfg['jsapi_ticket']['expires'] < time()) {
             if ($this->cfg['thirdapi']) {
                 // 如果启用第三方接口
-                $token = json_decode(http::get($this->cfg['thirdapi'] . "jsapiticket"), true);
+                $token = json_decode(HTTP::get($this->cfg['thirdapi'] . "jsapiticket"), true);
                 if ($token['code'] == "1" && $token['data']['ticket'] && $token['data']['expires_in']) {
                     $this->cfg['jsapi_ticket'] = [
                         "ticket"  => $token['data']['ticket'],
@@ -345,7 +345,7 @@ class OA
                     "access_token" => $this->cfg['access_token']['token'],
                     "type"         => "jsapi",
                 ]);
-                $ticket = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
+                $ticket = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
                 if ($ticket['errcode']) {
                     return $ticket;
                 } else {
@@ -389,7 +389,7 @@ class OA
     public function send_tpl($para = [])
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result;
     }
@@ -401,7 +401,7 @@ class OA
     public function send_custom($para = [])
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result;
     }
@@ -428,7 +428,7 @@ class OA
             ]);
             okinfo("https://mp.weixin.qq.com/mp/subscribemsg?{$query}#wechat_redirect");
         } elseif ($_L['form']['reserved'] == $reserved) {
-            $result = http::post("https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
+            $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
                 "touser"      => $para['touser'],
                 "template_id" => $para['template_id'],
                 "miniprogram" => $para['miniprogram'],
@@ -448,7 +448,7 @@ class OA
     public function add_tpl($tpl)
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
             "template_id_short" => $tpl,
         ]));
         $result = json_decode($result, true);
@@ -462,7 +462,7 @@ class OA
     public function del_tpl($tplid)
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
             "template_id" => $tplid,
         ]));
         $result = json_decode($result, true);
@@ -477,9 +477,9 @@ class OA
     {
         $this->access_token();
         if (is_array($para)) {
-            $result = http::post("https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
+            $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
         } elseif ($para == "get") {
-            $result = http::get("https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$this->cfg['access_token']['token']}");
+            $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$this->cfg['access_token']['token']}");
         }
         $result = json_decode($result, true);
         return $result;
@@ -605,11 +605,22 @@ class OA
         $this->access_token();
         $url    = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={$this->cfg['access_token']['token']}";
         $url    = $para['next_openid'] ? $url . "&next_openid=" . $para['next_openid'] : $url;
-        $result = json_decode(http::get($url), true);
+        $result = json_decode(HTTP::get($url), true);
         if ($result['total'] && ($result['total'] == $result['count'] || (($para['page'] - 1) * 10000 + $result['count']) == $result['total'])) {
             unset($result['next_openid']);
         }
         return $result;
+    }
+    /**
+     * @获取当前在线客服列表
+     * @param {*}
+     * @return {*}
+     */
+    public function get_custom_online()
+    {
+        $this->access_token();
+        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist?access_token={$this->cfg['access_token']['token']}"), true);
+        return $result['kf_online_list'] ?: false;
     }
     /**
      * [get_material_count 获取永久素材总数]
@@ -618,9 +629,14 @@ class OA
     public function get_material_count()
     {
         $this->access_token();
-        $result = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$this->cfg['access_token']['token']}"), true);
+        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$this->cfg['access_token']['token']}"), true);
         return $result;
     }
+    /**
+     * @获取永久素材列表
+     * @param {*}
+     * @return {*}
+     */
     public function get_material_list($para = [])
     {
         $this->access_token();
@@ -629,7 +645,7 @@ class OA
             "offset" => $para['offset'] ? $para['offset'] : "0",
             "count"  => $para['count'] ? $para['count'] : "20",
         ]);
-        $result = json_decode(http::post("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$this->cfg['access_token']['token']}", $query), true);
+        $result = json_decode(HTTP::post("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$this->cfg['access_token']['token']}", $query), true);
         return $result;
     }
     /**

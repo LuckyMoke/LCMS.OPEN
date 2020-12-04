@@ -10,9 +10,9 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta content="telephone=no" name="format-detection" />
         <link rel="stylesheet" href="{{$_L['url']['static']}}prettify/prettify.css?{{$_L['config']['ver']}}" />
-        <style>h2{margin:0 10px 10px 10px;padding:20px 10px 10px 0;font-size:18px;color:#409eff;font-weight:400;border-bottom:1px #ebeef5 solid;line-height:1.6}ol li:nth-child({{$error['this']['line']-$error['this']['start']}}){background:#fbd7d7 !important;}</style>
+        <style>body{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;background:#ffffff;}pre{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;letter-spacing:1px;}h2{margin:0 10px 10px 10px;padding:20px 10px 10px 0;font-size:18px;color:#409eff;font-weight:400;border-bottom:1px #ebeef5 solid;line-height:1.6}ol li:nth-child({{$error['this']['line']-$error['this']['start']}}){background:#fbd7d7 !important;}</style>
     </head>
-    <body style="background:#ffffff;font-family:'Fira Code','Segoe UI','Lucida Grande',Helvetica,Arial,'Microsoft YaHei',FreeSans,Arimo,'Droid Sans','wenquanyi micro hei',sans-serif">
+    <body>
         <div style="border:1px #DCDFE6 solid;margin:20px 10px;">
             <h2 title="{{$error['this']['path']}}">
                 <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com//s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}} in </a>
