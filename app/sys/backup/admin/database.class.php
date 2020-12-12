@@ -2,9 +2,9 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2020-11-17 22:26:13
+ * @LastEditTime: 2020-12-12 12:27:58
  * @Description:数据库备份恢复操作
- * @symbol_custom_string_obkoro1_copyright: Copyright ${now_year} 运城市盘石网络科技有限公司
+ * @Copyright 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
@@ -21,7 +21,7 @@ class database extends adminbase
         switch ($_L['form']['action']) {
             case 'backup':
                 $table = sql_query("SHOW TABLE STATUS");
-                $table = array_column($table, "Name");
+                $table = array_column((array) $table, "Name");
                 makedir(PATH_WEB . "backup/data/");
                 delfile(PATH_WEB . "backup/backup.sql");
                 ajaxout(1, "success", "", $table);
@@ -77,7 +77,7 @@ class database extends adminbase
                 ];
             }
         }
-        array_multisort(array_column($result, 'time'), SORT_DESC, $result);
+        array_multisort(array_column((array) $result, 'time'), SORT_DESC, (array) $result);
         return $result;
     }
     /**

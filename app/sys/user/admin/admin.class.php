@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-01 15:35:03
+ * @LastEditTime: 2020-12-11 16:29:43
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -110,7 +110,7 @@ class admin extends adminbase
         switch ($_L['form']['action']) {
             case 'admin-list':
                 $where     = $LC['name'] ? " AND (name LIKE '%{$LC['name']}%' OR title LIKE '%{$LC['name']}%' OR email LIKE '%{$LC['name']}%' OR mobile LIKE '%{$LC['name']}%')" : "";
-                $data      = LCMS::SUPER() ? TABLE::data("admin", "id != 0" . $where, "id ASC") : TABLE::data("admin", "(lcms = '{$_L[LCMSADMIN][id]}' OR id = '{$_L[LCMSADMIN][id]}')" . $where, "id ASC");
+                $data      = LCMS::SUPER() ? TABLE::data("admin", "id != 0" . $where, "id ASC") : TABLE::data("admin", "(lcms = '{$_L['LCMSADMIN']['id']}' OR id = '{$_L['LCMSADMIN']['id']}')" . $where, "id ASC");
                 $adminlist = sql_getall(["admin"]);
                 $levellist = sql_getall(["admin_level"]);
                 foreach ($data['data'] as $key => $val) {
@@ -181,7 +181,7 @@ class admin extends adminbase
                 if (LCMS::SUPER()) {
                     $data = table::data("admin_level", "", "id ASC");
                 } else {
-                    $data = table::data("admin_level", "uid = '{$_L[LCMSADMIN][id]}'", "id ASC");
+                    $data = table::data("admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id ASC");
                 }
                 $adminlist = sql_getall(["admin"]);
                 foreach ($data['data'] as $key => $val) {
@@ -205,7 +205,7 @@ class admin extends adminbase
                 }
                 break;
             case 'admin-level-list-del':
-                $adminlist = sql_getall(["admin", "type = '{$LC[id]}'"]);
+                $adminlist = sql_getall(["admin", "type = '{$LC['id']}'"]);
                 if ($adminlist) {
                     ajaxout(0, "有用户使用此权限");
                 } else {
@@ -385,13 +385,13 @@ class admin extends adminbase
                 }
                 break;
             case 'admin-level-edit':
-                $level = $_L['form']['id'] ? LCMS::form(array(
+                $level = $_L['form']['id'] ? LCMS::form([
                     "do"    => "get",
                     "table" => "admin_level",
                     "id"    => $_L['form']['id'],
-                )) : array();
-                ksort($level['sys']);
-                ksort($level['open']);
+                ]) : [];
+                $level && ksort($level['sys']);
+                $level && ksort($level['open']);
                 $appall = LEVEL::appall();
                 foreach ($appall as $type => $val) {
                     foreach ($val as $name => $info) {

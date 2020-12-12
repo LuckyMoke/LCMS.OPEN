@@ -55,7 +55,7 @@ class adminbase extends common
                 LCMS::X(403, "系统权限已修改，请重新登陆", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
-                $level                    = sql_get(["admin_level", "id = '{$_L[LCMSADMIN][type]}'"]);
+                $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);
                 $_L['LCMSADMIN']['level'] = sql2arr($level['parameter']);
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == "0" ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
@@ -94,7 +94,7 @@ class adminbase extends common
             LCMS::X(403, "没有权限，禁止访问");
         }
     }
-    public static function domain($domain = "", $secure = "", $autodomain = false)
+    public function domain($domain = "", $secure = "", $autodomain = false)
     {
         global $_L;
         if (is_url($domain)) {
@@ -105,6 +105,6 @@ class adminbase extends common
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         };
-        self::load_web_url($domain, $secure);
+        $this->load_web_url($domain, $secure);
     }
 }

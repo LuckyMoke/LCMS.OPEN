@@ -77,7 +77,7 @@ class index extends adminbase
                     $logintime              = datenow();
                     $admininfo['logintime'] = $logintime;
                     SESSION::set("LCMSADMIN", $admininfo);
-                    sql_update(["admin", ["logintime" => $logintime, "ip" => CLIENT_IP], "id = '{$admininfo[id]}'"]);
+                    sql_update(["admin", ["logintime" => $logintime, "ip" => CLIENT_IP], "id = '{$admininfo['id']}'"]);
                     ajaxout(1, "登录成功", $_L['form']['go'] ? $_L['form']['go'] : $_L['url']['admin']);
                 }
             } else {

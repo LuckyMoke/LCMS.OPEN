@@ -1,43 +1,61 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <title>程序错误</title>
-        <meta name="renderer" content="webkit" />
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-        <meta content="yes" name="apple-mobile-web-app-capable" />
-        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-        <meta content="telephone=no" name="format-detection" />
-        <link rel="stylesheet" href="{{$_L['url']['static']}}prettify/prettify.css?{{$_L['config']['ver']}}" />
-        <style>body{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;background:#ffffff;}pre{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;letter-spacing:1px;}h2{margin:0 10px 10px 10px;padding:20px 10px 10px 0;font-size:18px;color:#409eff;font-weight:400;border-bottom:1px #ebeef5 solid;line-height:1.6}ol li:nth-child({{$error['this']['line']-$error['this']['start']}}){background:#fbd7d7 !important;}</style>
-    </head>
-    <body>
-        <div style="border:1px #DCDFE6 solid;margin:20px 10px;">
-            <h2 title="{{$error['this']['path']}}">
-                <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com//s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}} in </a>
-                <span style="color:#909399">{{$error['this']['file']}} line {{$error['this']['line']}}</span>
-            </h2>
-            <h1 style="margin:0;padding:0 10px 10px 10px;font-size:24px;font-weight:normal;">{{$error['this']['fanyi']}}</h1>
-            <div style="border-top:1px #DCDFE6 solid;border-bottom:1px #DCDFE6 solid;">
-                <pre class="prettyprint linenums" style="margin:0">{{$error['this']['content']}}</pre>
-            </div>
-            <h2>
-                Call Stack
-            </h2>
-            <ul style="list-style-type:decimal;padding-left:60px;">
-                <loop $error['trace'],$val,$index>
-                    <li title="{{$val['path']}}" style="padding:5px 0;">
-                        <if $val['class']||$val['function']>at </if><if $val['class']><span style="border-bottom:1px dashed;">{{$val['class']}}</span>{{$val['type']}}</if><if $val['function']>{{$val['function']}} </if>in <span style="color:#909399">{{$val['file']}} line {{$val['line']}}</span>
-                    </li>
-                </loop>
-            </ul>
+<html>
+<head>
+    <title>程序错误</title>
+    <meta name="renderer" content="webkit" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link rel="stylesheet" href="{{$_L['url']['static']}}prettify/prettify.css?{{$_L['config']['ver']}}" />
+    <style>body{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;background:#ffffff;}pre{font-family:"Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"!important;letter-spacing:1px;}h2{margin:0 10px 10px 10px;padding:20px 10px 10px 0;font-size:18px;color:#409eff;font-weight:400;border-bottom:1px #ebeef5 solid;line-height:1.6}ol li:nth-child({{$error['this']['line']-$error['this']['start']}}){background:#fbd7d7 !important;}.list li:hover{background:#f4f4f4}</style>
+</head>
+<body>
+    <div style="border:1px #DCDFE6 solid;margin:20px 10px;">
+        <h2 title="{{$error['this']['path']}}">
+            <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com//s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}} in </a>
+            <span style="color:#909399">{{$error['this']['file']}} line {{$error['this']['line']}}</span>
+        </h2>
+        <h1 style="margin:0;padding:0 10px 10px 10px;font-size:24px;font-weight:normal;word-break:break-word;">{{$error['this']['fanyi']}}</h1>
+        <div style="border-top:1px #DCDFE6 solid;border-bottom:1px #DCDFE6 solid;">
+            <pre class="prettyprint linenums" style="margin:0">{{$error['this']['content']}}</pre>
         </div>
-        <div style="margin:0 10px 20px 10px;font-size:12px;color:#909399">&copy;{{ echo date("Y") }} {{$_L['config']['admin']['developer']}} 版权所有 翻版必究 当前系统版本 V{{ $_L['config']['ver'] }} 页面加载时间 {{ echo round(microtime(true)-PAGE_START, 5) }} 秒</div>
-        <script type="text/javascript" src="{{$_L['url']['static']}}prettify/prettify.js?{{$_L['config']['ver']}}"></script>
-        <script>
-            prettyPrint();
-            document.querySelector('ol').setAttribute('start', {{$error['this']['start']+1}});
-        </script>
-    </body>
-    </html>
+        <h2>调用栈：</h2>
+        <ul style="list-style-type:decimal;padding-left:60px;">
+            <loop $error['trace'],$val,$index>
+                <li title="{{$val['path']}}" style="padding:5px 0;word-break:break-all;">
+                    <if $val['class']||$val['function']>at </if><if $val['class']><span style="border-bottom:1px dashed;">{{$val['class']}}</span>{{$val['type']}}</if><if $val['function']>{{$val['function']}} </if>in <span style="color:#909399">{{$val['file']}} line {{$val['line']}}</span>
+                </li>
+            </loop>
+        </ul>
+        <h2>表单：</h2>
+        <ul class="list" style="list-style:none;margin:10px 10px 20px 40px;padding:0;font-size:12px;">
+            <loop $_L['form'],$val,$key>
+                <li style="border-bottom:1px dashed #DCDFE6;padding: 8px;">
+                    <div style="width:150px;float:left;word-break:break-all;">{{$key}}</div>
+                    <div style="padding-left:160px;color:#909399;word-break:break-all;">{{$val}}</div>
+                    <div style="clear:both"></div>
+                </li>
+            </loop>
+        </ul>
+        <h2>服务器：</h2>
+        <ul class="list" style="list-style:none;margin:10px 10px 20px 40px;padding:0;font-size:12px;">
+            <loop $_SERVER,$val,$key>
+                <li style="border-bottom:1px dashed #DCDFE6;padding: 8px;">
+                    <div style="width:150px;float:left;word-break:break-all;">{{$key}}</div>
+                    <div style="padding-left:160px;color:#909399;word-break:break-all;">{{$val}}</div>
+                    <div style="clear:both"></div>
+                </li>
+            </loop>
+        </ul>
+    </div>
+    <div style="margin:0 10px 20px 10px;font-size:12px;color:#909399">&copy;{{ echo date("Y") }} {{$_L['config']['admin']['developer']}} 版权所有 翻版必究 当前系统版本 V{{ $_L['config']['ver'] }} 页面加载时间 {{ echo round(microtime(true)-PAGE_START, 5) }} 秒</div>
+    <script type="text/javascript" src="{{$_L['url']['static']}}prettify/prettify.js?{{$_L['config']['ver']}}"></script>
+    <script>
+        prettyPrint();
+        document.querySelector('ol').setAttribute('start', {{$error['this']['start']+1}});
+    </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-03 16:41:29
+ * @LastEditTime: 2020-12-11 16:48:01
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -38,11 +38,11 @@ class SESSION
         if (self::$type == "1") {
             load::plugin("Redis/rds");
             self::$redis = new RDS();
-            $expire_time = self::$redis->$do->hGet(self::$userid, "LCMSSIDTIME");
+            $expire_time = self::$redis->do->hGet(self::$userid, "LCMSSIDTIME");
             if ($expire_time && $expire_time < time()) {
-                self::$redis->$do->hDel(self::$userid, "LCMSADMIN");
+                self::$redis->do->hDel(self::$userid, "LCMSADMIN");
             }
-            self::$redis->$do->hSet(self::$userid, "LCMSSIDTIME", time() + intval($session_time));
+            self::$redis->do->hSet(self::$userid, "LCMSSIDTIME", time() + intval($session_time));
         } else {
             session_name("LCMSSID");
             session_id(self::$userid);
@@ -65,7 +65,7 @@ class SESSION
             if (is_object($value) || is_array($value)) {
                 $value = serialize($value);
             }
-            self::$redis->$do->hSet(self::$userid, $name, $value);
+            self::$redis->do->hSet(self::$userid, $name, $value);
         } else {
             $_SESSION[$name] = $value;
         }
@@ -79,7 +79,7 @@ class SESSION
     public static function get($name)
     {
         if (self::$type == "1") {
-            $value      = self::$redis->$do->hGet(self::$userid, $name);
+            $value      = self::$redis->do->hGet(self::$userid, $name);
             $value_serl = @unserialize($value);
             if (is_object($value_serl) || is_array($value_serl)) {
                 return $value_serl;
@@ -97,7 +97,7 @@ class SESSION
     public static function getall()
     {
         if (self::$type == "1") {
-            $arr = self::$redis->$do->hGetAll(self::$userid);
+            $arr = self::$redis->do->hGetAll(self::$userid);
             foreach ($arr as $key => $val) {
                 $val_serl = @unserialize($val);
                 if (is_object($val_serl) || is_array($val_serl)) {
@@ -119,7 +119,7 @@ class SESSION
     public static function del($name)
     {
         if (self::$type == "1") {
-            self::$redis->$do->hDel(self::$userid, $name);
+            self::$redis->do->hDel(self::$userid, $name);
         } else {
             unset($_SESSION[$name]);
         }
@@ -132,7 +132,7 @@ class SESSION
     public static function delall()
     {
         if (self::$type == "1") {
-            self::$redis->$do->delete(self::$userid);
+            self::$redis->do->delete(self::$userid);
         } else {
             session_destroy();
         }

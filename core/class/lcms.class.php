@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-03 13:11:19
+ * @LastEditTime: 2020-12-11 15:30:32
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -126,7 +126,7 @@ class LCMS
             "key"   => $paran['key'] ? $paran['key'] : "parameter",
             "unset" => $paran['unset'] ? $paran['unset'] : false,
         );
-        $data = $para['id'] ? sql_get([$para['table'], "id = '{$para[id]}'"]) : "";
+        $data = $para['id'] ? sql_get([$para['table'], "id = '{$para['id']}'"]) : [];
         if ($para['do'] == "get") {
             $parameter = sql2arr($data[$para['key']]);
             foreach ($parameter as $key => $val) {
@@ -134,7 +134,7 @@ class LCMS
             }
             return $data;
         }
-        foreach ($form as $key => $val) {
+        foreach ((array)$form as $key => $val) {
             if (is_array($val)) {
                 $parameter[$key] = $val;
                 unset($form[$key]);
@@ -150,7 +150,7 @@ class LCMS
                     $form[$para['key']] = empty($parameter) ? "" : arr2sql($data[$para['key']], $parameter);
                 }
             }
-            sql_update([$para['table'], $form, "id = '{$para[id]}'"]);
+            sql_update([$para['table'], $form, "id = '{$para['id']}'"]);
         } else {
             $parameter ? $form[$para['key']] = arr2sql($parameter) : "";
             sql_insert([$para['table'], $form]);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-27 14:16:01
+ * @LastEditTime: 2020-12-11 15:43:26
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -38,7 +38,7 @@ class TABLE
      * @param  string $table [description]
      * @return [type]        [description]
      */
-    public static function html($table = "")
+    public static function html($table = [])
     {
         global $_L;
         $toolbar = self::toolbar($table['toolbar']);
@@ -75,6 +75,7 @@ class TABLE
     public static function toolbar($toolbar = "")
     {
         global $_L;
+        $laytpl    = "";
         $toolbarid = "TOOLBAR" . randstr(6);
         if ($toolbar) {
             if (is_array($toolbar)) {
@@ -84,8 +85,6 @@ class TABLE
                 }
                 $laytpl  = "<script type='text/html' id='{$toolbarid}'>{$laytpl}<div class='clear'></div></script>";
                 $toolbar = "#{$toolbarid}";
-            } else {
-                $toolbar = $table['toolbar'];
             }
         } else {
             $laytpl  = "<script type='text/html' id='{$toolbarid}'><div class='clear'></div></script>";
@@ -104,13 +103,14 @@ class TABLE
     public static function search($arr)
     {
         global $_L;
+        $html = "";
         if ($arr) {
             foreach ($arr as $key => $val) {
                 switch ($val['type']) {
                     case 'select':
                         $options = '';
                         foreach ($val['option'] as $option) {
-                            if (count($option['children']) > 0) {
+                            if (!empty($option['children'])) {
                                 $opts = "";
                                 foreach ($option['children'] as $opt) {
                                     $opts .= '<option value="' . $opt['value'] . '">' . $opt['title'] . '</option>';
@@ -197,7 +197,7 @@ class TABLE
         global $_L;
         $form = $_L['form']['LC'];
         if ($form['id']) {
-            sql_delete([$table, "id = '{$form[id]}'"]);
+            sql_delete([$table, "id = '{$form['id']}'"]);
         } elseif (is_array($form)) {
             $ids = implode(",", array_column($form, "id"));
             sql_delete([$table, "id IN ({$ids})"]);
@@ -209,10 +209,11 @@ class TABLE
      * @param  string $tree [description]
      * @return [type]       [description]
      */
-    public static function tree($tree = "")
+    public static function tree($tree = [])
     {
         global $_L;
-        $laytpl = "";
+        $laytpl  = "";
+        $toolbar = "";
         foreach ($tree['toolbar'] as $key => $val) {
             $val['url'] = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
             $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
@@ -232,7 +233,7 @@ class TABLE
             "top"  => $tree['top'],
             "cols" => $tree['cols'],
         ];
-        $html .= "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . base64_encode(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
+        $html = "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . base64_encode(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
         echo $html;
     }
     /**

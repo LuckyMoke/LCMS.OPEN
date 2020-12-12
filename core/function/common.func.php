@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-01 15:37:25
+ * @LastEditTime: 2020-12-11 16:24:50
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -49,12 +49,12 @@ function ajaxout($code = 1, $msg = "", $go = "", $data = "")
 }
 /**
  * [arr2sql 数组序列化]
- * @param  [type] $old   [description]
+ * @param  array  $old   [description]
  * @param  array  $new   [description]
  * @param  string $unarr [description]
  * @return [type]        [description]
  */
-function arr2sql($old, $new = [], $unarr = '')
+function arr2sql($old = [], $new = [], $unarr = '')
 {
     $old = sql2arr($old);
     if ($old && is_array($new) && !empty($new)) {
@@ -65,7 +65,7 @@ function arr2sql($old, $new = [], $unarr = '')
                 unset($old[$str]);
             }
         }
-        $sql = serialize($new ? array_replace_recursive($old, $new) : $old);
+        $sql = serialize($new ? array_replace_recursive((array) $old, $new) : $old);
     } elseif ($old) {
         // 使用老数据
         $sql = serialize($old);
@@ -77,16 +77,16 @@ function arr2sql($old, $new = [], $unarr = '')
 }
 /**
  * [sql2arr 反序列化]
- * @param  [type] $data [description]
+ * @param  string $data [description]
  * @return [type]       [description]
  */
-function sql2arr($data)
+function sql2arr($data = "")
 {
-    if (is_array($data)) {
-        return $data;
-    }
     if (empty($data)) {
         return false;
+    }
+    if (is_array($data)) {
+        return $data;
     }
     if (!is_serialize($data)) {
         return false;

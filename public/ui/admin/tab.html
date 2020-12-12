@@ -1,8 +1,8 @@
-<if count($_L['APP']['menu'][L_CLASS]['level']) gt 1>
+<if count((array)$_L['APP']['menu'][L_CLASS]['level']) gt 1>
     <div id="APPTAB" class="layui-tab layui-tab-brief">
         <ul class="layui-tab-title">
             <loop $_L['APP']['menu'][L_CLASS]['level'],$val,$key>
-                <li class="{{ echo L_ACTION == 'do' . $key ? "layui-this" : "" }}">
+                <li class="{{ echo L_ACTION == 'do' . $key ? 'layui-this' : '' }}">
                     <a href="{{ $_L['url']['own_form'] . $key }}" title="{{ $val['title'] }}">{{ $val['title'] }}</a>
                 </li>
             </loop>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2020-10-29 15:36:53
+ * @LastEditTime: 2020-12-11 17:52:41
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -54,6 +54,7 @@ class developer
                     ],
                     "trace" => $traces,
                 ];
+                ob_end_clean();
                 require LCMS::template(PATH_PUBLIC . "ui/admin/error");
                 exit();
             } else {

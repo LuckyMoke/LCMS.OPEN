@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-29 17:36:09
+ * @LastEditTime: 2020-12-11 16:52:49
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -301,8 +301,8 @@ class admin extends adminbase
         if ($_L['form']['checked'] == "1") {
             load::plugin("Redis/rds");
             $redis = new RDS();
-            $redis->$do->setex("LCMSREDISTEST", 60, "success");
-            if ($redis->$do->get('LCMSREDISTEST') == "success") {
+            $redis->do->setex("LCMSREDISTEST", 60, "success");
+            if ($redis->do->get('LCMSREDISTEST') == "success") {
                 ajaxout(1);
             } else {
                 ajaxout(0, "Redis未成功开启");

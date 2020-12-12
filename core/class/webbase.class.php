@@ -10,7 +10,7 @@ class webbase extends common
         $this->load_web_config();
         $this->load_web_url();
         $this->check_level();
-        self::load_tpl_config();
+        $this->load_tpl_config();
     }
     public function load_web_config()
     {
@@ -68,7 +68,7 @@ class webbase extends common
             }
         }
     }
-    public static function load_tpl_config($tpl = "")
+    public function load_tpl_config($tpl = "")
     {
         global $_L;
         $config = PATH_APP_NOW . "web/tpl/{$tpl}/config.php";
@@ -79,7 +79,7 @@ class webbase extends common
             TPL::getui($paths);
         }
     }
-    public static function domain($domain = "", $secure = "", $autodomain = false)
+    public function domain($domain = "", $secure = "", $autodomain = false)
     {
         global $_L;
         if (is_url($domain)) {
@@ -90,6 +90,6 @@ class webbase extends common
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         }
-        self::load_web_url($domain, $secure);
+        $this->load_web_url($domain, $secure);
     }
 }

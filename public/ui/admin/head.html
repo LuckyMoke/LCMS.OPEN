@@ -29,8 +29,8 @@
     </head>
     <body>
         <template "ui/top" />
-        <div id="APPIFRAME" style="padding-left:{{$_L['form']['n']!='appstore'&&count($_L['APP']['menu'])>1?'150px':'0'}};">
-            <if $_L['form']['n']!="appstore" && count($_L['APP']['menu']) gt 1>
+        <div id="APPIFRAME" style="padding-left:{{$_L['form']['n']!='appstore'&&count((array)$_L['APP']['menu'])>1?'150px':'0'}};">
+            <if $_L['form']['n']!='appstore' && count((array)$_L['APP']['menu']) gt 1>
                 <div id="APPNAV">
                     <div>
                         <i class="layui-icon layui-icon-spread-left"></i>

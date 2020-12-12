@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-11 16:30:15
+ * @Description:权限计算
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class LEVEL
 {
@@ -39,7 +46,7 @@ class LEVEL
         foreach ($appinfo['menu'] as $key => $val) {
             if (!empty($val['level'])) {
                 foreach ($val['level'] as $fun => $arr) {
-                    if (!$fun['menu'] || $arr['menu'] == "0") {
+                    if (!$arr['menu'] || $arr['menu'] == "0") {
                         unset($appinfo['menu'][$key]['level'][$fun]);
                     }
                 }
@@ -47,11 +54,11 @@ class LEVEL
                 unset($appinfo['menu'][$key]);
             }
         }
-        $fristclass            = array_key_first($appinfo['menu']);
-        $fristfun              = array_key_first($appinfo['menu'][$fristclass]['level']);
+        $fristclass            = array_key_first((array) $appinfo['menu']);
+        $fristfun              = array_key_first((array) $appinfo['menu'][$fristclass]['level']);
         $appinfo['url']['all'] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$fristclass}&a={$fristfun}";
         foreach ($appinfo['menu'] as $key => $val) {
-            $fristfun             = array_key_first($appinfo['menu'][$key]['level']);
+            $fristfun             = array_key_first((array) $appinfo['menu'][$key]['level']);
             $appinfo['url'][$key] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$key}&a={$fristfun}";
         }
         return $appinfo;
@@ -61,8 +68,8 @@ class LEVEL
         global $_L;
         $sys  = traversal_one(PATH_APP . "sys");
         $open = traversal_one(PATH_APP . "open");
-        sort($sys['dir']);
-        sort($open['dir']);
+        $sys && sort($sys['dir']);
+        $open && sort($open['dir']);
         foreach ($sys['dir'] as $dir) {
             $info = self::app($dir, "sys");
             if ($info) {

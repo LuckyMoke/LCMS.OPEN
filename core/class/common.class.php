@@ -43,16 +43,16 @@ class common
         isset($_REQUEST['GLOBALS']) && exit('Access Error');
         parse_str(substr(strstr(HTTP_QUERY, '?'), 1), $QUERY);
         foreach ($QUERY as $k => $v) {
-            $k{0} != '_' && $_L['form'][$k] = filterform($v);
+            $k[0] != '_' && $_L['form'][$k] = filterform($v);
         }
         foreach ($_COOKIE as $k => $v) {
-            $k{0} != '_' && $_L['form'][$k] = filterform($v);
+            $k[0] != '_' && $_L['form'][$k] = filterform($v);
         }
         foreach ($_POST as $k => $v) {
-            $k{0} != '_' && $_L['form'][$k] = filterform($v);
+            $k[0] != '_' && $_L['form'][$k] = filterform($v);
         }
         foreach ($_GET as $k => $v) {
-            $k{0} != '_' && $_L['form'][$k] = filterform($v);
+            $k[0] != '_' && $_L['form'][$k] = filterform($v);
         }
     }
     /**
@@ -90,6 +90,7 @@ class common
         ]);
         if ($_L['config']['admin']['development']) {
             $_L['config']['ver'] = "9999." . time();
+            ob_start();
         } else {
             $version = PATH_CORE . "version";
             if (is_file($version)) {
@@ -103,6 +104,7 @@ class common
         if (!empty($_L['table'])) {
             DB::$mysql->close();
         }
+        ob_end_flush();
         exit;
     }
 }

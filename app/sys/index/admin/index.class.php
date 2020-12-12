@@ -11,6 +11,7 @@ class index extends adminbase
     public function doindex()
     {
         global $_L;
+        $app    = [];
         $config = LCMS::config([
             "type" => "sys",
             "name" => "menu",
@@ -86,7 +87,7 @@ class index extends adminbase
         }
         foreach ($tempopen as $index => $list) {
             $open[$index]['title'] = $list['title'];
-            if (count($list['menu']) > 1) {
+            if (count((array) $list['menu']) > 1) {
                 foreach ($list['menu'] as $name => $li) {
                     $app[$name] = $app[$name] ?: LEVEL::app($name, $name == "appstore" ? "sys" : "open");
                     if ($app[$name]['menu']) {
@@ -106,7 +107,7 @@ class index extends adminbase
                     }
                 }
             } else {
-                $name       = array_key_first($list['menu']);
+                $name       = array_key_first((array) $list['menu']);
                 $app[$name] = $app[$name] ?: LEVEL::app($name, $name == "appstore" ? "sys" : "open");
                 if (is_array($list['menu'][$name])) {
                     foreach ($list['menu'][$name] as $class) {

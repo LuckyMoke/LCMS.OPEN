@@ -11,8 +11,6 @@ define('PATH_CORE', PATH_WEB . "core/");
 define('PATH_CORE_CLASS', PATH_WEB . "core/class/");
 define('PATH_CORE_FUNC', PATH_WEB . "core/function/");
 define('PATH_CORE_PLUGIN', PATH_WEB . "core/plugin/");
-define('PATH_APP_NOW', PATH_APP . L_TYPE . '/' . L_NAME . '/');
-define('PATH_APP_OWN', PATH_APP . L_TYPE . '/' . L_NAME . '/' . L_MODULE . '/');
 define('PHP_FILE', basename(__FILE__));
 define('PHP_SELF', htmlentities($_SERVER['PHP_SELF']) == "" ? $_SERVER['SCRIPT_NAME'] : htmlentities($_SERVER['PHP_SELF']));
 define('SYS_TIME', time());
@@ -27,10 +25,10 @@ require_once PATH_CORE_FUNC . 'file.func.php';
 require_once 'mysql.class.php';
 class install
 {
-    public static $configName = PATH_CORE . "config.php";
+    public $configName = PATH_CORE . "config.php";
     public function __construct()
     {
-        self::checkInstallLock();
+        $this->checkInstallLock();
     }
     /**
      * [checkInstallLock 检测是否已安装]
@@ -61,7 +59,7 @@ class install
         foreach ($db as $key => $val) {
             $config = str_replace("[db_{$key}]", $val, $config);
         }
-        file_put_contents(self::$configName, $config);
+        file_put_contents($this->configName, $config);
     }
     /**
      * [addLock 安装完成锁安装]
@@ -121,7 +119,7 @@ class install
     public function installDb($db)
     {
         $db['charset'] = "utf8mb4";
-        self::checkDb($db);
+        $this->checkDb($db);
         $data = DB::get_dbs();
         foreach ($data as $key => $val) {
             if ($val == $db['name']) {
@@ -141,7 +139,7 @@ class install
                 ajaxout(0, DB::error());
             };
         }
-        self::addConfig($db);
+        $this->addConfig($db);
     }
     /**
      * [addAdmin 添加管理员]
@@ -149,15 +147,15 @@ class install
      */
     public function addAdmin($admin)
     {
-        require_once self::$configName;
+        require_once $this->configName;
         $db = $_L['mysql'];
-        self::checkDb($db);
+        $this->checkDb($db);
         DB::$link->select_db($db['name']);
         $query = "insert  into `{$db['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','{$admin['pass']}',NULL,NULL,'lcms','0.00','2019-01-01 00:00:00',NULL,NULL,'',NULL,0);";
         DB::query($query);
-        self::addLock();
+        $this->addLock();
         if (!DB::error()) {
-            self::delInstall();
+            $this->delInstall();
         }
     }
 }
