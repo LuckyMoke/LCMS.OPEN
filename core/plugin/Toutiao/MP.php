@@ -2,16 +2,16 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-03 13:07:25
+ * @LastEditTime: 2020-12-13 16:07:13
  * @Description:头条小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 class MP
 {
-    public $cfg = array();
+    public $cfg = [];
     public function __construct($config)
     {
-        $this->$cfg = $config;
+        $this->cfg = $config;
         $this->cache();
     }
     /**
@@ -21,8 +21,8 @@ class MP
      */
     public function cache($type = "get")
     {
-        if ($this->$cfg['appid'] && $this->$cfg['appsecret']) {
-            $cachename = md5($this->$cfg['appid'] . $this->$cfg['appsecret']);
+        if ($this->cfg['appid'] && $this->cfg['appsecret']) {
+            $cachename = md5($this->cfg['appid'] . $this->cfg['appsecret']);
         } else {
             return false;
         }
@@ -30,14 +30,14 @@ class MP
             case 'save':
                 LCMS::cache([
                     "name" => $cachename,
-                    "data" => $this->$cfg,
+                    "data" => $this->cfg,
                 ]);
                 break;
             default:
                 $cache = LCMS::cache([
                     "name" => $cachename,
                 ]);
-                $this->$cfg = is_array($cache) ? array_merge($this->$cfg, $cache) : $this->$cfg;
+                $this->cfg = is_array($cache) ? array_merge($this->cfg, $cache) : $this->cfg;
                 break;
         }
     }
@@ -49,8 +49,8 @@ class MP
     public function openid($code)
     {
         $query = http_build_query([
-            "appid"  => $this->$cfg['appid'],
-            "secret" => $this->$cfg['appsecret'],
+            "appid"  => $this->cfg['appid'],
+            "secret" => $this->cfg['appsecret'],
             "code"   => $code,
         ]);
         $result = json_decode(http::get("https://developer.toutiao.com/api/apps/jscode2session?{$query}"), true);
@@ -62,17 +62,17 @@ class MP
      */
     public function access_token()
     {
-        if (!$this->$cfg['access_token']['token'] || $this->$cfg['access_token']['expires'] < time()) {
+        if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
             $query = http_build_query(array(
-                "appid"      => $this->$cfg['appid'],
-                "secret"     => $this->$cfg['appsecret'],
+                "appid"      => $this->cfg['appid'],
+                "secret"     => $this->cfg['appsecret'],
                 "grant_type" => "client_credential",
             ));
             $token = json_decode(http::get("https://developer.toutiao.com/api/apps/token?{$query}"), true);
             if ($token['errcode']) {
                 return $token;
             } else {
-                $this->$cfg['access_token'] = [
+                $this->cfg['access_token'] = [
                     "token"   => $token['access_token'],
                     "expires" => time() + 3600,
                 ];
@@ -90,7 +90,7 @@ class MP
     {
         $this->access_token();
         $result = $this->post_json("https://developer.toutiao.com/api/apps/qrcode", json_encode_ex([
-            "access_token" => $this->$cfg['access_token']['token'],
+            "access_token" => $this->cfg['access_token']['token'],
             "appname"      => $appname,
             "path"         => urlencode($path),
         ]));

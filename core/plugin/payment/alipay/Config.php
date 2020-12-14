@@ -14,6 +14,6 @@ class AliPayConfig
             "timeout_express" => "2h",
         ] + $config;
         $config['gatewayurl'] = $config['gatewayurl'] == "1" ? "https://openapi.alipaydev.com/gateway.do" : "https://openapi.alipay.com/gateway.do";
-        $this->$get           = $config;
+        $this->get            = $config;
     }
 }

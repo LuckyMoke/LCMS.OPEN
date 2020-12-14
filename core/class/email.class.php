@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-13 15:25:58
+ * @Description:邮件发送类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::plugin("PHPMailer/Exception");
 load::plugin("PHPMailer/PHPMailer");
@@ -38,7 +45,7 @@ class EMAIL
             $email->addAddress($config['to'], $config['toname']);
             if ($config['attachment']) {
                 foreach ($config['attachment'] as $key => $val) {
-                    $mail->addAttachment($val['path'], $val['title']);
+                    $email->addAttachment($val['path'], $val['title']);
                 }
             }
             $email->isHTML(true);

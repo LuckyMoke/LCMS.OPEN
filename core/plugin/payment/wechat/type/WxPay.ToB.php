@@ -7,8 +7,8 @@ class WxPayTo
     {
         $url   = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";
         $input = [
-            "mch_appid"        => $config->$get['appid'],
-            "mchid"            => $config->$get['mch_id'],
+            "mch_appid"        => $config->get['appid'],
+            "mchid"            => $config->get['mch_id'],
             "partner_trade_no" => $order['order_no'],
             "openid"           => $order['openid'],
             "check_name"       => "NO_CHECK",

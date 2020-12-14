@@ -61,21 +61,20 @@ class index extends adminbase
     {
         global $_L;
         $dir = PATH_UPLOAD . $_L['ROOTID'] . "/images/" . date("Ym") . "/";
-        if (!empty($_L['form']['files'])) {
-            foreach ($_L['form']['files'] as $url) {
-                $upload = UPLOAD::file($dir, $url);
-                if ($upload['code'] == 1) {
-                    $result[] = [
-                        "state"  => "SUCCESS",
-                        "source" => $url,
-                        "url"    => "{$upload['dir']}{$upload['filename']}",
-                    ];
-                } else {
-                    $result[] = [
-                        "state"  => "FAIL",
-                        "source" => $url,
-                    ];
-                }
+        $_L['form']['files'] = $_L['form']['files'] ?: [];
+        foreach ($_L['form']['files'] as $url) {
+            $upload = UPLOAD::file($dir, $url);
+            if ($upload['code'] == 1) {
+                $result[] = [
+                    "state"  => "SUCCESS",
+                    "source" => $url,
+                    "url"    => "{$upload['dir']}{$upload['filename']}",
+                ];
+            } else {
+                $result[] = [
+                    "state"  => "FAIL",
+                    "source" => $url,
+                ];
             }
         }
         echo json_encode(["list" => $result]);

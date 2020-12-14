@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-05 14:48:15
+ * @LastEditTime: 2020-12-13 15:27:03
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -93,6 +93,7 @@ class LAY
         $para         = self::start($para);
         $para['many'] = $para['many'] ? "" : "xm-select-radio";
         $default      = $para['default'] ? "<option value=''>{$para['default']}</option>" : "";
+        $option       = "";
         foreach ($para['option'] as $key => $val) {
             $selected = $val['value'] == $para['value'] ? " selected" : "";
             $disabled = $val['disabled'] ? " disabled='disabled'" : "";
@@ -217,7 +218,8 @@ class LAY
     }
     public static function radio($para)
     {
-        $para = self::start($para);
+        $para  = self::start($para);
+        $radio = "";
         foreach ($para['radio'] as $key => $val) {
             $disabled = $val['disabled'] ? ' disabled' : '';
             $checked  = $val['value'] == $para['value'] ? ' checked' : '';
@@ -236,7 +238,8 @@ class LAY
     }
     public static function checkbox($para)
     {
-        $para = self::start($para);
+        $para     = self::start($para);
+        $checkbox = "";
         foreach ($para['checkbox'] as $key => $val) {
             if ($val['name']) {
                 $checkbox .= "<input type='checkbox' name='{$val['name']}' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($val['value'] == '1' ? ' checked' : '') . " />";

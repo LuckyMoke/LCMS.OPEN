@@ -121,7 +121,7 @@ class AutoPay
         unset($order['payment']['notify_url']);
         load::plugin("payment/wechat/Config");
         $config = new WxPayConfig($order['payment']);
-        if ($config->$get['paytotype'] != "1") {
+        if ($config->get['paytotype'] != "1") {
             load::plugin("payment/wechat/type/WxPay.To");
             $order_no = "mch_billno";
         } else {

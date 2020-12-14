@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-13 23:38:36
+ * @Description:文件操作方法
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 /**
  * [path_absolute 相对路径转绝对路径]
@@ -7,13 +14,11 @@ defined('IN_LCMS') or exit('No permission');
  */
 function path_absolute($path)
 {
-    if (substr($path, 0, strlen(PATH_WEB)) == PATH_WEB) {
-        $path = $path;
-    } else {
-        $path = PATH_WEB . str_replace(array("../", "./", PATH_WEB), "", $path);
-    }
-    $path = is_dir($path) ? path_standard($path) : $path;
-    return $path;
+    $path = PATH_WEB . str_replace([
+        "../", "./", PATH_WEB,
+    ], "", $path);
+    $path = str_replace("\/", "\\", $path);
+    return is_dir($path) ? path_standard($path) : $path;
 }
 /**
  * [path_relative 绝对路径转相对路径]
@@ -23,7 +28,9 @@ function path_absolute($path)
  */
 function path_relative($path, $relative = "../")
 {
-    return $relative . str_replace(array("../", "./", PATH_WEB), "", $path);
+    return $relative . str_replace([
+        "../", "./", PATH_WEB,
+    ], "", $path);
 }
 /**
  * [path_standard 目录结尾加/]
@@ -32,7 +39,8 @@ function path_relative($path, $relative = "../")
  */
 function path_standard($path)
 {
-    if (substr($path, -1, 1) != "/") {
+    $last = substr($path, -1);
+    if ($last != "/" && $last != "\\") {
         $path = $path . "/";
     }
     return $path;
@@ -250,50 +258,35 @@ function getfileable($filename)
 }
 /**
  * [unzipfile 解压ZIP]
- * @param  [type] $file        [要解压的zip压缩文件]
- * @param  string $destination [解压后的文件名（默认为解压前的文件名去掉zip后缀）]
- * @return [type]              [解压成功返回true，否则返回false]
+ * @param  [type] $zipname [要解压的zip压缩文件]
+ * @param  string $dir     [解压到目录]
+ * @return [type]          [解压成功返回true，否则返回false]
  */
-function unzipfile($file, $destination = '')
+function unzipfile($zipname, $dir = "")
 {
-    $file = path_absolute($file);
-    @clearstatcache();
-    if (is_file($file)) {
-        $destination = $destination != "" ? $destination : dirname($file);
-        $destination = path_absolute($destination);
-        require_once PATH_CORE_PLUGIN . "Zip/pclzip.php";
-        $PclZip = new PclZip($file);
-        $result = $PclZip->extract(
-            PCLZIP_OPT_PATH, $destination, PCLZIP_OPT_REPLACE_NEWER
-        );
-        return $result == 0 ? false : true;
-    }
+    require_once PATH_CORE_PLUGIN . "Zip/ziper.php";
+    $ziper = new Ziper();
+    $ziper->unzip($zipname, $dir);
+    return true;
 }
 /**
  * [zipfile 压缩为ZIP]
- * @param  [type]  $filelist    [要压缩的文件夹和文件]
- * @param  string  $destination [压缩后的文件路径需要有.zip后缀]
+ * @param  [type]  $fromfile    [要压缩的文件夹和文件]
+ * @param  string  $zipname     [压缩后的文件路径需要有后缀]
  * @param  string  $remove      [去除的目录名]
  * @param  boolean $overWrite   [是否覆盖已有的文件（true：覆盖，false：不覆盖）默认覆盖]
  * @return [type]               [压缩失败返回false]
  */
-function zipfile($filelist, $destination, $remove = "", $overWrite = true)
+function zipfile(array $fromfile, $zipname, $jump = "", $overWrite = true)
 {
-    foreach ($filelist as $index => $file) {
-        $filelist[$index] = path_absolute($file);
+    $zipname = path_absolute($zipname);
+    if ($overWrite) {
+        delfile($zipname);
     }
-    $destination = path_absolute($destination);
-    @clearstatcache();
-    if (!is_file($destination) || $overWrite) {
-        delfile($destination);
-        require_once PATH_CORE_PLUGIN . "Zip/pclzip.php";
-        $PclZip = new PclZip($destination);
-        $result = $PclZip->create(
-            $filelist,
-            PCLZIP_OPT_REMOVE_PATH, ($remove != "" ? path_absolute($remove) : PATH_WEB)
-        );
-        return $result == 0 ? false : true;
-    }
+    require_once PATH_CORE_PLUGIN . "Zip/ziper.php";
+    $ziper = new Ziper();
+    $ziper->zip($fromfile, $zipname, $jump);
+    return true;
 }
 /**
  * [getdirpower 验证文件夹是否有写权限]
@@ -383,7 +376,7 @@ function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
         while (($file = readdir($resource)) !== false) {
             $file     = gbk2utf8($file);
             $filename = $jkdir . $file;
-            if (@is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
+            if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
                 if ($jump != null) {
                     if (preg_match_all("/^({$jump})/", str_replace($jkdir, '', $filename), $out)) {
                         continue;
@@ -419,7 +412,7 @@ function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamear
         while (($file = readdir($resource)) !== false) {
             $file     = gbk2utf8($file);
             $filename = $jkdir . $file;
-            if (@is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
+            if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
                 if ($jump != null) {
                     if (preg_match_all("/^({$jump})/", str_replace(PATH_WEB, '', $filename), $out)) {
                         continue;

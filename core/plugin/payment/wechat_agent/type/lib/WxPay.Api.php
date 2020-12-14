@@ -34,7 +34,7 @@ class WxPayApi
      */
     public static function Sign($config, $para)
     {
-        return strtoupper(md5(self::ToUrlParams($para) . "&key=" . $config->$get['key']));
+        return strtoupper(md5(self::ToUrlParams($para) . "&key=" . $config->get['key']));
     }
     /**
      * [ToXml 数组转XML]
@@ -93,11 +93,11 @@ class WxPayApi
         $ch          = curl_init();
         $curlVersion = curl_version();
         curl_setopt($ch, CURLOPT_TIMEOUT, $second);
-        if ($config->$get['proxy_host'] != "0.0.0.0" && $config->$get['proxy_port'] != 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $config->$get['proxy_host']);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $config->$get['proxy_port']);
+        if ($config->get['proxy_host'] != "0.0.0.0" && $config->get['proxy_port'] != 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $config->get['proxy_host']);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $config->get['proxy_port']);
         }
-        curl_setopt($ch, CURLOPT_USERAGENT, "WXPaySDK/" . $config->$get['version'] . " (" . PHP_OS . ") PHP/" . PHP_VERSION . " CURL/" . $curlVersion['version'] . " " . $config->$get['mch_id']);
+        curl_setopt($ch, CURLOPT_USERAGENT, "WXPaySDK/" . $config->get['version'] . " (" . PHP_OS . ") PHP/" . PHP_VERSION . " CURL/" . $curlVersion['version'] . " " . $config->get['mch_id']);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -105,9 +105,9 @@ class WxPayApi
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         if ($useCert == true) {
             curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
-            curl_setopt($ch, CURLOPT_SSLCERT, $config->$get['apiclient_cert']);
+            curl_setopt($ch, CURLOPT_SSLCERT, $config->get['apiclient_cert']);
             curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
-            curl_setopt($ch, CURLOPT_SSLKEY, $config->$get['apiclient_key']);
+            curl_setopt($ch, CURLOPT_SSLKEY, $config->get['apiclient_key']);
         }
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);

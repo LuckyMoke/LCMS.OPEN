@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2020-12-12 12:27:58
+ * @LastEditTime: 2020-12-13 22:13:58
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -20,8 +20,8 @@ class database extends adminbase
         global $_L;
         switch ($_L['form']['action']) {
             case 'backup':
-                $table = sql_query("SHOW TABLE STATUS");
-                $table = array_column((array) $table, "Name");
+                $table                     = sql_query("SHOW TABLE STATUS");
+                is_array($table) && $table = array_column($table, "Name");
                 makedir(PATH_WEB . "backup/data/");
                 delfile(PATH_WEB . "backup/backup.sql");
                 ajaxout(1, "success", "", $table);
@@ -77,7 +77,7 @@ class database extends adminbase
                 ];
             }
         }
-        array_multisort(array_column((array) $result, 'time'), SORT_DESC, (array) $result);
+        !empty($result) && array_multisort(array_column($result, 'time'), SORT_DESC, $result);
         return $result;
     }
     /**
@@ -96,7 +96,7 @@ class database extends adminbase
                 unzipfile($file, $path);
                 if (is_file($cache)) {
                     $sqldata = file_get_contents($cache);
-                    $sqldata = explode(";\n", trim($sqldata));
+                    $sqldata = explode(";\n\n", trim($sqldata));
                     foreach ($sqldata as $sql) {
                         if ($sql) {
                             sql_query($sql);
@@ -126,7 +126,7 @@ class database extends adminbase
         $cache  = PATH_WEB . "backup/backup.sql";
         $create = sql_query("SHOW CREATE TABLE {$name}");
         if ($create['Create Table']) {
-            file_put_contents($cache, "DROP TABLE IF EXISTS `{$name}`;\n{$create['Create Table']};\n", FILE_APPEND);
+            file_put_contents($cache, "DROP TABLE IF EXISTS `{$name}`;\n\n{$create['Create Table']};\n\n", FILE_APPEND);
         }
         $tablename = str_replace($_L['mysql']['pre'], "", $name);
         $numrows   = sql_counter([$tablename]);
@@ -140,11 +140,12 @@ class database extends adminbase
                         $tmp[] = $v === null ? "[BACKUPNULL]" : $v;
                     }
                     $tmp = array_map('addslashes', $tmp);
+                    $tmp = str_replace(["\r\n", "\n"], "\\r\\n", $tmp);
                     $vals .= "('" . implode("','", $tmp) . "'),";
                 }
                 $vals = rtrim($vals, ",");
                 $vals = str_replace("'[BACKUPNULL]'", "NULL", $vals);
-                file_put_contents($cache, "INSERT INTO `{$name}` VALUES {$vals};\n", FILE_APPEND);
+                file_put_contents($cache, "INSERT INTO `{$name}` VALUES {$vals};\n\n", FILE_APPEND);
             }
             $start = $start + 500;
         }
@@ -162,7 +163,9 @@ class database extends adminbase
         if (is_file($cache)) {
             $bpath = "{$path}data/";
             $bname = "DATA#V{$_L['config']['ver']}#T" . date("Y-m-d&H.i.s") . "#" . randstr(6);
-            if (zipfile($cache, "{$bpath}{$bname}.LCMS", $path)) {
+            if (zipfile([
+                [$cache, "backup.sql"],
+            ], "{$bpath}{$bname}.LCMS")) {
                 delfile($cache);
                 ajaxout(1, "备份成功");
             } else {

@@ -8,16 +8,16 @@ class WxPayMini
         $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
         if ($order['openid']) {
             $input = [
-                "appid"            => $config->$get['appid'],
-                "mch_id"           => $config->$get['mch_id'],
+                "appid"            => $config->get['appid'],
+                "mch_id"           => $config->get['mch_id'],
                 "body"             => $order['body'],
                 "out_trade_no"     => $order['order_no'],
                 "total_fee"        => $order['pay'] * 100,
                 "spbill_create_ip" => $_SERVER['REMOTE_ADDR'],
-                "notify_url"       => $config->$get['notify_url'],
+                "notify_url"       => $config->get['notify_url'],
                 "trade_type"       => "JSAPI",
                 "openid"           => $order['openid'],
-                "sign_type"        => $config->$get['sign_type'],
+                "sign_type"        => $config->get['sign_type'],
                 "nonce_str"        => WxPayApi::NonceStr(),
             ];
         }
@@ -43,7 +43,7 @@ class WxPayMini
                 "timeStamp" => strval(time()),
                 "nonceStr"  => WxPayApi::NonceStr(),
                 "package"   => "prepay_id={$result['prepay_id']}",
-                "signType"  => $config->$get['sign_type'],
+                "signType"  => $config->get['sign_type'],
             ];
             $jsapi['paySign'] = WxPayApi::Sign($config, $jsapi);
             return $jsapi;

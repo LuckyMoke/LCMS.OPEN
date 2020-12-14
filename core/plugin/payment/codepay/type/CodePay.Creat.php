@@ -7,17 +7,17 @@ class CodePayCreat
         global $_L;
         $url   = "https://api.xiuxiu888.com/creat_order/?";
         $input = [
-            "id"         => $config->$get['appid'],
-            "page"       => $config->$get['page'],
+            "id"         => $config->get['appid'],
+            "page"       => $config->get['page'],
             "pay_id"     => $order['order_no'], // 订单号
             "type"       => $order['paytype'] == "wechat" ? "3" : ($order['paytype'] == "alipay" ? "1" : "2"), // 支付方式
             "price"      => $order['pay'],
-            "notify_url" => $config->$get['notify_url'],
-            'return_url' => $config->$get['return_url'],
+            "notify_url" => $config->get['notify_url'],
+            'return_url' => $config->get['return_url'],
         ];
-        if ($config->$get['appid'] && $config->$get['appsecret']) {
+        if ($config->get['appid'] && $config->get['appsecret']) {
             $query = $this->buildRequestJson($config, $input);
-            if ($config->$get['page'] == 4) {
+            if ($config->get['page'] == 4) {
                 $result = json_decode(HTTP::get($url . $query), true);
                 if ($result['status'] == "0") {
                     return ["code" => "1", "msg" => "success", "data" => $result];
@@ -46,7 +46,7 @@ class CodePayCreat
             $sign .= "$key=$val";
             $urls .= "$key=" . urlencode($val);
         }
-        $query = $urls . '&sign=' . md5($sign . $config->$get['appsecret']);
+        $query = $urls . '&sign=' . md5($sign . $config->get['appsecret']);
         return $query;
     }
 }

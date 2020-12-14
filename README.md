@@ -8,7 +8,7 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.0以上，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.1以上，Mysql5.6以上
 
 硬件要求：CPU 1GHz，内存1G，硬盘空余10G
 

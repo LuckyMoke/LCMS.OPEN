@@ -119,7 +119,7 @@ class AutoPay
         if ($result['alipay_trade_refund_response']['code'] == "10000") {
             return ["code" => 1, "msg" => "退款成功", "order_no" => $result['alipay_trade_refund_response']['out_trade_no']];
         } else {
-            return ["code" => 0, "msg" => "退款失败：{$result[alipay_trade_refund_response]['sub_msg']}"];
+            return ["code" => 0, "msg" => "退款失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
         }
     }
     /**
@@ -147,7 +147,7 @@ class AutoPay
         if ($result['alipay_trade_refund_response']['code'] == "10000") {
             return ["code" => 1, "msg" => "转账成功", "order_no" => $result['alipay_trade_refund_response']['out_biz_no']];
         } else {
-            return ["code" => 0, "msg" => "转账失败：{$result[alipay_trade_refund_response]['sub_msg']}"];
+            return ["code" => 0, "msg" => "转账失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
         }
     }
     /**
@@ -165,7 +165,7 @@ class AutoPay
         if ($result['alipay_trade_refund_response']['code'] == "10000") {
             return ["code" => 1, "msg" => "转账成功", "order_no" => $result['alipay_trade_refund_response']['out_biz_no']];
         } else {
-            return ["code" => 0, "msg" => "转账失败：{$result[alipay_trade_refund_response]['sub_msg']}"];
+            return ["code" => 0, "msg" => "转账失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
         }
     }
 }

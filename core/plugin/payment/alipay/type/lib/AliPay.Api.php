@@ -3,7 +3,7 @@ class AliPayApi
 {
     public static function unifiedOrder($config, $input)
     {
-        $input['sign'] = self::sign(self::ToUrlParams($input), $config->$get['privatekey'], $config->$get['sign_type']);
+        $input['sign'] = self::sign(self::ToUrlParams($input), $config->get['privatekey'], $config->get['sign_type']);
         return $input;
     }
     protected static function sign($para, $key = "", $signType = "RSA")
@@ -20,7 +20,7 @@ class AliPayApi
         }
         return false;
     }
-    public function verify($para, $sign, $key = "", $signType = 'RSA')
+    public static function verify($para, $sign, $key = "", $signType = 'RSA')
     {
         if ($key) {
             $key = "-----BEGIN PUBLIC KEY-----\n" . wordwrap($key, 64, "\n", true) . "\n-----END PUBLIC KEY-----";

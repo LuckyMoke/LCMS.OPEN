@@ -33,7 +33,11 @@ class find extends adminbase
     {
         global $_L;
         $config = $this->config;
-        require LCMS::template("own/find");
+        if ($config['reg']['findpass'] > "0") {
+            require LCMS::template("own/find");
+        } else {
+            LCMS::X(403, "未开启找回密码功能");
+        }
     }
     public function doreset()
     {

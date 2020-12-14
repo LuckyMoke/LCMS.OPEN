@@ -8,10 +8,10 @@ class WxPayCheck
         global $_L;
         $url   = "https://api.mch.weixin.qq.com/pay/orderquery";
         $input = [
-            "appid"        => $config->$get['appid'],
-            "mch_id"       => $config->$get['mch_id'],
+            "appid"        => $config->get['appid'],
+            "mch_id"       => $config->get['mch_id'],
             "out_trade_no" => $order['order_no'],
-            "sign_type"    => $config->$get['sign_type'],
+            "sign_type"    => $config->get['sign_type'],
             "nonce_str"    => WxPayApi::NonceStr(),
         ];
         $input['sign'] = WxPayApi::Sign($config, $input);

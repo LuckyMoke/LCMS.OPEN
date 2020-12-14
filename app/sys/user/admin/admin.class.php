@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-11 16:29:43
+ * @LastEditTime: 2020-12-13 15:16:52
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,7 @@ class admin extends adminbase
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
-        $table = array(
+        $table = [
             "url"     => "ajax&action=admin-list",
             "cols"    => [
                 ["checkbox" => "checkbox", "width" => 50],
@@ -63,7 +63,7 @@ class admin extends adminbase
             "search"  => [
                 ["title" => "账号/用户名/邮箱/手机", "name" => "name"],
             ],
-        );
+        ];
         require LCMS::template("own/admin-list");
     }
     public function dolevel()
@@ -502,7 +502,7 @@ class admin extends adminbase
                     ],
                     ["layui" => "radio", "title" => "用户注册",
                         "name"   => "LC[reg][on]",
-                        "value"  => $config['reg']['on'] ? $config['reg']['on'] : "0",
+                        "value"  => $config['reg']['on'] ?? "0",
                         "radio"  => [
                             ["title" => "关闭", "value" => "0", "tab" => "tab0"],
                             ["title" => "账号验证", "value" => "justuser", "tab" => "tab_justuser"],
@@ -510,9 +510,18 @@ class admin extends adminbase
                             ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
                         ],
                     ],
+                    ["layui" => "radio", "title" => "找回密码",
+                        "name"   => "LC[reg][findpass]",
+                        "value"  => $config['reg']['findpass'] ?? "0",
+                        "radio"  => [
+                            ["title" => "关闭", "value" => "0"],
+                            ["title" => "开启", "value" => "1"],
+                        ],
+                        "tips"   => "需配置邮箱或短信接口！",
+                    ],
                     ["layui" => "radio", "title" => "注册审核",
                         "name"   => "LC[reg][status]",
-                        "value"  => $config['reg']['status'] ? $config['reg']['status'] : "0",
+                        "value"  => $config['reg']['status'] ?? "0",
                         "radio"  => [
                             ["title" => "手动审核", "value" => "0"],
                             ["title" => "自动审核", "value" => "1"],

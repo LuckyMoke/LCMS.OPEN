@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-11 16:30:15
+ * @LastEditTime: 2020-12-13 21:14:45
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -54,11 +54,11 @@ class LEVEL
                 unset($appinfo['menu'][$key]);
             }
         }
-        $fristclass            = array_key_first((array) $appinfo['menu']);
-        $fristfun              = array_key_first((array) $appinfo['menu'][$fristclass]['level']);
+        $fristclass            = !empty($appinfo['menu']) ? array_key_first($appinfo['menu']) : "";
+        $fristfun              = !empty($appinfo['menu'][$fristclass]['level']) ? array_key_first($appinfo['menu'][$fristclass]['level']) : "";
         $appinfo['url']['all'] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$fristclass}&a={$fristfun}";
         foreach ($appinfo['menu'] as $key => $val) {
-            $fristfun             = array_key_first((array) $appinfo['menu'][$key]['level']);
+            $fristfun             = !empty($appinfo['menu'][$key]['level']) ? array_key_first($appinfo['menu'][$key]['level']) : "";
             $appinfo['url'][$key] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$key}&a={$fristfun}";
         }
         return $appinfo;

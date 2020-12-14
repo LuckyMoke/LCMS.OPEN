@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-11-19 15:36:23
+ * @LastEditTime: 2020-12-13 21:52:03
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -142,7 +142,7 @@ class SQLPDO
     {
         $this->psm = $this->pdo->query($sql);
         if (strtoupper(substr($sql, 0, 6)) === "SELECT" || strtoupper(substr($sql, 0, 4)) === "SHOW") {
-            $rows = self::affected_rows();
+            $rows = $this->affected_rows();
             if ($rows > 1) {
                 return $this->psm->fetchAll($result_type);
             } elseif ($rows == 1) {

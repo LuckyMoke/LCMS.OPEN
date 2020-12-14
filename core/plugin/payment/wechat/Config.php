@@ -11,6 +11,6 @@ class WxPayConfig
             "proxy_host" => "0.0.0.0",
             "proxy_port" => "0",
         ] + $config;
-        $this->$get = $config;
+        $this->get = $config;
     }
 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-11 15:30:32
+ * @LastEditTime: 2020-12-13 14:10:16
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -134,7 +134,7 @@ class LCMS
             }
             return $data;
         }
-        foreach ((array)$form as $key => $val) {
+        foreach ((array) $form as $key => $val) {
             if (is_array($val)) {
                 $parameter[$key] = $val;
                 unset($form[$key]);

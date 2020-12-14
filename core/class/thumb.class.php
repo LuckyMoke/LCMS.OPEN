@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-13 15:28:32
+ * @Description:缩略图生成类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 class THUMB
 {
@@ -63,7 +70,7 @@ class THUMB
         imagedestroy($thumb);
         imagedestroy($img);
     }
-    protected function img_resource($img, $mime_type)
+    protected static function img_resource($img, $mime_type)
     {
         switch ($mime_type) {
             case 1:

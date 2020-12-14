@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2020-10-10 14:20:59
+ * @LastEditTime: 2020-12-13 15:27:41
+ * @Description:Mysql数据库连接类
+ * @Copyright 2020 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('sqlpdo');
 class DB

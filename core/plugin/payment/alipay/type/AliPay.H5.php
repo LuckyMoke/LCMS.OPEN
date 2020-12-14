@@ -6,14 +6,14 @@ class AliPayH5
     {
         $input = [
             'method'      => 'alipay.trade.wap.pay',
-            'app_id'      => $config->$get['appid'],
-            'format'      => $config->$get['format'],
-            'charset'     => $config->$get['charset'],
-            'sign_type'   => $config->$get['sign_type'],
-            'timestamp'   => $config->$get['timestamp'],
-            'version'     => $config->$get['version'],
-            'notify_url'  => $config->$get['notify_url'],
-            'return_url'  => $config->$get['return_url'],
+            'app_id'      => $config->get['appid'],
+            'format'      => $config->get['format'],
+            'charset'     => $config->get['charset'],
+            'sign_type'   => $config->get['sign_type'],
+            'timestamp'   => $config->get['timestamp'],
+            'version'     => $config->get['version'],
+            'notify_url'  => $config->get['notify_url'],
+            'return_url'  => $config->get['return_url'],
             'biz_content' => json_encode([
                 'out_trade_no' => $order['order_no'],
                 'total_amount' => $order['pay'],
@@ -30,7 +30,7 @@ class AliPayH5
             $arr[$key] = str_replace("'", "&apos;", $val);
         }
         $result = [
-            "url"  => $config->$get['gatewayurl'] . "?charset=" . $config->$get['charset'],
+            "url"  => $config->get['gatewayurl'] . "?charset=" . $config->get['charset'],
             "data" => $arr,
         ];
         return $result;

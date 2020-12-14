@@ -86,7 +86,7 @@ class phpqrcode
     }
     public function encodeString8bit($string, $version, $level)
     {
-        if (string == null) {
+        if ($string == null) {
             throw new Exception('empty string!');
             return null;
         }
@@ -231,8 +231,10 @@ define('QR_LOG_DIR', false);
 define('QR_FIND_BEST_MASK', true);
 define('QR_FIND_FROM_RANDOM', 2);
 define('QR_DEFAULT_MASK', 2);
-define('QR_PNG_MAXIMUM_SIZE', 1024);class QRtools
+define('QR_PNG_MAXIMUM_SIZE', 1024);
+class QRtools
 {
+    public static $frames = [];
     public static function binarize($frame)
     {
         $len = count($frame);
@@ -903,7 +905,7 @@ class QRinputItem
     public function encodeModeKanji($version)
     {
         try {
-            $bs = new QRbitrtream();
+            $bs = new QRbitstream();
             $bs->appendNum(4, 0x8);
             $bs->appendNum(QRspec::lengthIndicator(QR_MODE_KANJI, $version), (int) ($this->size / 2));
             for ($i = 0; $i < $this->size; $i += 2) {
@@ -1067,7 +1069,7 @@ class QRinput
         }
         $buf = array($size, $index, $parity);
         try {
-            $entry = new QRinputItem(QR_MODE_STRUCTURE, 3, buf);
+            $entry = new QRinputItem(QR_MODE_STRUCTURE, 3, $buf);
             array_unshift($this->items, $entry);
             return 0;
         } catch (Exception $e) {
@@ -1147,7 +1149,7 @@ class QRinput
     {
         return $size * 8;
     }
-    public function estimateBitsModeKanji($size)
+    public static function estimateBitsModeKanji($size)
     {
         return (int) (($size / 2) * 13);
     }
@@ -1592,7 +1594,7 @@ class QRsplit
         if ($ret < 0) {
             return -1;
         }
-        return $run;
+        return $ret;
     }
     public function eat8()
     {
@@ -1651,7 +1653,7 @@ class QRsplit
                 case QR_MODE_AN:$length = $this->eatAn();
                     break;
                 case QR_MODE_KANJI:
-                    if ($hint == QR_MODE_KANJI) {
+                    if ($this->modeHint == QR_MODE_KANJI) {
                         $length = $this->eatKanji();
                     } else {
                         $length = $this->eat8();
@@ -1674,7 +1676,7 @@ class QRsplit
         $stringLen = strlen($this->dataStr);
         $p         = 0;
         while ($p < $stringLen) {
-            $mode = self::identifyMode(substr($this->dataStr, $p), $this->modeHint);
+            $mode = $this->identifyMode(substr($this->dataStr, $p), $this->modeHint);
             if ($mode == QR_MODE_KANJI) {
                 $p += 2;
             } else {
@@ -2172,7 +2174,7 @@ class QRrawcode
     }
     public function getCode()
     {
-        $ret;
+        $ret = "";
         if ($this->count < $this->dataLength) {
             $row = $this->count % $this->blocks;
             $col = $this->count / $this->blocks;

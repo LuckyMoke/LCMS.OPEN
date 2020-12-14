@@ -11,6 +11,6 @@ class CodePayConfig
             "page"     => 4,
             "pay_type" => "0",
         ] + $config;
-        $this->$get = $config;
+        $this->get = $config;
     }
 }

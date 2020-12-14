@@ -6,10 +6,10 @@ class WxPayTo
     {
         $url   = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";
         $input = [
-            "mch_id"       => $config->$get['mch_id'],
-            "sub_mch_id"   => $config->$get['sub_mch_id'],
-            "wxappid"      => $config->$get['appid'],
-            "msgappid"     => $config->$get['sub_appid'],
+            "mch_id"       => $config->get['mch_id'],
+            "sub_mch_id"   => $config->get['sub_mch_id'],
+            "wxappid"      => $config->get['appid'],
+            "msgappid"     => $config->get['sub_appid'],
             "mch_billno"   => $order['order_no'],
             "send_name"    => $order['send_name'],
             "re_openid"    => $order['openid'],

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-09-04 12:07:27
+ * @LastEditTime: 2020-12-13 15:29:23
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -66,6 +66,7 @@ class TPL
         global $_M;
         $cachefile = self::cachename() . ".{$suffix}";
         $code      = self::get_content($paths, $suffix);
+        $codes     = "";
         foreach ($code as $val) {
             if ($val['code']) {
                 $val['name'] = $val['name'] ? $val['name'] : "base";

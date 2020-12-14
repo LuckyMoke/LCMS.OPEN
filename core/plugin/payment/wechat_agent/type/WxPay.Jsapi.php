@@ -9,18 +9,18 @@ class WxPayJsapi
         $openid = $this->getOpenid($config);
         if ($openid['openid']) {
             $input = [
-                "appid"            => $config->$get['appid'],
-                "mch_id"           => $config->$get['mch_id'],
-                "sub_appid"        => $config->$get['sub_appid'],
-                "sub_mch_id"       => $config->$get['sub_mch_id'],
+                "appid"            => $config->get['appid'],
+                "mch_id"           => $config->get['mch_id'],
+                "sub_appid"        => $config->get['sub_appid'],
+                "sub_mch_id"       => $config->get['sub_mch_id'],
                 "body"             => $order['body'],
                 "out_trade_no"     => $order['order_no'],
                 "total_fee"        => $order['pay'] * 100,
                 "spbill_create_ip" => $_SERVER['REMOTE_ADDR'],
-                "notify_url"       => $config->$get['notify_url'],
+                "notify_url"       => $config->get['notify_url'],
                 "trade_type"       => "JSAPI",
                 "openid"           => $openid['openid'],
-                "sign_type"        => $config->$get['sign_type'],
+                "sign_type"        => $config->get['sign_type'],
                 "nonce_str"        => WxPayApi::NonceStr(),
             ];
         }
@@ -46,7 +46,7 @@ class WxPayJsapi
                 "timeStamp" => strval(time()),
                 "nonceStr"  => WxPayApi::NonceStr(),
                 "package"   => "prepay_id={$result['prepay_id']}",
-                "signType"  => $config->$get['sign_type'],
+                "signType"  => $config->get['sign_type'],
             ];
             $jsapi['paySign'] = WxPayApi::Sign($config, $jsapi);
             return json_encode($jsapi);
@@ -60,21 +60,21 @@ class WxPayJsapi
     public function getOpenid($config)
     {
         global $_L;
-        $openid = session::get("WeChat_snsapi_base_" . $config->$get['mch_id']);
+        $openid = session::get("WeChat_snsapi_base_" . $config->get['mch_id']);
         if ($openid['openid']) {
             return $openid;
         } else {
-            if ($config->$get['oauth']) {
+            if ($config->get['oauth']) {
                 if ($_L['form']['wechatpayoauth']) {
-                    session::set("WeChat_snsapi_base_" . $config->$get['mch_id'], ["openid" => $_L['form']['wechatpayoauth']]);
+                    session::set("WeChat_snsapi_base_" . $config->get['mch_id'], ["openid" => $_L['form']['wechatpayoauth']]);
                     goheader(url_clear($_L['url']['now'], "code|state"));
                 } else {
-                    goheader($config->$get['oauth'] . urlencode($_L['url']['now']) . "&key=wechatpayoauth");
+                    goheader($config->get['oauth'] . urlencode($_L['url']['now']) . "&key=wechatpayoauth");
                 }
             } else {
                 if (!isset($_L['form']['code'])) {
                     $query = http_build_query([
-                        "appid"         => $config->$get['appid'],
+                        "appid"         => $config->get['appid'],
                         "redirect_uri"  => $_L['url']['now'],
                         "response_type" => "code",
                         "scope"         => "snsapi_base",
@@ -84,7 +84,7 @@ class WxPayJsapi
                 } else {
                     $openid = $this->getOpenidFromMp($config, $_L['form']['code']);
                     if ($openid['openid']) {
-                        session::set("WeChat_snsapi_base_" . $config->$get['mch_id'], $openid);
+                        session::set("WeChat_snsapi_base_" . $config->get['mch_id'], $openid);
                         goheader(url_clear($_L['url']['now'], "code|state"));
                     }
                 }
@@ -94,8 +94,8 @@ class WxPayJsapi
     private function getOpenidFromMp($config, $code)
     {
         $query = http_build_query([
-            "appid"      => $config->$get['appid'],
-            "secret"     => $config->$get['appsecret'],
+            "appid"      => $config->get['appid'],
+            "secret"     => $config->get['appsecret'],
             "code"       => $code,
             "grant_type" => "authorization_code",
         ]);
