@@ -104,7 +104,9 @@ class common
         if (!empty($_L['table'])) {
             DB::$mysql->close();
         }
-        ob_end_flush();
+        while (ob_end_flush() > 0) {
+            ob_end_flush();
+        }
         exit;
     }
 }
