@@ -1,6 +1,9 @@
 <if $_L['APP']['info']>
     <template "ui/head"/>
-    <style>@media screen and (max-width: 750px) {#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0;height:100%;background:#ffffff;}}</style>
+    <style>@media screen and (max-width: 750px) {#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}}</style>
+    <script type="text/javascript">
+        if(window.parent.document.getElementById("NAVTOP")){document.write('<style>#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}#APPNAV{display:none;}</style>');};
+    </script>
 <else />
     <!DOCTYPE html>
     <html>
@@ -33,7 +36,7 @@
         </if>
     </div>
     <script type="text/javascript">
-        var html=document.getElementById("lasttime"),second=3;if(html!=null){var lasttime=setInterval(function(){second=second-1;if(second<=0){clearInterval(lasttime);window.location.href='{{$go}}'}else{html.innerHTML=second+'s'}},1000);}
+        var html=document.getElementById("lasttime"),second=3;if(html!=null){var lasttime=setInterval(function(){second=second-1;if(second<=0){clearInterval(lasttime);window.location.href='{{$go}}'}else{html.innerHTML=second+'s'}},1000);};
     </script>
 <if $_L['APP']['info']>
     <template "ui/foot"/>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-11 15:43:26
+ * @LastEditTime: 2020-12-20 14:52:44
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -201,6 +201,8 @@ class TABLE
         } elseif (is_array($form)) {
             $ids = implode(",", array_column($form, "id"));
             sql_delete([$table, "id IN ({$ids})"]);
+        } else {
+            return false;
         }
         return sql_error() ? false : true;
     }
@@ -231,6 +233,7 @@ class TABLE
             "url"  => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
             "id"   => $tree['id'] ? $tree['id'] : "",
             "top"  => $tree['top'],
+            "show" => $tree['show'],
             "cols" => $tree['cols'],
         ];
         $html = "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . base64_encode(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";

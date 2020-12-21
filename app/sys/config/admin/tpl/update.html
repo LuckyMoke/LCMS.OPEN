@@ -14,15 +14,9 @@
             <td>
                 <if $info && $info['lasttime'] gte datenow()>
                     <span class="layui-badge layui-bg-blue">在线更新服务</span>
-                    <else>
-                        <span class="layui-badge update-type">无在线更新服务</span>
-                    </else>
-                </if>
-                <if $info && $info['isbusiness']>
-                    <span class="layui-badge layui-bg-blue">商业授权</span>
-                    <else>
-                        <span class="layui-badge">非商业授权</span>
-                    </else>
+                    <else />
+                    <span class="layui-badge update-type">无在线更新服务</span>
+                    <a class="layui-badge layui-bg-blue" href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank"> 点击免费手动更新</a>
                 </if>
             </td>
         </tr>
@@ -32,7 +26,7 @@
                 <if $info && $info['lasttime'] gte datenow()>
                     <span class="layui-badge layui-bg-blue">{{ $info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime'] }}</span>
                     <else>
-                        <span class="layui-badge">0000-00-00 00:00:00</span>
+                    <span class="layui-badge">0000-00-00 00:00:00</span>
                     </else>
                 </if>
             </td>

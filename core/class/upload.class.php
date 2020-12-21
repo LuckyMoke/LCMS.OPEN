@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 15:29:32
+ * @LastEditTime: 2020-12-20 19:13:54
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -31,6 +31,9 @@ class UPLOAD
             } else {
                 // 如果文件地址是本地上传
                 $file = $para ? $para : $_FILES['file'];
+                if ($file['error'] != 0) {
+                    return self::out(0, "上传失败 CODE:{$file['error']}");
+                }
                 $mime = substr($file['name'], strrpos($file['name'], ".") + 1);
                 $size = round($file['size'] / 1024);
             }
