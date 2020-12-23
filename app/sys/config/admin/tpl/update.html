@@ -5,18 +5,18 @@
         <tr>
             <td width="100px">当前域名：</td>
             <td>
-                {{ echo HTTP_HOST }}
-                <a style="cursor:pointer;color:red;padding-left:10px;" class="update-buy" data-url="{{ $buyurl }}">购买在线更新服务</a>
+                {{HTTP_HOST}}
+                <a style="cursor:pointer;color:red;padding-left:10px;" class="update-buy" data-url="{{$buyurl}}"><i class="layui-icon layui-icon-upload"></i> 购买在线更新服务</a>
             </td>
         </tr>
         <tr>
-            <td>授权状态：</td>
+            <td>服务状态：</td>
             <td>
                 <if $info && $info['lasttime'] gte datenow()>
-                    <span class="layui-badge layui-bg-blue">在线更新服务</span>
+                    服务中
                     <else />
-                    <span class="layui-badge update-type">无在线更新服务</span>
-                    <a class="layui-badge layui-bg-blue" href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank"> 点击免费手动更新</a>
+                    <span class="update-type">已关闭</span>
+                    <a href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank" style="font-size:12px;color:#a7a7a7;">&nbsp;&nbsp;<i class="layui-icon layui-icon-survey"></i>免费手动更新</a>
                 </if>
             </td>
         </tr>
@@ -24,34 +24,32 @@
             <td>到期时间：</td>
             <td>
                 <if $info && $info['lasttime'] gte datenow()>
-                    <span class="layui-badge layui-bg-blue">{{ $info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime'] }}</span>
-                    <else>
-                    <span class="layui-badge">0000-00-00 00:00:00</span>
-                    </else>
+                    {{$info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime']}}
+                    <else />
+                    0000-00-00 00:00:00
                 </if>
             </td>
         </tr>
         <tr>
             <td>当前版本：</td>
             <td>
-                V{{ $_L['config']['ver'] }}
+                V{{$_L['config']['ver']}}
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="layui-btn layui-btn-xs update-btn hide">立即更新</button>
             </td>
         </tr>
         <tr>
             <td>最新版本：</td>
-            <td class="update-status">
-                <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
-                正在检测更新
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td class="update-log"></td>
+            <td class="update-status">Loading...</td>
         </tr>
     </tbody>
 </table>
+<div class="install-log">
+    <ul class="layui-timeline update-log">
+        <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
+        &nbsp;正在检测更新
+    </ul>
+</div>
 <div class="install-bg hide">
     <svg id="adc953c4-1f1c-4de2-8e29-bb7913a5554f" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="60%" viewBox="0 0 733.86247 702.19479">
         <path d="M257.07474,533.1599a1.11537,1.11537,0,0,1-.23571-.46222,351.19117,351.19117,0,0,1,478.94006-405.746,1.11976,1.11976,0,1,1-.87626,2.061C612.32539,76.89059,473.23316,98.13255,371.90572,184.44937,271.19684,270.23927,227.9405,403.478,259.01686,532.17137a1.12007,1.12007,0,0,1-1.94212.98853Z" transform="translate(-233.06876 -98.90261)" fill="#e6e6e6" />
@@ -77,4 +75,16 @@
     </div>
     <div class="install-tips"></div>
 </div>
+<script type="text/html" class="update-log-tpl">
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis layui-icon-radio"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">
+                V{ver}
+                <span>更新日期:{addtime}</span>
+            </h3>
+            {content}
+        </div>
+    </li>
+</script>
 <template "ui/foot" />
