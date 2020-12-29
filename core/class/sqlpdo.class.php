@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 21:52:03
+ * @LastEditTime: 2020-12-29 11:15:11
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,7 @@ class SQLPDO
     {
         try {
             $this->pdo = new PDO($sqlinfo, $user, $pass);
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             LCMS::X(500, iconv('gbk', 'utf-8', $e->getMessage()));
         }
 
@@ -43,8 +43,12 @@ class SQLPDO
     {
         $this->psm = $this->pdo->prepare($sql);
         if ($this->psm) {
-            $this->psm->execute($params);
-            return $this->psm;
+            try {
+                $this->psm->execute($params);
+                return $this->psm;
+            } catch (Exception $e) {
+                LCMS::X($this->errno(), $this->error());
+            }
         } else {
             LCMS::X(500, "数据错误");
         }
@@ -199,10 +203,11 @@ class SQLPDO
     public function errno()
     {
         if (gettype($this->psm) == "object") {
-            $error = $this->psm->errorCode();
+            $errno = $this->psm->errorCode();
         } else {
-            $error = $this->pdo->errorCode();
+            $errno = $this->pdo->errorCode();
         }
+        return $errno;
     }
     /**
      * [close 关闭数据库连接]

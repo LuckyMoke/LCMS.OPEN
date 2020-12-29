@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2020-12-20 14:07:50
+ * @LastEditTime: 2020-12-28 23:51:14
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -58,7 +58,7 @@ class developer
                 require LCMS::template(PATH_PUBLIC . "ui/admin/error");
                 exit();
             } else {
-                LCMS::X(500, "程序错误");
+                LCMS::X(500, "程序致命错误<br/>查看详情需开启开发模式");
             }
         });
     }

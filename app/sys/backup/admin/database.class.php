@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2020-12-13 22:13:58
+ * @LastEditTime: 2020-12-29 00:36:48
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -73,7 +73,7 @@ class database extends adminbase
                     "name" => $file,
                     "ver"  => $info[0],
                     "time" => str_replace(["T", "."], ["", ":"], $info[1]),
-                    "size" => getfilesize("{$dir}{$file}", "MB"),
+                    "size" => getfilesize("{$dir}{$file}"),
                 ];
             }
         }

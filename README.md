@@ -8,7 +8,7 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.1以上，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.1-8.0，Mysql5.6以上
 
 硬件要求：CPU 1GHz，内存1G，硬盘空余10G
 
@@ -17,10 +17,17 @@
 
 浏览器访问 http://你的域名/install/ 开始安装
 
+视频教程 [点击观看](https://support.qq.com/products/136192/faqs/85452)
+
 #### 安装方式
 
  - 方式一： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
  - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装
+
+#### 更新方法
+
+ - 方法一：购买在线更新服务，在线自动更新
+ - 方法二：下载最新版安装包直接覆盖即可，记得删除 `install` 目录
 
 #### QQ讨论群
 

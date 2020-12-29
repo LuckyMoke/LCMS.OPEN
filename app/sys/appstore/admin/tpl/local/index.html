@@ -3,7 +3,7 @@
 <table class="layui-table app-local">
     <thead>
         <tr>
-            <th width="50px">图标</th>
+            <th width="50px" style="text-align:center;">图标</th>
             <th width="200px">应用名</th>
             <if $level['url']['store']>
                 <th width="200px" class="layui-hide-xs">开发者</th>
@@ -14,18 +14,18 @@
             </if>
             <th class="layui-hide-xs app-hide-sm">应用描述</th>
             <if $level['url']['store']>
-                <th class="layui-hide-xs" width="{{ echo LCMS::SUPER()?'120px':'80px' }}">操作</th>
+                <th class="layui-hide-xs" style="text-align:center;" width="{{ echo LCMS::SUPER()?'100px':'60px' }}">操作</th>
             </if>
         </tr>
     </thead>
     <tbody>
         <loop $open,$url,$app>
             <tr data-name="{{ $app }}" data-ver="{{ $applist['open'][$app]['info']['ver'] }}">
-                <td>
+                <td style="text-align:center;">
                     <a href="{{ $url }}" title="{{ $applist['open'][$app]['info']['title'] }}">
-                        <if is_file(PATH_APP."open/{$app}/icon.gif")> <img src="{{ $_L['url']['app'] }}open/{{ $app }}/icon.gif?ver={{$applist['open'][$app]['info']['ver']}}" width="50px" height="50px" />
+                        <if is_file(PATH_APP."open/{$app}/icon.gif")> <img src="{{ $_L['url']['app'] }}open/{{ $app }}/icon.gif?ver={{$applist['open'][$app]['info']['ver']}}" width="40px" height="40px" />
                         <else />
-                        <img src="{{ $_L['url']['static'] }}images/appicon.gif" width="50px" height="50px" />
+                        <img src="{{ $_L['url']['static'] }}images/appicon.gif" width="40px" height="40px" />
                         </if>
                     </a>
                 </td>
@@ -41,11 +41,11 @@
                 </if>
                 <td class="layui-hide-xs app-hide-sm">{{ $applist['open'][$app]['info']['description'] }}</td>
                 <if $level['url']['store']>
-                    <td class="layui-hide-xs">
+                    <td class="layui-hide-xs" style="text-align:center;">
                         <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
+                            <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
                             <if LCMS::SUPER()>
-                                <button class="layui-btn layui-btn-sm layui-btn-danger app-uninstall" data-url="{{ $_L['url']['own_form'] }}uninstall&app={{ $app }}">卸载</button>
+                                <button class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{ $_L['url']['own_form'] }}uninstall&app={{ $app }}">卸载</button>
                             </if>
                         </div>
                     </td>

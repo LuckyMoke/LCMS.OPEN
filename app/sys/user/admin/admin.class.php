@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-13 15:16:52
+ * @LastEditTime: 2020-12-29 11:16:03
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -64,6 +64,7 @@ class admin extends adminbase
                 ["title" => "账号/用户名/邮箱/手机", "name" => "name"],
             ],
         ];
+        $acount = sql_counter(["admin"]);
         require LCMS::template("own/admin-list");
     }
     public function dolevel()

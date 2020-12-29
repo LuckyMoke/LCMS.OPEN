@@ -2,7 +2,7 @@
     <template "ui/head"/>
     <style>@media screen and (max-width: 750px) {#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}}</style>
     <script type="text/javascript">
-        if(window.parent.document.getElementById("NAVTOP")){document.write('<style>#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}#APPNAV{display:none;}</style>');};
+        if(self!=top&&window.parent.document.getElementById("NAVTOP")){document.write('<style>#NAVTOP,#APPTAB,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}#APPNAV{display:none;}</style>');};
     </script>
 <else />
     <!DOCTYPE html>
@@ -19,13 +19,14 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta content="telephone=no" name="format-detection" />
         <link rel="stylesheet" href="/public/static/layui/css/layui.css" />
+        <style type="text/css">.msg a{color:#ffadad;text-decoration:underline;}.msg a:hover{color:#F56C6C}</style>
     </head>
     <body style="background:#ffffff;">
 </if>
     <div style="text-align:center;position:relative;box-sizing:border-box;padding-top:20vh;height:calc(100vh - 200px);">
         <i class="layui-icon layui-icon-face-cry" style="font-size:100px;color:#F56C6C;"></i>
         <p style="color:#303133;font-size:20px;padding-top:10px;font-weight:bold;">出现了一些问题</p>
-        <p style="color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;">
+        <p class="msg" style="color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;">
             [{{$X['code']}}] : {{$X['msg']}}
         </p>
         <if $go>

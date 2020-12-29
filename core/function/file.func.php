@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 23:38:36
+ * @LastEditTime: 2020-12-29 00:46:46
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -218,19 +218,29 @@ function delfile($fileUrl)
  * @param  [type] $filename [要获取的文件名]
  * @return [type]           [返回文件的大小]
  */
-function getfilesize($filename, $unit = "KB")
+function getfilesize($filename, $unit = null)
 {
     $filename = path_absolute($filename);
     @clearstatcache();
     if (is_file($filename)) {
         $filesize = filesize($filename);
+        if (!$unit) {
+            if ($filesize >= 0) {
+                $unit = "KB";
+            } elseif ($filesize >= 1048576) {
+                $unit = "MB";
+            } elseif ($filesize >= 1073741824) {
+                $unit = "GB";
+            }
+            $last = true;
+        }
         switch ($unit) {
             case 'GB':
-                $filesize = $filesize / (1024 * 1024 * 1024);
+                $filesize = $filesize / 1073741824;
                 $filesize = sprintf("%.2f", $filesize);
                 break;
             case 'MB':
-                $filesize = $filesize / (1024 * 1024);
+                $filesize = $filesize / 1048576;
                 $filesize = sprintf("%.2f", $filesize);
                 break;
             case 'B':
@@ -241,7 +251,7 @@ function getfilesize($filename, $unit = "KB")
                 $filesize = sprintf("%.2f", $filesize);
                 break;
         }
-        return $filesize;
+        return $filesize . ($last ? $unit : "");
     }
 }
 /**
