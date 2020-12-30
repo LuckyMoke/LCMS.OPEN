@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-13 15:27:03
+ * @LastEditTime: 2020-12-30 16:26:09
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -39,6 +39,18 @@ class LAY
         $para          = self::start($para);
         $para['title'] = $para['title'] ? $para['title'] : "标题栏";
         echo "<p class='lcms-form-des{$para['cname']}'>{$para['title']}</p>";
+    }
+    public static function html($para)
+    {
+        $para = self::start($para);
+        $html = "
+            <div class='layui-form-item{$para['cname']}' pane>
+                <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
+                <div class='layui-input-block'>
+                    <div class='lcms-form-html'>{$para['value']}</div>
+                </div>
+            </div>";
+        echo $html;
     }
     public static function input($para)
     {
