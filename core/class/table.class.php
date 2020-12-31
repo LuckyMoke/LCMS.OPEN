@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-20 14:52:44
+ * @LastEditTime: 2020-12-30 19:48:05
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -113,11 +113,11 @@ class TABLE
                             if (!empty($option['children'])) {
                                 $opts = "";
                                 foreach ($option['children'] as $opt) {
-                                    $opts .= '<option value="' . $opt['value'] . '">' . $opt['title'] . '</option>';
+                                    $opts .= "<option value='{$opt['value']}'" . ($val['value'] == $opt['value'] ? " selected" : "") . ">{$opt['title']}</option>";
                                 }
                                 $options .= "<optgroup label='{$option['title']}'>{$opts}</optgroup>";
                             } else {
-                                $options .= '<option value="' . $option['value'] . '">' . $option['title'] . '</option>';
+                                $options .= "<option value='{$option['value']}'" . ($val['value'] == $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
                             }
                         }
                         $html .= '<div class="layui-input-inline"><select name="LC[' . $val['name'] . ']" lay-verify="" lay-search><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-13 15:29:23
+ * @LastEditTime: 2020-12-31 12:31:39
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -14,19 +14,19 @@ class TPL
     public static $scanarr = "";
     public static $tplpath = "";
     /**
-     * [cachename 缓存文件名称]
-     * @return [type] [description]
+     * @description: 缓存文件名称
+     * @return {string}
      */
     public static function cachename()
     {
         global $_L;
-        $cachefile = PATH_CACHE . "static/" . md5(L_NAME . TPL::$ver);
+        $cachefile = PATH_CACHE . "static/" . md5(L_NAME . self::$tplpath . self::$ver);
         return $cachefile;
     }
     /**
-     * [getui 获取css，js文件]
-     * @param  [type] $paths [description]
-     * @return [type]        [description]
+     * @description: 生成css，js文件
+     * @param {array} $paths
+     * @return {*}
      */
     public static function getui($paths)
     {
@@ -43,17 +43,9 @@ class TPL
                     $js[] = $val;
                 }
             }
-            self::uicss($css);
-            self::uijs($js);
+            self::patch($css, "css");
+            self::patch($js, "js");
         }
-    }
-    public static function uicss($paths)
-    {
-        self::patch($paths, "css");
-    }
-    public static function uijs($paths)
-    {
-        self::patch($paths, "js");
     }
     /**
      * [patch 对文件内容做处理]

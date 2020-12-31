@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 14:10:16
+ * @LastEditTime: 2020-12-30 19:33:38
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -317,6 +317,7 @@ class LCMS
                 }
                 @clearstatcache();
             }
+            $html = str_replace(["<%", "%>"], ["{{", "}}"], $html);
             file_put_contents($cache, "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html);
 
         }
