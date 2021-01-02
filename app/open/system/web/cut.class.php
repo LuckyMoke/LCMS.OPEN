@@ -8,6 +8,9 @@ class cut extends webbase
     {
         global $_L;
         parent::__construct();
+        header("cache-control: max-age=604800");
+        header("pragma: cache");
+        header("expires: " . gmdate("D, d M Y H:i:s", time() + 604800) . " GMT");
     }
     public function doindex()
     {
@@ -15,10 +18,9 @@ class cut extends webbase
         if (!$_L['form']['para']) {
             LCMS::X(403, "缺少必要参数");
         }
-        header("cache-control: max-age=3600");
         $para = stristr($_L['form']['para'], ".", true);
         $para = $para ? $para : $_L['form']['para'];
-        $para = explode("|", ssl_decode($para));
+        $para = explode("|", base64_decode($para));
         $path = path_absolute($para[0]);
         if (!is_file($path) || is_dir($path)) {
             $path = $_L['config']['web']['image_default'] ? path_absolute($_L['config']['web']['image_default']) : LCMS::X(404, "图片不存在");

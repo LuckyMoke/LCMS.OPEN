@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 15:28:32
+ * @LastEditTime: 2021-01-02 14:54:38
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -16,7 +16,7 @@ class THUMB
         $y    = $y ? $y : 0;
         $mime = strstr(str_replace(array("../", "./"), "", $path), ".");
         $mime = $mime ? $mime : ".jpg";
-        $para = ssl_encode($path . "|" . $x . "|" . $y);
+        $para = base64_encode($path . "|" . $x . "|" . $y);
         if ($html) {
             $site = $_L['url']['web']['site'] ? $_L['url']['web']['site'] : $_L['url']['site'];
             $url  = "{$site}images/{$para}{$mime}";

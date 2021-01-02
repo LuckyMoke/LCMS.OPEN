@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-11 16:24:50
+ * @LastEditTime: 2020-12-31 18:25:04
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -300,7 +300,7 @@ function sqlinsert($string)
             $string[$key] = sqlinsert($val);
         }
     } else {
-        $cache = str_ireplace([
+        $string = str_ireplace([
             "\0", "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
         ], [
             "_", "_", "\*", "&#92;", "&#34;", "&#39;", "sel\ect", "ins\ert", "up\date", "del\ete", "un\ion", "in\to", "load\_file", "out\file", "sl\eep",
@@ -404,6 +404,44 @@ function strcut($str, $start = 0, $length = '')
     }
     $newstr = mb_substr($str, $start, $length, $code);
     return $newstr;
+}
+/**
+ * @description: 字符串模糊
+ * @param {atring} $str
+ * @param {int} $start
+ * @param {int} $end
+ * @return {*}
+ */
+function strstar($str, $start, $end = 0)
+{
+    $len = mb_strlen($str, "UTF-8");
+    if ($start == 0 && $start >= $len) {
+        $start = $len - 1;
+    }
+    if ($end != 0 && $end >= $len) {
+        $end = $len - $start - 1;
+        $end = $end < 0 ?: 0;
+    }
+    if (($start + $end) >= $len) {
+        $end = 0;
+    }
+    if (($start + $end) >= $len) {
+        $start--;
+    }
+    $endStart = $len - $end;
+    $top      = mb_substr($str, 0, $start, "UTF-8");
+    $bottom   = "";
+    if ($endStart > 0) {
+        $bottom = mb_substr($str, $endStart, $end, "UTF-8");
+    }
+    $len    = $len - mb_strlen($top, "UTF-8");
+    $len    = $len - mb_strlen($bottom, "UTF-8");
+    $newStr = $top;
+    for ($i = 0; $i < $len; $i++) {
+        $newStr .= "*";
+    }
+    $newStr .= $bottom;
+    return $newStr;
 }
 /**
  * [ssl_encode ssl AES 字符串加密]
