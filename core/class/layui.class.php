@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-30 16:26:09
+ * @LastEditTime: 2021-01-04 13:58:56
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -314,6 +314,22 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-editor' data-name='{$para['name']}'>
                     <script name='{$para['name']}' type='text/plain'>" . base64_decode($para['value']) . "</script>
+                </div>
+            </div>";
+        echo $html;
+    }
+    public static function icon($para)
+    {
+        $para = self::start($para);
+        $html = "
+            <div class='layui-form-item lcms-form-icon{$para['cname']}'>
+                <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
+                <div class='layui-input-block'>
+                    <div class='layui-input-inline'>
+                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                    </div>
+                    <div class='_change'>选择</div>
+                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
             </div>";
         echo $html;
