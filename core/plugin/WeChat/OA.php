@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-04 14:52:11
+ * @LastEditTime: 2021-01-14 15:10:23
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -43,15 +43,13 @@ class OA
         }
         switch ($type) {
             case 'save':
-                LCMS::cache([
-                    "name" => $cname,
-                    "data" => $this->cfg,
-                ]);
+                LCMS::cache($cname, $this->cfg);
+                break;
+            case 'clear':
+                LCMS::cache($cname, "clear");
                 break;
             default:
-                $arr = LCMS::cache([
-                    "name" => $cname,
-                ]);
+                $arr = LCMS::cache($cname);
                 if (is_array($arr)) {
                     $this->cfg = array_merge($arr, $this->cfg);
                 }
@@ -86,7 +84,7 @@ class OA
                     "grant_type" => "client_credential",
                 ]);
                 $token = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-                if ($token['errcode']) {
+                if (!$token['access_token']) {
                     return $token;
                 } else {
                     $this->cfg['access_token'] = [
@@ -346,7 +344,7 @@ class OA
                     "type"         => "jsapi",
                 ]);
                 $ticket = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
-                if ($ticket['errcode']) {
+                if (!$ticket['ticket']) {
                     return $ticket;
                 } else {
                     $this->cfg['jsapi_ticket'] = [

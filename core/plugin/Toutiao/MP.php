@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 16:07:13
+ * @LastEditTime: 2021-01-14 15:12:50
  * @Description:头条小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,22 +22,22 @@ class MP
     public function cache($type = "get")
     {
         if ($this->cfg['appid'] && $this->cfg['appsecret']) {
-            $cachename = md5($this->cfg['appid'] . $this->cfg['appsecret']);
+            $cname = md5($this->cfg['appid'] . $this->cfg['appsecret']);
         } else {
             return false;
         }
         switch ($type) {
             case 'save':
-                LCMS::cache([
-                    "name" => $cachename,
-                    "data" => $this->cfg,
-                ]);
+                LCMS::cache($cname, $this->cfg);
+                break;
+            case 'clear':
+                LCMS::cache($cname, "clear");
                 break;
             default:
-                $cache = LCMS::cache([
-                    "name" => $cachename,
-                ]);
-                $this->cfg = is_array($cache) ? array_merge($this->cfg, $cache) : $this->cfg;
+                $arr = LCMS::cache($cname);
+                if (is_array($arr)) {
+                    $this->cfg = array_merge($arr, $this->cfg);
+                }
                 break;
         }
     }

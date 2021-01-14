@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-03 13:09:34
+ * @LastEditTime: 2021-01-14 15:11:07
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -31,15 +31,13 @@ class MP
         }
         switch ($type) {
             case 'save':
-                LCMS::cache([
-                    "name" => $cname,
-                    "data" => $this->cfg,
-                ]);
+                LCMS::cache($cname, $this->cfg);
+                break;
+            case 'clear':
+                LCMS::cache($cname, "clear");
                 break;
             default:
-                $arr = LCMS::cache([
-                    "name" => $cname,
-                ]);
+                $arr = LCMS::cache($cname);
                 if (is_array($arr)) {
                     $this->cfg = array_merge($arr, $this->cfg);
                 }
@@ -75,7 +73,7 @@ class MP
                 "grant_type" => "client_credential",
             ));
             $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-            if ($token['errcode']) {
+            if (!$token['access_token']) {
                 return $token;
             } else {
                 $this->cfg['access_token'] = [

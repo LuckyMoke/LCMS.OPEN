@@ -2,8 +2,8 @@
     <html>
     <head>
         <title>{{htmlspecialchars($page['title']?$page['title']:$_L['config']['web']['title'])}}</title>
-        <meta name="keywords" content="{{htmlspecialchars($page['keywords']?$page['keywords']:$_L['config']['web']['title'])}}" />
-        <meta name="description" content="{{htmlspecialchars($page['description']?$page['description']:$_L['config']['web']['title'])}}" />
+        <meta name="keywords" content="{{htmlspecialchars($page['keywords']?$page['keywords']:'')}}" />
+        <meta name="description" content="{{htmlspecialchars($page['description']?$page['description']:'')}}" />
         <meta name="generator" content="盘企®PHP开发框架" />
         <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
         <meta name="renderer" content="webkit" />
@@ -17,7 +17,7 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta content="telephone=no" name="format-detection" />
         <link rel="icon" href="data:image/ico;base64,aWNv" />
-        <link rel="stylesheet" href="{{ echo str_replace(PATH_WEB, $_L['url']['site'], TPL::cachename()) . '.css?' }}{{ $_L['config']['ver'] }}" />
+        <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {"url":{{json_encode($_L['url'])}} };
             if (window.location.href.search('console=true') != -1) {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-11 16:52:49
+ * @LastEditTime: 2021-01-04 14:53:49
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -238,7 +238,8 @@ class admin extends adminbase
                         "radio"  => [
                             ["title" => "打开", "value" => 1],
                             ["title" => "关闭", "value" => 0],
-                        ]],
+                        ],
+                        "tips"   => "使用完请及时关闭，只建议本地开发时开启"],
                     ["layui" => "on", "title" => "SESSION",
                         "name"   => "LC[session_type]",
                         "value"  => $config['session_type'] ?: "0",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-30 19:33:38
+ * @LastEditTime: 2021-01-14 15:20:06
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -56,19 +56,25 @@ class LCMS
         }
     }
     /**
-     * @cache保存读取
-     * @param {*}
+     * @description:
+     * @param {string} $name
+     * @param {string|array} $para
+     * @param {bool} $lcms
      * @return {*}
      */
-    public static function cache($para = [])
+    public static function cache($name = "", $para = "", $lcms = false)
     {
         global $_L;
-        $file = PATH_CACHE . "cfg/" . md5(L_NAME . $para['name'] . ($para['lcms'] == true ? "0" : $_L['ROOTID'])) . ".cache";
-        if (!$para['data'] && is_file($file)) {
+        $lcms = $lcms ? "0" : $_L['ROOTID'];
+        $name = "c{$lcms}-" . substr(md5(L_NAME . $name), 8, 16);
+        $file = PATH_CACHE . "cfg/{$name}.cache";
+        if (!$para && is_file($file)) {
             return sql2arr(file_get_contents($file));
-        } elseif ($para['data']) {
+        } elseif ($para == "clear") {
+            delfile($file);
+        } elseif (is_array($para)) {
             makedir(PATH_CACHE . "cfg/");
-            file_put_contents($file, arr2sql($para['data']));
+            file_put_contents($file, arr2sql($para));
         }
     }
     /**
