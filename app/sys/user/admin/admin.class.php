@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-29 11:16:03
+ * @LastEditTime: 2021-01-29 16:47:44
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,9 +20,6 @@ class admin extends adminbase
     public function doindex()
     {
         global $_L, $LC;
-        if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "没有权限，禁止访问");
-        }
         $table = [
             "url"     => "ajax&action=admin-list",
             "cols"    => [
@@ -70,9 +67,6 @@ class admin extends adminbase
     public function dolevel()
     {
         global $_L, $LC;
-        if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "没有权限，禁止访问");
-        }
         $table = [
             "url"     => "ajax&action=admin-level-list",
             "cols"    => [
@@ -243,9 +237,6 @@ class admin extends adminbase
     public function doiframe()
     {
         global $_L, $LC;
-        if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "没有权限，禁止访问");
-        }
         switch ($_L['form']['action']) {
             case 'admin-edit':
                 $admin = LCMS::form([
@@ -376,6 +367,13 @@ class admin extends adminbase
                     } else {
                         $_L['form']['LC']['lcms'] = $level[0];
                         $_L['form']['LC']['type'] = $level[1];
+                    }
+                }
+                if ($_L['LCMSADMIN']['lcms'] > "0") {
+                    if ($_L['LCMSADMIN']['tuid'] == "0") {
+                        $_L['form']['LC']['tuid'] = $_L['LCMSADMIN']['id'];
+                    } elseif ($_L['LCMSADMIN']['tuid'] > "0") {
+                        $_L['form']['LC']['tuid'] = $_L['LCMSADMIN']['tuid'];
                     }
                 }
                 LCMS::form(["table" => "admin"]);

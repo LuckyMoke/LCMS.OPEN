@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-11 16:48:01
+ * @LastEditTime: 2021-01-26 17:08:24
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,6 +26,7 @@ class SESSION
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
             self::$userid = "LCMS" . strtoupper($_L['form']['rootsid']);
+            self::$userid = preg_replace("/[^A-Z0-9]/i", "", self::$userid);
         } else {
             if (empty($_COOKIE['LCMSCID'])) {
                 $cookie = strtoupper(substr(md5(time() . randstr(6) . CLIENT_IP . $_SERVER['HTTP_USER_AGENT']), 8, 16)) . randstr(6);

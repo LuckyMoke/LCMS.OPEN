@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 15:27:49
+ * @LastEditTime: 2021-01-21 22:32:24
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -91,12 +91,14 @@ class PAYS
                 $order['repaytime'] = datenow();
             }
             sql_update(["order", $order, "order_no = '{$order['order_no']}'"]);
-        } elseif (!$order['payment']) {
+        } elseif (!$order['payment'] && $order['payid']) {
             $payment           = self::payment_info($order['payid'], true);
             $order['order_no'] = randstr(4) . date("YmdHis") . microseconds() . randstr(2, "num");
             $order['payment']  = $payment['payment'];
             $order['addtime']  = datenow();
             sql_insert(["order", $order]);
+        } else {
+            return false;
         }
         return self::order_info($order['order_no']);
     }

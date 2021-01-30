@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-14 15:20:06
+ * @LastEditTime: 2021-01-19 00:29:09
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -33,7 +33,7 @@ class LCMS
      */
     public static function X($errcode, $errmsg, $go = "")
     {
-        if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") {
+        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest")) {
             ajaxout(0, $errmsg ?: "拒绝访问！");
         } else {
             global $_L;

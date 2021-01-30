@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-29 11:15:11
+ * @LastEditTime: 2021-01-23 17:26:40
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class SQLPDO
         try {
             $this->pdo = new PDO($sqlinfo, $user, $pass);
         } catch (Exception $e) {
-            LCMS::X(500, iconv('gbk', 'utf-8', $e->getMessage()));
+            LCMS::X(500, "数据库-" . iconv('gbk', 'utf-8', $e->getMessage()));
         }
 
     }
@@ -44,6 +44,11 @@ class SQLPDO
         $this->psm = $this->pdo->prepare($sql);
         if ($this->psm) {
             try {
+                foreach ($params as $key => $val) {
+                    if ($val == "") {
+                        $params[$key] = null;
+                    }
+                }
                 $this->psm->execute($params);
                 return $this->psm;
             } catch (Exception $e) {

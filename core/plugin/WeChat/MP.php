@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-14 15:11:07
+ * @LastEditTime: 2021-01-21 17:15:31
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -133,7 +133,7 @@ class MP
      */
     public function encode_data($para = [])
     {
-        if ($para['iv'] && $para['encryptedData'] && $para['session_key'] && $para['openid']) {
+        if ($para['iv'] && $para['encryptedData'] && $para['session_key']) {
             if (strlen($para['session_key']) == 24 && strlen($para['iv']) == 24) {
                 $result = openssl_decrypt(base64_decode($para['encryptedData']), "AES-128-CBC", base64_decode($para['session_key']), 1, base64_decode($para['iv']));
                 $result = json_decode($result, true);

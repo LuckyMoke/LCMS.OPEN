@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 15:30:28
+ * @LastEditTime: 2021-01-29 16:23:02
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -39,6 +39,7 @@ class adminbase extends common
             "upload"   => "{$url_site}upload/",
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
+            "qrcode"   => "{$url_site}app/index.php?n=system&c=qr&text=",
             "own"      => "{$url_admin}index.php?",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
             "own_form" => "{$url_admin}index.php?t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",
@@ -64,6 +65,9 @@ class adminbase extends common
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);
                 $_L['LCMSADMIN']['level'] = sql2arr($level['parameter']);
+            }
+            if ($_L['LCMSADMIN']['tuid']) {
+                $_L['LCMSADMIN']['lcms'] = sql_get(["admin", "id = '{$_L['LCMSADMIN']['tuid']}'"])['lcms'];
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == "0" ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
             $_L['ROOTID'] = LCMS::SUPER() ? "0" : $_L['ROOTID'];

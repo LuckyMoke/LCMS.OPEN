@@ -108,7 +108,7 @@ class index extends adminbase
                 }
             } else {
                 !empty($list['menu']) && $name = array_key_first($list['menu']);
-                $app[$name] = $app[$name] ?: LEVEL::app($name, $name == "appstore" ? "sys" : "open");
+                $app[$name]                    = $app[$name] ?: LEVEL::app($name, $name == "appstore" ? "sys" : "open");
                 if (is_array($list['menu'][$name])) {
                     foreach ($list['menu'][$name] as $class) {
                         if ($app[$name]['menu'][$class]) {
