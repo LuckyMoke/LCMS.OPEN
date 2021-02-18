@@ -33,6 +33,18 @@ CREATE TABLE `[_PRE]admin_level` (
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员权限';
 
+CREATE TABLE `[_PRE]cache`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NULL COMMENT '名称',
+  `updatetime` datetime NULL COMMENT '更新时间',
+  `parameter` longtext NULL,
+  `lcms` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  INDEX(`name`),
+  INDEX(`updatetime`),
+  INDEX(`lcms`)
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COMMENT='框架缓存';
+
 CREATE TABLE `[_PRE]config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL COMMENT '模块名字',
@@ -48,6 +60,20 @@ CREATE TABLE `[_PRE]config` (
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='全局设置数据';
 
 insert  into `[_PRE]config`(`id`,`name`,`type`,`cate`,`parameter`,`lcms`) values (1, 'menu', 'sys', 'admin', 'a:2:{s:4:\"open\";a:2:{i:0;a:2:{s:5:\"title\";s:12:\"常用应用\";s:4:\"menu\";a:0:{}}i:1;a:2:{s:5:\"title\";s:12:\"应用中心\";s:4:\"menu\";a:1:{s:8:\"appstore\";a:1:{s:5:\"class\";a:2:{s:5:\"local\";i:1;s:5:\"store\";i:1;}}}}}s:3:\"sys\";a:2:{i:0;a:2:{s:5:\"title\";s:12:\"用户中心\";s:4:\"menu\";a:1:{s:4:\"user\";a:1:{s:5:\"class\";a:1:{s:5:\"admin\";i:1;}}}}i:1;a:2:{s:5:\"title\";s:12:\"框架设置\";s:4:\"menu\";a:2:{s:6:\"config\";a:1:{s:5:\"class\";a:3:{s:5:\"admin\";i:1;s:3:\"web\";i:1;s:6:\"update\";i:1;}}s:6:\"backup\";a:1:{s:5:\"class\";a:2:{s:8:\"database\";i:1;s:8:\"optimize\";i:1;}}}}}}', 0),(2,'config','sys','admin','a:12:{s:10:\"oauth_code\";s:0:\"\";s:5:\"title\";s:21:\"盘企PHP开发框架\";s:8:\"lcmsmode\";s:1:\"1\";s:9:\"developer\";s:39:\"运城市盘石网络科技有限公司\";s:4:\"logo\";s:43:\"../public/static/images/logo.png?1582619927\";s:5:\"https\";s:1:\"0\";s:7:\"gonggao\";s:780:\"PHRhYmxlPjx0Ym9keT48dHIgY2xhc3M9ImZpcnN0Um93Ij48dGQgdmFsaWduPSJtaWRkbGUiIHdpZHRoPSI2MCIgYWxpZ249InJpZ2h0Ij7lrpjmlrnnvZHnq5k8L3RkPjx0ZCB2YWxpZ249InRvcCI+PGEgaHJlZj0iaHR0cHM6Ly93d3cucGFuc2hpMTguY29tLyIgdGFyZ2V0PSJfYmxhbmsiPmh0dHBzOi8vd3d3LnBhbnNoaTE4LmNvbS88L2E+PC90ZD48L3RyPjx0cj48dGQgdmFsaWduPSJtaWRkbGUiIGFsaWduPSJyaWdodCI+5byA5Y+R5paH5qGjPC90ZD48dGQgdmFsaWduPSJ0b3AiPjxhIGhyZWY9Imh0dHBzOi8vd3d3LmthbmNsb3VkLmNuL2x1Y2t5bW9rZS9sY21zLyIgdGFyZ2V0PSJfYmxhbmsiPmh0dHBzOi8vd3d3LmthbmNsb3VkLmNuL2x1Y2t5bW9rZS9sY21zLzwvYT48YnIvPjwvdGQ+PC90cj48dHI+PHRkIHZhbGlnbj0ibWlkZGxlIiBhbGlnbj0icmlnaHQiPuS6pOa1gee+pDwvdGQ+PHRkIHZhbGlnbj0idG9wIj48YSBocmVmPSJodHRwczovL2pxLnFxLmNvbS8/X3d2PTEwMjcmaz01aE9MMjF3IiB0YXJnZXQ9Il9ibGFuayI+ODQ5OTY2ODk4PC9hPjwvdGQ+PC90cj48L3Rib2R5PjwvdGFibGU+PHA+PGJyLz48L3A+\";s:3:\"dir\";s:5:\"admin\";s:11:\"sessiontime\";s:0:\"\";s:10:\"login_code\";a:4:{s:4:\"type\";s:1:\"0\";s:6:\"domain\";s:0:\"\";s:8:\"luosimao\";a:2:{s:8:\"site_key\";s:0:\"\";s:7:\"api_key\";s:0:\"\";}s:7:\"tencent\";a:2:{s:5:\"appid\";s:0:\"\";s:9:\"appsecret\";s:0:\"\";}}s:7:\"attsize\";s:3:\"300\";s:8:\"mimelist\";s:32:\"jpg|jpeg|png|gif|bmp|mp3|txt|csv\";}',0),(3,'config','sys','plugin','a:2:{s:5:\"email\";a:6:{s:8:\"fromname\";s:12:\"我的邮箱\";s:4:\"from\";s:11:\"mail@qq.com\";s:4:\"pass\";s:3:\"123\";s:4:\"smtp\";s:11:\"smtp.qq.com\";s:4:\"port\";s:3:\"465\";s:3:\"ssl\";s:1:\"1\";}s:6:\"alisms\";a:3:{s:2:\"id\";s:0:\"\";s:6:\"secret\";s:0:\"\";s:4:\"sign\";s:0:\"\";}}',0),(4,'config','sys','web','a:7:{s:5:\"https\";s:1:\"1\";s:6:\"domain\";s:0:\"\";s:4:\"logo\";s:0:\"\";s:11:\"domain_must\";s:1:\"0\";s:5:\"title\";s:21:\"盘企PHP开发框架\";s:13:\"image_default\";s:0:\"\";s:6:\"tongji\";s:0:\"\";}',0);
+
+CREATE TABLE `[_PRE]upload`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(10) NULL COMMENT '上传类型',
+  `datey` varchar(6) NULL COMMENT '上传目录',
+  `name` varchar(32) NULL COMMENT '文件名称',
+  `src` varchar(255) NULL COMMENT '文件链接',
+  `lcms` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  INDEX(`type`),
+  INDEX(`datey`),
+  INDEX(`name`),
+  INDEX(`lcms`)
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COMMENT='上传文件表';
 
 CREATE TABLE `[_PRE]order` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

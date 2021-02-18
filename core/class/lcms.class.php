@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-19 00:29:09
+ * @LastEditTime: 2021-02-18 14:28:16
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -16,7 +16,7 @@ class LCMS
      */
     public static function IP()
     {
-        $iplib = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
+        $iplib = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
         foreach ($iplib as $val) {
             if (isset($_SERVER[$val]) && $_SERVER[$val] && strcasecmp($_SERVER[$val], "unknown")) {
                 $ips = explode(',', $_SERVER[$val]);
@@ -65,16 +65,28 @@ class LCMS
     public static function cache($name = "", $para = "", $lcms = false)
     {
         global $_L;
-        $lcms = $lcms ? "0" : $_L['ROOTID'];
-        $name = "c{$lcms}-" . substr(md5(L_NAME . $name), 8, 16);
-        $file = PATH_CACHE . "cfg/{$name}.cache";
-        if (!$para && is_file($file)) {
-            return sql2arr(file_get_contents($file));
+        $lcms  = $lcms ? "0" : $_L['ROOTID'];
+        $name  = substr(md5(L_NAME . $name), 8, 16);
+        $where = "name = '{$name}' AND lcms = '{$lcms}'";
+        $cache = sql_get(["cache", $where]);
+        if (!$para && $cache) {
+            return sql2arr($cache['parameter']);
         } elseif ($para == "clear") {
-            delfile($file);
+            sql_delete(["cache", $where]);
         } elseif (is_array($para)) {
-            makedir(PATH_CACHE . "cfg/");
-            file_put_contents($file, arr2sql($para));
+            if ($cache) {
+                sql_update(["cache", [
+                    "parameter"  => arr2sql($para),
+                    "updatetime" => datenow(),
+                ], $where]);
+            } else {
+                sql_insert(["cache", [
+                    "name"       => $name,
+                    "parameter"  => arr2sql($para),
+                    "updatetime" => datenow(),
+                    "lcms"       => $lcms,
+                ]]);
+            }
         }
     }
     /**
@@ -188,25 +200,24 @@ class LCMS
     public static function template($path, $ui = "")
     {
         global $_L;
-        $dir      = explode('/', $path);
-        $postion  = $dir[0];
-        $filename = substr(stristr($path, '/'), 1);
+        $dir     = explode('/', $path);
+        $postion = $dir[0];
+        $fpath   = substr(stristr($path, '/'), 1);
         if ($postion == 'own') {
-            $uipath   = $ui ? "{$ui}/" : "";
-            $file     = PATH_APP_OWN . "tpl/{$uipath}{$filename}.html";
-            $filename = str_replace(PATH_WEB, "", $file);
+            $uipath = $ui ? "{$ui}/" : "";
+            $file   = PATH_APP_OWN . "tpl/{$uipath}{$fpath}.html";
+            $fpath  = str_replace(PATH_WEB, "", $file);
         } elseif ($postion == 'ui') {
-            $file     = PATH_PUBLIC . "ui/" . L_MODULE . "/{$filename}.html";
-            $filename = str_replace(PATH_WEB, "", $file);
+            $file  = PATH_PUBLIC . "ui/" . L_MODULE . "/{$fpath}.html";
+            $fpath = str_replace(PATH_WEB, "", $file);
         } else {
-            $file     = "{$path}.html";
-            $filename = str_replace(PATH_WEB, "", $file);
+            $file  = "{$path}.html";
+            $fpath = str_replace(PATH_WEB, "", $file);
         }
-        $cache = PATH_CACHE . "tpl/" . md5($filename) . ".php";
-        if (!is_file($file) && !is_file($cache)) {
-            LCMS::X(404, "{$filename} 文件未找到");
-        }
-        if (is_file($file) && @filemtime($file) > @filemtime($cache)) {
+        $cname = substr(md5($fpath), 8, 16);
+        $cache = PATH_CACHE . "tpl/{$cname}.php";
+        is_file($file) || LCMS::X(404, "{$fpath} 文件未找到");
+        if (filemtime($file) > filemtime($cache)) {
             // if (1) {
             $html = file_get_contents($file);
             preg_match_all("/{{(.*?)}}/i", $html, $match);
@@ -312,20 +323,10 @@ class LCMS
                     $html           = str_replace($val, "<?php echo {$match[1][$key]} ?>", $html);
                 }
             }
-            if (!file_exists(PATH_CACHE . "tpl/")) {
-                @clearstatcache();
-                $fileUrl = '';
-                foreach (explode('/', PATH_CACHE . "tpl/") as $val) {
-                    $fileUrl .= $val . '/';
-                    if (!file_exists($fileUrl)) {
-                        mkdir($fileUrl);
-                    }
-                }
-                @clearstatcache();
-            }
+            mkdir(PATH_CACHE . "tpl/");
             $html = str_replace(["<%", "%>"], ["{{", "}}"], $html);
-            file_put_contents($cache, "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html);
-
+            $html = "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html;
+            file_put_contents($cache, $html);
         }
         return $cache;
     }
