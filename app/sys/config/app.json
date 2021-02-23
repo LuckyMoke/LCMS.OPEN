@@ -25,7 +25,11 @@
             "title": "基本设置",
             "level": {
                 "plugin": {
-                    "title": "插件设置",
+                    "title": "消息设置",
+                    "menu": 1
+                },
+                "oss": {
+                    "title": "文件存储",
                     "menu": 1
                 },
                 "payment": {

@@ -1,0 +1,26 @@
+<template "ui/head" />
+<template "ui/css" />
+<template "ui/iframe" />
+<style>
+    #LCONTENT .lcms-form-upload-file input {
+        width: 100%;
+    }
+
+    #LCONTENT .lcms-form-upload-file-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+</style>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li><a href="{{$_L['url']['own_form']}}ivideo&id={{$_L['form']['id']}}">第三方视频</a></li>
+        <li class="layui-this">上传视频</li>
+    </ul>
+</div>
+<div class="lcms-form-video" data-id="{{$_L['form']['id']}}">
+    <div class="layui-form layui-form-pane">
+        <ui form($form) />
+    </div>
+</div>
+<template "ui/foot" />

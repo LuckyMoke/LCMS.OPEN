@@ -18,9 +18,12 @@
             var LCMS = {
                 url: {{json_encode($_L['url'])}},
                 config: {
+                    oss: '{{$_L['plugin']['oss']['type']}}',
+                    cdn: '{{$_L['plugin']['oss']['domain']}}',
                     ver: '{{$_L['config']['ver']}}'
                 },
-                app: {{json_encode($_L['APP']['info'])}}
+                app: {{json_encode($_L['APP']['info'])}},
+                ROOTID: {{$_L['ROOTID']}}
             };
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.min.js?ver='+LCMS.config.ver+'"></scr'+'ipt>');

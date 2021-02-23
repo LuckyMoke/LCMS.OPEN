@@ -1,0 +1,24 @@
+<template "ui/head" />
+<template "ui/css" />
+<template "ui/iframe" />
+<style>
+    .layui-form-label {
+        display: none;
+    }
+
+    #LCONTENT .lcms-form-upload-file input {
+        width: 100%;
+    }
+
+    #LCONTENT .lcms-form-upload-file-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+</style>
+<div class="lcms-form-attachment" data-id="{{$_L['form']['id']}}">
+    <div class="layui-form layui-form-pane">
+        <ui form($form) />
+    </div>
+</div>
+<template "ui/foot" />

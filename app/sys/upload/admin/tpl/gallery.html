@@ -1,19 +1,12 @@
 <template "ui/head" />
 <template "ui/css" />
 <template "ui/iframe" />
-<if $_L['form']['editor']>
-    <style type="text/css">
-        #LCONTENT{padding:0 15px}.lcms-form-upload-gallery ._gallery ._bg{height:80px}.lcms-form-upload-gallery ._gallery ._bg ._tips{line-height:80px}
-    </style>
-</if>
-<div class="lcms-form-upload-gallery" data-many="{{$_L['form']['many']}}" data-id="{{$_L['form']['id']}}" data-editor="{{$_L['form']['editor']}}">
+<div class="lcms-form-upload-gallery" data-many="{{$_L['form']['many']}}" data-id="{{$_L['form']['id']}}">
     <div class="_topbar">
         <div class="_pos">upload/image/</div>
         <div class="_btn">
             <button class="layui-btn layui-btn-sm layui-btn-warm _bak">返回</button>
-            <if !$_L['form']['editor']>
-                <button class="layui-btn layui-btn-sm _ok">确认</button>
-            </if>
+            <button class="layui-btn layui-btn-sm _ok">确认</button>
         </div>
     </div>
     <div class="_gallery"></div>
@@ -31,12 +24,12 @@
 </script>
 <script type="text/html" class="tpl-file">
     <div class="layui-col-xs3">
-        <div class="_bg _img" data-src="{src}">
+        <div class="_bg _img" data-src="{datasrc}">
             <img src="{src}"/>
-            <div class="_name">{size}</div>
+            <div class="_name" style="{stylle}">{size}</div>
             <div class="_tips">点击选择</div>
             <div class="_ok"><i class="layui-icon layui-icon-ok"></i></div>
-            <div class="_del" data-src="{src}" data-dir="{dir}"><i class="layui-icon layui-icon-delete"></i></div>
+            <div class="_del" data-src="{datasrc}" data-dir="{dir}"><i class="layui-icon layui-icon-delete"></i></div>
         </div>
     </div>
 </script>

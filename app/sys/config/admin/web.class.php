@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-10-28 13:49:44
+ * @LastEditTime: 2021-02-23 18:16:58
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -98,6 +98,81 @@ class web extends adminbase
                 require LCMS::template("own/web_plugin");
                 break;
         }
+    }
+    public function dooss()
+    {
+        global $_L;
+        $plugin = LCMS::config([
+            "type" => "sys",
+            "cate" => "plugin",
+        ]);
+        $form = [
+            ["layui" => "radio", "title" => "存储方式",
+                "name"   => "LC[oss][type]",
+                "value"  => $plugin['oss']['type'] ?: "local",
+                "radio"  => [
+                    ["title" => "本地存储", "value" => "local", "tab" => "oss-0"],
+                    ["title" => "七牛云存储", "value" => "qiniu", "tab" => "oss-qiniu"],
+                    ["title" => "腾讯云存储", "value" => "tencent", "tab" => "oss-tencent"],
+                    // ["title" => "阿里云存储", "value" => "aliyun", "tab" => "oss-aliyun"],
+                ]],
+            ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的所有文件先手动上传到云存储！！",
+                "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun"],
+            ["layui"      => "input", "title" => "CDN域名",
+                "name"        => "LC[oss][domain]",
+                "value"       => $plugin['oss']['domain'],
+                "placeholder" => "https://www.domain.com/",
+                "cname"       => "hidden oss-qiniu oss-tencent oss-aliyun"],
+            ["layui" => "input", "title" => "AccessKey",
+                "name"   => "LC[oss][qiniu][AccessKey]",
+                "value"  => $plugin['oss']['qiniu']['AccessKey'],
+                "cname"  => "hidden oss-qiniu"],
+            ["layui" => "input", "title" => "secretKey",
+                "name"   => "LC[oss][qiniu][secretKey]",
+                "value"  => $plugin['oss']['qiniu']['secretKey'],
+                "cname"  => "hidden oss-qiniu"],
+            ["layui" => "input", "title" => "bucket",
+                "name"   => "LC[oss][qiniu][bucket]",
+                "value"  => $plugin['oss']['qiniu']['bucket'],
+                "cname"  => "hidden oss-qiniu"],
+            ["layui" => "radio", "title" => "存储区域",
+                "name"   => "LC[oss][qiniu][uphost]",
+                "value"  => $plugin['oss']['qiniu']['uphost'],
+                "verify" => "required",
+                "radio"  => [
+                    ["title" => "华东", "value" => "hd"],
+                    ["title" => "华北", "value" => "hb"],
+                    ["title" => "华南", "value" => "hn"],
+                ],
+                "cname"  => "hidden oss-qiniu"],
+            ["layui" => "input", "title" => "SecretId",
+                "name"   => "LC[oss][tencent][SecretId]",
+                "value"  => $plugin['oss']['tencent']['SecretId'],
+                "cname"  => "hidden oss-tencent"],
+            ["layui" => "input", "title" => "SecretKey",
+                "name"   => "LC[oss][tencent][SecretKey]",
+                "value"  => $plugin['oss']['tencent']['SecretKey'],
+                "cname"  => "hidden oss-tencent"],
+            ["layui" => "input", "title" => "Bucket",
+                "name"   => "LC[oss][tencent][Bucket]",
+                "value"  => $plugin['oss']['tencent']['Bucket'],
+                "cname"  => "hidden oss-tencent"],
+            ["layui" => "radio", "title" => "存储区域",
+                "name"   => "LC[oss][tencent][Region]",
+                "value"  => $plugin['oss']['tencent']['Region'],
+                "verify" => "required",
+                "radio"  => [
+                    ["title" => "北京", "value" => "ap-beijing"],
+                    ["title" => "南京", "value" => "ap-nanjing"],
+                    ["title" => "上海", "value" => "ap-shanghai"],
+                    ["title" => "广州", "value" => "ap-guangzhou"],
+                    ["title" => "成都", "value" => "ap-chengdu"],
+                    ["title" => "重庆", "value" => "ap-chongqing"],
+                ],
+                "cname"  => "hidden oss-tencent"],
+            ["layui" => "btn", "title" => "立即保存"],
+        ];
+        require LCMS::template("own/web_oss");
     }
     public function dopayment()
     {

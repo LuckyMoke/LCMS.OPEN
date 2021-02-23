@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-18 15:23:47
+ * @LastEditTime: 2021-02-23 15:41:39
  * @Description:图库
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -19,6 +19,38 @@ class gallery extends adminbase
     {
         global $_L;
         require LCMS::template("own/gallery");
+    }
+    public function doupload()
+    {
+        global $_L;
+        require LCMS::template("own/upload");
+    }
+    public function doivideo()
+    {
+        global $_L;
+        require LCMS::template("own/ivideo");
+    }
+    public function dovideo()
+    {
+        global $_L;
+        $form = [
+            ["layui" => "file", "title" => "视频链接",
+                "name"   => "file",
+                "verify" => "required"],
+            ["layui" => "btn", "title" => "插入视频"],
+        ];
+        require LCMS::template("own/video");
+    }
+    public function doattachment()
+    {
+        global $_L;
+        $form = [
+            ["layui" => "file", "title" => "上传附件",
+                "name"   => "file",
+                "verify" => "required"],
+            ["layui" => "btn", "title" => "插入附件"],
+        ];
+        require LCMS::template("own/attachment");
     }
     /**
      * @description: 图片目录列表
@@ -47,12 +79,27 @@ class gallery extends adminbase
         $image = sql_getall(["upload", "type = 'image' AND datey = '{$datey}' AND lcms = '{$_L['ROOTID']}'", "id DESC"]);
         foreach ($image as $val) {
             $size = getimagesize(path_absolute($val['src']));
+            switch ($_L['plugin']['oss']['type']) {
+                case 'qiniu':
+                case 'tencent':
+                    $list['file'][] = [
+                        "name"    => $val['name'],
+                        "src"     => $_L['plugin']['oss']['domain'] . str_replace("../", "", $val['src']),
+                        "datasrc" => $val['src'],
+                        "size"    => '',
+                        "stylle"  => 'opacity:0',
+                    ];
+                    break;
+                default:
+                    $list['file'][] = [
+                        "name"    => $val['name'],
+                        "src"     => $val['src'],
+                        "datasrc" => $val['src'],
+                        "size"    => $size[0] . "×" . $size[1],
+                    ];
+                    break;
+            }
 
-            $list['file'][] = [
-                "name" => $val['name'],
-                "src"  => $val['src'],
-                "size" => $size[0] . "×" . $size[1],
-            ];
         }
         $list['total'] = count($image);
         echo json_encode_ex($list);

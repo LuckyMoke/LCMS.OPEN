@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-29 16:23:02
+ * @LastEditTime: 2021-02-22 17:37:50
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,6 +20,7 @@ class adminbase extends common
         $this->check_login();
         $this->load_web_url();
         $this->load_app_info();
+        $this->load_plugin_info();
         $this->check_level();
     }
     protected function load_admin_url()
@@ -96,6 +97,16 @@ class adminbase extends common
     {
         global $_L;
         $_L['APP'] = LEVEL::app();
+    }
+    protected function load_plugin_info()
+    {
+        global $_L;
+        $_L['plugin'] = LCMS::config([
+            "name" => "config",
+            "type" => "sys",
+            "cate" => "plugin",
+        ]);
+        $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "local";
     }
     protected function check_level()
     {

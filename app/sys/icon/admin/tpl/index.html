@@ -1,19 +1,28 @@
 <template "ui/head" />
 <template "ui/iframe" />
 <template "ui/css" />
-<link rel="stylesheet" href="{{$_L['url']['static']}}fontawesome/css/fontawesome.min.css" />
+<link rel="stylesheet" href="{{$_L['url']['static']}}fontawesome/css/fontawesome.min.css?{{$_L['config']['ver']}}" />
 <div class="layui-tab layui-tab-card icon" data-id="{{$_L['form']['id']}}">
     <ul class="layui-tab-title">
-        <li class="layui-this">常规图标</li>
-        <li>品牌图标</li>
+        <li class="layui-this">实心图标<i></i></li>
+        <li>常规图标<i></i></li>
+        <li>品牌图标<i></i></li>
     </ul>
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <div class="fas"></div>
+            <ul class="list fas"></ul>
+        </div>
+        <div class="layui-tab-item layui-show">
+            <ul class="list far"></ul>
         </div>
         <div class="layui-tab-item">
-            <div class="fab"></div>
+            <ul class="list fab"></ul>
         </div>
     </div>
 </div>
+<script type="text/html" class="tpl">
+    <li data-value="{class} fa-{name}" title="{name}">
+        <i class="{class} fa-fw fa-{name}"></i>{name}
+    </li>
+</script>
 <template "ui/foot" />

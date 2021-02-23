@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-31 18:25:04
+ * @LastEditTime: 2021-02-23 18:54:20
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -601,6 +601,23 @@ function html_editor($str = "")
     $str = preg_replace('/(<iframe[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $str);
     $str = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $str);
     return $str;
+}
+/**
+ * @description: 获取云存储链接
+ * @param {*} $url
+ * @return {*}
+ */
+function oss($url)
+{
+    global $_L;
+    if (!is_url($url) && $_L['plugin']['oss']['type'] != "local") {
+        $preg = "../upload/{$_L['ROOTID']}/";
+        if (strpos($url, $preg) !== false) {
+            $url = str_replace("../", "", $url);
+            return $_L['plugin']['oss']['domain'] . $url;
+        }
+    }
+    return $url;
 }
 /**
  * 获取服务器信息

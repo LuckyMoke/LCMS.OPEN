@@ -31,10 +31,10 @@
                 <div class="__box_logo">
                     <if strpos($_SERVER['HTTP_USER_AGENT'],"YeeClient")===false>
                         <a href="{{$_L['url']['admin']}}">
-                            <img src="{{$_L['config']['admin']['logo']}}" width="100%" />
+                            <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                         </a>
                         <else/>
-                        <img src="{{$_L['config']['admin']['logo']}}" width="100%" />
+                        <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                     </if>
                 </div>
                 <ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="lcmsleftnav">
