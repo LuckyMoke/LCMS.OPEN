@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-23 12:04:33
+ * @LastEditTime: 2021-02-25 15:11:31
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -39,7 +39,7 @@ class UPLOAD
             }
             if ($size > $_L['config']['admin']['attsize']) {
                 // 如果文件大小超过上传限制
-                $return = self::out(0, "超过上传大小限制");
+                $return = self::out(0, "文件大小超过{$_L['config']['admin']['attsize']}KB");
             } else {
                 if (stripos($_L['config']['admin']['mimelist'], $mime) !== false) {
                     $name = strval(time()) . microseconds() . ".{$mime}";
