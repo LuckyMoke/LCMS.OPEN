@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-02 14:54:38
+ * @LastEditTime: 2021-02-26 20:46:14
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,16 +12,38 @@ class THUMB
     public static function url($path = "", $x = "", $y = "", $html = false)
     {
         global $_L;
-        $x    = $x ? $x : 0;
-        $y    = $y ? $y : 0;
-        $mime = strstr(str_replace(array("../", "./"), "", $path), ".");
+        if (is_url($path)) {
+            // 如果是完整链接，返回链接
+            return $path;
+        }
+        $x = $x ?: 0;
+        $y = $y ?: 0;
+        if ($x == 0 && $y == 0) {
+            // 如果没有裁剪，返回原图
+            return oss($path);
+        }
+        switch ($_L['plugin']['oss']['type']) {
+            case 'qiniu':
+                $url = oss($path);
+                if (is_url($url)) {
+                    return "{$url}?imageMogr2/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/blur/1x0/quality/75";
+                }
+                break;
+            case 'tencent':
+                $url = oss($path);
+                if (is_url($url)) {
+                    return "{$url}?imageMogr2/gravity/center/crop/{$x}x{$y}";
+                }
+                break;
+        }
+        $mime = strrchr($path, ".");
         $mime = $mime ? $mime : ".jpg";
         $para = base64_encode($path . "|" . $x . "|" . $y);
         if ($html) {
-            $site = $_L['url']['web']['site'] ? $_L['url']['web']['site'] : $_L['url']['site'];
+            $site = $_L['url']['web']['site'] ?: $_L['url']['site'];
             $url  = "{$site}images/{$para}{$mime}";
         } else {
-            $site = $_L['url']['web']['own'] ? $_L['url']['web']['own'] : $_L['url']['own'];
+            $site = $_L['url']['web']['own'] ?: $_L['url']['own'];
             $url  = "{$site}n=system&c=cut&para={$para}";
         }
         return $url;
