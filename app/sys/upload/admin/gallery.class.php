@@ -2,8 +2,8 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-23 15:41:39
- * @Description:图库
+ * @LastEditTime: 2021-03-02 14:45:28
+ * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
@@ -35,8 +35,31 @@ class gallery extends adminbase
         global $_L;
         $form = [
             ["layui" => "file", "title" => "视频链接",
-                "name"   => "file",
+                "name"   => "src",
                 "verify" => "required"],
+            ["layui" => "upload", "title" => "视频封面",
+                "name"   => "poster"],
+            ["layui" => "radio", "title" => "自动播放",
+                "name"   => "autoplay",
+                "radio"  => [
+                    ["title" => "否", "value" => 0],
+                    ["title" => "是", "value" => 1],
+                ]],
+            ["layui" => "radio", "title" => "循环播放",
+                "name"   => "loop",
+                "radio"  => [
+                    ["title" => "否", "value" => 0],
+                    ["title" => "是", "value" => 1],
+                ]],
+            ["layui" => "input", "title" => "视频宽",
+                "name"   => "width",
+                "value"  => "800",
+                "tips"   => "数字或100%",
+                "verify" => "required"],
+            ["layui" => "input", "title" => "视频高",
+                "name"   => "height",
+                "value"  => "auto",
+                "tips"   => "数字或auto"],
             ["layui" => "btn", "title" => "插入视频"],
         ];
         require LCMS::template("own/video");

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-01-29 16:47:44
+ * @LastEditTime: 2021-03-02 15:22:48
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -652,6 +652,7 @@ class admin extends adminbase
                         "admin",
                         "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "'){$where}",
                         "id ASC",
+                        "", "", "", 10,
                     ]);
                     foreach ($admin as $key => $val) {
                         $list[] = [
@@ -673,11 +674,13 @@ class admin extends adminbase
                     break;
                 default:
                     $form = [
-                        ["layui" => "select", "title" => "当前视角",
-                            "name"   => "LC[id]",
-                            "value"  => $_L['LCMSADMIN']['id'],
-                            "verify" => "required",
-                            "url"    => "god&action=list",
+                        ["layui"  => "select", "title" => "当前视角",
+                            "name"    => "LC[id]",
+                            "value"   => $_L['LCMSADMIN']['id'],
+                            "verify"  => "required",
+                            "tips"    => "输入帐号搜索更多",
+                            "default" => "请输入帐号搜索",
+                            "url"     => "god&action=list",
                         ],
                         ["layui" => "btn", "title" => "立即切换"],
                     ];
