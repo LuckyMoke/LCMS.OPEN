@@ -14,8 +14,8 @@ switch ($action) {
             "sys" => $_SERVER["SERVER_SOFTWARE"],
             "php" => PHP_VERSION,
         ];
-        if ($serv['sys'] < "7.0.0") {
-            $serv['php'] = "{$serv['php']} <span style='color:red'>最低要求7.0.0</span>";
+        if ($serv['sys'] < "7.1.0") {
+            $serv['php'] = "{$serv['php']} <span style='color:red'>最低要求7.1.0</span>";
             $code        = 0;
         } else {
             $serv['php'] = "{$serv['php']} <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本符合</span>";

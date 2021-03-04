@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-24 20:36:17
+ * @LastEditTime: 2021-03-03 14:52:30
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -93,12 +93,12 @@ class index extends adminbase
         $files = $_L['form']['files'] ?? [];
         foreach ($files as $url) {
             if ($_L['plugin']['oss']['type'] != "local" && stripos($url, $_L['plugin']['oss']['domain']) !== false) {
-                echo json_encode(["list" => [[
+                $result[] = [
                     "state"  => "SUCCESS",
                     "source" => $url,
                     "url"    => $url,
-                ]]]);
-                exit;
+                ];
+                continue;
             }
             $res = UPLOAD::file($dir, $url);
             if ($res['code'] == 1) {
