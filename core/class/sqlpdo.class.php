@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-04 16:30:17
+ * @LastEditTime: 2021-03-04 19:32:05
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -11,6 +11,8 @@ class SQLPDO
 {
     private $pdo;
     private $psm;
+    private $errorInfo;
+    private $errorcode;
     /**
      * [__construct 连接数据库]
      * @param  [type] $db [数据库信息]
@@ -149,7 +151,13 @@ class SQLPDO
      */
     public function query($sql, $result_type = PDO::FETCH_ASSOC)
     {
-        $this->psm = $this->pdo->query($sql);
+        try {
+            $this->psm = $this->pdo->query($sql);
+        } catch (Exception $e) {
+            $this->errorInfo = $e->getMessage();
+            $this->errorCode = $e->getCode();
+            return;
+        }
         if (strtoupper(substr($sql, 0, 6)) === "SELECT" || strtoupper(substr($sql, 0, 4)) === "SHOW") {
             $rows = $this->affected_rows();
             if ($rows > 1) {
@@ -192,6 +200,11 @@ class SQLPDO
      */
     public function error()
     {
+        if ($this->errorInfo) {
+            $errorInfo       = $this->errorInfo;
+            $this->errorInfo = "";
+            return $errorInfo;
+        }
         if (gettype($this->psm) == "object") {
             $error = $this->psm->errorInfo();
         } else {
@@ -207,6 +220,11 @@ class SQLPDO
      */
     public function errno()
     {
+        if ($this->errorCode) {
+            $errorCode       = $this->errorCode;
+            $this->errorCode = "";
+            return $errorCode;
+        }
         if (gettype($this->psm) == "object") {
             $errno = $this->psm->errorCode();
         } else {

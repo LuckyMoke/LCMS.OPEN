@@ -10,7 +10,7 @@
         </blockquote>
     </if>
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-md{{ $_L['config']['admin']['gonggao']?'6':'12' }} layui-col-xs12">
+        <div class="layui-col-md{{$_L['config']['admin']['gonggao']?'6':'12'}} layui-col-xs12">
             <table class="layui-table">
                 <thead>
                     <tr>
@@ -20,15 +20,21 @@
                 <tbody>
                     <tr>
                         <td width="100px">服务器系统</td>
-                        <td>{{ $info['os'] }}</td>
+                        <td>{{$info['os']}}</td>
                     </tr>
                     <tr>
                         <td>服务器环境</td>
-                        <td>{{ $info['sys'] }}</td>
+                        <td>{{$info['sys']}}</td>
                     </tr>
                     <tr>
                         <td>PHP版本</td>
-                        <td>{{ $info['php'] }}</td>
+                        <td>
+                            <if $info['php'] gte "7.1.0">
+                                {{$info['php']}}
+                                <else />
+                                <span style="color:red;">{{$info['php']}} PHP版本太低，需>=7.1</span>
+                            </if>
+                        </td>
                     </tr>
                     <tr>
                         <td>数据库版本</td>
@@ -37,8 +43,10 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
-                            <span style="padding-right:2px;color:{{ $info['redis']?'green':'red'; }}">[Redis]</span>
-                            <span style="padding-right:2px;color:{{ $info['memcached']?'green':'red'; }}">[Memcached]</span>
+                            <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[Zip]</span>
+                            <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[Fileinfo]</span>
+                            <span style="padding-right:2px;color:{{$info['redis']?'green':'red';}}">[Redis]</span>
+                            <span style="padding-right:2px;color:{{$info['memcached']?'green':'red';}}">[Memcached]</span>
                         </td>
                     </tr>
                     <tr>

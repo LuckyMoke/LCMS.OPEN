@@ -7,19 +7,44 @@ switch ($action) {
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));
         break;
     case 'dirs':
-        $code = 1;
-        $dirs = $install->checkDirs();
-        $serv = [
-            "os"  => php_uname('s'),
-            "sys" => $_SERVER["SERVER_SOFTWARE"],
-            "php" => PHP_VERSION,
+        $code   = 1;
+        $dirs   = $install->checkDirs();
+        $serv[] = [
+            "name" => "系统信息",
+            "desc" => php_uname('s'),
         ];
-        if ($serv['sys'] < "7.1.0") {
-            $serv['php'] = "{$serv['php']} <span style='color:red'>最低要求7.1.0</span>";
-            $code        = 0;
+        $serv[] = [
+            "name" => "环境信息",
+            "desc" => $_SERVER["SERVER_SOFTWARE"],
+        ];
+        if (PHP_VERSION < "7.1.0") {
+            $serv[] = [
+                "name" => "PHP版本",
+                "desc" => PHP_VERSION . " <span style='color:red'><i class='layui-icon layui-icon-close'></i>最低要求7.1.0</span>",
+            ];
+            $code = 0;
         } else {
-            $serv['php'] = "{$serv['php']} <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本符合</span>";
+            $serv[] = [
+                "name" => "PHP版本",
+                "desc" => PHP_VERSION . " <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本符合</span>",
+            ];
         }
+        if (extension_loaded("zip")) {
+            $desc = "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>zip]</span>";
+        } else {
+            $desc = "<span style='color:red'>[<i class='layui-icon layui-icon-close'></i>zip]</span>";
+            $code = 0;
+        }
+        if (extension_loaded("fileinfo")) {
+            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>fileinfo]</span>";
+        } else {
+            $desc .= " <span style='color:red'>[<i class='layui-icon layui-icon-close'></i>fileinfo]</span>";
+            $code = 0;
+        }
+        $serv[] = [
+            "name" => "PHP组件",
+            "desc" => $desc,
+        ];
         foreach ($result as $key => $val) {
             if ($val['power'] != 1) {
                 $code = 0;

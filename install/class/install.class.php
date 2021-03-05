@@ -84,28 +84,28 @@ class install
     {
         $result = [
             [
-                "name"  => "app",
-                "desc"  => "应用下载安装目录",
+                "name"  => "/app",
+                "desc"  => "",
                 "power" => getdirpower(PATH_APP) ? 1 : 0,
             ],
             [
-                "name"  => "cache",
-                "desc"  => "框架所有缓存文件目录",
+                "name"  => "/cache",
+                "desc"  => "",
                 "power" => getdirpower(PATH_CACHE) ? 1 : 0,
             ],
             [
-                "name"  => "core",
-                "desc"  => "框架所有核心文件目录",
+                "name"  => "/core",
+                "desc"  => "",
                 "power" => getdirpower(PATH_CORE) ? 1 : 0,
             ],
             [
-                "name"  => "upload",
-                "desc"  => "用户上传文件目录",
+                "name"  => "/upload",
+                "desc"  => "",
                 "power" => getdirpower(PATH_UPLOAD) ? 1 : 0,
             ],
             [
-                "name"  => "public",
-                "desc"  => "框架所有公共资源",
+                "name"  => "/public",
+                "desc"  => "",
                 "power" => getdirpower(PATH_PUBLIC) ? 1 : 0,
             ],
         ];
