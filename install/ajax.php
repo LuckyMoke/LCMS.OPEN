@@ -42,7 +42,7 @@ switch ($action) {
             $code = 0;
         }
         $serv[] = [
-            "name" => "PHP组件",
+            "name" => "PHP扩展",
             "desc" => $desc,
         ];
         foreach ($result as $key => $val) {

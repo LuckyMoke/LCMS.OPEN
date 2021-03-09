@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-03-04 17:52:43
+ * @LastEditTime: 2021-03-07 12:21:57
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -68,10 +68,15 @@ class repair extends adminbase
         global $_L;
         return json_decode(file_get_contents(PATH_APP_NOW . "include/data/mysql.json"), true);
     }
+    /**
+     * @description: 对比数据结构不同
+     * @param {*} $new
+     * @param {*} $old
+     * @return {*}
+     */
     private function get_diff($new, $old)
     {
         global $_L;
-        // array_diff($new, $old)
         foreach ($new as $name => $data) {
             if ($old[$name]) {
                 foreach ($data as $key => $val) {

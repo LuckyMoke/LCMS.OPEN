@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-29 00:46:46
+ * @LastEditTime: 2021-03-05 17:44:11
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -225,12 +225,14 @@ function getfilesize($filename, $unit = null)
     if (is_file($filename)) {
         $filesize = filesize($filename);
         if (!$unit) {
-            if ($filesize >= 0) {
-                $unit = "KB";
+            if ($filesize >= 1073741824) {
+                $unit = "GB";
             } elseif ($filesize >= 1048576) {
                 $unit = "MB";
-            } elseif ($filesize >= 1073741824) {
-                $unit = "GB";
+            } elseif ($filesize >= 1024) {
+                $unit = "KB";
+            } else {
+                $unit = "B";
             }
             $last = true;
         }
