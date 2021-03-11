@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-26 20:46:14
+ * @LastEditTime: 2021-03-11 14:13:22
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -32,7 +32,7 @@ class THUMB
             case 'tencent':
                 $url = oss($path);
                 if (is_url($url)) {
-                    return "{$url}?imageMogr2/gravity/center/crop/{$x}x{$y}";
+                    return "{$url}?imageMogr2/thumbnail/!{$x}x{$y}r/|imageMogr2/gravity/center/crop/{$x}x{$y}/interlace/0";
                 }
                 break;
         }
