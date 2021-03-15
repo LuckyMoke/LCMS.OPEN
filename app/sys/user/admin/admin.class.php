@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-03-02 15:22:48
+ * @LastEditTime: 2021-03-13 16:25:08
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -670,7 +670,7 @@ class admin extends adminbase
                         $admin['god'] = $_L['LCMSADMIN']['id'];
                     }
                     SESSION::set("LCMSADMIN", $admin);
-                    ajaxout(1, "切换成功", "reload-top");
+                    ajaxout(2, "切换成功", "reloadall");
                     break;
                 default:
                     $form = [
