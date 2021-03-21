@@ -9,49 +9,50 @@
         <meta content="yes" name="apple-mobile-web-app-capable"/>
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
-        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}amazeui/amazeui.min.css?{{ $_L['config']['ver'] }}"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}mescroll/mescroll.min.css?{{ $_L['config']['ver'] }}"/>
+        <script type="text/javascript">var formatDecimal=function(num,decimal){num=num.toString();let index=num.indexOf('.');if(index!==-1){num=num.substring(0,decimal+index+1)}else{num=num.substring(0)}return parseFloat(num).toFixed(decimal)};var int_w=375,win_w=window.screen.width,meta=document.createElement('meta');document.querySelector('meta[name="viewport"]').remove();document.getElementsByTagName('head')[0].cssText='width:'+int_w+'px;overflow-x:hidden';meta.name='viewport';meta.content='width='+(win_w>=int_w?int_w:win_w)+', initial-scale='+formatDecimal(win_w/int_w,2)+', user-scalable=no';document.getElementsByTagName('head')[0].appendChild(meta);</script>
+        <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link rel="stylesheet" href="{{$_L['url']['static']}}amazeui/amazeui.min.css?{{$_L['config']['ver']}}"/>
+        <link rel="stylesheet" href="{{$_L['url']['static']}}mescroll/mescroll.min.css?{{$_L['config']['ver']}}"/>
         <style type="text/css">
         body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}.pay-btn{margin:20px 10px 0 10px}
         </style>
     </head>
     <body>
         <div id="mescroll" class="mescroll">
-            <div class="pay-box" data-check="{{ $_L['url']['own'] }}n=system&c=pay&a=check&order_no={{ $order['order']['order_no'] }}" data-goback="{{ $order['other']['return_url'] }}">
+            <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order']['order_no']}}" data-goback="{{$order['other']['return_url']}}">
                 <div class="_title">
-                    <img src="{{ $_L['url']['site'] }}core/plugin/payment/wechat/icon.png"/>
+                    <img src="{{$_L['url']['site']}}core/plugin/payment/wechat/icon.png"/>
                 </div>
                 <div class="_body">
                     <h1>
                         ￥
-                        <span>{{ $order['order']['pay'] }}</span>
+                        <span>{{$order['order']['pay']}}</span>
                     </h1>
                     <p style="color:red;text-align:center;">支付完成后，不要立即关闭页面<br>请等待自动确认订单状态！</p>
                     <div class="_info">
                         <div>
                             <p class="am-fl">商品名</p>
-                            <p class="am-fr">{{ $order['order']['body'] }}</p>
+                            <p class="am-fr">{{$order['order']['body']}}</p>
                             <div class="am-cf"> </div>
                         </div>
                         <div>
                             <p class="am-fl">订单金额</p>
-                            <p class="am-fr">￥{{ $order['order']['pay'] }}</p>
+                            <p class="am-fr">￥{{$order['order']['pay']}}</p>
                             <div class="am-cf"> </div>
                         </div>
                         <div>
                             <p class="am-fl">商户单号</p>
-                            <p class="am-fr">{{ $order['other']['order_no_own'] }}</p>
+                            <p class="am-fr">{{$order['other']['order_no_own']}}</p>
                             <div class="am-cf"> </div>
                         </div>
                         <div>
                             <p class="am-fl">交易单号</p>
-                            <p class="am-fr">{{ $order['order']['order_no'] }}</p>
+                            <p class="am-fr">{{$order['order']['order_no']}}</p>
                             <div class="am-cf"> </div>
                         </div>
                         <div>
                             <p class="am-fl">下单时间</p>
-                            <p class="am-fr">{{ $order['order']['addtime'] }}</p>
+                            <p class="am-fr">{{$order['order']['addtime']}}</p>
                             <div class="am-cf"> </div>
                         </div>
                     </div>
@@ -61,10 +62,10 @@
                 <button class="am-btn am-btn-success am-btn-block" onclick="JSAPIPay()">立即支付</button>
             </div>
         </div>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}jquery.min.js"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/mlayer.js?{{ $_L['config']['ver'] }}"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}mescroll/mescroll.min.js?{{ $_L['config']['ver'] }}"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['ver'] }}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}layer/mlayer.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}mescroll/mescroll.min.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}../ui/web/static/ljs.js?{{$_L['config']['ver']}}"></script>
         <script type="text/javascript">
             var jsApiCall=function(){WeixinJSBridge.invoke('getBrandWCPayRequest',{{$result}},function(res){if(res.err_msg!="get_brand_wcpay_request:ok"){LJS._tips('支付失败',0)}})};var JSAPIPay=function(){if(typeof WeixinJSBridge=="undefined"){if(document.addEventListener){document.addEventListener('WeixinJSBridgeReady',jsApiCall,false)}else if(document.attachEvent){document.attachEvent('WeixinJSBridgeReady',jsApiCall);document.attachEvent('onWeixinJSBridgeReady',jsApiCall)}}else{jsApiCall()}};new MeScroll("mescroll",{down:{use:false},up:{use:false}});var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);
         </script>

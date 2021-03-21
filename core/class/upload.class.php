@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-15 17:05:08
+ * @LastEditTime: 2021-03-19 16:36:31
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -85,6 +85,7 @@ class UPLOAD
             "image/png"                    => "png",
             "image/bmp"                    => "bmp",
             "image/gif"                    => "gif",
+            "image/webp"                   => "webp",
             "image/vnd.wap.wbmp"           => "wbmp",
             "image/x-up-wpng"              => "wpng",
             "image/x-icon"                 => "ico",
@@ -103,6 +104,6 @@ class UPLOAD
             "application/octet-stream"     => "rar",
             "application/x-cprplayer"      => "pdf",
         ];
-        return $allmime[$mime];
+        return $allmime[$mime] ?: "jpeg";
     }
 }

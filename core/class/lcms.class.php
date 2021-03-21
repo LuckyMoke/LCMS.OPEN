@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-22 17:37:12
+ * @LastEditTime: 2021-03-19 17:31:45
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -214,11 +214,10 @@ class LCMS
             $file  = "{$path}.html";
             $fpath = str_replace(PATH_WEB, "", $file);
         }
+        is_file($file) || LCMS::X(404, "{$fpath} 文件未找到");
         $cname = substr(md5($fpath), 8, 16);
         $cache = PATH_CACHE . "tpl/{$cname}.php";
-        is_file($file) || LCMS::X(404, "{$fpath} 文件未找到");
         if (filemtime($file) > filemtime($cache)) {
-            // if (1) {
             $html = file_get_contents($file);
             preg_match_all("/{{(.*?)}}/i", $html, $match);
             preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);

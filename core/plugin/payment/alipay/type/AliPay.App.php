@@ -17,8 +17,9 @@ class AliPayApp
                 'out_trade_no' => $order['order_no'],
                 'total_amount' => $order['pay'],
                 'subject'      => $order['body'],
+                'goods_type'   => "1",
                 'product_code' => "QUICK_MSECURITY_PAY",
-            ] + ($order['fenqi'] > 0 ? ['extend_params' => ["hb_fq_num" => $order['fenqi'], "hb_fq_seller_percent" => "100"]] : [])),
+            ] + ($order['fenqi'] ?: [])),
         ];
         $input = AliPayApi::unifiedOrder($config, $input);
         return $this->buildRequestStr($config, $input);

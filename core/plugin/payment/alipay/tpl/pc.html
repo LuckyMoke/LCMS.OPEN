@@ -1,92 +1,128 @@
 <!DOCTYPE html>
-<html>
+    <html>
     <head>
         <title>订单支付</title>
-        <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <meta content="yes" name="apple-mobile-web-app-capable"/>
-        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
-        <meta content="telephone=no" name="format-detection"/>
-        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}amazeui/amazeui.min.css?{{ $_L['config']['ver'] }}"/>
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{$_L['url']['static']}}amazeui/amazeui.min.css?{{$_L['config']['ver']}}" />
         <style type="text/css">
-        body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box{max-width:600px;margin:0 auto}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._qr{text-align:center;padding:0 0 20px 0;border-bottom:1px #ccc dashed}.pay-box ._qr img{width:220px;height:220px}.pay-box ._tips{text-align:center;color:#a0a0a0;margin-top:20px;padding-bottom:20px;border-bottom:1px #ccc dashed}.pay-box ._tips i{font-size:60px;line-height:60px;position:absolute;margin-left:-100px}.pay-box ._tips p{margin:0 0 0 100px;line-height:30px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}.fenqi{padding:10px 10px 0 10px}.fenqi h3{margin-bottom:10px}.fenqi ul{margin:0 -2% 0 -2%}.fenqi a{width:90%;padding:5px 0}
+            body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box{max-width:600px;margin:0 auto}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._qr{text-align:center;padding:0 0 20px 0;border-bottom:1px #ccc dashed}.pay-box ._qr img{width:220px;height:220px}.pay-box ._tips{text-align:center;color:#a0a0a0;margin-top:20px;padding-bottom:20px;border-bottom:1px #ccc dashed}.pay-box ._tips i{font-size:60px;line-height:60px;position:absolute;margin-left:-100px}.pay-box ._tips p{margin:0 0 0 100px;line-height:30px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}.fenqi{position:relative;box-sizing:border-box;overflow:hidden;padding:10px 0 0 0}.fenqi h3{margin-bottom:10px}.fenqi ul{margin:0 -2% 0 -2%}.fenqi a{width:90%;padding:5px 0}
         </style>
     </head>
     <body>
-        <div class="pay-box" data-check="{{ $_L['url']['own'] }}n=system&c=pay&a=check&order_no={{ $order['order']['order_no'] }}" data-goback="{{ $order['other']['return_url'] }}">
+        <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order']['order_no']}}" data-goback="{{$order['other']['return_url']}}">
             <div class="_title">
-                <img src="{{ $_L['url']['site'] }}core/plugin/payment/alipay/icon.png"/>
+                <img src="{{$_L['url']['site']}}core/plugin/payment/alipay/icon.png" />
             </div>
             <div class="_body">
                 <div class="_info">
                     <div>
                         <p class="am-fl">商品名</p>
-                        <p class="am-fr">{{ $order['order']['body'] }}</p>
+                        <p class="am-fr">{{$order['order']['body']}}</p>
                         <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">订单金额</p>
-                        <p class="am-fr">￥{{ $order['order']['pay'] }}</p>
+                        <p class="am-fr">￥{{$order['order']['pay']}}</p>
                         <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">商户单号</p>
-                        <p class="am-fr">{{ $order['other']['order_no_own'] }}</p>
+                        <p class="am-fr">{{$order['other']['order_no_own']}}</p>
                         <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">交易单号</p>
-                        <p class="am-fr">{{ $order['order']['order_no'] }}</p>
+                        <p class="am-fr">{{$order['order']['order_no']}}</p>
                         <div class="am-cf"></div>
                     </div>
                     <div>
                         <p class="am-fl">下单时间</p>
-                        <p class="am-fr">{{ $order['order']['addtime'] }}</p>
+                        <p class="am-fr">{{$order['order']['addtime']}}</p>
                         <div class="am-cf"></div>
                     </div>
                 </div>
             </div>
             <if $huabei>
                 <div class="fenqi">
-                    <h3>选择花呗免息分期</h3>
-                    <ul class="am-avg-sm-{{ $huabei == 3 ? '2' : ($huabei == 6 ? '3' : '4') }} am-text-center">
+                    <h3>选择花呗{{$huabei>12?"":"免息"}}分期<span style="font-size:12px;color:#C0C4CC;font-weight:normal;padding-left:10px;">能否分期以支付宝显示为准</span></h3>
+                    <ul class="am-avg-sm-{{$huabei==3?'2':($huabei==6?'3':'4')}} am-text-center">
                         <li>
-                            <a class="am-btn am-btn-{{ $fenqi == ''?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}">不分期</a>
+                            <a class="am-btn am-btn-{{$fenqi==''?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}">不分期</a>
                         </li>
                         <li>
-                            <a class="am-btn am-btn-{{ $fenqi == '3'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=3">3期</a>
+                            <a class="am-btn am-btn-{{$fenqi=='3'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=3">3期</a>
                         </li>
                         <if $huabei gte 6>
                             <li>
-                                <a class="am-btn am-btn-{{ $fenqi == '6'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=6">6期</a>
+                                <a class="am-btn am-btn-{{$fenqi=='6'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=6">6期</a>
                             </li>
                         </if>
                         <if $huabei gte 12>
                             <li>
-                                <a class="am-btn am-btn-{{ $fenqi == '12'?'secondary':'default' }}" href="{{ echo url_clear($_L['url']['now'], 'fenqi') }}&fenqi=12">12期</a>
+                                <a class="am-btn am-btn-{{$fenqi=='12'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=12">12期</a>
                             </li>
                         </if>
                     </ul>
                 </div>
             </if>
             <div class="pay-btn">
-                <form method='POST' action="{{ $result['url'] }}" target="_blank">
-                    {{ foreach ($result['data'] as $key=>$val) }}
-                    <input type="hidden" name="{{ $key }}" value='{{ $val }}'/>
-                    {{ /foreach }}
-                    <br/>
+                <form method='POST' action="{{$result['url']}}" target="_blank">
+                    <loop $result['data'],$val,$key>
+                        <input type="hidden" name="{{$key}}" value='{{$val}}' />
+                    </loop>
+                    <br />
                     <button class="am-btn am-btn-primary am-btn-block" type='submit'>立即支付</button>
                 </form>
+                <if $huabei gt 12>
+                    <table class="am-table am-table-bordered am-table-striped am-table-compact am-text-center" style="font-size:12px;margin-top:15px;">
+                        <tbody>
+                            <tr>
+                                <th width="80px">期数</th>
+                                <th>每期手续费</th>
+                                <th>总手续费</th>
+                            </tr>
+                            <tr>
+                                <php>
+                                $fei=$order['order']['pay']*0.023;
+                            </php>
+                                <td>3期</td>
+                                <td>￥{{number_format($fei/3,2)}}</td>
+                                <td>￥{{number_format($fei,2)}}</td>
+                            </tr>
+                            <tr>
+                                <php>
+                                $fei=$order['order']['pay']*0.045;
+                            </php>
+                                <td>6期</td>
+                                <td>￥{{number_format($fei/6,2)}}</td>
+                                <td>￥{{number_format($fei,2)}}</td>
+                            </tr>
+                            <tr>
+                                <php>
+                                $fei=$order['order']['pay']*0.075;
+                            </php>
+                                <td>12期</td>
+                                <td>￥{{number_format($fei/12,2)}}</td>
+                                <td>￥{{number_format($fei,2)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size:12px;margin:-10px 0 20px 0;color:#C0C4CC;">实际手续费以支付宝显示为准</p>
+                </if>
             </div>
         </div>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}jquery.min.js"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}layer/layer.js?{{ $_L['config']['ver'] }}"></script>
-        <script type="text/javascript" src="{{ $_L['url']['static'] }}../ui/web/static/ljs.js?{{ $_L['config']['ver'] }}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}layer/layer.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}../ui/web/static/ljs.js?{{$_L['config']['ver']}}"></script>
         <script type="text/javascript">
             var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);layer.alert('支付超时<br>点击确定刷新订单',function(){location.reload()})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){window.location.href=goback})}},'json')}},2000);$('.pay-btn button').on('click',function(){layer.confirm('是否支付？',{btn:['重新支付','我已支付']},function(index){layer.close(index)},function(){location.reload()})});
         </script>
     </body>
-</html>
+    </html>

@@ -24,30 +24,36 @@ class AutoPay
         $order = self::cfg($order);
         load::plugin("payment/alipay/Config");
         $config = new AliPayConfig($order['payment']);
-        /**
-         * 计算花呗分期
-         */
-        if ($order['order']['huabei'] > 0 && $order['order']['huabei'] < 6) {
-            $order['order']['huabei'] = 3;
-        } elseif ($order['order']['huabei'] > 3 && $order['order']['huabei'] < 12) {
-            $order['order']['huabei'] = 6;
-        } elseif ($order['order']['huabei'] > 6) {
-            $order['order']['huabei'] = 12;
-        } else {
-            unset($order['order']['huabei']);
-        }
         $huabei = $order['order']['huabei'];
-        /**
-         * 获取用户选择了分几期
-         */
-        if ($_L['form']['fenqi'] > 0 && $_L['form']['fenqi'] < 6) {
-            $order['order']['fenqi'] = 3;
-        } elseif ($_L['form']['fenqi'] > 3 && $_L['form']['fenqi'] < 12) {
-            $order['order']['fenqi'] = 6;
-        } elseif ($_L['form']['fenqi'] > 6) {
-            $order['order']['fenqi'] = 12;
+        $huabei = $huabei ? explode("|", $huabei) : [];
+        $fenqi  = $_L['form']['fenqi'] ?: $huabei[1];
+        $seller = $huabei > 12 ? "0" : "100";
+        if ($fenqi > 6) {
+            // 分12期
+            $order['order']['fenqi'] = [
+                "extend_params" => [
+                    "hb_fq_num"            => "12",
+                    "hb_fq_seller_percent" => $seller,
+                ],
+            ];
+        } elseif ($fenqi > 3) {
+            // 分6期
+            $order['order']['fenqi'] = [
+                "extend_params" => [
+                    "hb_fq_num"            => "6",
+                    "hb_fq_seller_percent" => $seller,
+                ],
+            ];
+        } elseif ($fenqi > 0) {
+            // 分3期
+            $order['order']['fenqi'] = [
+                "extend_params" => [
+                    "hb_fq_num"            => "3",
+                    "hb_fq_seller_percent" => $seller,
+                ],
+            ];
         }
-        $fenqi = $order['order']['fenqi'];
+        $huabei = $huabei[0];
         switch ($order['order']['paytype']) {
             case 'h5':
             case 'jsapi':
@@ -60,7 +66,6 @@ class AutoPay
                 require LCMS::template(PATH_CORE_PLUGIN . "payment/alipay/tpl/h5");
                 break;
             case 'qr':
-                $order['order']['fenqi'] = $huabei;
                 load::plugin("payment/alipay/type/AliPay.Qr");
                 $AliPayQr = new AliPayQr();
                 $result   = $AliPayQr->Order($config, $order['order']);
