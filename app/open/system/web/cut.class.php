@@ -8,9 +8,10 @@ class cut extends webbase
     {
         global $_L;
         parent::__construct();
-        header("cache-control: max-age=604800");
+        header("cache-control: public, max-age=604800");
         header("pragma: cache");
         header("expires: " . gmdate("D, d M Y H:i:s", time() + 604800) . " GMT");
+        header("last-modified: Mon, 26 Jul 1997 05:00:00 GMT");
     }
     public function doindex()
     {
@@ -27,4 +28,4 @@ class cut extends webbase
         }
         THUMB::create($path, $para[1], $para[2]);
     }
-};
+}

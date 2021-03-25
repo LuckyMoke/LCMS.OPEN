@@ -39,10 +39,10 @@
             }
         },
         "update": {
-            "title": "系统升级",
+            "title": "框架升级",
             "level": {
                 "index": {
-                    "title": "系统状态",
+                    "title": "框架升级",
                     "menu": 0
                 }
             }

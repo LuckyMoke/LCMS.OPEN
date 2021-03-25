@@ -1,140 +1,107 @@
 <!DOCTYPE HTML>
-<html>
-<head>
-    <title>注册 - {{ $_L['config']['admin']['title'] }}</title>
-    <meta name="generator"
-          content="盘企®PHP开发框架" />
-    <meta name="anthor"
-          content="运城市盘石网络科技有限公司 www.panshi18.com" />
-    <meta name="renderer"
-          content="webkit" />
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible"
-          content="IE=edge,chrome=1" />
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-          name="viewport" />
-    <meta content="yes"
-          name="apple-mobile-web-app-capable" />
-    <meta content="black"
-          name="apple-mobile-web-app-status-bar-style" />
-    <meta content="telephone=no"
-          name="format-detection" />
-    <link href="{{ $_L['url']['site'] }}favicon.ico"
-          rel="shortcut icon"
-          type="image/x-icon" />
-    <link rel="stylesheet"
-          href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}" />
-    <link rel="stylesheet"
-          href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}" />
-    <script type="text/javascript">
+    <html>
+    <head>
+        <title>注册 - {{ $_L['config']['admin']['title'] }}</title>
+        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}" />
+        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}" />
+        <script type="text/javascript">
         var LCMS = {"url":{{json_encode($_L['url'])}} };
     </script>
-</head>
-<body>
-    <div class="layui-container">
-        <div class="layui-row">
-            <div class="loginbox regbox layui-col-xs12 layui-col-sm6 layui-col-md6 layui-col-sm-offset3 layui-col-md-offset3">
-                <h1>{{ $_L['config']['admin']['title'] }}</h1>
-                <form class="layui-form layui-form-pane"
-                      action="?n=login&c=reg&a={{ $config['reg']['on'] }}"
-                      method="post"
-                      target="_self">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">账号</label>
-                        <div class="layui-input-block">
-                            <input type="text"
-                                   name="name"
-                                   required
-                                   lay-verify="required|isname"
-                                   placeholder="账号用来登陆"
-                                   autocomplete="off"
-                                   class="layui-input __name" />
+    </head>
+    <body>
+        <div class="layui-container">
+            <div class="layui-row">
+                <div class="loginbox regbox layui-col-xs12 layui-col-sm10 layui-col-md8 layui-col-lg6 layui-col-sm-offset1 layui-col-md-offset2 layui-col-lg-offset3">
+                    <h1>{{ $_L['config']['admin']['title'] }}</h1>
+                    <form class="layui-form layui-form-pane" action="?n=login&c=reg&a={{ $config['reg']['on'] }}" method="post" target="_self">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">账号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" required lay-verify="required|isname" placeholder="账号用来登陆" autocomplete="off" class="layui-input __name" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">密码</label>
-                        <div class="layui-input-block">
-                            <input type="password"
-                                   name="pass"
-                                   required
-                                   lay-verify="required"
-                                   placeholder="请输入密码"
-                                   autocomplete="off"
-                                   class="layui-input" />
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="pass" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" />
+                            </div>
                         </div>
-                    </div>
-                    <if $config['reg']['input_title']>
+                        <if $config['reg']['input_title']>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">用户名</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="title" required lay-verify="required" placeholder="用户名只做显示使用" autocomplete="off" class="layui-input"/>
+                                    <input type="text" name="title" required lay-verify="required" placeholder="用户名只做显示使用" autocomplete="off" class="layui-input" />
                                 </div>
                             </div>
                         </if>
-                    <if $config['reg']['on'] == "mobile">
+                        <if $config['reg']['on']=="mobile">
                             <div class="layui-form-item _mobile">
                                 <label class="layui-form-label">手机号</label>
                                 <div class="layui-input-block">
-                                    <input type="phone" name="mobile" required lay-verify="required|phone|ismobile" placeholder="请输入手机号" autocomplete="off" class="layui-input __mobile"/>
+                                    <input type="phone" name="mobile" required lay-verify="required|phone|ismobile" placeholder="请输入手机号" autocomplete="off" class="layui-input __mobile" />
                                     <button class="layui-btn layui-btn-normal" lay-submit lay-filter="code_send">发送验证码</button>
                                 </div>
                             </div>
                         </if>
-                    <if $config['reg']['on'] == "email">
+                        <if $config['reg']['on']=="email">
                             <div class="layui-form-item _email">
                                 <label class="layui-form-label">邮箱</label>
                                 <div class="layui-input-block">
-                                    <input type="email" name="email" required lay-verify="required|email|isemail" placeholder="请输入邮箱账号" autocomplete="off" class="layui-input __email"/>
+                                    <input type="email" name="email" required lay-verify="required|email|isemail" placeholder="请输入邮箱账号" autocomplete="off" class="layui-input __email" />
                                     <button class="layui-btn layui-btn-normal" lay-submit lay-filter="code_send">发送验证码</button>
                                 </div>
                             </div>
                         </if>
-                    <if $config['reg']['on'] == "justuser">
+                        <if $config['reg']['on']=="justuser">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">验证码</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input" maxlength="4"/>
-                                    <img class="__code" src="{{ $_L['url']['app'] }}index.php?n=system&c=pin" title="点击刷新" onclick="this.src='{{ $_L['url']['app'] }}index.php?n=system&c=pin&'+Math.random()"/>
+                                    <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input" maxlength="4" />
+                                    <img class="__code" src="{{ $_L['url']['app'] }}index.php?n=system&c=pin" title="点击刷新" onclick="this.src='{{ $_L['url']['app'] }}index.php?n=system&c=pin&'+Math.random()" />
                                 </div>
                             </div>
                         </if>
-                    <if $config['reg']['on'] == "email" || $config['reg']['on'] == "mobile">
+                        <if $config['reg']['on']=="email" || $config['reg']['on']=="mobile">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">验证码</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="code" placeholder="请输入接收到的验证码" autocomplete="off" class="layui-input"/>
+                                    <input type="text" name="code" placeholder="请输入接收到的验证码" autocomplete="off" class="layui-input" />
                                 </div>
                             </div>
                         </if>
-                    <div class="layui-form-item">
-                        <button class="layui-btn layui-btn-fluid"
-                                lay-submit
-                                lay-filter="reg">立即注册</button>
-                    </div>
-                    <div class="layui-form-item">
-                        <a class="layui-btn layui-btn-primary layui-btn-fluid"
-                           href="?rootid={{$this->rootid}}&n=login">
-                            我有账号？返回登陆
-                        </a>
-                    </div>
-                    <div class="clear"></div>
-                </form>
-                <div id="LCMSFOOT">&copy {{ echo date("Y") }} {{ $_L['config']['admin']['developer'] }} 版权所有 翻版必究</div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="reg">立即注册</button>
+                        </div>
+                        <div class="layui-form-item">
+                            <a class="layui-btn layui-btn-primary layui-btn-fluid" href="?rootid={{$this->rootid}}&n=login&go={{urlencode($_L['form']['go'])}}">
+                                我有账号？返回登陆
+                            </a>
+                        </div>
+                        <div class="clear"></div>
+                    </form>
+                    <div id="LCMSFOOT">&copy {{ echo date("Y") }} {{ $_L['config']['admin']['developer'] }} 版权所有 翻版必究</div>
+                </div>
             </div>
         </div>
-    </div>
-    <script type="text/html"
-            id="code">
+        <script type="text/html" id="code">
             <div style="padding:20px;">
                 <p><img style="width:100%;height:65px;" src="../app/index.php?n=system&c=pin" title="点击刷新" onclick="this.src='../app/index.php?n=system&c=pin&' + Math.random()"/></p><br>
                 <input type="text" name="code" placeholder="请输入验证码" autocomplete="off" class="layui-input __code" maxlength="4"/><br>
                 <a class="layui-btn layui-btn-fluid __sendcode">发送验证码</a>
             </div>
         </script>
-    <script type="text/javascript"
-            src="{{ $_L['url']['static'] }}layui/layui.js?{{ $_L['config']['ver'] }}"></script>
-    <script type="text/javascript"
-            src="{{ $_L['url']['own_path'] }}admin/tpl/static/fun.js?{{ $_L['config']['ver'] }}"></script>
-    {{ $_L['config']['web']['tongji'] }}
-</body>
-</html>
+        <script type="text/javascript" src="{{ $_L['url']['static'] }}layui/layui.js?{{ $_L['config']['ver'] }}"></script>
+        <script type="text/javascript" src="{{ $_L['url']['own_path'] }}admin/tpl/static/fun.js?{{ $_L['config']['ver'] }}"></script>
+        {{ $_L['config']['web']['tongji'] }}
+    </body>
+    </html>

@@ -21,7 +21,7 @@
     <body>
         <div class="layui-container">
             <div class="layui-row">
-                <div class="loginbox layui-col-xs12 layui-col-sm6 layui-col-md6 layui-col-sm-offset3 layui-col-md-offset3">
+                <div class="loginbox layui-col-xs12 layui-col-sm10 layui-col-md8 layui-col-lg6 layui-col-sm-offset1 layui-col-md-offset2 layui-col-lg-offset3">
                     <h1>{{$_L['config']['admin']['title']}}</h1>
                     <form class="layui-form layui-form-pane" action="?n=login&a=check" method="post" target="_self">
                         <input type="hidden" name="go" value="{{$_L['form']['go']}}" />
@@ -55,11 +55,11 @@
                         </div>
                         <if $config['reg']['on'] && $config['reg']['on']!="0">
                             <div class="layui-form-item">
-                                <a class="layui-btn layui-btn-primary layui-btn-fluid" href="?rootid={{$rootid}}&n=login&c=reg">注册账号</a>
+                                <a class="layui-btn layui-btn-primary layui-btn-fluid" href="?rootid={{$rootid}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
                             </div>
                         </if>
                         <if $config['reg']['findpass'] gt 0>
-                            <a class="_findpass" href="?rootid={{$rootid}}&n=login&c=find">
+                            <a class="_findpass" href="?rootid={{$rootid}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">
                                 <i class="layui-icon layui-icon-about"></i>
                                 找回密码
                             </a>
