@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-11 14:13:22
+ * @LastEditTime: 2021-03-25 22:40:23
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -52,11 +52,11 @@ class THUMB
     {
         ob_end_clean();
         $img_info = @getimagesize($path);
-        if (stripos($img_info['mime'], "image/jpeg|image/pjpeg|image/gif|image/png|image/x-png") != false) {
+        if (stripos($img_info['mime'], "image/jpeg|image/pjpeg|image/gif|image/png|image/x-png|image/webp|image/vnd.wap.wbmp|image/x-up-wpng") != false) {
             header("content-type: {$img_info['mime']}");
             echo file_get_contents($path);
         }
-        $img   = self::img_resource($path, $img_info[2]);
+        $img   = self::img_resource($path, $img_info['mime']);
         $scale = $img_info[0] / $img_info[1];
         $x     = $x == 0 ? $y * $scale : ($x > 1920 ? 1920 : $x);
         $y     = $y == 0 ? $x / $scale : ($y > 1000 ? 1000 : $y);
@@ -84,9 +84,16 @@ class THUMB
             case 'image/jpeg':
                 imagejpeg($thumb, null, 100);
                 break;
+            case 'image/x-up-wpng':
             case 'image/x-png':
             case 'image/png':
                 imagepng($thumb);
+                break;
+            case 'image/webp':
+                imagewebp($thumb);
+                break;
+            case 'image/vnd.wap.wbmp':
+                imagewbmp($thumb);
                 break;
         }
         imagedestroy($thumb);
@@ -105,9 +112,16 @@ class THUMB
                 $res = imagecreatefromjpeg($img);
                 break;
             case 3:
+            case 'image/x-up-wpng':
             case 'image/x-png':
             case 'image/png':
                 $res = imagecreatefrompng($img);
+                break;
+            case 'image/webp':
+                $res = imagecreatefromwebp($img);
+                break;
+            case 'image/vnd.wap.wbmp':
+                $res = imagecreatefromwbmp($img);
                 break;
             default:
                 return false;

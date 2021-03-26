@@ -1,23 +1,25 @@
 <!DOCTYPE HTML>
-<html>
+    <html>
     <head>
         <title>开始安装</title>
-        <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <meta content="yes" name="apple-mobile-web-app-capable"/>
-        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
-        <meta content="telephone=no" name="format-detection"/>
-        <link rel="stylesheet" href="../public/static/layui/css/layui.css"/>
-        <link rel="stylesheet" href="static/style.css"/>
+        <meta name="renderer" content="webkit" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <link rel="stylesheet" href="../public/static/layui/css/layui.css" />
+        <link rel="stylesheet" href="static/style.css" />
     </head>
     <body>
         <div class="layui-container">
             <div class="layui-row">
                 <div class="layui-col-xs12">
                     <div class="setup setup1">
-                        <h1 class="title">阅读使用协议</h1>
+                        <h1 class="title">阅读使用协议
+                            <p style="text-align:center;font-size:12px;">本框架需PHP7.2及以上版本</p>
+                        </h1>
                         <div class="_content"> </div>
                         <div class="btn center">
                             <button class="layui-btn go-dirs">同意使用协议</button>
@@ -60,37 +62,37 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">连接地址</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[host]" placeholder="请输入数据库连接地址" class="layui-input" lay-verify="required" value="127.0.0.1"/>
+                                    <input type="text" name="db[host]" placeholder="请输入数据库连接地址" class="layui-input" lay-verify="required" value="127.0.0.1" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">端口号</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[port]" placeholder="请输入数据库端口号" class="layui-input" lay-verify="required" value="3306"/>
+                                    <input type="text" name="db[port]" placeholder="请输入数据库端口号" class="layui-input" lay-verify="required" value="3306" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">用户名</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[user]" placeholder="请输入数据库用户名" class="layui-input" lay-verify="required" value=""/>
+                                    <input type="text" name="db[user]" placeholder="请输入数据库用户名" class="layui-input" lay-verify="required" value="" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">密码</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[pass]" placeholder="请输入数据库密码" class="layui-input" lay-verify="required" value=""/>
+                                    <input type="text" name="db[pass]" placeholder="请输入数据库密码" class="layui-input" lay-verify="required" value="" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">库名</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[name]" placeholder="请输入数据库库名" class="layui-input" lay-verify="required" value=""/>
+                                    <input type="text" name="db[name]" placeholder="请输入数据库库名" class="layui-input" lay-verify="required" value="" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">表前缀</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="db[pre]" placeholder="请输入数据库表前缀" class="layui-input" lay-verify="required" value="lcms_"/>
+                                    <input type="text" name="db[pre]" placeholder="请输入数据库表前缀" class="layui-input" lay-verify="required" value="lcms_" />
                                 </div>
                             </div>
                             <div class="btn">
@@ -106,19 +108,19 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">管理员账号</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="admin[name]" placeholder="请输入管理员账号" class="layui-input" lay-verify="required"/>
+                                    <input type="text" name="admin[name]" placeholder="请输入管理员账号" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">管理员密码</label>
                                 <div class="layui-input-block">
-                                    <input type="password" name="admin[pass]" placeholder="请输入管理员密码" class="layui-input" lay-verify="required"/>
+                                    <input type="password" name="admin[pass]" placeholder="请输入管理员密码" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">重复密码</label>
                                 <div class="layui-input-block">
-                                    <input type="password" name="admin[repass]" placeholder="请再次输入管理员密码" class="layui-input" lay-verify="required"/>
+                                    <input type="password" name="admin[repass]" placeholder="请再次输入管理员密码" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="btn">
@@ -129,14 +131,14 @@
                         </form>
                     </div>
                     <div class="setup setup5 hide">
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
                         <div class="center">
                             <i class="layui-icon layui-icon-ok-circle" style="font-size:100px;color:#709e00;"> </i>
                             <h2>安装成功</h2>
-                            <br/>
+                            <br />
                             <p>恭喜您，安装成功！访问后台开始你的探索吧！</p>
                         </div>
                         <div class="btn center">
@@ -145,12 +147,12 @@
                         </div>
                     </div>
                     <div class="copyright">版权所有 运城市盘石网络科技有限公司</div>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                 </div>
             </div>
         </div>
         <script type="text/javascript" src="../public/static/layui/layui.all.js"></script>
         <script type="text/javascript" src="static/fun.js"></script>
     </body>
-</html>
+    </html>

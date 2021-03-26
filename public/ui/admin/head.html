@@ -20,6 +20,10 @@
                 config: {
                     oss: '{{$_L['plugin']['oss']['type']}}',
                     cdn: '{{$_L['plugin']['oss']['domain']}}',
+                    isupload: {
+                        img: {{$_L['LCMSADMIN']['level']['sys']['upload']['index']['img']??1}},
+                        file: {{$_L['LCMSADMIN']['level']['sys']['upload']['index']['file']??1}},
+                    },
                     attsize: '{{$_L['config']['admin']['attsize']}}',
                     mimelist: '{{$_L['config']['admin']['mimelist']}}',
                     ver: '{{$_L['config']['ver']}}'

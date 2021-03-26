@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-02-24 13:57:41
+ * @LastEditTime: 2021-03-26 17:30:22
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -126,6 +126,20 @@ class web extends adminbase
                             ["title" => "腾讯云存储", "value" => "tencent", "tab" => "oss-tencent"],
                             // ["title" => "阿里云存储", "value" => "aliyun", "tab" => "oss-aliyun"],
                         ]],
+                ];
+                if (LCMS::SUPER()) {
+                    $form = array_merge($form, [
+                        ["layui" => "radio", "title" => "全站使用",
+                            "name"   => "LC[oss][super]",
+                            "value"  => $plugin['oss']['super'] ?? 0,
+                            "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun",
+                            "radio"  => [
+                                ["title" => "各帐号独立设置", "value" => 0],
+                                ["title" => "全站使用此设置", "value" => 1],
+                            ]],
+                    ]);
+                }
+                $form = array_merge($form, [
                     ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的所有文件先手动上传到云存储！！",
                         "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun"],
                     ["layui"      => "input", "title" => "CDN域名",
@@ -181,7 +195,7 @@ class web extends adminbase
                         ],
                         "cname"  => "hidden oss-tencent"],
                     ["layui" => "btn", "title" => "立即保存"],
-                ];
+                ]);
                 require LCMS::template("own/web_oss");
                 break;
         }

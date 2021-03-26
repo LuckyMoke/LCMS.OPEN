@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-23 18:54:54
+ * @LastEditTime: 2021-03-26 17:38:06
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -80,11 +80,24 @@ class webbase extends common
     protected function load_plugin_info()
     {
         global $_L;
+        $plugin = LCMS::config([
+            "name" => "config",
+            "type" => "sys",
+            "cate" => "plugin",
+            "lcms" => true,
+        ]);
         $_L['plugin'] = LCMS::config([
             "name" => "config",
             "type" => "sys",
             "cate" => "plugin",
         ]);
+        $plugin['oss']['type'] = $plugin['oss']['type'] ?: "local";
+        if ($plugin['oss']['type'] != "local") {
+            if ($plugin['oss']['super'] == "1") {
+                $_L['plugin']['oss'] = $plugin['oss'];
+                return;
+            }
+        }
         $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "local";
     }
     public function load_tpl_config($tpl = "")
