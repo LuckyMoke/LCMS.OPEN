@@ -12,7 +12,7 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.1-8.0，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.2-8.0，Mysql5.6以上
 
 PHP扩展：zip扩展（宝塔默认开启）、fileinfo扩展（请手动开启）
 
@@ -28,7 +28,7 @@ PHP扩展：zip扩展（宝塔默认开启）、fileinfo扩展（请手动开启
 #### 安装方式
 
  - 方式一： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
- - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装
+ - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
 
 #### 更新方法
 

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-03-13 16:25:08
+ * @LastEditTime: 2021-04-12 13:22:43
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -153,7 +153,7 @@ class admin extends adminbase
                     }
                 }
                 if (TABLE::del("admin")) {
-                    ajaxout(1, "删除成功");
+                    ajaxout(1, "删除成功", "reload");
                 } else {
                     ajaxout(0, "删除失败");
                 }
@@ -205,32 +205,35 @@ class admin extends adminbase
                     ajaxout(0, "有用户使用此权限");
                 } else {
                     if (table::del("admin_level")) {
-                        ajaxout(1, "删除成功");
+                        ajaxout(1, "删除成功", "reload");
                     } else {
                         ajaxout(0, "删除失败");
                     }
                 }
                 break;
             case 'admin-level':
-                $admininfo = $_L['LCMSADMIN'];
-                $adminall  = LCMS::SUPER() ? sql_getall(["admin", "lcms = '0'", "id ASC"]) : sql_getall(["admin", "id = '{$admininfo['id']}'", "id ASC"]);
-                foreach ($adminall as $key => $val) {
+                $admin = $_L['LCMSADMIN'];
+                $uid   = LCMS::SUPER() ? "uid != 0" : "uid = '{$admin['id']}'";
+                $llist = sql_getall(["admin_level", $uid, "id ASC"]);
+                $lids  = is_array($llist) ? implode(",", array_unique(array_column($llist, "uid"))) : "";
+                $alist = $lids ? sql_getall(["admin", "id IN({$lids})", "id ASC"]) : [];
+                foreach ($alist as $index => $val) {
                     $val['title'] .= " - [{$val['name']}]";
                     $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
-                    $adminarr = [
+                    $arr[$index] = [
                         "value" => $val['type'] == "lcms" ? "0" : $val['id'],
                         "title" => $val['title'],
                     ];
-                    $children = sql_getall(["admin_level", "uid = '{$val['id']}'", "id ASC"]);
-                    foreach ($children as $key => $val) {
-                        $adminarr['children'][] = [
-                            "value" => $val['id'],
-                            "title" => $val['name'] . " - [ID" . $val['id'] . "]",
-                        ];
+                    foreach ($llist as $level) {
+                        if ($level["uid"] == $val['id']) {
+                            $arr[$index]['children'][] = [
+                                "value" => $level['id'],
+                                "title" => $level['name'] . " - [ID" . $level['id'] . "]",
+                            ];
+                        }
                     }
-                    $adminlist[] = $adminarr;
                 }
-                echo json_encode($adminlist);
+                echo json_encode($arr ?: []);
                 break;
         }
     }
@@ -678,8 +681,8 @@ class admin extends adminbase
                             "name"    => "LC[id]",
                             "value"   => $_L['LCMSADMIN']['id'],
                             "verify"  => "required",
-                            "tips"    => "输入帐号搜索更多",
-                            "default" => "请输入帐号搜索",
+                            "tips"    => "输入帐号名搜索更多",
+                            "default" => "输入帐号名搜索更多",
                             "url"     => "god&action=list",
                         ],
                         ["layui" => "btn", "title" => "立即切换"],
