@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-02-23 18:54:20
+ * @LastEditTime: 2021-04-18 15:43:37
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -60,9 +60,24 @@ function arr2sql($old = [], $new = [], $unarr = '')
     if ($old && is_array($new) && !empty($new)) {
         // 新老数据合并
         $unarr = explode("|", $unarr);
-        foreach ($unarr as $str) {
-            if ($str) {
-                unset($old[$str]);
+        foreach ($unarr as $unstr) {
+            if ($unstr) {
+                $unstr = explode("/", $unstr);
+                $unnum = count($unstr);
+                switch ($unnum) {
+                    case 1:
+                        unset($old[$unstr[0]]);
+                        break;
+                    case 2:
+                        unset($old[$unstr[0]][$unstr[1]]);
+                        break;
+                    case 3:
+                        unset($old[$unstr[0]][$unstr[1]][$unstr[2]]);
+                        break;
+                    case 4:
+                        unset($old[$unstr[0]][$unstr[1]][$unstr[2]][$unstr[3]]);
+                        break;
+                }
             }
         }
         $sql = serialize($new ? array_replace_recursive((array) $old, $new) : $old);

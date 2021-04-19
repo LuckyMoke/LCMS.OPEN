@@ -17,10 +17,10 @@ switch ($action) {
             "name" => "环境信息",
             "desc" => $_SERVER["SERVER_SOFTWARE"],
         ];
-        if (PHP_VERSION < "7.1.0") {
+        if (PHP_VERSION < "7.2.0") {
             $serv[] = [
                 "name" => "PHP版本",
-                "desc" => PHP_VERSION . " <span style='color:red'><i class='layui-icon layui-icon-close'></i>最低要求7.1.0</span>",
+                "desc" => PHP_VERSION . " <span style='color:red'><i class='layui-icon layui-icon-close'></i>最低要求7.2.0</span>",
             ];
             $code = 0;
         } else {
