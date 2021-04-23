@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-18 15:43:37
+ * @LastEditTime: 2021-04-21 12:58:38
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -197,7 +197,19 @@ function microseconds()
  */
 function randstr($length = "4", $type = "all")
 {
-    $str    = $type == "all" ? "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" : "0123456789";
+    switch ($type) {
+        case 'num':
+        case 'number':
+            $str = "0123456789";
+            break;
+        case 'let':
+        case 'letter':
+            $str = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            break;
+        default:
+            $str = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            break;
+    }
     $result = "";
     for ($i = 0; $i < $length; $i++) {
         $num[$i] = mt_rand(0, strlen($str) - 1);
