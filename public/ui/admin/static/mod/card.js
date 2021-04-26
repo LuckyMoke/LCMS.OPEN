@@ -1,1 +1,0 @@
-$('#PTCONTENT .PTCARD input').on('click',function(){return false});$('#PTCONTENT .PTCARD a').on('click',function(){return false});$('#PTCONTENT .PTCARD input').each(function(){var w=$(this).attr('width');if(w&&w!='undefined'){$(this).css({'width':w+'px'})}});$('#PTCONTENT .PTCARD .__li').prepend('+');$('#PTCONTENT .PTCARD .___li').prepend('++');

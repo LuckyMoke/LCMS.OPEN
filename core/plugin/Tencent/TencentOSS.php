@@ -192,25 +192,6 @@ class TencentOSS
             return $sign;
         }
     }
-    // private function http_delete($url, $headers = [])
-    // {
-    //     $ch = curl_init($url);
-    //     if ($headers) {
-    //         foreach ($headers as $key => $val) {
-    //             $header[] = "{$key}: {$val}";
-    //         }
-    //         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    //     }
-    //     curl_setopt($ch, CURLOPT_HEADER, 0);
-    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    //     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-    //     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-    //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    //     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    //     $r = curl_exec($ch);
-    //     curl_close($ch);
-    //     return $r;
-    // }
     private function request($method = 'POST', $url, $data = "", $headers = [])
     {
         $ch = curl_init($url);
