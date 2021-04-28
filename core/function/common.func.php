@@ -2,14 +2,14 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-21 12:58:38
+ * @LastEditTime: 2021-04-27 14:14:02
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 /**
  * [dump 输出字符串或数组]
- * @param  [type]  $vars   [输出字符串或数组]
+ * @param  array|string  $vars   [输出字符串或数组]
  * @return [type]          [description]
  */
 function dump($vars)
@@ -21,19 +21,19 @@ function dump($vars)
 }
 /**
  * [json_encode_ex 数组转换为json，不转义中文]
- * @param  [type] $value [description]
+ * @param  string $value [description]
  * @return [type]        [description]
  */
-function json_encode_ex($value)
+function json_encode_ex($value = "")
 {
-    return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+    return $value ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) : "";
 }
 /**
  * [ajaxout AJAX输出的标准数据]
- * @param  [type] $code [返回状态 1,0]
- * @param  [type] $msg  [返回提示]
- * @param  [type] $go   [可选 跳转链接]
- * @param  [type] $data [可选 输出的数据]
+ * @param  integer $code [返回状态 1,0]
+ * @param  string $msg  [返回提示]
+ * @param  string $go   [可选 跳转链接]
+ * @param  array|string $data [可选 输出的数据]
  * @return [type]       [description]
  */
 function ajaxout($code = 1, $msg = "", $go = "", $data = "")
@@ -170,7 +170,7 @@ function datetime($date, $type = "")
 }
 /**
  * [unixtime 正常时间转unix时间戳]
- * @param  [type] $date [description]
+ * @param  string $date [description]
  * @return [type]       [description]
  */
 function unixtime($date)
@@ -229,8 +229,8 @@ function randfloat($min = 0, $max = 1)
 }
 /**
  * [url_clear 清理URL中的参数]
- * @param  [type] $url   [description]
- * @param  [type] $key   [description]
+ * @param  string $url   [description]
+ * @param  string $key   [description]
  * @return [type]        [description]
  */
 function url_clear($url, $keys)
@@ -258,7 +258,7 @@ function url_clear($url, $keys)
 }
 /**
  * [url_auto URL截取]
- * @param  [type] $url [url链接]
+ * @param  string $url [url链接]
  * @return [type]      [description]
  */
 function url_auto($url)
@@ -268,13 +268,14 @@ function url_auto($url)
 }
 /**
  * [okinfo description]
- * @param  [type] $url  [description]
- * @param  [type] $info [description]
+ * @param  string $url  [description]
+ * @param  string $info [description]
  * @return [type]       [description]
  */
 function okinfo($url, $info = "")
 {
     $url = url_clear($url, "lcmstips");
+    $url = $url ?: "";
     if ($info) {
         $info = urlencode($info);
         if (stristr($url, "?")) {
@@ -316,9 +317,9 @@ function utf82gbk($str = "")
     return mb_convert_encoding($str, "GBK", "UTF-8");
 }
 /**
- * [sqlinsert 数据库插入过滤]
- * @param  [type] $string [description]
- * @return [type]         [description]
+ * @description:
+ * @param array|string $string
+ * @return array|string
  */
 function sqlinsert($string)
 {
@@ -337,9 +338,9 @@ function sqlinsert($string)
     return $string;
 }
 /**
- * [filterform 全局表单内容过滤]
- * @param  [type] $string [description]
- * @return [type]         [description]
+ * @description:全局表单内容过滤
+ * @param array|string $string
+ * @return {*}
  */
 function filterform($string)
 {
@@ -349,6 +350,7 @@ function filterform($string)
         }
     } else {
         if (L_MODULE != "admin") {
+
             $string = trim(sqlinsert($string));
         } else {
             $string = trim($string);
@@ -358,7 +360,7 @@ function filterform($string)
 }
 /**
  * [filterEmoji 过滤Emoji]
- * @param  [type] $str [description]
+ * @param  string $str [description]
  * @return [type]      [description]
  */
 function filterEmoji($str)
@@ -372,7 +374,7 @@ function filterEmoji($str)
 }
 /**
  * [rmb 人民币小写转大写]
- * @param  [type] $rmb [description]
+ * @param  string $rmb [description]
  * @return [type]      [description]
  */
 function rmb($rmb)
@@ -403,7 +405,7 @@ function _cny_map_unit($list, $units)
 }
 /**
  * [strcut 字符串截取]
- * @param  [type]  $str    [description]
+ * @param  string  $str    [description]
  * @param  integer $start  [description]
  * @param  string  $length [description]
  * @return [type]          [description]
@@ -434,9 +436,9 @@ function strcut($str, $start = 0, $length = '')
 }
 /**
  * @description: 字符串模糊
- * @param {atring} $str
- * @param {int} $start
- * @param {int} $end
+ * @param string $str
+ * @param integer $start
+ * @param integer $end
  * @return {*}
  */
 function strstar($str, $start, $end = 0)
@@ -472,8 +474,8 @@ function strstar($str, $start, $end = 0)
 }
 /**
  * [ssl_encode ssl AES 字符串加密]
- * @param  [type] $string [description]
- * @param  [type] $key    [description]
+ * @param  string $string [description]
+ * @param  string $key    [description]
  * @return [type]         [description]
  */
 function ssl_encode($string, $key = "LCMS")
@@ -485,8 +487,8 @@ function ssl_encode($string, $key = "LCMS")
 }
 /**
  * [ssl_decode ssl AES 字符串解密]
- * @param  [type] $string [description]
- * @param  [type] $key    [description]
+ * @param  string $string [description]
+ * @param  string $key    [description]
  * @return [type]         [description]
  */
 function ssl_decode($string, $key = "LCMS")
@@ -496,7 +498,7 @@ function ssl_decode($string, $key = "LCMS")
 }
 /**
  * [lazyload 替换富文本中图片]
- * @param  [type] $str [description]
+ * @param  string $str [description]
  * @return [type]      [description]
  */
 function lazyload($str)
@@ -545,7 +547,7 @@ function is_base64($str = "")
 }
 /**
  * [is_phone 正则检测是否是]
- * @param  [type]  $phone [description]
+ * @param  string  $phone [description]
  * @return boolean        [description]
  */
 function is_phone($phone)
@@ -631,7 +633,7 @@ function html_editor($str = "")
 }
 /**
  * @description: 获取云存储链接
- * @param {*} $url
+ * @param string $url
  * @return {*}
  */
 function oss($url)

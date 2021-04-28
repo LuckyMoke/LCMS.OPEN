@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-16 15:57:52
+ * @LastEditTime: 2021-04-27 14:26:20
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,7 +12,7 @@ class LAY
     public static function start($para)
     {
         $para              = is_array($para) ? $para : array();
-        $para['title']     = $para['title'] ? $para['title'] : "小标题";
+        $para['title']     = $para['title'] ?: "小标题";
         $para['cname']     = $para['cname'] ? " {$para['cname']}" : "";
         $para['disabled']  = $para['disabled'] ? " disabled" : "";
         $para['disclass']  = $para['disabled'] ? " layui-disabled" : "";
@@ -271,16 +271,17 @@ class LAY
     }
     public static function upload($para)
     {
-        $para         = self::start($para);
-        $para['many'] = $para['many'] ? true : false;
-        $html         = "
+        $para          = self::start($para);
+        $para['local'] = $para['local'] ? true : false;
+        $para['many']  = $para['many'] ? true : false;
+        $html          = "
             <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane>
                 <input type='hidden' name='{$para['name']}' value='{$para['value']}' data-many='{$para['many']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-upload-list lcms-form-upload-img-list'></div>
                     <div class='layui-btn-group lcms-form-upload-btn'>
-                        <a class='layui-btn layui-btn-normal layui-btn-sm _up'  data-many='{$para['many']}' data-accept='{$para['accept']}'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-normal layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         <a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a>
                         <a class='layui-btn layui-btn-primary layui-btn-sm _other'>链接</a>
                     </div>
@@ -291,15 +292,16 @@ class LAY
     }
     public static function file($para)
     {
-        $para         = self::start($para);
-        $para['mime'] = $para['mime'] ? $para['mime'] : "file";
-        $html         = "
+        $para          = self::start($para);
+        $para['local'] = $para['local'] ? true : false;
+        $para['mime']  = $para['mime'] ? $para['mime'] : "file";
+        $html          = "
             <div class='layui-form-item lcms-form-upload-file{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     <div class='layui-btn-group lcms-form-upload-file-btn'>
-                        <a class='layui-btn layui-btn-normal layui-btn-xl _up' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-normal layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                     </div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
                     <div class='clear'></div>
@@ -337,10 +339,16 @@ class LAY
     }
     public static function spec($para)
     {
-        $para          = self::start($para);
-        $para['value'] = $para['value'] ? base64_encode(json_encode_ex($para['value'])) : "";
-        $para['specs'] = $para['specs'] ? base64_encode(json_encode_ex($para['specs'])) : "";
-        $html          = "
+        $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = json_encode_ex($para['value']);
+            $para['value'] = base64_encode($para['value']);
+        }
+        if ($para['specs']) {
+            $para['specs'] = json_encode_ex($para['specs']);
+            $para['specs'] = base64_encode($para['specs']);
+        }
+        $html = "
             <div class='layui-form-item layui-form-text lcms-form-spec{$para['cname']}' data-name='{$para['name']}' data-value='{$para['value']}' data-specs='{$para['specs']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}<span style='font-size:12px;color:#ff5722;padding-left:10px;'>标签可拖动排序</span></label>
                 <div class='layui-input-block'>

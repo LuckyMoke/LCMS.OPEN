@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-24 18:41:10
+ * @LastEditTime: 2021-04-27 13:46:15
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,7 +25,7 @@ class TPL
     }
     /**
      * @description: 生成css，js文件
-     * @param {array} $paths
+     * @param array $paths
      * @return {*}
      */
     public static function getui($paths = [])
@@ -56,8 +56,8 @@ class TPL
     }
     /**
      * [patch 对文件内容做处理]
-     * @param  [type] $paths  [description]
-     * @param  [type] $suffix [description]
+     * @param  array $paths  [description]
+     * @param  string $suffix [description]
      * @return [type]         [description]
      */
     public static function patch($paths, $suffix)
@@ -77,34 +77,36 @@ class TPL
     }
     /**
      * [get_content 读取css，js文件内容]
-     * @param  [type] $paths  [description]
-     * @param  [type] $suffix [description]
+     * @param  array $paths  [description]
+     * @param  string $suffix [description]
      * @return [type]         [description]
      */
     public static function get_content($paths, $suffix)
     {
         $code = array();
-        foreach ($paths as $val) {
-            $codea         = array();
-            $codea['name'] = pathinfo($val, PATHINFO_BASENAME);
-            $codea['code'] = self::ps_content($val, $suffix);
-            $code[]        = $codea;
+        foreach ($paths as $file) {
+            if (is_file($file)) {
+                $codea         = array();
+                $codea['name'] = pathinfo($file, PATHINFO_BASENAME);
+                $codea['code'] = self::ps_content($file, $suffix);
+                $code[]        = $codea;
+            }
         }
         return $code;
     }
     /**
      * [ps_content 对文件内容做处理]
-     * @param  [type] $path   [description]
-     * @param  [type] $suffix [description]
+     * @param  string $file   [description]
+     * @param  string $suffix [description]
      * @return [type]         [description]
      */
-    public static function ps_content($path, $suffix)
+    public static function ps_content($file, $suffix)
     {
         global $_L;
-        $code = file_get_contents($path);
-        $path = str_replace(PATH_WEB, "", $path);
+        $code = file_get_contents($file);
+        $file = str_replace(PATH_WEB, "", $file);
         if ($suffix == 'css') {
-            $adurl = "../../" . dirname($path) . '/';
+            $adurl = "../../" . dirname($file) . '/';
             preg_match_all("/(?<=url\()[^\)]+/i", $code, $urls);
             foreach ($urls[0] as $url) {
                 if (stristr($url, "data:") === false) {
@@ -120,7 +122,7 @@ class TPL
     }
     /**
      * [scanAll 扫描所有文件]
-     * @param  [type] $dir [description]
+     * @param  string $dir [description]
      * @param  array  $arr [description]
      * @return [type]      [description]
      */
