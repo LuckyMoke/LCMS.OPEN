@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-27 14:14:02
+ * @LastEditTime: 2021-04-28 22:37:40
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,7 +26,7 @@ function dump($vars)
  */
 function json_encode_ex($value = "")
 {
-    return $value ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) : "";
+    return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
 }
 /**
  * [ajaxout AJAX输出的标准数据]

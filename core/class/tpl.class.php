@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-27 13:46:15
+ * @LastEditTime: 2021-04-30 14:03:28
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -15,7 +15,8 @@ class TPL
     public static $tplpath = "";
     /**
      * @description: 缓存文件名称
-     * @return {string}
+     * @param {*}
+     * @return string
      */
     public static function cachename()
     {
@@ -108,7 +109,9 @@ class TPL
         if ($suffix == 'css') {
             $adurl = "../../" . dirname($file) . '/';
             preg_match_all("/(?<=url\()[^\)]+/i", $code, $urls);
-            foreach ($urls[0] as $url) {
+            $urls = $urls[0] ?: [];
+            $urls = array_unique($urls);
+            foreach ($urls as $url) {
                 if (stristr($url, "data:") === false) {
                     $code = str_replace($url, "{$adurl}{$url}", $code);
                 }
