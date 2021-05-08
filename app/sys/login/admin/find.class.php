@@ -3,7 +3,7 @@ defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class("captcha");
 load::sys_class("email");
-load::plugin("Aliyun/dysms");
+load::plugin("Aliyun/DySMS");
 class find extends adminbase
 {
     public function __construct()

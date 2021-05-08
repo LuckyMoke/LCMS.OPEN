@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-03-26 17:30:22
+ * @LastEditTime: 2021-05-07 19:46:25
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -124,7 +124,7 @@ class web extends adminbase
                             ["title" => "本地存储", "value" => "local", "tab" => "oss-0"],
                             ["title" => "七牛云存储", "value" => "qiniu", "tab" => "oss-qiniu"],
                             ["title" => "腾讯云存储", "value" => "tencent", "tab" => "oss-tencent"],
-                            // ["title" => "阿里云存储", "value" => "aliyun", "tab" => "oss-aliyun"],
+                            ["title" => "阿里云存储", "value" => "aliyun", "tab" => "oss-aliyun"],
                         ]],
                 ];
                 if (LCMS::SUPER()) {
@@ -194,6 +194,37 @@ class web extends adminbase
                             ["title" => "重庆", "value" => "ap-chongqing"],
                         ],
                         "cname"  => "hidden oss-tencent"],
+                    ["layui" => "input", "title" => "AccessKeyId",
+                        "name"   => "LC[oss][aliyun][AccessKeyId]",
+                        "value"  => $plugin['oss']['aliyun']['AccessKeyId'],
+                        "cname"  => "hidden oss-aliyun"],
+                    ["layui" => "input", "title" => "AccessKeySecret",
+                        "name"   => "LC[oss][aliyun][AccessKeySecret]",
+                        "value"  => $plugin['oss']['aliyun']['AccessKeySecret'],
+                        "cname"  => "hidden oss-aliyun"],
+                    ["layui" => "input", "title" => "Bucket",
+                        "name"   => "LC[oss][aliyun][Bucket]",
+                        "value"  => $plugin['oss']['aliyun']['Bucket'],
+                        "cname"  => "hidden oss-aliyun"],
+                    ["layui" => "radio", "title" => "存储区域",
+                        "name"   => "LC[oss][aliyun][Region]",
+                        "value"  => $plugin['oss']['aliyun']['Region'],
+                        "verify" => "required",
+                        "radio"  => [
+                            ["title" => "杭州", "value" => "cn-hangzhou"],
+                            ["title" => "上海", "value" => "cn-shanghai"],
+                            ["title" => "青岛", "value" => "cn-qingdao"],
+                            ["title" => "北京", "value" => "cn-beijing"],
+                            ["title" => "张家口", "value" => "cn-zhangjiakou"],
+                            ["title" => "呼和浩特", "value" => "cn-huhehaote"],
+                            ["title" => "乌兰察布", "value" => "cn-wulanchabu"],
+                            ["title" => "深圳", "value" => "cn-shenzhen"],
+                            ["title" => "河源", "value" => "cn-heyuan"],
+                            ["title" => "广州", "value" => "cn-guangzhou"],
+                            ["title" => "成都", "value" => "cn-chengdu"],
+                            ["title" => "香港", "value" => "cn-hongkong"],
+                        ],
+                        "cname"  => "hidden oss-aliyun"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ]);
                 require LCMS::template("own/web_oss");

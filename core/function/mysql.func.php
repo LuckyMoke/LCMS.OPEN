@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-15 14:47:14
+ * @LastEditTime: 2021-05-07 21:07:44
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -19,9 +19,9 @@ function sql_tablename($table)
     return $_L['mysql']['pre'] . $table;
 }
 /**
- * [sql_get 查询一条数据]
- * @param  [type] $sql  [table, where, order, para, fields]
- * @return [type]       [description]
+ * @description: 查询一条数据
+ * @param array $sql [table, where, order, para, fields]
+ * @return array|null
  */
 function sql_get($sql = [])
 {
@@ -38,9 +38,9 @@ function sql_get($sql = [])
     return DB::$mysql->get_one($query);
 }
 /**
- * [sql_getall 查询多条数据]
- * @param  [type] $sql  [table, where, order, para, key, fields, limit]
- * @return [type]       [description]
+ * @description: 查询多条数据
+ * @param array $sql [table, where, order, para, key, fields, limit]
+ * @return array|null
  */
 function sql_getall($sql = [])
 {
@@ -65,9 +65,9 @@ function sql_getall($sql = [])
     return $mysql;
 }
 /**
- * [sql_total 获取字段统计]
- * @param  [type] $sql [table, where, order, para, fields, limit]
- * @return [type]      [description]
+ * @description: 获取字段统计
+ * @param array $sql [table, where, order, para, fields, limit]
+ * @return array|null
  */
 function sql_total($sql = [])
 {
@@ -85,12 +85,12 @@ function sql_total($sql = [])
     $fields = str_replace(["SUM(", "COUNT(", "AVG(", "MAX(", "MIN("], ["SUM(a.", "COUNT(a.", "AVG(a.", "MAX(a.", "MIN(a."], $fields);
     $query  = "SELECT {$fields} FROM {$query}";
     $result = DB::$mysql->get_all($query);
-    return $result[0];
+    return $result ? $result[0] : [];
 }
 /**
- * [sql_update 更新表]
- * @param  [type] $sql [table, data, where, para, math]
- * @return [type]      [description]
+ * @description: 更新表数据
+ * @param array $sql [table, data, where, para, math]
+ * @return {*}
  */
 function sql_update($sql = [])
 {
@@ -125,9 +125,9 @@ function sql_update($sql = [])
     }
 }
 /**
- * [sql_insert 添加表]
- * @param  [type] $sql [table, data, para]
- * @return [type]      [description]
+ * @description: 添加表数据
+ * @param array $sql [table, data, para]
+ * @return int|string|null
  */
 function sql_insert($sql = [])
 {
@@ -169,9 +169,9 @@ function sql_insert($sql = [])
     return sql_insert_id();
 }
 /**
- * [sql_delete 删除数据]
- * @param  [type] $sql [table, where]
- * @return [type]      [description]
+ * @description: 删除表数据
+ * @param array $sql [table, where]
+ * @return {*}
  */
 function sql_delete($sql = [])
 {
@@ -181,9 +181,9 @@ function sql_delete($sql = [])
     DB::$mysql->delete($query);
 }
 /**
- * [sql_counter 获取数据量]
- * @param  [type] $sql [table, where, para]
- * @return [type]      [description]
+ * @description: 获取数据量
+ * @param array $sql [table, where, para]
+ * @return int|string|null
  */
 function sql_counter($sql = [])
 {
@@ -198,41 +198,45 @@ function sql_counter($sql = [])
     return DB::$mysql->counter("SELECT COUNT(*) FROM {$table}{$where}");
 }
 /**
- * [sql_query 自己写SQL语句]
- * @param  string $sql [query]
- * @return [type]      [description]
+ * @description: 自己写SQL语句
+ * @param string $sql
+ * @return {*}
  */
 function sql_query($sql = "")
 {
     return DB::$mysql->query($sql);
 }
 /**
- * [sql_insert_id 获取插入的最后一个ID]
- * @return [type] [description]
+ * @description: 获取插入的最后一个ID
+ * @param {*}
+ * @return int|string|null
  */
 function sql_insert_id()
 {
     return DB::$mysql->insert_id();
 }
 /**
- * [sql_affected_rows 返回上一次操作影响的条数]
- * @return [type] [description]
+ * @description: 返回上一次操作影响的条数
+ * @param {*}
+ * @return int|string|null
  */
 function sql_affected_rows()
 {
     return DB::$mysql->affected_rows();
 }
 /**
- * [sql_error 返回数据库操作错误]
- * @return [type] [description]
+ * @description: 返回数据库操作错误
+ * @param {*}
+ * @return string
  */
 function sql_error()
 {
     return DB::$mysql->error();
 }
 /**
- * [sql_errno 返回数据库操作错误编号]
- * @return [type] [description]
+ * @description: 返回数据库操作错误编号
+ * @param {*}
+ * @return string|int
  */
 function sql_errno()
 {

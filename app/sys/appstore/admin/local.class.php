@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-04 19:02:44
+ * @LastEditTime: 2021-05-06 12:54:45
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -45,9 +45,9 @@ class local extends adminbase
         ajaxout(1, 'success');
     }
     /**
-     * [updatesql 更新数据库]
-     * @param  [type] $sqldata [description]
-     * @return [type]          [description]
+     * @description: 更新数据库
+     * @param string $sqldata
+     * @return {*}
      */
     private function updatesql($sqldata)
     {

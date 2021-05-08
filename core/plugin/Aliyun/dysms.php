@@ -28,11 +28,11 @@ class DYSMS
         ];
     }
     /**
-     * [send 发送短信]
-     * @param  [type] $tplcode [模板编号]
-     * @param  [type] $phone   [可传入多个手机号，用英文,隔开，最多一次1000个手机号]
-     * @param  [type] $tplpara [参数内容]
-     * @return [type]          [description]
+     * @description: 短信发送
+     * @param string $tplcode
+     * @param string $phone
+     * @param array $tplpara
+     * @return array
      */
     public function send($tplcode, $phone, $tplpara = [])
     {
@@ -66,8 +66,9 @@ class DYSMS
         return $result;
     }
     /**
-     * [sign 数据签名]
-     * @return [type] [description]
+     * @description: 数据签名
+     * @param {*}
+     * @return {*}
      */
     public function sign()
     {
@@ -84,9 +85,9 @@ class DYSMS
         return $input;
     }
     /**
-     * [encode 签名编码]
-     * @param  [type] $str [description]
-     * @return [type]      [description]
+     * @description: 签名编码
+     * @param string $str
+     * @return string
      */
     private function encode($str)
     {

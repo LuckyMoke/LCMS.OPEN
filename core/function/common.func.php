@@ -2,15 +2,15 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-28 22:37:40
+ * @LastEditTime: 2021-05-08 10:17:07
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 /**
- * [dump 输出字符串或数组]
- * @param  array|string  $vars   [输出字符串或数组]
- * @return [type]          [description]
+ * @description: 输出字符串或数组
+ * @param mixed $vars
+ * @return string
  */
 function dump($vars)
 {
@@ -20,21 +20,21 @@ function dump($vars)
     echo $content;
 }
 /**
- * [json_encode_ex 数组转换为json，不转义中文]
- * @param  string $value [description]
- * @return [type]        [description]
+ * @description: 数组转换为json，不转义中文
+ * @param array $arr
+ * @return string|null
  */
-function json_encode_ex($value = "")
+function json_encode_ex($arr = "")
 {
-    return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+    return json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
 }
 /**
- * [ajaxout AJAX输出的标准数据]
- * @param  integer $code [返回状态 1,0]
- * @param  string $msg  [返回提示]
- * @param  string $go   [可选 跳转链接]
- * @param  array|string $data [可选 输出的数据]
- * @return [type]       [description]
+ * @description: AJAX输出的标准数据
+ * @param int $code 返回状态 1,0
+ * @param string $msg 返回提示
+ * @param string $go 跳转链接,可选
+ * @param mixed $data 输出的数据,可选
+ * @return string
  */
 function ajaxout($code = 1, $msg = "", $go = "", $data = "")
 {
@@ -48,13 +48,13 @@ function ajaxout($code = 1, $msg = "", $go = "", $data = "")
     exit;
 }
 /**
- * [arr2sql 数组序列化]
- * @param  array  $old   [description]
- * @param  array  $new   [description]
- * @param  string $unarr [description]
- * @return [type]        [description]
+ * @description: 数组序列化
+ * @param array $old
+ * @param array $new
+ * @param string $unarr
+ * @return string
  */
-function arr2sql($old = [], $new = [], $unarr = '')
+function arr2sql($old = [], $new = [], $unarr = "")
 {
     $old = sql2arr($old);
     if ($old && is_array($new) && !empty($new)) {
@@ -91,9 +91,9 @@ function arr2sql($old = [], $new = [], $unarr = '')
     return is_serialize($sql) ? $sql : "";
 }
 /**
- * [sql2arr 反序列化]
- * @param  string $data [description]
- * @return [type]       [description]
+ * @description: 反序列化
+ * @param mixed $data
+ * @return array|bool
  */
 function sql2arr($data = "")
 {
@@ -119,18 +119,19 @@ function sql2arr($data = "")
     }
 }
 /**
- * [timenow 获取当前时间]
- * @return [type] [description]
+ * @description: 获取当前时间
+ * @param {*}
+ * @return string
  */
 function datenow()
 {
     return date("Y-m-d H:i:s");
 }
 /**
- * [datetime 时间的转换、截取]
- * @param  [type] $date [description]
- * @param  string $type [description]
- * @return [type]       [description]
+ * @description: 时间的转换、截取
+ * @param string|int $date
+ * @param string $type
+ * @return string
  */
 function datetime($date, $type = "")
 {
@@ -169,17 +170,18 @@ function datetime($date, $type = "")
     }
 }
 /**
- * [unixtime 正常时间转unix时间戳]
- * @param  string $date [description]
- * @return [type]       [description]
+ * @description: 正常时间转unix时间戳
+ * @param string $date
+ * @return int
  */
 function unixtime($date)
 {
     return strtotime($date);
 }
 /**
- * [microseconds 获取毫秒时间戳]
- * @return [type]        [毫秒]
+ * @description: 获取毫秒时间戳
+ * @param {*}
+ * @return int
  */
 function microseconds()
 {
@@ -190,12 +192,12 @@ function microseconds()
     return $microseconds;
 }
 /**
- * [randstr 获取随机字符串]
- * @param  string $length [获取长度]
- * @param  string $type   [获取纯数字还是字母+数字]
- * @return [type]         [description]
+ * @description: 获取随机字符串
+ * @param int $length 获取长度
+ * @param string $type 获取类型:all,num,let
+ * @return string
  */
-function randstr($length = "4", $type = "all")
+function randstr($length = 4, $type = "all")
 {
     switch ($type) {
         case 'num':
@@ -218,20 +220,20 @@ function randstr($length = "4", $type = "all")
     return $result;
 }
 /**
- * [randfloat 获取两数之间的随机数，含小数]
- * @param  integer $min [description]
- * @param  integer $max [description]
- * @return [type]       [description]
+ * @description: 获取两数之间的随机数，含小数
+ * @param int $min
+ * @param int $max
+ * @return int
  */
 function randfloat($min = 0, $max = 1)
 {
     return round($min + mt_rand() / mt_getrandmax() * ($max - $min), 2);
 }
 /**
- * [url_clear 清理URL中的参数]
- * @param  string $url   [description]
- * @param  string $key   [description]
- * @return [type]        [description]
+ * @description: 清理URL中的参数
+ * @param string $url
+ * @param string $keys
+ * @return string
  */
 function url_clear($url, $keys)
 {
@@ -257,9 +259,9 @@ function url_clear($url, $keys)
     return $url;
 }
 /**
- * [url_auto URL截取]
- * @param  string $url [url链接]
- * @return [type]      [description]
+ * @description: URL去除scheme
+ * @param string $url
+ * @return string
  */
 function url_auto($url)
 {
@@ -267,10 +269,10 @@ function url_auto($url)
     return $url;
 }
 /**
- * [okinfo description]
- * @param  string $url  [description]
- * @param  string $info [description]
- * @return [type]       [description]
+ * @description: JS页面跳转
+ * @param string $url
+ * @param string $info
+ * @return {*}
  */
 function okinfo($url, $info = "")
 {
@@ -289,9 +291,9 @@ function okinfo($url, $info = "")
     exit;
 }
 /**
- * [goheader 302跳转]
- * @param  [type] $url [description]
- * @return [type]      [description]
+ * @description: 302跳转
+ * @param string $url
+ * @return {*}
  */
 function goheader($url)
 {
@@ -299,25 +301,25 @@ function goheader($url)
     exit;
 }
 /**
- * [gbk2utf8 编码转换]
- * @param  string $str [description]
- * @return [type]      [description]
+ * @description: 编码转换
+ * @param string $str
+ * @return string
  */
 function gbk2utf8($str = "")
 {
     return mb_convert_encoding($str, "UTF-8", "GBK, GB2312, BIG5, ASCII");
 }
 /**
- * [utf82gbk 编码转换]
- * @param  string $str [description]
- * @return [type]      [description]
+ * @description: 编码转换
+ * @param string $str
+ * @return string
  */
 function utf82gbk($str = "")
 {
     return mb_convert_encoding($str, "GBK", "UTF-8");
 }
 /**
- * @description:
+ * @description: 字符串过滤
  * @param array|string $string
  * @return array|string
  */
@@ -338,9 +340,9 @@ function sqlinsert($string)
     return $string;
 }
 /**
- * @description:全局表单内容过滤
+ * @description: 全局表单内容过滤
  * @param array|string $string
- * @return {*}
+ * @return array|string
  */
 function filterform($string)
 {
@@ -359,9 +361,9 @@ function filterform($string)
     return $string;
 }
 /**
- * [filterEmoji 过滤Emoji]
- * @param  string $str [description]
- * @return [type]      [description]
+ * @description: 过滤Emoji
+ * @param string $str
+ * @return string
  */
 function filterEmoji($str)
 {
@@ -373,9 +375,9 @@ function filterEmoji($str)
     return $str;
 }
 /**
- * [rmb 人民币小写转大写]
- * @param  string $rmb [description]
- * @return [type]      [description]
+ * @description: 人民币小写转大写
+ * @param string $rmb
+ * @return string
  */
 function rmb($rmb)
 {
@@ -404,13 +406,13 @@ function _cny_map_unit($list, $units)
     return $xs;
 }
 /**
- * [strcut 字符串截取]
- * @param  string  $str    [description]
- * @param  integer $start  [description]
- * @param  string  $length [description]
- * @return [type]          [description]
+ * @description: 字符串截取
+ * @param string $str
+ * @param int $start
+ * @param int $length
+ * @return string|bool
  */
-function strcut($str, $start = 0, $length = '')
+function strcut($str, $start = 0, $length = 0)
 {
     $code = mb_detect_encoding($str, "ASCII,UTF-8,GB2312,GBK", true);
     $len  = mb_strlen($str, $code);
@@ -437,9 +439,9 @@ function strcut($str, $start = 0, $length = '')
 /**
  * @description: 字符串模糊
  * @param string $str
- * @param integer $start
- * @param integer $end
- * @return {*}
+ * @param int $start
+ * @param int $end
+ * @return string
  */
 function strstar($str, $start, $end = 0)
 {
@@ -473,10 +475,10 @@ function strstar($str, $start, $end = 0)
     return $newStr;
 }
 /**
- * [ssl_encode ssl AES 字符串加密]
- * @param  string $string [description]
- * @param  string $key    [description]
- * @return [type]         [description]
+ * @description: AES字符串加密
+ * @param string $string
+ * @param string $key
+ * @return string
  */
 function ssl_encode($string, $key = "LCMS")
 {
@@ -486,10 +488,10 @@ function ssl_encode($string, $key = "LCMS")
     return $encrypt;
 }
 /**
- * [ssl_decode ssl AES 字符串解密]
- * @param  string $string [description]
- * @param  string $key    [description]
- * @return [type]         [description]
+ * @description: AES字符串解密
+ * @param string $string
+ * @param string $key
+ * @return string
  */
 function ssl_decode($string, $key = "LCMS")
 {
@@ -497,20 +499,20 @@ function ssl_decode($string, $key = "LCMS")
     return $decrypted;
 }
 /**
- * [lazyload 替换富文本中图片]
- * @param  string $str [description]
- * @return [type]      [description]
+ * @description: 替换富文本中图片懒加载
+ * @param string $str
+ * @return string
  */
-function lazyload($str)
+function lazyload($str = "")
 {
     $str = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $str);
     $str = preg_replace('/(<iframe[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $str);
     return $str;
 }
 /**
- * [is_mobile 检测是否手机端]
- * @param  string  $ua [description]
- * @return boolean     [description]
+ * @description: 检测是否手机端
+ * @param string $ua
+ * @return bool
  */
 function is_mobile($ua = "")
 {
@@ -537,18 +539,18 @@ function is_mobile($ua = "")
     return $ismobile > 0 ? true : false;
 }
 /**
- * [is_base64 判断是否为base64编码]
- * @param  string  $str [description]
- * @return boolean      [description]
+ * @description: 判断是否为base64编码
+ * @param string $str
+ * @return bool
  */
 function is_base64($str = "")
 {
     return $str == base64_encode(base64_decode($str)) ? true : false;
 }
 /**
- * [is_phone 正则检测是否是]
- * @param  string  $phone [description]
- * @return boolean        [description]
+ * @description: 判断是否为手机号
+ * @param string $phone
+ * @return bool
  */
 function is_phone($phone)
 {
@@ -564,9 +566,9 @@ function is_phone($phone)
     return $flag;
 }
 /**
- * @判断是否为序列化:
- * @param {*}
- * @return {*}
+ * @description: 判断是否为序列化
+ * @param mixed $data
+ * @return boolean
  */
 function is_serialize($data)
 {
@@ -597,9 +599,9 @@ function is_serialize($data)
     return true;
 }
 /**
- * [is_https 判断一个链接是否为https]
- * @param  [type]  $url [description]
- * @return boolean      [description]
+ * @description: 判断一个链接是否为https
+ * @param string $url
+ * @return bool
  */
 function is_https($url = "")
 {
@@ -608,9 +610,9 @@ function is_https($url = "")
     }
 }
 /**
- * @判断一个字符串是否为url:
- * @param {*}
- * @return {*}
+ * @description: 判断一个字符串是否为url
+ * @param string $str
+ * @return bool
  */
 function is_url($str = "")
 {
@@ -619,22 +621,23 @@ function is_url($str = "")
     }
 }
 /**
- * [html_editor HTML内容解码懒加载]
- * @param  string $str [description]
- * @return [type]      [description]
+ * @description: HTML内容解码懒加载
+ * @param string $content
+ * @return string
  */
-function html_editor($str = "")
+function html_editor($content = "")
 {
-    $str = is_base64($str) ? base64_decode($str) : $str;
-    $str = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $str);
-    $str = preg_replace('/(<iframe[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $str);
-    $str = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $str);
-    return $str;
+    $content = is_base64($content) ? base64_decode($content) : $content;
+    $content = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $content);
+    $content = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $content);
+    $content = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe class="lazyload" frameborder="0" data-src="$2"$3></iframe>', $content);
+    $content = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $content);
+    return $content;
 }
 /**
  * @description: 获取云存储链接
  * @param string $url
- * @return {*}
+ * @return string
  */
 function oss($url)
 {
@@ -649,8 +652,9 @@ function oss($url)
     return $url;
 }
 /**
- * 获取服务器信息
- * @return array 返回服务器信息
+ * @description: 获取服务器信息
+ * @param {*}
+ * @return array
  */
 function server_info()
 {
@@ -667,9 +671,9 @@ function server_info()
  */
 if (!function_exists('array_key_first')) {
     /**
-     * [array_key_first 获取数组第一个键]
-     * @param  $array [description]
-     * @return [type]        [description]
+     * @description: 获取数组第一个键
+     * @param array $array
+     * @return string|null
      */
     function array_key_first($array = array())
     {

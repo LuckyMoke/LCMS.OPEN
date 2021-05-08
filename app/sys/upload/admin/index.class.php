@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-03 14:52:30
+ * @LastEditTime: 2021-05-08 01:09:41
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -68,6 +68,13 @@ class index extends adminbase
                     $this->sql("delete", $file);
                     ajaxout(1, "删除成功");
                     break;
+                case 'aliyun':
+                    load::plugin("Aliyun/AliyunOSS");
+                    $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
+                    $Aliyun->delete(str_replace("../", "", $file));
+                    $this->sql("delete", $file);
+                    ajaxout(1, "删除成功");
+                    break;
                 default:
                     if (delfile($file)) {
                         $this->sql("delete", $file);
@@ -130,6 +137,19 @@ class index extends adminbase
                             delfile($path);
                         }
                         break;
+                    case 'aliyun':
+                        load::plugin("Aliyun/AliyunOSS");
+                        $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
+                        $rst    = $Aliyun->upload($path);
+                        if ($rst['code'] == "1") {
+                            $result[] = [
+                                "state"  => "SUCCESS",
+                                "source" => $url,
+                                "url"    => $_L['plugin']['oss']['domain'] . str_replace("../", "", $path),
+                            ];
+                            delfile($path);
+                        }
+                        break;
                     default:
                         $result[] = [
                             "state"  => "SUCCESS",
@@ -152,7 +172,7 @@ class index extends adminbase
         echo json_encode(["list" => $result]);
     }
     /**
-     * @description: 七牛上传
+     * @description: 七牛云上传
      * @param {*}
      * @return {*}
      */
@@ -181,6 +201,11 @@ class index extends adminbase
                 break;
         }
     }
+    /**
+     * @description: 腾讯云上传
+     * @param {*}
+     * @return {*}
+     */
     public function dotencent()
     {
         global $_L, $LF;
@@ -208,13 +233,42 @@ class index extends adminbase
         }
     }
     /**
-     * @description: 数据库操作
-     * @param {*} $type
-     * @param {*} $datey
-     * @param {*} $data
+     * @description: 阿里云上传
+     * @param {*}
      * @return {*}
      */
-    private function sql($type = "image", $datey, $data = "")
+    public function doaliyun()
+    {
+        global $_L, $LF;
+        load::plugin("Aliyun/AliyunOSS");
+        $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
+        switch ($LF['action']) {
+            case 'token':
+                $token = $Aliyun->token();
+                ajaxout(1, "success", "", $token);
+                break;
+            case 'success':
+                $this->sql($LF['type'], $LF['datey'], [
+                    "filename" => $LF['name'],
+                    "src"      => "../" . $LF['file'],
+                ]);
+                ajaxout(1, "上传成功", "", [
+                    "dir"      => "../" . $LF['dir'],
+                    "filename" => $LF['name'],
+                    "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
+                    "datasrc"  => "../" . $LF['file'],
+                ]);
+                break;
+        }
+    }
+    /**
+     * @description: 数据库操作
+     * @param string $type
+     * @param string $datey
+     * @param array $data
+     * @return {*}
+     */
+    private function sql($type = "image", $datey, $data = [])
     {
         global $_L;
         switch ($type) {

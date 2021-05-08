@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-25 22:40:23
+ * @LastEditTime: 2021-05-08 02:32:42
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,13 +26,34 @@ class THUMB
             case 'qiniu':
                 $url = oss($path);
                 if (is_url($url)) {
-                    return "{$url}?imageMogr2/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/blur/1x0/quality/75";
+                    if ($x != 0 && $y == 0) {
+                        return "{$url}?imageMogr2/auto-orient/thumbnail/{$x}x/interlace/1/blur/1x0/quality/75";
+                    } elseif ($x == 0 && $y != 0) {
+                        return "{$url}?imageMogr2/auto-orient/thumbnail/x{$y}/interlace/1/blur/1x0/quality/75";
+                    }
+                    return "{$url}?imageMogr2/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/interlace/1/blur/1x0/quality/75";
                 }
                 break;
             case 'tencent':
                 $url = oss($path);
                 if (is_url($url)) {
-                    return "{$url}?imageMogr2/thumbnail/!{$x}x{$y}r/|imageMogr2/gravity/center/crop/{$x}x{$y}/interlace/0";
+                    if ($x != 0 && $y == 0) {
+                        return "{$url}?imageMogr2/thumbnail/{$x}x/|imageMogr2/gravity/center/crop/{$x}x0/interlace/1";
+                    } elseif ($x == 0 && $y != 0) {
+                        return "{$url}?imageMogr2/thumbnail/x{$y}/|imageMogr2/gravity/center/crop/0x{$y}/interlace/1";
+                    }
+                    return "{$url}?imageMogr2/thumbnail/!{$x}x{$y}r/|imageMogr2/gravity/center/crop/{$x}x{$y}/interlace/1";
+                }
+                break;
+            case 'aliyun':
+                $url = oss($path);
+                if (is_url($url)) {
+                    if ($x != 0 && $y == 0) {
+                        return "{$url}?image/auto-orient,1/interlace,1/resize,m_lfit,w_{$x},limit_0/quality,q_75";
+                    } elseif ($x == 0 && $y != 0) {
+                        return "{$url}?image/auto-orient,1/interlace,1/resize,m_lfit,h_{$y},limit_0/quality,q_75";
+                    }
+                    return "{$url}?image/auto-orient,1/interlace,1/resize,m_fill,w_{$x},h_{$y},limit_0/quality,q_75";
                 }
                 break;
         }

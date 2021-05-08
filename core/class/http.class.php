@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-02-23 17:31:49
+ * @LastEditTime: 2021-05-06 12:53:11
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,9 +10,10 @@ defined('IN_LCMS') or exit('No permission');
 class HTTP
 {
     /**
-     * [get curl_get]
-     * @param  [type] $url [description]
-     * @return [type]      [description]
+     * @description: HTTP GET
+     * @param string $url 请求链接
+     * @param bool $header 是否输出头部信息
+     * @return string|array|null
      */
     public static function get($url, $header = false)
     {
@@ -38,11 +39,12 @@ class HTTP
         return $r;
     }
     /**
-     * [post description]
-     * @param  [type]  $url   [description]
-     * @param  [type]  $data  [description]
-     * @param  boolean $build [是否进行 http_build_query]
-     * @return [type]         [description]
+     * @description: HTTP POST
+     * @param string $url 请求链接
+     * @param {*} $data 请求数据
+     * @param bool $build 是否转换data数组
+     * @param array $headers 携带头部内容
+     * @return string|null
      */
     public static function post($url, $data, $build = false, $headers = [])
     {

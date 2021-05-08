@@ -2,22 +2,26 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-11-02 14:55:19
+ * @LastEditTime: 2021-05-08 10:47:47
  * @Description:验证码生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class CAPTCHA
 {
+    /**
+     * @description: 检查验证码
+     * @param string $pin
+     * @return bool
+     */
     public static function check($pin)
     {
         $authpin = self::getpin();
         if ($authpin && $authpin == strtoupper($pin)) {
             self::setpin(randstr(4, "num"));
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     public static function set()
     {
@@ -61,10 +65,10 @@ class CAPTCHA
     }
     public static function setpin($str)
     {
-        return session::set('LCMSPINCODE', $str);
+        return SESSION::set('LCMSPINCODE', $str);
     }
     public static function getpin()
     {
-        return session::get('LCMSPINCODE');
+        return SESSION::get('LCMSPINCODE');
     }
 }

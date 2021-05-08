@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-04-19 01:24:54
+ * @LastEditTime: 2021-05-08 02:46:24
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,7 +13,7 @@ class SESSION
     private static $userid;
     private static $redis;
     /**
-     * @启动SESSION
+     * @description: 启动SESSION
      * @param {*}
      * @return {*}
      */
@@ -56,15 +56,16 @@ class SESSION
         }
     }
     /**
-     * @设置SESSION
-     * @param {*}
-     * @return {*}
+     * @description: 设置SESSION
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
      */
     public static function set($name, $value)
     {
         if (self::$type == "1") {
             if (is_object($value) || is_array($value)) {
-                $value = serialize($value);
+                $value = arr2sql($value);
             }
             self::$redis->do->hSet(self::$userid, $name, $value);
         } else {
@@ -73,17 +74,16 @@ class SESSION
         return $value;
     }
     /**
-     * @获取SESSION
-     * @param {*}
-     * @return {*}
+     * @description: 获取SESSION
+     * @param string $name
+     * @return mixed
      */
     public static function get($name)
     {
         if (self::$type == "1") {
-            $value      = self::$redis->do->hGet(self::$userid, $name);
-            $value_serl = @unserialize($value);
-            if (is_object($value_serl) || is_array($value_serl)) {
-                return $value_serl;
+            $value = self::$redis->do->hGet(self::$userid, $name);
+            if (is_serialize($value)) {
+                return sql2arr($value);
             }
         } else {
             $value = $_SESSION[$name];
@@ -91,19 +91,17 @@ class SESSION
         return $value;
     }
     /**
-     * @获取所有SESSION
+     * @description: 获取所有SESSION
      * @param {*}
-     * @return {*}
+     * @return array
      */
     public static function getall()
     {
         if (self::$type == "1") {
             $arr = self::$redis->do->hGetAll(self::$userid);
             foreach ($arr as $key => $val) {
-                $val_serl = @unserialize($val);
-                if (is_object($val_serl) || is_array($val_serl)) {
-                    $arr[$key] = $val_serl;
-                    continue;
+                if (is_serialize($val)) {
+                    $val = sql2arr($val);
                 }
                 $arr[$key] = $val;
             }
@@ -113,8 +111,8 @@ class SESSION
         return $arr;
     }
     /**
-     * @删除SESSION
-     * @param {*}
+     * @description: 删除SESSION
+     * @param string $name
      * @return {*}
      */
     public static function del($name)
@@ -126,7 +124,7 @@ class SESSION
         }
     }
     /**
-     * @删除所有SESSION
+     * @description: 删除所有SESSION
      * @param {*}
      * @return {*}
      */
@@ -139,9 +137,9 @@ class SESSION
         }
     }
     /**
-     * @获取SESSIONID
+     * @description: 获取SESSIONID
      * @param {*}
-     * @return {*}
+     * @return string
      */
     public static function getid()
     {

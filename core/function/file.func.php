@@ -2,15 +2,15 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-05 17:44:11
+ * @LastEditTime: 2021-05-07 21:05:29
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 /**
- * [path_absolute 相对路径转绝对路径]
- * @param  [type] $path [要转换的路径]
- * @return [type]       [返回转换好的路径]
+ * @description: 相对路径转绝对路径
+ * @param string $path 要转换的路径
+ * @return string
  */
 function path_absolute($path)
 {
@@ -21,10 +21,10 @@ function path_absolute($path)
     return is_dir($path) ? path_standard($path) : $path;
 }
 /**
- * [path_relative 绝对路径转相对路径]
- * @param  [type] $path     [要转换的路径]
- * @param  string $relative [相对路径前缀]
- * @return [type]           [返回转换好的路径]
+ * @description: 绝对路径转相对路径
+ * @param string $path 要转换的路径
+ * @param string $relative 相对路径前缀
+ * @return string
  */
 function path_relative($path, $relative = "../")
 {
@@ -33,9 +33,9 @@ function path_relative($path, $relative = "../")
     ], "", $path);
 }
 /**
- * [path_standard 目录结尾加/]
- * @param  [type] $path [要转换的路径]
- * @return [type]       [返回转换好的路径]
+ * @description: 目录结尾加/
+ * @param string $path 要转换的路径
+ * @return string
  */
 function path_standard($path)
 {
@@ -46,9 +46,9 @@ function path_standard($path)
     return $path;
 }
 /**
- * [makedir 新建文件夹]
- * @param  [type] $dir [要新建的文件夹]
- * @return [type]      [文件夹存在则返回真，否侧新建文件夹，并返回是否新建文件夹成功]
+ * @description: 新建文件夹
+ * @param string $dir 要新建的文件夹
+ * @return boolean
  */
 function makedir($dir)
 {
@@ -72,11 +72,11 @@ function makedir($dir)
     return $result;
 }
 /**
- * [copydir 复制文件夹]
- * @param  [type]  $oldDir    [原文件夹]
- * @param  [type]  $targetDir [复制后的文件夹名]
- * @param  boolean $overWrite [是否覆盖原文件夹 默认覆盖]
- * @return [type]             [复制成功返回true，否则返回false]
+ * @description: 复制文件夹
+ * @param string $oldDir 原文件夹
+ * @param string $targetDir 复制后的文件夹名
+ * @param boolean $overWrite 是否覆盖原文件夹 默认覆盖
+ * @return boolean
  */
 function copydir($oldDir, $targetDir, $overWrite = true)
 {
@@ -103,11 +103,11 @@ function copydir($oldDir, $targetDir, $overWrite = true)
     }
 }
 /**
- * [copyfile 复制文件]
- * @param  [type]  $oldFile    [原文件]
- * @param  [type]  $targetFile [复制后的文件名]
- * @param  boolean $overWrite  [是否覆盖原文件 默认覆盖]
- * @return [type]              [复制成功返回true，否则返回false]
+ * @description: 复制文件
+ * @param string $oldFile 原文件
+ * @param string $targetFile 复制后的文件名
+ * @param boolean $overWrite 是否覆盖原文件 默认覆盖
+ * @return boolean
  */
 function copyfile($oldFile, $targetFile, $overWrite = true)
 {
@@ -122,11 +122,11 @@ function copyfile($oldFile, $targetFile, $overWrite = true)
     }
 }
 /**
- * [movedir 移动文件夹]
- * @param  [type]  $oldDir    [原文件夹]
- * @param  [type]  $targetDir [移动后的文件夹名]
- * @param  boolean $overWrite [是否覆盖已有文件夹 默认覆盖]
- * @return [type]             [移动成功返回true，否则返回false]
+ * @description: 移动文件夹
+ * @param string $oldDir 原文件夹
+ * @param string $targetDir 移动后的文件夹名
+ * @param boolean $overWrite 是否覆盖已有文件夹 默认覆盖
+ * @return boolean
  */
 function movedir($oldDir, $targetDir, $overWrite = true)
 {
@@ -152,11 +152,11 @@ function movedir($oldDir, $targetDir, $overWrite = true)
     }
 }
 /**
- * [movefile 移动文件]
- * @param  [type]  $oldFile    [原文件]
- * @param  [type]  $targetFile [移动后的文件名]
- * @param  boolean $overWrite  [是否覆盖已有文件 默认覆盖]
- * @return [type]              [移动成功返回true，否则返回false]
+ * @description: 移动文件
+ * @param string $oldFile 原文件
+ * @param string $targetFile 移动后的文件名
+ * @param boolean $overWrite 是否覆盖已有文件 默认覆盖
+ * @return boolean
  */
 function movefile($oldFile, $targetFile, $overWrite = true)
 {
@@ -174,10 +174,10 @@ function movefile($oldFile, $targetFile, $overWrite = true)
     }
 }
 /**
- * [deldir 删除文件夹]
- * @param  [type]  $fileDir [要删除的文件夹]
- * @param  boolean $type    [false：全删，true：只删一层]
- * @return [type]           [删除成功返回true，否则返回false]
+ * @description: 删除文件夹
+ * @param string $fileDir 要删除的文件夹
+ * @param boolean $type false：全删，true：只删一层
+ * @return boolean
  */
 function deldir($fileDir, $type = false)
 {
@@ -202,9 +202,9 @@ function deldir($fileDir, $type = false)
     }
 }
 /**
- * [delfile 删除文件]
- * @param  [type] $fileUrl [要删除的文件]
- * @return [type]          [删除成功返回true，否则返回false]
+ * @description: 删除文件
+ * @param string $fileUrl 要删除的文件
+ * @return boolean
  */
 function delfile($fileUrl)
 {
@@ -214,9 +214,10 @@ function delfile($fileUrl)
     return is_file($fileUrl) ? unlink($fileUrl) : false;
 }
 /**
- * [getfilesize 获取文件的大小]
- * @param  [type] $filename [要获取的文件名]
- * @return [type]           [返回文件的大小]
+ * @description: 获取文件的大小
+ * @param string $filename 要获取的文件名
+ * @param string|null $unit 返回文件的大小
+ * @return string
  */
 function getfilesize($filename, $unit = null)
 {
@@ -257,9 +258,9 @@ function getfilesize($filename, $unit = null)
     }
 }
 /**
- * [getfileable 获取文件的后缀名]
- * @param  [type] $filename [要获取的文件名]
- * @return [type]           [返回文件的后缀名]
+ * @description: 获取文件的后缀名
+ * @param string $filename 要获取的文件名
+ * @return string
  */
 function getfileable($filename)
 {
@@ -269,10 +270,10 @@ function getfileable($filename)
     return $fileable;
 }
 /**
- * [unzipfile 解压ZIP]
- * @param  [type] $zipname [要解压的zip压缩文件]
- * @param  string $dir     [解压到目录]
- * @return [type]          [解压成功返回true，否则返回false]
+ * @description: 解压ZIP
+ * @param string $zipname 要解压的zip压缩文件
+ * @param string $dir 解压到目录
+ * @return boolean
  */
 function unzipfile($zipname, $dir = "")
 {
@@ -282,14 +283,14 @@ function unzipfile($zipname, $dir = "")
     return true;
 }
 /**
- * [zipfile 压缩为ZIP]
- * @param  [type]  $fromfile    [要压缩的文件夹和文件]
- * @param  string  $zipname     [压缩后的文件路径需要有后缀]
- * @param  string  $remove      [去除的目录名]
- * @param  boolean $overWrite   [是否覆盖已有的文件（true：覆盖，false：不覆盖）默认覆盖]
- * @return [type]               [压缩失败返回false]
+ * @description: 压缩为ZIP
+ * @param array $fromfile 要压缩的文件夹和文件
+ * @param string $zipname 压缩后的文件路径需要有后缀
+ * @param string $jump 去除的目录名
+ * @param boolean $overWrite 是否覆盖（true：覆盖，false：不覆盖）默认覆盖
+ * @return boolean
  */
-function zipfile(array $fromfile, $zipname, $jump = "", $overWrite = true)
+function zipfile($fromfile, $zipname, $jump = "", $overWrite = true)
 {
     $zipname = path_absolute($zipname);
     if ($overWrite) {
@@ -301,9 +302,9 @@ function zipfile(array $fromfile, $zipname, $jump = "", $overWrite = true)
     return true;
 }
 /**
- * [getdirpower 验证文件夹是否有写权限]
- * @param  [type] $dir [要检测的文件夹]
- * @return [type]      [有可写权限返回true，否则返回false]
+ * @description: 验证文件夹是否有写权限
+ * @param string $dir 要检测的文件夹
+ * @return boolean
  */
 function getdirpower($dir)
 {
@@ -318,9 +319,9 @@ function getdirpower($dir)
     }
 }
 /**
- * [getfilepower 验证文件是否有写权限]
- * @param  [type] $file [要检测的文件]
- * @return [type]       [有可写权限返回true，否则返回false]
+ * @description: 验证文件是否有写权限
+ * @param string $file 要检测的文件
+ * @return boolean
  */
 function getfilepower($file)
 {
@@ -331,10 +332,10 @@ function getfilepower($file)
     }
 }
 /**
- * [modifydirpower 修改文件夹权限]
- * @param  [type] $dir   [要修改的文件夹]
- * @param  [type] $power [修改后的文件权限 777、555]
- * @return [type]        [修改成功返回true，否则返回false]
+ * @description: 修改文件夹权限
+ * @param string $dir 要修改的文件夹
+ * @param int $power 修改后的文件权限 777、555
+ * @return boolean
  */
 function modifydirpower($dir, $power)
 {
@@ -359,10 +360,10 @@ function modifydirpower($dir, $power)
     }
 }
 /**
- * [modifyfilepower 修改文件权限]
- * @param  [type] $file  [要修改的文件]
- * @param  [type] $power [修改后的文件权限 777、555]
- * @return [type]        [修改成功返回true，否则返回false]
+ * @description: 修改文件权限
+ * @param string $file 要修改的文件
+ * @param int $power 修改后的文件权限 777、555
+ * @return boolean
  */
 function modifyfilepower($file, $power)
 {
@@ -373,12 +374,11 @@ function modifyfilepower($file, $power)
     }
 }
 /**
- * [traversal_one 遍历指定文件夹下文件，只遍历一层]
- * @param  [type] $jkdir          [description]
- * @param  string $suffix         [description]
- * @param  [type] $jump           [description]
- * @param  array  &$filenamearray [description]
- * @return [type]                 [description]
+ * @description: 遍历指定文件夹下文件，只遍历一层
+ * @param string $jkdir
+ * @param string $suffix
+ * @param string|null $jump
+ * @return array
  */
 function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
 {
@@ -409,12 +409,12 @@ function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
     }
 }
 /**
- * [traversal_all 遍历文件夹下所有文件，多层遍历]
- * @param  [type] $jkdir          [description]
- * @param  string $suffix         [description]
- * @param  [type] $jump           [description]
- * @param  array  &$filenamearray [description]
- * @return [type]                 [description]
+ * @description: 遍历文件夹下所有文件，多层遍历
+ * @param string $jkdir
+ * @param string $suffix
+ * @param string $jump
+ * @param array $filenamearray
+ * @return array
  */
 function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamearray = array())
 {
@@ -445,9 +445,9 @@ function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamear
     }
 }
 /**
- * [read_csv 读取csv文件]
- * @param  [type] $file [description]
- * @return [type]       [description]
+ * @description: 读取csv文件
+ * @param string $file
+ * @return array|null
  */
 function read_csv($file)
 {

@@ -39,7 +39,7 @@ class TencentOSS
     }
     /**
      * @description: 上传文件
-     * @param {*} $file
+     * @param string $file
      * @return {*}
      */
     public function upload($file)

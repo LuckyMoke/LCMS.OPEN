@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-02 14:45:28
+ * @LastEditTime: 2021-05-08 01:56:32
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -105,6 +105,7 @@ class gallery extends adminbase
             switch ($_L['plugin']['oss']['type']) {
                 case 'qiniu':
                 case 'tencent':
+                case 'aliyun':
                     $list['file'][] = [
                         "name"    => $val['name'],
                         "src"     => $_L['plugin']['oss']['domain'] . str_replace("../", "", $val['src']),
