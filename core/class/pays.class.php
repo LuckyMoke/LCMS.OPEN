@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-21 22:32:24
+ * @LastEditTime: 2021-05-10 20:06:06
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -119,7 +119,8 @@ class PAYS
                 "parameter"    => $para['parameter'],
                 "goback"       => $para['goback'],
             ])));
-            $url = "{$_L['url']['sys']['own']}n=system&c=pay&paycode={$paycode}";
+            $url = $_L['url']['sys']['own'] ?: $_L['url']['web']['own'];
+            $url = "{$url}n=system&c=pay&paycode={$paycode}";
             return $url;
         }
     }

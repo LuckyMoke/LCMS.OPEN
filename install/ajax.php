@@ -4,6 +4,9 @@ require_once 'class/install.class.php';
 $install = new install();
 switch ($action) {
     case 'readme':
+        if ($_SERVER['PHP_SELF'] != "/install/ajax.php") {
+            ajaxout(404, "<h1 style='text-align:center;padding:50px 0;'>本程序无法在二级目录下安装</h1>");
+        }
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));
         break;
     case 'dirs':

@@ -29,9 +29,9 @@ class DYSMS
     }
     /**
      * @description: 短信发送
-     * @param string $tplcode
-     * @param string $phone
-     * @param array $tplpara
+     * @param string $tplcode 模板ID
+     * @param string $phone 手机号
+     * @param array $tplpara 模板参数
      * @return array
      */
     public function send($tplcode, $phone, $tplpara = [])

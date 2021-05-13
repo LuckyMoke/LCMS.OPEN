@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-08 10:17:07
+ * @LastEditTime: 2021-05-10 10:41:35
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -623,16 +623,30 @@ function is_url($str = "")
 /**
  * @description: HTML内容解码懒加载
  * @param string $content
+ * @param bool $lazyload
  * @return string
  */
-function html_editor($content = "")
+function html_editor($content = "", $lazyload = true)
 {
-    $content = is_base64($content) ? base64_decode($content) : $content;
-    $content = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1 class="lazyload" data-src$2', $content);
-    $content = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $content);
-    $content = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe class="lazyload" frameborder="0" data-src="$2"$3></iframe>', $content);
-    $content = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $content);
-    return $content;
+    if ($content) {
+        $content = is_base64($content) ? base64_decode($content) : $content;
+        preg_match_all("/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/i", $content, $match);
+        if ($match[1]) {
+            $imgs = [];
+            foreach ($match[1] as $index => $img) {
+                $imgs[] = str_replace($img, oss($img), $match[0][$index]);
+
+            }
+            $content = str_replace($match[0], $imgs, $content);
+        }
+        if ($lazyload) {
+            $content = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1class="lazyload" data-src$2', $content);
+            $content = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $content);
+            $content = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe frameborder="0" data-src="$2"$3></iframe>', $content);
+        }
+        $content = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $content);
+    }
+    return $content ?: "";
 }
 /**
  * @description: 获取云存储链接

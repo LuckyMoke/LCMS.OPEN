@@ -11,6 +11,9 @@ class index extends adminbase
     public function doindex()
     {
         global $_L;
+        if (!$_L['config']['web']['domain']) {
+            LCMS::X(400, "检测到您是第一次打开后台<br/>请先到 <a href='index.php?t=sys&n=config&c=admin&a=web' style='color:red'>框架设置</a> 填写默认域名");
+        }
         $info   = server_info();
         $level  = level::app('config');
         $update = $level['url']['update'] ? "1" : "0";
