@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-03-04 19:33:06
+ * @LastEditTime: 2021-05-14 14:42:23
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -130,24 +130,26 @@ class database extends adminbase
         }
         $tablename = str_replace($_L['mysql']['pre'], "", $name);
         $numrows   = sql_counter([$tablename]);
-        while ($start < $numrows) {
-            $rows = sql_getall([$tablename, "", "", "", "", "", [$start, 500]]);
-            if (!empty($rows)) {
-                $vals = "";
-                foreach ($rows as $row) {
-                    $tmp = [];
-                    foreach ($row as $k => $v) {
-                        $tmp[] = $v === null ? "[BACKUPNULL]" : $v;
+        if ($tablename != "cache") {
+            while ($start < $numrows) {
+                $rows = sql_getall([$tablename, "", "", "", "", "", [$start, 500]]);
+                if (!empty($rows)) {
+                    $vals = "";
+                    foreach ($rows as $row) {
+                        $tmp = [];
+                        foreach ($row as $k => $v) {
+                            $tmp[] = $v === null ? "[BACKUPNULL]" : $v;
+                        }
+                        $tmp = array_map('addslashes', $tmp);
+                        $tmp = str_replace(["\r\n", "\n"], "\\n", $tmp);
+                        $vals .= "('" . implode("','", $tmp) . "'),";
                     }
-                    $tmp = array_map('addslashes', $tmp);
-                    $tmp = str_replace(["\r\n", "\n"], "\\r\\n", $tmp);
-                    $vals .= "('" . implode("','", $tmp) . "'),";
+                    $vals = rtrim($vals, ",");
+                    $vals = str_replace("'[BACKUPNULL]'", "NULL", $vals);
+                    file_put_contents($cache, "INSERT INTO `{$name}` VALUES {$vals};\n\n", FILE_APPEND);
                 }
-                $vals = rtrim($vals, ",");
-                $vals = str_replace("'[BACKUPNULL]'", "NULL", $vals);
-                file_put_contents($cache, "INSERT INTO `{$name}` VALUES {$vals};\n\n", FILE_APPEND);
+                $start = $start + 500;
             }
-            $start = $start + 500;
         }
     }
     /**
