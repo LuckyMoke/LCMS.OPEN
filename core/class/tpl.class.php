@@ -2,14 +2,14 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-30 14:03:28
+ * @LastEditTime: 2021-05-16 21:34:54
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class TPL
 {
-    public static $cache   = true;
+    public static $cache   = 1;
     public static $ver     = "";
     public static $scanarr = "";
     public static $tplpath = "";
@@ -32,27 +32,53 @@ class TPL
     public static function getui($paths = [])
     {
         global $_L;
-        if (!is_file(self::cachename() . ".css") || !is_file(self::cachename() . ".js") || !self::$cache) {
-            $tpath = PATH_APP_NOW . "web/tpl" . (self::$tplpath ? "/" . self::$tplpath : "");
-            $files = self::scanAll($tpath) ?: [];
-            foreach ($paths as $index => $val) {
-                if (stripos($val, PATH_WEB) === false) {
-                    $paths[$index] = "{$tpath}/{$val}";
+        $_L['ui'] = [
+            "nocache" => 0,
+            "css"     => [],
+            "js"      => [],
+            "xhr"     => [],
+        ];
+        $tpath = PATH_APP_NOW . "web/tpl" . (self::$tplpath ? "/" . self::$tplpath : "");
+        if (self::$cache == 2) {
+            $_L['ui']['nocache'] = 1;
+            foreach ($paths as $val) {
+                if ($val) {
+                    $val = explode("?", $val)[0];
+                    if (stripos($val, PATH_WEB) === false) {
+                        $val = "{$tpath}/{$val}";
+                    }
+                    $suffix = substr($val, strrpos($val, ".") + 1);
+                    if ($suffix == "css") {
+                        $_L['ui']['css'][] = $val;
+                    } elseif ($suffix == "js") {
+                        $_L['ui']['js'][] = $val;
+                    } else {
+                        $_L['ui']['xhr'][] = $val;
+                    }
                 }
             }
-            $files = array_diff($files, $paths);
-            $files = array_merge_recursive($paths, $files);
-            foreach ($files as $val) {
-                $suffix = pathinfo($val, PATHINFO_EXTENSION);
-                if ($suffix == 'css') {
-                    $css[] = $val;
+        } else {
+            if (!is_file(self::cachename() . ".css") || !is_file(self::cachename() . ".js") || !self::$cache) {
+                $files = self::scanAll($tpath) ?: [];
+                foreach ($paths as $index => $val) {
+                    if (stripos($val, PATH_WEB) === false) {
+                        $paths[$index] = "{$tpath}/{$val}";
+                    }
                 }
-                if ($suffix == 'js') {
-                    $js[] = $val;
+                $files = array_diff($files, $paths);
+                $files = array_merge_recursive($paths, $files);
+                foreach ($files as $val) {
+                    $suffix = pathinfo($val, PATHINFO_EXTENSION);
+                    if ($suffix == 'css') {
+                        $css[] = $val;
+                    }
+                    if ($suffix == 'js') {
+                        $js[] = $val;
+                    }
                 }
+                self::patch($css, "css");
+                self::patch($js, "js");
             }
-            self::patch($css, "css");
-            self::patch($js, "js");
         }
     }
     /**

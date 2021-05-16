@@ -17,7 +17,14 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta content="telephone=no" name="format-detection" />
         <link rel="icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
+        <if !$_L['ui']['nocache']>
+            <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
+        </if>
+        <if $_L['ui']['js']>
+            <loop $_L['ui']['js'],$js>
+                <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?'.TPL::$ver}}"></script>
+            </loop>
+        </if>
         <script type="text/javascript">
             var LCMS = {"url":{{json_encode($_L['url'])}} };
             if (window.location.href.search('console=true') != -1) {
