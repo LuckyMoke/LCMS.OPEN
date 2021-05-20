@@ -35,13 +35,37 @@ switch ($action) {
         if (extension_loaded("zip")) {
             $desc = "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>zip]</span>";
         } else {
-            $desc = "<span style='color:red'>[<i class='layui-icon layui-icon-close'></i>zip]</span>";
+            $desc = "<a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFzip%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>zip]</a>";
             $code = 0;
         }
         if (extension_loaded("fileinfo")) {
             $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>fileinfo]</span>";
         } else {
-            $desc .= " <span style='color:red'>[<i class='layui-icon layui-icon-close'></i>fileinfo]</span>";
+            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFfileinfo%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>fileinfo]</a>";
+            $code = 0;
+        }
+        if (class_exists('pdo')) {
+            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>pdo]</span>";
+        } else {
+            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFpdo%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>pdo]</a>";
+            $code = 0;
+        }
+        if (extension_loaded("mysqli")) {
+            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>mysqli]</span>";
+        } else {
+            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFmysqli%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>mysqli]</a>";
+            $code = 0;
+        }
+        if (extension_loaded("pdo_mysql")) {
+            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>pdo_mysql]</span>";
+        } else {
+            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFpdo_mysql%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>pdo_mysql]</a>";
+            $code = 0;
+        }
+        if (extension_loaded("pdo_sqlite")) {
+            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>pdo_sqlite]</span>";
+        } else {
+            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFpdo_sqlite%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>pdo_sqlite]</a>";
             $code = 0;
         }
         $serv[] = [

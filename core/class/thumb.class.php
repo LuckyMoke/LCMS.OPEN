@@ -2,17 +2,25 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-08 02:32:42
+ * @LastEditTime: 2021-05-20 17:51:25
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class THUMB
 {
-    public static function url($path = "", $x = "", $y = "", $html = false)
+    /**
+     * @description:
+     * @param string $path
+     * @param int $x
+     * @param int $y
+     * @param bool $html
+     * @return {*}
+     */
+    public static function url($path = "", $x = 0, $y = 0, $html = false)
     {
         global $_L;
-        if (is_url($path)) {
+        if (is_url($path) && stripos($path, $_L['plugin']['oss']['domain']) === false) {
             // 如果是完整链接，返回链接
             return $path;
         }
@@ -69,7 +77,14 @@ class THUMB
         }
         return $url;
     }
-    public static function create($path, $x = "", $y = "")
+    /**
+     * @description:
+     * @param string $path
+     * @param int $x
+     * @param int $y
+     * @return {*}
+     */
+    public static function create($path, $x = 0, $y = 0)
     {
         ob_end_clean();
         $img_info = @getimagesize($path);
@@ -120,6 +135,12 @@ class THUMB
         imagedestroy($thumb);
         imagedestroy($img);
     }
+    /**
+     * @description:
+     * @param mixed $img
+     * @param string $mime_type
+     * @return mixed
+     */
     protected static function img_resource($img, $mime_type)
     {
         switch ($mime_type) {
