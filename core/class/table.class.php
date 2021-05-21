@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-30 19:48:05
+ * @LastEditTime: 2021-05-21 13:39:11
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -60,7 +60,7 @@ class TABLE
             "defaultToolbar" => ['filter', 'print', 'exports'],
             "toolbar"        => $toolbar,
             "totalRow"       => $totalRow ? true : false,
-            "page"           => $table['page'] ? $table['page'] : true,
+            "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
         ];
