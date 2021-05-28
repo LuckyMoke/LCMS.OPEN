@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-18 23:25:45
+ * @LastEditTime: 2021-05-27 17:49:08
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -333,7 +333,7 @@ function sqlinsert($string)
         $string = str_ireplace([
             "\0", "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
         ], [
-            "_", "_", "\*", "&#92;", "&#34;", "&#39;", "sel\ect", "ins\ert", "up\date", "del\ete", "un\ion", "in\to", "load\_file", "out\file", "sl\eep",
+            "_", "_", "/*", "&#92;", "&#34;", "&#39;", "sel/ect", "ins/ert", "up/date", "del/ete", "un/ion", "in/to", "load/_file", "out/file", "sl/eep",
         ], $string);
         $string = trim($string);
     }
@@ -352,7 +352,6 @@ function filterform($string)
         }
     } else {
         if (L_MODULE != "admin") {
-
             $string = trim(sqlinsert($string));
         } else {
             $string = trim($string);

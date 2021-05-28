@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-04 19:32:05
+ * @LastEditTime: 2021-05-28 15:00:39
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -14,9 +14,11 @@ class SQLPDO
     private $errorInfo;
     private $errorcode;
     /**
-     * [__construct 连接数据库]
-     * @param  [type] $db [数据库信息]
-     * @return [type]     [description]
+     * @description: 连接数据库
+     * @param string $sqlinfo
+     * @param string $user
+     * @param string $pass
+     * @return {*}
      */
     public function __construct($sqlinfo, $user = "", $pass = "")
     {
@@ -28,18 +30,19 @@ class SQLPDO
 
     }
     /**
-     * [version 获取数据库版本]
-     * @return [type] [description]
+     * @description: 获取数据库版本
+     * @param {*}
+     * @return {*}
      */
     public function version()
     {
         return $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
     /**
-     * [prepare 数据库操作准备]
-     * @param  [type] $sql     [description]
-     * @param  [type] $$params [description]
-     * @return [type]          [description]
+     * @description: 数据库操作准备
+     * @param string $sql
+     * @param array $params
+     * @return {*}
      */
     public function prepare($sql, $params = [])
     {
@@ -61,93 +64,103 @@ class SQLPDO
         }
     }
     /**
-     * [fetch 从结果集中获取下一行]
-     * @param  [type] $sql         [description]
-     * @param  string $result_type [description]
-     * @return [type]              [description]
+     * @description: 从结果集中获取下一行
+     * @param string $sql
+     * @param array $params
+     * @param string $result_type
+     * @return array|null
      */
-    public function fetch($sql, $result_type = "")
+    public function fetch($sql, $params = [], $result_type = "")
     {
-        return $this->prepare($sql)->fetch($result_type);
+        return $this->prepare($sql, $params)->fetch($result_type);
     }
     /**
-     * [fetch_all 返回一个包含结果集中所有行的数组]
-     * @param  [type] $sql         [description]
-     * @param  string $result_type [description]
-     * @return [type]              [description]
+     * @description: 返回一个包含结果集中所有行的数组
+     * @param string $sql
+     * @param array $params
+     * @param string $result_type
+     * @return array|null
      */
-    public function fetch_all($sql, $result_type = "")
+    public function fetch_all($sql, $params = [], $result_type = "")
     {
-        return $this->prepare($sql)->fetchAll($result_type);
+        return $this->prepare($sql, $params)->fetchAll($result_type);
     }
     /**
-     * [fetch_column 从结果集中的下一行返回单独的一列]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description: 从结果集中的下一行返回单独的一列
+     * @param string $sql
+     * @param array $params
+     * @return {*}
      */
-    public function fetch_column($sql)
+    public function fetch_column($sql, $params = [])
     {
-        return $this->prepare($sql)->fetchColumn();
+        return $this->prepare($sql, $params)->fetchColumn();
     }
     /**
-     * [get_tables 获取数据库所有表名]
-     * @return [type] [description]
+     * @description: 获取数据库所有表名
+     * @param array $sql
+     * @return {*}
      */
     public function get_tables($sql = "SHOW TABLES")
     {
-        return $this->fetch_all($sql, PDO::FETCH_COLUMN);
+        return $this->fetch_all($sql, [], PDO::FETCH_COLUMN);
     }
     /**
-     * [get_one 查询一条数据]
-     * @param  [type] $sql         [description]
-     * @param  [type] $result_type [description]
-     * @return [type]              [description]
+     * @description: 查询一条数据
+     * @param string $sql
+     * @param array $params
+     * @param string $result_type
+     * @return array|null
      */
-    public function get_one($sql, $result_type = PDO::FETCH_ASSOC)
+    public function get_one($sql, $params = [], $result_type = PDO::FETCH_ASSOC)
     {
-        return $this->fetch($sql, $result_type);
+        return $this->fetch($sql, $params, $result_type);
     }
     /**
-     * [get_all 查询多条数据]
-     * @param  [type] $sql         [description]
-     * @param  [type] $result_type [description]
-     * @return [type]              [description]
+     * @description: 查询多条数据
+     * @param string $sql
+     * @param array $params
+     * @param string $result_type
+     * @return array|null
      */
-    public function get_all($sql, $result_type = PDO::FETCH_ASSOC)
+    public function get_all($sql, $params = [], $result_type = PDO::FETCH_ASSOC)
     {
-        return $this->fetch_all($sql, $result_type);
+        return $this->fetch_all($sql, $params, $result_type);
     }
     /**
-     * [update 更新数据]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description: 更新数据
+     * @param string $sql
+     * @param array $params
+     * @return {*}
      */
     public function update($sql, $params = [])
     {
         return $this->prepare($sql, $params)->rowCount();
     }
     /**
-     * [insert 插入数据]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description: 插入数据
+     * @param string $sql
+     * @param array $params
+     * @return {*}
      */
     public function insert($sql, $params = [])
     {
         return $this->prepare($sql, $params)->rowCount();
     }
     /**
-     * [delete 删除数据]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description:
+     * @param string $sql
+     * @param array $params
+     * @return {*}
      */
-    public function delete($sql)
+    public function delete($sql, $params = [])
     {
-        return $this->prepare($sql)->rowCount();
+        return $this->prepare($sql, $params)->rowCount();
     }
     /**
-     * [query 自由查询sql语句]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description: 自由查询sql语句
+     * @param string $sql
+     * @param {*} $result_type
+     * @return array
      */
     public function query($sql, $result_type = PDO::FETCH_ASSOC)
     {
@@ -168,25 +181,28 @@ class SQLPDO
         }
     }
     /**
-     * [counter 查询数据库条数]
-     * @param  [type] $sql [description]
-     * @return [type]      [description]
+     * @description: 查询数据库条数
+     * @param string $sql
+     * @param array $params
+     * @return int
      */
-    public function counter($sql)
+    public function counter($sql, $params = [])
     {
-        return $this->fetch_column($sql);
+        return $this->fetch_column($sql, $params);
     }
     /**
-     * [insert_id 获取最后一个插入数据的ID]
-     * @return [type] [description]
+     * @description: 获取最后一个插入数据的ID
+     * @param {*}
+     * @return {*}
      */
     public function insert_id()
     {
         return $this->pdo->lastInsertId();
     }
     /**
-     * [affected_rows 返回受 DELETE、INSERT、 或 UPDATE 语句影响的行数]
-     * @return [type] [description]
+     * @description: 返回受 DELETE、INSERT、 或 UPDATE 语句影响的行数
+     * @param {*}
+     * @return {*}
      */
     public function affected_rows()
     {
@@ -195,8 +211,9 @@ class SQLPDO
         }
     }
     /**
-     * [error 返回最后一次操作的错误信息]
-     * @return [type] [description]
+     * @description: 返回最后一次操作的错误信息
+     * @param {*}
+     * @return {*}
      */
     public function error()
     {
@@ -215,8 +232,9 @@ class SQLPDO
         }
     }
     /**
-     * [errno 返回最后一次操作的错误编号]
-     * @return [type] [description]
+     * @description: 返回最后一次操作的错误编号
+     * @param {*}
+     * @return {*}
      */
     public function errno()
     {
@@ -233,8 +251,9 @@ class SQLPDO
         return $errno;
     }
     /**
-     * [close 关闭数据库连接]
-     * @return [type] [description]
+     * @description: 关闭数据库连接
+     * @param {*}
+     * @return {*}
      */
     public function close()
     {

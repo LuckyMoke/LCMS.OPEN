@@ -97,6 +97,10 @@ class common
                 $_L['config']['ver'] = file_get_contents($version);
             }
         }
+        // 上传文件格式过滤
+        $_L['config']['admin']['mimelist'] = str_ireplace([
+            "|php", "php", "|pht", "pht",
+        ], "", $_L['config']['admin']['mimelist']);
     }
     public function __destruct()
     {

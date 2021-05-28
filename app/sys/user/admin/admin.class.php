@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-04-12 13:22:43
+ * @LastEditTime: 2021-05-28 15:26:35
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,18 +24,34 @@ class admin extends adminbase
             "url"     => "ajax&action=admin-list",
             "cols"    => [
                 ["checkbox" => "checkbox", "width" => 50],
-                ["title" => "ID", "field" => "id", "width" => 80, "align" => "center"],
-                ["title" => "帐号", "field" => "name", "minWidth" => 90],
-                ["title" => "用户名", "field" => "title", "width" => 150],
-                ["title" => "邮箱", "field" => "email", "width" => 120],
-                ["title" => "手机号", "field" => "mobile", "width" => 120],
-                ["title" => "用户权限", "field" => "type", "width" => 120],
-                ["title" => "上级用户", "field" => "lcms", "width" => 120],
-                ["title" => "最后登录时间", "field" => "logintime", "width" => 180],
-                ["title" => "最后登录IP", "field" => "ip", "width" => 150],
-                ["title" => "到期时间", "field" => "lasttime", "width" => 180],
-                ["title" => "账号状态", "field" => "status", "width" => 90, "align" => "center"],
-                ["title"  => "操作", "field" => "do", "width" => 90,
+                ["title" => "ID", "field" => "id",
+                    "width"  => 80,
+                    "align"  => "center"],
+                ["title"   => "帐号", "field" => "name",
+                    "minWidth" => 90],
+                ["title" => "用户名", "field" => "title",
+                    "width"  => 150],
+                ["title" => "邮箱", "field" => "email",
+                    "width"  => 120],
+                ["title" => "手机号", "field" => "mobile",
+                    "width"  => 120],
+                ["title" => "用户权限", "field" => "type",
+                    "width"  => 120],
+                ["title" => "上级用户", "field" => "lcms",
+                    "width"  => 120],
+                ["title" => "最后登录时间", "field" => "logintime",
+                    "width"  => 170,
+                    "align"  => "center"],
+                ["title" => "最后登录IP", "field" => "ip",
+                    "width"  => 150],
+                ["title" => "到期时间", "field" => "lasttime",
+                    "width"  => 170,
+                    "align"  => "center"],
+                ["title" => "账号状态", "field" => "status",
+                    "width"  => 90,
+                    "align"  => "center"],
+                ["title"  => "操作", "field" => "do",
+                    "width"   => 90,
                     "align"   => "center",
                     "fixed"   => "right",
                     "toolbar" => [
@@ -104,29 +120,38 @@ class admin extends adminbase
         global $_L, $LC;
         switch ($_L['form']['action']) {
             case 'admin-list':
-                $where     = $LC['name'] ? " AND (name LIKE '%{$LC['name']}%' OR title LIKE '%{$LC['name']}%' OR email LIKE '%{$LC['name']}%' OR mobile LIKE '%{$LC['name']}%')" : "";
-                $data      = LCMS::SUPER() ? TABLE::data("admin", "id != 0" . $where, "id ASC") : TABLE::data("admin", "(lcms = '{$_L['LCMSADMIN']['id']}' OR id = '{$_L['LCMSADMIN']['id']}')" . $where, "id ASC");
-                $adminlist = sql_getall(["admin"]);
-                $levellist = sql_getall(["admin_level"]);
-                foreach ($data['data'] as $key => $val) {
-                    $data['data'][$key]['type']   = $data['data'][$key]['type'] == "lcms" ? "超级权限" : $data['data'][$key]['type'];
-                    $checked                      = $data['data'][$key]['status'] ? "checked" : "";
-                    $data['data'][$key]['status'] = "<input type='checkbox' data-url='{$_L['url']['own_form']}ajax&action=admin-list-status&id={$data['data'][$key]['id']}' lay-skin='switch' lay-text='启用|禁用' {$checked}>";
-                    foreach ($adminlist as $info) {
-                        if ($info['id'] == $val['lcms']) {
-                            $data['data'][$key]['lcms'] = $info['title'] . " - [" . $info['name'] . "]";
-                        } elseif ($val['lcms'] == "0") {
-                            $data['data'][$key]['lcms'] = "超级管理员";
-                        }
-                        continue;
+                $where = $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
+                if (LCMS::SUPER()) {
+                    $data = TABLE::set("admin", "id != 0{$where}", "id ASC", [
+                        ":name" => "%{$LC['name']}%",
+                    ]);
+                } else {
+                    $data = TABLE::set("admin", "(lcms = :lcms OR id = :id){$where}", "id ASC", [
+                        ":id"   => $_L['LCMSADMIN']['id'],
+                        ":name" => "%{$LC['name']}%",
+                    ]);
+                }
+                $adminlist = [];
+                $levellist = [];
+                foreach ($data as $index => $val) {
+                    if (!$adminlist[$val['lcms']]) {
+                        $adminlist[$val['lcms']] = sql_get(["admin", "id = '{$val['lcms']}'"]);
                     }
-                    foreach ($levellist as $info) {
-                        if ($info['id'] == $val['type']) {
-                            $data['data'][$key]['type'] = $info['name'] . " - [ID" . $info['id'] . "]";
-                        } elseif ($val['type'] == "lcms") {
-                        }
-                        continue;
+                    if (!$levellist[$val['type']]) {
+                        $levellist[$val['type']] = sql_get(["admin_level", "id = '{$val['type']}'"]);
                     }
+                    $admin        = $adminlist[$val['lcms']];
+                    $level        = $levellist[$val['type']];
+                    $data[$index] = array_merge($val, [
+                        "lcms"   => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
+                        "type"   => $val['type'] == "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
+                        "status" => [
+                            "type"  => "switch",
+                            "url"   => "ajax&action=admin-list-status",
+                            "text"  => "启用|禁用",
+                            "value" => $val['status'],
+                        ],
+                    ]);
                 }
                 TABLE::out($data);
                 break;
@@ -315,7 +340,7 @@ class admin extends adminbase
                 require LCMS::template("own/iframe/admin-edit");
                 break;
             case 'admin-check-name':
-                $admininfo = sql_get(["admin", "name = ':name' OR email = ':name' OR mobile = ':name'", "id DESC", [
+                $admininfo = sql_get(["admin", "name = :name OR email = :name OR mobile = :name", "id DESC", [
                     ":name" => $_L['form']['name'],
                 ]]);
                 if ($admininfo) {
@@ -336,7 +361,7 @@ class admin extends adminbase
                     $where = " AND id NOT IN({$LC['id']})";
                 }
                 if ($LC['name']) {
-                    $admininfo = sql_get(["admin", "(name = ':name' OR email = ':name' OR mobile = ':name'){$where}", "id DESC", [
+                    $admininfo = sql_get(["admin", "(name = :name OR email = :name OR mobile = :name){$where}", "id DESC", [
                         ":name" => $LC['name'],
                     ]]);
                     if ($admininfo) {
@@ -344,7 +369,7 @@ class admin extends adminbase
                     };
                 }
                 if ($LC['email']) {
-                    $admininfo = sql_get(["admin", "(name = ':email' OR email = ':email' OR mobile = ':email'){$where}", "id DESC", [
+                    $admininfo = sql_get(["admin", "(name = :email OR email = :email OR mobile = :email){$where}", "id DESC", [
                         ":email" => $LC['email'],
                     ]]);
                     if ($admininfo) {
@@ -352,7 +377,7 @@ class admin extends adminbase
                     };
                 }
                 if ($LC['mobile']) {
-                    $admininfo = sql_get(["admin", "(name = ':mobile' OR email = ':mobile' OR mobile = ':mobile'){$where}", "id DESC", [
+                    $admininfo = sql_get(["admin", "(name = :mobile OR email = :mobile OR mobile = :mobile){$where}", "id DESC", [
                         ":mobile" => $LC['mobile'],
                     ]]);
                     if ($admininfo) {
@@ -443,6 +468,7 @@ class admin extends adminbase
                         "option"   => $this->get_adminall(true),
                         "disabled" => LCMS::SUPER() ? "" : true,
                     ],
+                    ["layui" => "des", "title" => "点击左侧模块名称、或者点击每个小模块的标题，均可进行全选操作！"],
                 ];
                 $hide = $hide ? base64_encode(json_encode($hide)) : "";
                 require LCMS::template("own/iframe/admin-level-edit");

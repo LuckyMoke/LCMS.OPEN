@@ -58,7 +58,7 @@ class reg extends adminbase
         switch ($_L['form']['action']) {
             case 'code_ready':
                 if (is_phone($_L['form']['mobile'])) {
-                    $admininfo = sql_get(["admin", "name = ':mobile' OR email = ':mobile' OR mobile = ':mobile'", "id DESC", [
+                    $admininfo = sql_get(["admin", "name = :mobile OR email = :mobile OR mobile = :mobile", "id DESC", [
                         ":mobile" => $_L['form']['mobile'],
                     ]]);
                     if ($admininfo) {
@@ -117,7 +117,7 @@ class reg extends adminbase
         switch ($_L['form']['action']) {
             case 'code_ready':
                 if ($this->is_email($_L['form']['email'])) {
-                    $admininfo = sql_get(["admin", "name = ':email' OR email = ':email' OR mobile = ':email'", "id DESC", [
+                    $admininfo = sql_get(["admin", "name = :email OR email = :email OR mobile = :email", "id DESC", [
                         ":email" => $_L['form']['email'],
                     ]]);
                     if ($admininfo) {
@@ -234,7 +234,7 @@ class reg extends adminbase
                     if (strlen($_L['form']['name']) <= 6) {
                         ajaxout(0, "账号不能少于6位");
                     }
-                    $admininfo = sql_get(["admin", "name = ':name' OR email = ':name' OR mobile = ':name'", "id DESC", [
+                    $admininfo = sql_get(["admin", "name = :name OR email = :name OR mobile = :name", "id DESC", [
                         ":name" => $_L['form']['name'],
                     ]]);
                     if ($admininfo) {

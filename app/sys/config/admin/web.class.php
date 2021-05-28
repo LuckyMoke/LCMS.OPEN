@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-07 19:46:25
+ * @LastEditTime: 2021-05-22 17:18:58
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -311,7 +311,7 @@ class web extends adminbase
                 break;
             case 'payment-list-del':
                 if (TABLE::del("payment")) {
-                    ajaxout(1, "删除成功");
+                    ajaxout(1, "删除成功", "reload");
                 } else {
                     ajaxout(0, "删除失败");
                 }

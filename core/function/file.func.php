@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-07 21:05:29
+ * @LastEditTime: 2021-05-27 19:37:02
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -15,7 +15,7 @@ defined('IN_LCMS') or exit('No permission');
 function path_absolute($path)
 {
     $path = PATH_WEB . str_replace([
-        "../", "./", PATH_WEB,
+        "../", "./", "..\\", ".\\", PATH_WEB,
     ], "", $path);
     $path = str_replace("\/", "\\", $path);
     return is_dir($path) ? path_standard($path) : $path;
@@ -29,7 +29,7 @@ function path_absolute($path)
 function path_relative($path, $relative = "../")
 {
     return $relative . str_replace([
-        "../", "./", PATH_WEB,
+        "../", "./", "..\\", ".\\", PATH_WEB,
     ], "", $path);
 }
 /**

@@ -13,7 +13,9 @@
                 <loop $level['sys'],$val,$name>
                     <if $val['class']>
                         <div class="lcms-admin-level-box">
-                            <div class="lcms-admin-level-title">{{$val['title']}}</div>
+                            <div class="lcms-admin-level-title">
+                                {{$val['title']}}
+                            </div>
                             <loop $val['class'],$val,$class>
                                 <if $val['select']>
                                     <div class="lcms-admin-level-check lcms-form-checkbox">

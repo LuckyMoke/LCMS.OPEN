@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-03-07 12:21:57
+ * @LastEditTime: 2021-05-21 18:05:31
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -18,6 +18,9 @@ class repair extends adminbase
     public function doindex()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "仅超级管理员可设置");
+        }
         $new  = $this->new_sql();
         $diff = $this->get_diff($new, $this->get_key($new));
         foreach ($diff as $name => $val) {

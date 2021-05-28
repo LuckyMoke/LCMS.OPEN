@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-19 17:31:45
+ * @LastEditTime: 2021-05-27 19:09:17
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -136,11 +136,11 @@ class LCMS
     public static function form($paran = [])
     {
         global $_L;
-        $form = $_L['form']['LC'];
+        $form = $_L['form']['LC'] ?: [];
         $para = array(
             "do"    => $paran['do'] ? $paran['do'] : "save",
             "table" => $paran['table'] ? $paran['table'] : "",
-            "id"    => $paran['id'] ? $paran['id'] : ($form['id'] ? $form['id'] : ""),
+            "id"    => $paran['id'] ? $paran['id'] : (is_numeric($form['id']) ? $form['id'] : ""),
             "key"   => $paran['key'] ? $paran['key'] : "parameter",
             "unset" => $paran['unset'] ? $paran['unset'] : false,
         );
@@ -152,7 +152,7 @@ class LCMS
             }
             return $data;
         }
-        foreach ((array) $form as $key => $val) {
+        foreach ($form as $key => $val) {
             if (is_array($val)) {
                 $parameter[$key] = $val;
                 unset($form[$key]);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-13 21:38:07
+ * @LastEditTime: 2021-05-28 15:36:08
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -18,6 +18,9 @@ class admin extends adminbase
     public function doindex()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "仅超级管理员可设置");
+        }
         switch ($_L['form']['action']) {
             case 'save':
                 $_L['form']['LC']['domain'] = str_replace(["http://", "https://", "/"], "", $_L['form']['LC']['domain']);
@@ -81,6 +84,9 @@ class admin extends adminbase
     public function doweb()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "仅超级管理员可设置");
+        }
         switch ($_L['form']['action']) {
             case 'save':
                 $domain = parse_url($_L['form']['LC']['domain']);
@@ -148,6 +154,9 @@ class admin extends adminbase
     public function dosafe()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "仅超级管理员可设置");
+        }
         switch ($_L['form']['action']) {
             case 'save':
                 if ($_L['form']['LC']['dir'] != $_L['config']['admin']['dir']) {
@@ -158,6 +167,9 @@ class admin extends adminbase
                         $change = true;
                     }
                 }
+                $_L['form']['LC']['mimelist'] = str_ireplace([
+                    "|php", "php", "|pht", "pht",
+                ], "", $_L['form']['LC']['mimelist']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",

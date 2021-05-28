@@ -64,7 +64,7 @@ class index extends adminbase
             };
         };
         $pass      = md5($_L['form']['pass']);
-        $admininfo = sql_get(["admin", "(name = ':name' OR email = ':name' OR mobile = ':name') AND pass = '{$pass}'", "id DESC", [
+        $admininfo = sql_get(["admin", "(name = :name OR email = :name OR mobile = :name) AND pass = '{$pass}'", "id DESC", [
             ":name" => $_L['form']['name'],
         ]]);
         if ($admininfo) {

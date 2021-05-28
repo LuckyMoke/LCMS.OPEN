@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-05-14 14:42:23
+ * @LastEditTime: 2021-05-27 19:41:10
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -18,12 +18,15 @@ class database extends adminbase
     public function doindex()
     {
         global $_L;
+        if (!LCMS::SUPER()) {
+            LCMS::X(403, "仅超级管理员可设置");
+        }
         switch ($_L['form']['action']) {
             case 'backup':
                 $table                     = sql_query("SHOW TABLE STATUS");
                 is_array($table) && $table = array_column($table, "Name");
-                makedir(PATH_WEB . "backup/data/");
-                delfile(PATH_WEB . "backup/backup.sql");
+                makedir("/backup/data/");
+                delfile("/backup/backup.sql");
                 ajaxout(1, "success", "", $table);
                 break;
             case 'backup-table':
@@ -41,9 +44,8 @@ class database extends adminbase
                 $this->insertsql();
                 break;
             case 'del':
-                $file = PATH_WEB . "backup/data/{$_L['form']['name']}";
-                if (is_file($file)) {
-                    delfile($file);
+                $file = "/backup/data/{$_L['form']['name']}";
+                if (delfile($file)) {
                     ajaxout(1, "删除成功");
                 } else {
                     ajaxout(0, "文件不存在");
