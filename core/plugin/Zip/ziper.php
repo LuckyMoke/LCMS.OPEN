@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-12-13 17:04:20
- * @LastEditTime: 2020-12-13 23:38:46
+ * @LastEditTime: 2021-05-29 18:50:07
  * @Description:压缩解压文件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,12 +25,12 @@ class Ziper
     }
     /**
      * @description: 压缩文件
-     * @fromfile {*} 待压缩的文件或者目录
-     * @zipname {*} 压缩后的文件路径名称
-     * @jump {*} 压缩时跳过的目录和文件
-     * @return {*}
+     * @param array $fromfiles
+     * @param string $zipname
+     * @param array|string $jump
+     * @return bool
      */
-    public function zip(array $fromfiles, string $zipname, $jump = "")
+    public function zip($fromfiles, $zipname, $jump = "")
     {
         if ($zipname) {
             $zipname = path_absolute($zipname);
@@ -71,12 +71,13 @@ class Ziper
     }
     /**
      * @description: 解压缩
-     * @zipname {string} 待解压的文件
-     * @dir {string} 解压到目录
-     * @return {*}
+     * @param string $zipname
+     * @param string $dir
+     * @return bool
      */
     public function unzip($zipname, $dir = "")
     {
+        $zipname = path_absolute($zipname);
         if (!is_file($zipname)) {
             LCMS::X(404, "文件不存在");
         }
@@ -94,6 +95,11 @@ class Ziper
         }
         return true;
     }
+    /**
+     * @description: 关闭文件
+     * @param {*}
+     * @return {*}
+     */
     public function __destruct()
     {
         if ($this->isopen) {

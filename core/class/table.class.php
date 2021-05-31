@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-21 13:39:11
+ * @LastEditTime: 2021-05-31 17:26:43
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -197,7 +197,9 @@ class TABLE
         global $_L;
         $form = $_L['form']['LC'];
         if ($form['id']) {
-            sql_delete([$table, "id = '{$form['id']}'"]);
+            sql_delete([$table, "id = :id", [
+                ":id" => $form['id'],
+            ]]);
         } elseif (is_array($form)) {
             $ids = implode(",", array_column($form, "id"));
             sql_delete([$table, "id IN ({$ids})"]);

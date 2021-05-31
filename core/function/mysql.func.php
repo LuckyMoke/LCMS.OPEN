@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-28 15:09:14
+ * @LastEditTime: 2021-05-31 17:26:10
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,15 +25,14 @@ function sql_tablename($table)
  */
 function sql_get($sql = [])
 {
-    if ($sql[1] == sql_filter($sql[1])) {
-        $table  = sql_tablename($sql[0]);
-        $bind   = sql_bindParas($sql[1], $sql[3]);
-        $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
-        $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
-        $fields = $sql[4] ? (is_array($sql[4]) ? implode(", ", $sql[4]) : $sql[4]) : "*";
-        $query  = "SELECT {$fields} FROM {$table}{$where}{$order}";
-        $result = DB::$mysql->get_one($query, $bind['paras']);
-    }
+    sql_filter($sql[1]);
+    $table  = sql_tablename($sql[0]);
+    $bind   = sql_bindParas($sql[1], $sql[3]);
+    $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
+    $fields = $sql[4] ? (is_array($sql[4]) ? implode(", ", $sql[4]) : $sql[4]) : "*";
+    $query  = "SELECT {$fields} FROM {$table}{$where}{$order}";
+    $result = DB::$mysql->get_one($query, $bind['paras']);
     return $result ?: [];
 }
 /**
@@ -43,23 +42,22 @@ function sql_get($sql = [])
  */
 function sql_getall($sql = [])
 {
-    if ($sql[1] == sql_filter($sql[1])) {
-        $table  = sql_tablename($sql[0]);
-        $bind   = sql_bindParas($sql[1], $sql[3]);
-        $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
-        $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
-        $fields = $sql[5] ? (is_array($sql[5]) ? implode(", ", $sql[5]) : $sql[5]) : "*";
-        $limit  = $sql[6] ? (is_array($sql[6]) ? " LIMIT {$sql[6][0]}, {$sql[6][1]}" : " LIMIT 0, {$sql[6]}") : "";
-        $query  = "SELECT {$fields} FROM {$table}{$where}{$order}{$limit}";
-        $mysql  = DB::$mysql->get_all($query, $bind['paras']);
-        if ($sql[4] && $mysql) {
-            foreach ($mysql as $key => $val) {
-                $result[$val[$sql[4]]] = $val;
-            }
-            return $result;
+    sql_filter($sql[1]);
+    $table  = sql_tablename($sql[0]);
+    $bind   = sql_bindParas($sql[1], $sql[3]);
+    $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
+    $fields = $sql[5] ? (is_array($sql[5]) ? implode(", ", $sql[5]) : $sql[5]) : "*";
+    $limit  = $sql[6] ? (is_array($sql[6]) ? " LIMIT {$sql[6][0]}, {$sql[6][1]}" : " LIMIT 0, {$sql[6]}") : "";
+    $query  = "SELECT {$fields} FROM {$table}{$where}{$order}{$limit}";
+    $mysql  = DB::$mysql->get_all($query, $bind['paras']);
+    if ($sql[4] && $mysql) {
+        foreach ($mysql as $key => $val) {
+            $result[$val[$sql[4]]] = $val;
         }
-        $result = $mysql;
+        return $result;
     }
+    $result = $mysql;
     return $result ?: [];
 }
 /**
@@ -69,18 +67,17 @@ function sql_getall($sql = [])
  */
 function sql_total($sql = [])
 {
-    if ($sql[1] == sql_filter($sql[1])) {
-        $table  = sql_tablename($sql[0]);
-        $bind   = sql_bindParas($sql[1], $sql[3]);
-        $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
-        $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
-        $fields = $sql[4] ? (is_array($sql[4]) ? implode(", ", $sql[4]) : $sql[4]) : "*";
-        $limit  = $sql[5] ? (is_array($sql[5]) ? " LIMIT {$sql[5][0]}, {$sql[5][1]}" : " LIMIT 0, {$sql[5]}") : "";
-        $query  = "(SELECT * FROM {$table}{$where}{$order}{$limit}) AS a";
-        $fields = str_replace(["SUM(", "COUNT(", "AVG(", "MAX(", "MIN("], ["SUM(a.", "COUNT(a.", "AVG(a.", "MAX(a.", "MIN(a."], $fields);
-        $query  = "SELECT {$fields} FROM {$query}";
-        $result = DB::$mysql->get_all($query, $bind['paras']);
-    }
+    sql_filter($sql[1]);
+    $table  = sql_tablename($sql[0]);
+    $bind   = sql_bindParas($sql[1], $sql[3]);
+    $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $order  = $sql[2] ? " ORDER BY {$sql[2]}" : "";
+    $fields = $sql[4] ? (is_array($sql[4]) ? implode(", ", $sql[4]) : $sql[4]) : "*";
+    $limit  = $sql[5] ? (is_array($sql[5]) ? " LIMIT {$sql[5][0]}, {$sql[5][1]}" : " LIMIT 0, {$sql[5]}") : "";
+    $query  = "(SELECT * FROM {$table}{$where}{$order}{$limit}) AS a";
+    $fields = str_replace(["SUM(", "COUNT(", "AVG(", "MAX(", "MIN("], ["SUM(a.", "COUNT(a.", "AVG(a.", "MAX(a.", "MIN(a."], $fields);
+    $query  = "SELECT {$fields} FROM {$query}";
+    $result = DB::$mysql->get_all($query, $bind['paras']);
     return $result ? $result[0] : [];
 
 }
@@ -110,7 +107,8 @@ function sql_update($sql = [])
     } else {
         $data = $sql[1];
     }
-    if ($data && $sql[2] == sql_filter($sql[2])) {
+    if ($data) {
+        sql_filter($sql[2]);
         $bind  = sql_bindParas($sql[2], $sql[3]);
         $where = $sql[2] ? " WHERE {$bind['sql']}" : "";
         if ($bind['paras']) {
@@ -169,13 +167,12 @@ function sql_insert($sql = [])
  */
 function sql_delete($sql = [])
 {
-    if ($sql[1] == sql_filter($sql[1])) {
-        $table = sql_tablename($sql[0]);
-        $bind  = sql_bindParas($sql[1], $sql[2]);
-        $where = $sql[1] ? " WHERE {$bind['sql']}" : "";
-        $query = "DELETE FROM {$table}{$where}";
-        DB::$mysql->delete($query, $bind['paras']);
-    }
+    sql_filter($sql[1]);
+    $table = sql_tablename($sql[0]);
+    $bind  = sql_bindParas($sql[1], $sql[2]);
+    $where = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $query = "DELETE FROM {$table}{$where}";
+    DB::$mysql->delete($query, $bind['paras']);
 }
 /**
  * @description: 获取数据量
@@ -184,13 +181,12 @@ function sql_delete($sql = [])
  */
 function sql_counter($sql = [])
 {
-    if ($sql[1] == sql_filter($sql[1])) {
-        $table  = sql_tablename($sql[0]);
-        $bind   = sql_bindParas($sql[1], $sql[2]);
-        $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
-        $query  = "SELECT COUNT(*) FROM {$table}{$where}";
-        $result = DB::$mysql->counter($query, $bind['paras']);
-    }
+    sql_filter($sql[1]);
+    $table  = sql_tablename($sql[0]);
+    $bind   = sql_bindParas($sql[1], $sql[2]);
+    $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $query  = "SELECT COUNT(*) FROM {$table}{$where}";
+    $result = DB::$mysql->counter($query, $bind['paras']);
     return $result ?: 0;
 }
 /**
@@ -240,16 +236,19 @@ function sql_errno()
 }
 /**
  * @description: 内容过滤
- * @param {*} $string
- * @return {*}
+ * @param string $sql
+ * @return string
  */
-function sql_filter($string = "")
+function sql_filter($sql = "")
 {
-    return trim(str_ireplace([
+    $result = str_ireplace([
         "select", "sleep", "union",
     ], [
         "sel/ect", "sl/eep", "un/ion",
-    ], $string));
+    ], $sql);
+    if ($result != $sql) {
+        LCMS::X(0, "数据库操作失败");
+    }
 }
 /**
  * @description: 数据绑定处理

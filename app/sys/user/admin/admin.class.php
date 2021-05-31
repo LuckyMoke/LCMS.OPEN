@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-28 15:26:35
+ * @LastEditTime: 2021-05-31 19:16:46
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,13 +13,14 @@ class admin extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         parent::__construct();
-        $LC = $_L['form']['LC'];
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     public function doindex()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         $table = [
             "url"     => "ajax&action=admin-list",
             "cols"    => [
@@ -82,7 +83,7 @@ class admin extends adminbase
     }
     public function dolevel()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         $table = [
             "url"     => "ajax&action=admin-level-list",
             "cols"    => [
@@ -117,8 +118,8 @@ class admin extends adminbase
     }
     public function doajax()
     {
-        global $_L, $LC;
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
             case 'admin-list':
                 $where = $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
                 if (LCMS::SUPER()) {
@@ -126,7 +127,7 @@ class admin extends adminbase
                         ":name" => "%{$LC['name']}%",
                     ]);
                 } else {
-                    $data = TABLE::set("admin", "(lcms = :lcms OR id = :id){$where}", "id ASC", [
+                    $data = TABLE::set("admin", "(lcms = :id OR id = :id){$where}", "id ASC", [
                         ":id"   => $_L['LCMSADMIN']['id'],
                         ":name" => "%{$LC['name']}%",
                     ]);
@@ -184,13 +185,13 @@ class admin extends adminbase
                 }
                 break;
             case 'admin-list-status':
-                if ($_L['form']['id'] == $_L['LCMSADMIN']['id']) {
+                if ($LF['id'] == $_L['LCMSADMIN']['id']) {
                     ajaxout(0, "禁止修改");
                     exit;
                 }
                 sql_update(["admin", [
                     "status" => $LC['value'] ? "1" : "0",
-                ], "id = '{$_L['form']['id']}'"]);
+                ], "id = '{$LF['id']}'"]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
                 } else {
@@ -199,20 +200,21 @@ class admin extends adminbase
                 break;
             case 'admin-level-list':
                 if (LCMS::SUPER()) {
-                    $data = table::data("admin_level", "", "id ASC");
+                    $data = TABLE::set("admin_level", "", "id ASC", "", "id, name, uid");
                 } else {
-                    $data = table::data("admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id ASC");
+                    $data = TABLE::set("admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id ASC", "", "id, name, uid");
                 }
-                $adminlist = sql_getall(["admin"]);
-                foreach ($data['data'] as $key => $val) {
-                    foreach ($adminlist as $info) {
-                        if ($info['id'] == $val['uid']) {
-                            $data['data'][$key]['uid'] = $info['title'] . " - [" . $info['name'] . "]";
-                            continue;
-                        }
+                $adminlist = [];
+                foreach ($data as $index => $val) {
+                    if (!$adminlist[$val['uid']]) {
+                        $adminlist[$val['uid']] = sql_get(["admin", "id = '{$val['uid']}'"]);
                     }
+                    $admin        = $adminlist[$val['uid']];
+                    $data[$index] = array_merge($val, [
+                        "uid" => $admin['title'] . " - [" . $admin['name'] . "]",
+                    ]);
                 }
-                table::out($data);
+                TABLE::out($data);
                 break;
             case 'admin-level-list-save':
                 sql_update(["admin_level", [
@@ -229,42 +231,18 @@ class admin extends adminbase
                 if ($adminlist) {
                     ajaxout(0, "有用户使用此权限");
                 } else {
-                    if (table::del("admin_level")) {
+                    if (TABLE::del("admin_level")) {
                         ajaxout(1, "删除成功", "reload");
                     } else {
                         ajaxout(0, "删除失败");
                     }
                 }
                 break;
-            case 'admin-level':
-                $admin = $_L['LCMSADMIN'];
-                $uid   = LCMS::SUPER() ? "uid != 0" : "uid = '{$admin['id']}'";
-                $llist = sql_getall(["admin_level", $uid, "id ASC"]);
-                $lids  = is_array($llist) ? implode(",", array_unique(array_column($llist, "uid"))) : "";
-                $alist = $lids ? sql_getall(["admin", "id IN({$lids})", "id ASC"]) : [];
-                foreach ($alist as $index => $val) {
-                    $val['title'] .= " - [{$val['name']}]";
-                    $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
-                    $arr[$index] = [
-                        "value" => $val['type'] == "lcms" ? "0" : $val['id'],
-                        "title" => $val['title'],
-                    ];
-                    foreach ($llist as $level) {
-                        if ($level["uid"] == $val['id']) {
-                            $arr[$index]['children'][] = [
-                                "value" => $level['id'],
-                                "title" => $level['name'] . " - [ID" . $level['id'] . "]",
-                            ];
-                        }
-                    }
-                }
-                echo json_encode($arr ?: []);
-                break;
         }
     }
     public function doiframe()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         switch ($_L['form']['action']) {
             case 'admin-edit':
                 $admin = LCMS::form([
@@ -327,7 +305,7 @@ class admin extends adminbase
                         "tips"    => "先新建用户权限再选择",
                         "default" => "上级用户|用户权限",
                         "verify"  => "required",
-                        "url"     => "{$_L['url']['own_form']}ajax&action=admin-level",
+                        "url"     => "select&action=admin-level",
                     ],
                     ["layui" => "date", "title" => "到期时间",
                         "name"   => "LC[lasttime]",
@@ -465,7 +443,9 @@ class admin extends adminbase
                         "name"     => "LC[uid]",
                         "value"    => $level['uid'] ? $level['uid'] : $_L['LCMSADMIN']['id'],
                         "verify"   => "required",
-                        "option"   => $this->get_adminall(true),
+                        "url"      => "select&action=admin",
+                        "default"  => "请输入账号名搜索更多",
+                        "tips"     => "请输入账号名搜索更多",
                         "disabled" => LCMS::SUPER() ? "" : true,
                     ],
                     ["layui" => "des", "title" => "点击左侧模块名称、或者点击每个小模块的标题，均可进行全选操作！"],
@@ -499,18 +479,25 @@ class admin extends adminbase
      */
     public function doconfig()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "没有权限，禁止访问");
         }
         switch ($_L['form']['action']) {
             case 'save':
-                LCMS::config([
-                    "do"   => "save",
-                    "type" => "sys",
-                    "cate" => "admin",
-                ]);
-                ajaxout(1, "保存成功");
+                $level = explode("/", $LF['admin_level']);
+                if ($level[0] !== "" && $level[1] !== "") {
+                    $_L['form']['LC']['reg']['lcms']  = $level[0];
+                    $_L['form']['LC']['reg']['level'] = $level[1];
+                    LCMS::config([
+                        "do"   => "save",
+                        "type" => "sys",
+                        "cate" => "admin",
+                    ]);
+                    ajaxout(1, "保存成功");
+                } else {
+                    ajaxout(0, "保存失败，请选择默认权限");
+                }
                 break;
             default:
                 $config = LCMS::config([
@@ -561,17 +548,11 @@ class admin extends adminbase
                         "cname"  => "hidden tab_mobile",
                         "tips"   => "请先到全局设置中配置短信插件",
                     ],
-                    ["layui" => "select", "title" => "默认上级",
-                        "name"   => "LC[reg][lcms]",
-                        "value"  => $config['reg']['lcms'],
+                    ["layui" => "selectN", "title" => "默认权限",
+                        "name"   => "admin_level",
+                        "value"  => "{$config['reg']['lcms']}/{$config['reg']['level']}",
                         "verify" => "required",
-                        "option" => $this->get_adminall(),
-                    ],
-                    ["layui" => "select", "title" => "默认权限",
-                        "name"   => "LC[reg][level]",
-                        "value"  => $config['reg']['level'],
-                        "verify" => "required",
-                        "option" => $this->get_levelall(),
+                        "url"    => "select&action=admin-level",
                     ],
                     ["layui"   => "checkbox", "title" => "注册字段",
                         "checkbox" => [
@@ -593,7 +574,7 @@ class admin extends adminbase
      */
     public function doprofile()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         switch ($_L['form']['action']) {
             case 'admin-edit':
                 $admin = LCMS::form([
@@ -672,25 +653,9 @@ class admin extends adminbase
      */
     public function dogod()
     {
-        global $_L, $LC;
+        global $_L, $LF, $LC;
         if (LCMS::SUPER() || $_L['LCMSADMIN']['god']) {
-            switch ($_L['form']['action']) {
-                case 'list':
-                    $where = $_L['form']['keyword'] ? " AND (id = '{$_L['form']['keyword']}' OR name LIKE '%{$_L['form']['keyword']}%' OR title LIKE '%{$_L['form']['keyword']}%')" : "";
-                    $admin = sql_getall([
-                        "admin",
-                        "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "'){$where}",
-                        "id ASC",
-                        "", "", "", 10,
-                    ]);
-                    foreach ($admin as $key => $val) {
-                        $list[] = [
-                            "value" => $val['id'],
-                            "title" => "{$val['name']} - {$val['title']} - [ID:{$val['id']}]",
-                        ];
-                    }
-                    ajaxout(1, "success", "", $list);
-                    break;
+            switch ($LF['action']) {
                 case 'save':
                     $admin = sql_get(["admin", "id = {$LC['id']}"]);
                     if ($_L['LCMSADMIN']['god']) {
@@ -709,7 +674,7 @@ class admin extends adminbase
                             "verify"  => "required",
                             "tips"    => "输入帐号名搜索更多",
                             "default" => "输入帐号名搜索更多",
-                            "url"     => "god&action=list",
+                            "url"     => "select&action=admin&all=true",
                         ],
                         ["layui" => "btn", "title" => "立即切换"],
                     ];
@@ -720,42 +685,60 @@ class admin extends adminbase
             LCMS::X(403, "没有权限访问");
         }
     }
-    private function get_adminall($type = false)
+    /**
+     * @description: 下拉选择AJAX数据
+     * @param {*}
+     * @return {*}
+     */
+    public function doselect()
     {
-        global $_L;
-        if (LCMS::SUPER()) {
-            $list[] = [
-                "value" => $type ? $_L['LCMSADMIN']['id'] : "0",
-                "title" => "{$_L['LCMSADMIN']['title']} - [{$_L['LCMSADMIN']['name']}]",
-            ];
-            $admin = sql_getall(["admin", "lcms = '0' AND type != 'lcms'", "id ASC"]);
-        } else {
-            $admin = sql_getall(["admin", "id = '{$_L['LCMSADMIN']['id']}'", "id DESC"]);
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'admin':
+                $where = "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "')";
+                if (!LCMS::SUPER() && $LF['all'] != "true") {
+                    $where .= " AND id = '{$_L['LCMSADMIN']['id']}'";
+                }
+                $where .= $LF['keyword'] ? " AND (name LIKE :keyword OR title LIKE :keyword)" : "";
+                $admin = sql_getall([
+                    "admin", $where, "id ASC",
+                    [
+                        ":id"      => $LF['keyword'],
+                        ":keyword" => "%{$LF['keyword']}%",
+                    ], "", "", 10,
+                ]);
+                foreach ($admin as $key => $val) {
+                    $list[] = [
+                        "value" => $val['id'],
+                        "title" => "{$val['name']} - {$val['title']} - [ID:{$val['id']}]",
+                    ];
+                }
+                ajaxout(1, "success", "", $list);
+                break;
+            case 'admin-level':
+                $admin = $_L['LCMSADMIN'];
+                $uid   = LCMS::SUPER() ? "uid != 0" : "uid = '{$admin['id']}'";
+                $llist = sql_getall(["admin_level", $uid, "id ASC"]);
+                $lids  = is_array($llist) ? implode(",", array_unique(array_column($llist, "uid"))) : "";
+                $alist = $lids ? sql_getall(["admin", "id IN({$lids})", "id ASC"]) : [];
+                foreach ($alist as $index => $val) {
+                    $val['title'] .= " - [{$val['name']}]";
+                    $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
+                    $arr[$index] = [
+                        "value" => $val['type'] == "lcms" ? "0" : $val['id'],
+                        "title" => $val['title'],
+                    ];
+                    foreach ($llist as $level) {
+                        if ($level["uid"] == $val['id']) {
+                            $arr[$index]['children'][] = [
+                                "value" => $level['id'],
+                                "title" => $level['name'] . " - [ID" . $level['id'] . "]",
+                            ];
+                        }
+                    }
+                }
+                echo json_encode($arr ?: []);
+                break;
         }
-        foreach ($admin as $key => $val) {
-            $val['title'] .= " - [{$val['name']}]";
-            $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
-            $list[] = [
-                "value" => $val['id'],
-                "title" => $val['title'],
-            ];
-        }
-        return $list;
-    }
-    private function get_levelall()
-    {
-        global $_L;
-        if (LCMS::SUPER()) {
-            $level = sql_getall(["admin_level", "", "id DESC"]);
-        } else {
-            $level = sql_getall(["admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id DESC"]);
-        }
-        foreach ($level as $key => $val) {
-            $list[] = [
-                "value" => $val['id'],
-                "title" => $val['name'] . " - [ID:{$val['id']}]",
-            ];
-        }
-        return $list;
     }
 }

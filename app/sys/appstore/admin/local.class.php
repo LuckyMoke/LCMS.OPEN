@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-06 12:54:45
+ * @LastEditTime: 2021-05-31 17:37:14
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -37,7 +37,8 @@ class local extends adminbase
     public function douninstall()
     {
         global $_L;
-        $dir = PATH_APP . "open/{$_L['form']['app']}/";
+        $app = str_replace(["../", "./", "..\\", ".\\", "/", "\\"], "", $_L['form']['app']);
+        $dir = PATH_APP . "open/{$app}/";
         if (is_file($dir . "uninstall.sql")) {
             $this->updatesql(str_replace("[TABLE_PRE]", $_L['mysql']['pre'], file_get_contents($dir . "uninstall.sql")));
         }

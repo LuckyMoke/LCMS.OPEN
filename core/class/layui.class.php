@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-20 17:55:18
+ * @LastEditTime: 2021-05-31 17:55:54
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -118,7 +118,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block{$para['tipsbox']}'>
-                    <select class='lcms-form-select' xm-select-skin='default' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']}{$para['verifybox']}{$para['disabled']}>
+                    <select class='lcms-form-select' xm-select-skin='default' xm-select='{$para['id']}' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']}{$para['verifybox']}{$para['disabled']}>
                         {$default}{$option}
                     </select>
                 </div>

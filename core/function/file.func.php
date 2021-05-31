@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-27 19:37:02
+ * @LastEditTime: 2021-05-29 19:11:30
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -53,7 +53,7 @@ function path_standard($path)
 function makedir($dir)
 {
     $dir = path_absolute($dir);
-    @clearstatcache();
+    clearstatcache();
     if (is_dir($dir)) {
         return true;
     } else {
@@ -81,7 +81,7 @@ function makedir($dir)
 function copydir($oldDir, $targetDir, $overWrite = true)
 {
     $oldDir = path_absolute($oldDir);
-    @clearstatcache();
+    clearstatcache();
     if (is_dir($oldDir)) {
         makedir($targetDir);
         $targetDir = path_absolute($targetDir);
@@ -97,7 +97,7 @@ function copydir($oldDir, $targetDir, $overWrite = true)
                 }
             }
             closedir($resource);
-            @clearstatcache();
+            clearstatcache();
             return is_dir($targetDir);
         }
     }
@@ -113,7 +113,7 @@ function copyfile($oldFile, $targetFile, $overWrite = true)
 {
     $oldFile    = path_absolute($oldFile);
     $targetFile = path_absolute($targetFile);
-    @clearstatcache();
+    clearstatcache();
     if (is_file($oldFile)) {
         if (!is_file($targetFile) || $overWrite) {
             makedir(dirname($targetFile));
@@ -131,7 +131,7 @@ function copyfile($oldFile, $targetFile, $overWrite = true)
 function movedir($oldDir, $targetDir, $overWrite = true)
 {
     $oldDir = path_absolute($oldDir);
-    @clearstatcache();
+    clearstatcache();
     if (is_dir($oldDir)) {
         makedir($targetDir);
         $targetDir = path_absolute($targetDir);
@@ -162,7 +162,7 @@ function movefile($oldFile, $targetFile, $overWrite = true)
 {
     $oldFile    = path_absolute($oldFile);
     $targetFile = path_absolute($targetFile);
-    @clearstatcache();
+    clearstatcache();
     if (is_file($oldFile)) {
         if (is_file($targetFile) && $overWrite == false) {
             return false;
@@ -182,7 +182,7 @@ function movefile($oldFile, $targetFile, $overWrite = true)
 function deldir($fileDir, $type = false)
 {
     $fileDir = path_absolute($fileDir);
-    @clearstatcache();
+    clearstatcache();
     if (is_dir($fileDir)) {
         if ($resource = opendir($fileDir)) {
             while (($filename = readdir($resource)) !== false) {
@@ -197,7 +197,7 @@ function deldir($fileDir, $type = false)
             }
             closedir($resource);
         }
-        @clearstatcache();
+        clearstatcache();
         return !$type ? rmdir($fileDir) : true;
     }
 }
@@ -210,7 +210,7 @@ function delfile($fileUrl)
 {
     $fileUrl = path_absolute($fileUrl);
     $fileUrl = stristr(PHP_OS, "WIN") ? utf82gbk($fileUrl) : $fileUrl;
-    @clearstatcache();
+    clearstatcache();
     return is_file($fileUrl) ? unlink($fileUrl) : false;
 }
 /**
@@ -222,7 +222,7 @@ function delfile($fileUrl)
 function getfilesize($filename, $unit = null)
 {
     $filename = path_absolute($filename);
-    @clearstatcache();
+    clearstatcache();
     if (is_file($filename)) {
         $filesize = filesize($filename);
         if (!$unit) {
@@ -309,12 +309,12 @@ function zipfile($fromfile, $zipname, $jump = "", $overWrite = true)
 function getdirpower($dir)
 {
     $dir = path_absolute($dir);
-    @clearstatcache();
+    clearstatcache();
     if (is_dir($dir)) {
-        $file_hd = @fopen($dir . '/test.txt', 'w');
+        $file_hd = fopen($dir . '/lcms-power-test.txt', 'w');
         $flag    = $file_hd ? true : false;
-        @fclose($file_hd);
-        @unlink($dir . '/test.txt');
+        fclose($file_hd);
+        unlink($dir . '/lcms-power-test.txt');
         return $flag;
     }
 }
@@ -326,7 +326,7 @@ function getdirpower($dir)
 function getfilepower($file)
 {
     $file = path_absolute($file);
-    @clearstatcache();
+    clearstatcache();
     if (is_file($file) && is_writable($file)) {
         return true;
     }
@@ -341,8 +341,8 @@ function modifydirpower($dir, $power)
 {
     $dir = path_absolute($dir);
     $dir = path_standard($dir);
-    @clearstatcache();
-    if (is_dir($dir) && @chmod($dir, $power)) {
+    clearstatcache();
+    if (is_dir($dir) && chmod($dir, $power)) {
         if ($resource = opendir($dir)) {
             while (($filename = readdir($resource)) !== false) {
                 $filename = gbk2utf8($filename);
@@ -368,7 +368,7 @@ function modifydirpower($dir, $power)
 function modifyfilepower($file, $power)
 {
     $file = path_absolute($file);
-    @clearstatcache();
+    clearstatcache();
     if (is_file($file)) {
         return chmod($file, $power);
     }
