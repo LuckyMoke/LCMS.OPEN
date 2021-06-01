@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>百度地图</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="https://api.map.baidu.com/api?key=&v=1.3&services=true&s=1"></script>
+        <style type="text/css">body,html{width:100%;height:100%;margin:0;padding:0;overflow:hidden}#Map{width:100%;height:100%;border:#ccc solid 1px;box-sizing:border-box}</style>
+    </head>
+    <body onload="initMap()">
+        <div id="Map"></div>
+        <script type="text/javascript">var map,marker,getParam=function(name){return location.href.match(new RegExp('[?#&]'+name+'=([^?#&]+)','i'))?RegExp.$1:''},centerParam=getParam('center'),zoomParam=getParam('zoom'),markersParam=getParam('markers'),createMap=function(){map=new BMap.Map("Map");var centerArr=centerParam.split(',');var point=new BMap.Point(parseFloat(centerArr[0]),parseFloat(centerArr[1]));map.centerAndZoom(point,parseInt(zoomParam))},setMapEvent=function(){map.enableDragging();map.enableScrollWheelZoom();map.enableDoubleClickZoom();map.enableKeyboard()},addMapControl=function(){var ctrl_nav=new BMap.NavigationControl({anchor:BMAP_ANCHOR_TOP_LEFT,type:BMAP_NAVIGATION_CONTROL_LARGE});map.addControl(ctrl_nav);var ctrl_ove=new BMap.OverviewMapControl({anchor:BMAP_ANCHOR_BOTTOM_RIGHT,isOpen:1});map.addControl(ctrl_ove);var ctrl_sca=new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT});map.addControl(ctrl_sca)},initMap=function(){if(!window.BMap){return}createMap();setMapEvent();addMapControl();var markersArr=markersParam.split(',');var point=new BMap.Point(markersArr[0],markersArr[1]);marker=new BMap.Marker(point);marker.enableDragging();map.addOverlay(marker)};</script>
+    </body>
+    </html>
