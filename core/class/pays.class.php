@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-10 20:06:06
+ * @LastEditTime: 2021-06-03 18:13:24
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -16,7 +16,13 @@ class PAYS
      */
     public static function order_info($order_no)
     {
-        $order = sql_get(["order", "order_no = '{$order_no}'"]);
+        $order = sql_get([
+            "order",
+            "order_no = :order_no",
+            "", [
+                ":order_no" => $order_no,
+            ],
+        ]);
         return $order;
     }
     /**
@@ -27,12 +33,18 @@ class PAYS
     public static function payment_info($payid, $type = false)
     {
         global $_L;
-        $payment = LCMS::form(array("table" => "payment", "do" => "get", "id" => $payid));
+        $payment = LCMS::form([
+            "table" => "payment",
+            "do"    => "get",
+            "id"    => $payid,
+        ]);
         if ($type) {
             return $payment;
         } else {
             load::plugin("payment/{$payment['payment']}/AutoPay");
-            $payment = AutoPay::cfg(["payment" => $payment[$payment['payment']]]);
+            $payment = AutoPay::cfg([
+                "payment" => $payment[$payment['payment']],
+            ]);
             return $payment['payment'];
         }
     }
@@ -45,12 +57,26 @@ class PAYS
     {
         global $_L;
         if ($payment) {
-            $list = sql_getall(["payment", "payment LIKE '%{$payment}%' AND lcms = '{$_L['ROOTID']}'", "id DESC"]);
+            $list = sql_getall([
+                "payment",
+                "payment LIKE :payment AND lcms = '{$_L['ROOTID']}'",
+                "id DESC",
+                [
+                    ":payment" => $payment,
+                ],
+            ]);
         } else {
-            $list = sql_getall(["payment", "lcms = '{$_L['ROOTID']}'", "id DESC"]);
+            $list = sql_getall([
+                "payment",
+                "lcms = '{$_L['ROOTID']}'",
+                "id DESC",
+            ]);
         }
         foreach ($list as $key => $val) {
-            $result[] = ["title" => $val['title'], "value" => $val['id']];
+            $result[] = [
+                "title" => $val['title'],
+                "value" => $val['id'],
+            ];
         }
         return $result;
     }
@@ -82,7 +108,7 @@ class PAYS
      * @param  array  $order [description]
      * @return [type]        [description]
      */
-    public static function order($order = array())
+    public static function order($order = [])
     {
         if ($order['order_no']) {
             if ($order['status'] == "1") {
@@ -90,7 +116,14 @@ class PAYS
             } elseif ($order['status'] == "2") {
                 $order['repaytime'] = datenow();
             }
-            sql_update(["order", $order, "order_no = '{$order['order_no']}'"]);
+            sql_update([
+                "order",
+                $order,
+                "order_no = :order_no",
+                [
+                    ":order_no" => $order['order_no'],
+                ],
+            ]);
         } elseif (!$order['payment'] && $order['payid']) {
             $payment           = self::payment_info($order['payid'], true);
             $order['order_no'] = randstr(4) . date("YmdHis") . microseconds() . randstr(2, "num");
@@ -110,7 +143,12 @@ class PAYS
     public static function get($para = array())
     {
         global $_L;
-        $order = $para['order_no'] ? self::order_info($para['order_no']) : self::order(["body" => $para['body'], "pay" => $para['pay'], "paytype" => $para['paytype'], "payid" => $para['payid']]);
+        $order = $para['order_no'] ? self::order_info($para['order_no']) : self::order([
+            "body"    => $para['body'],
+            "pay"     => $para['pay'],
+            "paytype" => $para['paytype'],
+            "payid"   => $para['payid'],
+        ]);
         if ($order) {
             $paycode = urlencode(base64_encode(json_encode_ex([
                 "order_no"     => $order['order_no'],
@@ -134,7 +172,10 @@ class PAYS
     {
         $payment = self::payment_info($paycode['payid'], true);
         $payment ? "" : LCMS::X(404, "未找到支付参数");
-        $order = $paycode['order_no'] ? self::order(["order_no" => $paycode['order_no'], "payment" => $payment['payment']]) : LCMS::X(404, "未找到订单信息");
+        $order = $paycode['order_no'] ? self::order([
+            "order_no" => $paycode['order_no'],
+            "payment"  => $payment['payment'],
+        ]) : LCMS::X(404, "未找到订单信息");
         if ($order['status'] == "0") {
             $order['openid'] = $openid ? $openid : false;
             load::plugin("payment/{$order['payment']}/AutoPay");
