@@ -33,7 +33,7 @@
         "title": "授权借调",
         "name": "LC[wechat][oauth]",
         "value": "oauth",
-        "tips": "不借调不要填写内容",
+        "tips": "公众号借调权限使用，不借调不要填写内容",
         "cname": "hidden payment_wechat"
     }, {
         "layui": "input",
@@ -46,22 +46,34 @@
         "title": "支付密钥",
         "name": "LC[wechat][key]",
         "value": "key",
+        "placeholder": "请将API密钥与APIV3密钥设置成一样",
+        "tips": "请将API密钥与APIV3密钥设置成一样",
         "cname": "hidden payment_wechat"
     }, {
         "layui": "title",
         "title": "证书信息",
         "cname": "hidden payment_wechat"
     }, {
+        "layui": "input",
+        "title": "证书编号",
+        "name": "LC[wechat][serial_no]",
+        "value": "serial_no",
+        "cname": "hidden payment_wechat"
+    }, {
         "layui": "textarea",
         "title": "apiclient_cert",
         "name": "LC[wechat][apiclient_cert]",
         "value": "apiclient_cert",
+        "placeholder": "请填入apiclient_cert.pem文件内容",
+        "tips": "请填入apiclient_cert.pem文件内容",
         "cname": "hidden payment_wechat"
     }, {
         "layui": "textarea",
         "title": "apiclient_key",
         "name": "LC[wechat][apiclient_key]",
         "value": "apiclient_key",
+        "placeholder": "请填入apiclient_key.pem文件内容",
+        "tips": "请填入apiclient_key.pem文件内容",
         "cname": "hidden payment_wechat"
     }]
 }

@@ -1,0 +1,240 @@
+<?php
+class WxPayOrder
+{
+    /**
+     * @description: 接口初始化
+     * @param array $init
+     * @return {*}
+     */
+    public function __construct($init)
+    {
+        $this->api   = "https://api.mch.weixin.qq.com";
+        $this->cfg   = $init['config'];
+        $this->order = $init['order'];
+    }
+    /**
+     * @description: Jsapi下单
+     * @param string $openid
+     * @return array
+     */
+    public function Jsapi($openid = "")
+    {
+        $url    = "/v3/pay/transactions/jsapi";
+        $openid = $openid ?: $this->getOpenid();
+        $openid || LCMS::X(403, "缺少OPENID");
+        $result = $this->postJson($url, json_encode([
+            "appid"        => $this->cfg['appid'],
+            "mchid"        => $this->cfg['mch_id'],
+            "description"  => $this->order['body'],
+            "out_trade_no" => $this->order['order_no'],
+            "notify_url"   => $this->cfg['notify_url'],
+            "amount"       => [
+                "total"    => $this->order['pay'] * 100,
+                "currency" => "CNY",
+            ],
+            "payer"        => [
+                "openid" => $openid,
+            ],
+        ]));
+        if ($result['code'] || !$result['prepay_id']) {
+            LCMS::X(401, $result['message']);
+        } else {
+            $jsapi = [
+                "appId"     => $this->cfg["appid"],
+                "timeStamp" => strval(time()),
+                "nonceStr"  => randstr(32, "let"),
+                "package"   => "prepay_id={$result['prepay_id']}",
+            ];
+            return array_merge($jsapi, [
+                "paySign"  => WxPayApi::Sign($this->cfg, $jsapi),
+                "signType" => $this->cfg['sign_type'],
+            ]);
+        }
+    }
+    /**
+     * @description: H5下单
+     * @param {*}
+     * @return array
+     */
+    public function H5()
+    {
+        $url    = "/v3/pay/transactions/h5";
+        $result = $this->postJson($url, json_encode([
+            "appid"        => $this->cfg['appid'],
+            "mchid"        => $this->cfg['mch_id'],
+            "description"  => $this->order['body'],
+            "out_trade_no" => $this->order['order_no'],
+            "notify_url"   => $this->cfg['notify_url'],
+            "amount"       => [
+                "total"    => $this->order['pay'] * 100,
+                "currency" => "CNY",
+            ],
+            "scene_info"   => [
+                "payer_client_ip" => CLIENT_IP,
+                "h5_info"         => [
+                    "type" => "WAP",
+                ],
+            ],
+        ]));
+        if ($result['code'] || !$result['h5_url']) {
+            LCMS::X(401, $result['message']);
+        } else {
+            return $result;
+        }
+    }
+    /**
+     * @description: 电脑端下单
+     * @param {*}
+     * @return array
+     */
+    public function Pc()
+    {
+        $url    = "/v3/pay/transactions/native";
+        $result = $this->postJson($url, json_encode([
+            "appid"        => $this->cfg['appid'],
+            "mchid"        => $this->cfg['mch_id'],
+            "description"  => $this->order['body'],
+            "out_trade_no" => $this->order['order_no'],
+            "notify_url"   => $this->cfg['notify_url'],
+            "amount"       => [
+                "total"    => $this->order['pay'] * 100,
+                "currency" => "CNY",
+            ],
+        ]));
+        if ($result['code'] || !$result['code_url']) {
+            LCMS::X(401, $result['message']);
+        } else {
+            return $result;
+        }
+    }
+    /**
+     * @description: 退款操作
+     * @param {*}
+     * @return array
+     */
+    public function Repay()
+    {
+        $url    = "/v3/refund/domestic/refunds";
+        $result = $this->postJson($url, json_encode([
+            "out_trade_no"  => $this->order['order_no'],
+            "out_refund_no" => $this->order['order_no'] . "R",
+            "amount"        => [
+                "refund"   => $this->order['pay'] * 100,
+                "total"    => $this->order['pay'] * 100,
+                "currency" => "CNY",
+            ],
+        ]));
+        if ($result['code']) {
+            LCMS::X(401, $result['message']);
+        } else {
+            return $result;
+        }
+    }
+    /**
+     * @description: 订单状态监测
+     * @param {*}
+     * @return array
+     */
+    public function Check()
+    {
+        global $_L;
+        $url    = $this->api . "/v3/pay/transactions/out-trade-no/{$this->order['order_no']}?mchid=" . $this->cfg['mch_id'];
+        $result = json_decode(WxPayApi::Request("GET", $url, "", [
+            "Authorization" => "WECHATPAY2-SHA256-RSA2048 " . WxPayApi::Sign($this->cfg, [
+                "method"    => "GET",
+                "url"       => $url,
+                "timeStamp" => time(),
+                "nonceStr"  => randstr(32, "let"),
+                "body"      => "",
+            ]),
+        ]), true);
+        if ($result['code']) {
+            LCMS::X(401, $result['message']);
+        } else {
+            return $result;
+        }
+    }
+    /**
+     * @description: 提交JSON数据
+     * @param string $url
+     * @param string $body
+     * @return array
+     */
+    private function postJson($url, $body)
+    {
+        $url    = $this->api . $url;
+        $result = json_decode(WxPayApi::Request("POST", $url, $body, [
+            "Authorization" => "WECHATPAY2-SHA256-RSA2048 " . WxPayApi::Sign($this->cfg, [
+                "method"    => "POST",
+                "url"       => $url,
+                "timeStamp" => time(),
+                "nonceStr"  => randstr(32, "let"),
+                "body"      => $body,
+            ]),
+            "Content-Type"  => "application/json; charset=utf-8",
+            "Accept"        => "application/json",
+        ]), true);
+        return $result ?: [];
+    }
+    /**
+     * @description: 获取用户OPENID
+     * @return string
+     */
+    private function getOpenid()
+    {
+        global $_L;
+        $sname  = "LCMS" . strtoupper(substr(md5($this->cfg['appid']), 8, 16)) . "-snsapi_base";
+        $openid = SESSION::get($sname);
+        if ($openid['openid']) {
+            return $openid['openid'];
+        } else {
+            if ($this->cfg['oauth']) {
+                if ($_L['form']['wechatpayoauth']) {
+                    SESSION::set($sname, [
+                        "openid" => $_L['form']['wechatpayoauth'],
+                    ]);
+                    goheader(url_clear($_L['url']['now'], "code|state"));
+                } else {
+                    goheader($this->cfg['oauth'] . urlencode($_L['url']['now']) . "&key=wechatpayoauth");
+                }
+            } else {
+                if (!isset($_L['form']['code'])) {
+                    $query = http_build_query([
+                        "appid"         => $this->cfg['appid'],
+                        "redirect_uri"  => $_L['url']['now'],
+                        "response_type" => "code",
+                        "scope"         => "snsapi_base",
+                    ]);
+                    $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
+                    exit();
+                } else {
+                    $openid = $this->getOpenidFromMp($_L['form']['code']);
+                    if ($openid['openid']) {
+                        SESSION::set($sname, $openid);
+                        goheader(url_clear($_L['url']['now'], "code|state"));
+                    }
+                }
+            }
+        }
+    }
+    private function getOpenidFromMp($code)
+    {
+        $query = http_build_query([
+            "appid"      => $this->cfg['appid'],
+            "secret"     => $this->cfg['appsecret'],
+            "code"       => $code,
+            "grant_type" => "authorization_code",
+        ]);
+        return json_decode(http::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
+    }
+    private function header_nocache($url)
+    {
+        header('Expires:0');
+        header('Last-Modified:' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control:no-store, no-cahe, must-revalidate');
+        header('Cache-Control:post-chedk=0, pre-check=0', false);
+        header('Pragma:no-cache');
+        header("HTTP/1.1 301 Moved Permanently");
+        header("Location:{$url}");
+    }
+}

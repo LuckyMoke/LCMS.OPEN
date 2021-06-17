@@ -1,3 +1,8 @@
-<template "ui/head"/>
-<ui table($table)/>
-<template "ui/foot"/>
+<template "ui/head" />
+<p class="lcms-form-des">
+    使用支付功能需要添加一条伪静态规则：<br/>
+    Nginx：rewrite ^/paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 last;<br/>
+    Apache：RewriteRule ^paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 [L]<br/>
+</p>
+<ui table($table) />
+<template "ui/foot" />

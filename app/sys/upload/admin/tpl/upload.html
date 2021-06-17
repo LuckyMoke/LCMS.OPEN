@@ -4,8 +4,8 @@
 <div class="lcms-form-upload" data-id="{{$_L['form']['id']}}">
     <div class="_topbar">
         <div class="_choose">
-            <input type="file" multiple="multiple" accept="image/*" name="editorfile" />
             <button class="layui-btn layui-btn-sm layui-btn-normal">选择图片</button>
+            <input type="file" multiple="multiple" accept="image/*" name="editorfile" />
         </div>
         <div class="_btn">
             <button class="layui-btn layui-btn-sm _ok">插入图片</button>
@@ -23,7 +23,7 @@
         </table>
     </div>
     <script type="text/html" class="tpl-li">
-        <tr>
+        <tr class="_tr-index{index}">
             <td class="text-cut">{name}</td>
             <td align="center">{size}</td>
             <td align="center" class="_status">等待上传</td>

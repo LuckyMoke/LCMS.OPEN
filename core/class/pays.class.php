@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-06-03 18:13:24
+ * @LastEditTime: 2021-06-15 20:12:23
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -62,7 +62,7 @@ class PAYS
                 "payment LIKE :payment AND lcms = '{$_L['ROOTID']}'",
                 "id DESC",
                 [
-                    ":payment" => $payment,
+                    ":payment" => "{$payment}%",
                 ],
             ]);
         } else {

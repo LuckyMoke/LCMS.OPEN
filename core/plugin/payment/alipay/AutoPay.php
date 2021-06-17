@@ -1,36 +1,44 @@
 <?php
+require_once "libs/AliPay.Config.php";
 class AutoPay
 {
+    static $payname = "alipay";
+    static $tpl     = PATH_CORE_PLUGIN . "payment/alipay/tpl/";
     /**
-     * [cfg 必要 支付参数的配置]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 必须 支付参数配置
+     * @param array $order
+     * @return array
      */
-    public static function cfg($order)
+    public static function init($order)
     {
         global $_L;
-        $order['payment']['notify_url'] = "{$_L['url']['site']}core/plugin/payment/alipay/notify.php";
-        $order['payment']['return_url'] = $order['other']['return_url'];
-        return $order;
+        $order['payment'] = array_merge($order['payment'], [
+            "notify_url" => "{$_L['url']['site']}paynotify/" . self::$payname . "/{$order['order']['order_no']}",
+        ]);
+        $config = new AliPayConfig($order['payment']);
+        return [
+            "config" => $config->get,
+            "order"  => array_merge($order['order'], $order['other'] ?: []),
+        ];
     }
     /**
-     * [order 必要 下单接口]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 必须 下单方法
+     * @param array $order
+     * @return {*}
      */
     public static function order($order)
     {
         global $_L;
-        $order = self::cfg($order);
-        load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
-        $huabei = $order['order']['huabei'];
+        $init   = self::init($order);
+        $order  = $init['order'];
+        $AliPay = new AliPayOrder($init);
+        $huabei = $order['huabei'];
         $huabei = $huabei ? explode("|", $huabei) : [];
         $fenqi  = $_L['form']['fenqi'] ?: $huabei[1];
         $seller = $huabei > 12 ? "0" : "100";
         if ($fenqi > 6) {
             // 分12期
-            $order['order']['fenqi'] = [
+            $order['fenqi'] = [
                 "extend_params" => [
                     "hb_fq_num"            => "12",
                     "hb_fq_seller_percent" => $seller,
@@ -38,7 +46,7 @@ class AutoPay
             ];
         } elseif ($fenqi > 3) {
             // 分6期
-            $order['order']['fenqi'] = [
+            $order['fenqi'] = [
                 "extend_params" => [
                     "hb_fq_num"            => "6",
                     "hb_fq_seller_percent" => $seller,
@@ -46,7 +54,7 @@ class AutoPay
             ];
         } elseif ($fenqi > 0) {
             // 分3期
-            $order['order']['fenqi'] = [
+            $order['fenqi'] = [
                 "extend_params" => [
                     "hb_fq_num"            => "3",
                     "hb_fq_seller_percent" => $seller,
@@ -54,123 +62,132 @@ class AutoPay
             ];
         }
         $huabei = $huabei[0];
-        switch ($order['order']['paytype']) {
+        switch ($order['paytype']) {
             case 'h5':
             case 'jsapi':
-                load::plugin("payment/alipay/type/AliPay.H5");
-                $AliPayH5 = new AliPayH5();
-                $result   = $AliPayH5->Order($config, $order['order']);
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'QQ/') !== false) {
-                    $newwindows = true;
+                $result = $AliPay->Jsapi();
+                $UA     = $_SERVER['HTTP_USER_AGENT'];
+                if (strpos($UA, 'MicroMessenger') !== false || strpos($UA, 'QQ/') !== false) {
+                    $openInBrowser = true;
                 }
-                require LCMS::template(PATH_CORE_PLUGIN . "payment/alipay/tpl/h5");
+                require LCMS::template(self::$tpl . "h5");
                 break;
             case 'qr':
-                load::plugin("payment/alipay/type/AliPay.Qr");
-                $AliPayQr = new AliPayQr();
-                $result   = $AliPayQr->Order($config, $order['order']);
-                if ($result['alipay_trade_precreate_response']['code'] == '10000') {
-                    $qrcode = urlencode($result['alipay_trade_precreate_response']['qr_code']);
-                    require LCMS::template(PATH_CORE_PLUGIN . "payment/alipay/tpl/qr");
+                $result = $AliPay->Qr();
+                if ($result['code'] == '10000') {
+                    $qrcode = urlencode($result['qr_code']);
+                    require LCMS::template(self::$tpl . "qr");
                 } else {
-                    LCMS::X(403, "创建订单失败：{$result['alipay_trade_precreate_response']['sub_msg']}");
+                    LCMS::X(401, "创建订单失败：{$result['sub_msg']}");
                 }
                 break;
             case 'app':
-                load::plugin("payment/alipay/type/AliPay.App");
-                $AliPayApp = new AliPayApp();
-                $result    = $AliPayApp->Order($config, $order['order']);
-                return $result;
+                return $AliPay->App();
                 break;
             case 'pc':
-                load::plugin("payment/alipay/type/AliPay.Pc");
-                $AliPayPc = new AliPayPc();
-                $result   = $AliPayPc->Order($config, $order['order']);
-                require LCMS::template(PATH_CORE_PLUGIN . "payment/alipay/tpl/pc");
+                $result = $AliPay->Jsapi("pc");
+                require LCMS::template(self::$tpl . "pc");
                 break;
         }
     }
     /**
-     * [check 必要 查询订单接口]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 必须 查询订单接口
+     * @param array $order
+     * @return arrat
      */
     public static function check($order)
     {
-        $order = self::cfg($order);
-        load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
-        load::plugin("payment/alipay/type/AliPay.Check");
-        $AliPayCheck = new AliPayCheck();
-        $result      = $AliPayCheck->Check($config, $order['order']);
+        $AliPay = new AliPayOrder(self::init($order));
+        $result = $AliPay->Check();
         if ($result['code'] == "10000" && $result['trade_status'] == "TRADE_SUCCESS") {
-            return ["code" => 1, "msg" => "订单已支付", "order_no" => $result['out_trade_no']];
+            return [
+                "code"     => 1,
+                "msg"      => "订单已支付",
+                "order_no" => $result['out_trade_no'],
+            ];
         } else {
-            return ["code" => 0, "msg" => "订单未支付：{$result['sub_msg']}{$result['trade_status']}"];
+            return [
+                "code" => 0,
+                "msg"  => "订单未支付：{$result['sub_msg']}{$result['trade_status']}",
+            ];
         }
     }
     /**
-     * [repay 必要 退款接口]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 必须 退款接口
+     * @param array $order
+     * @return array
      */
     public static function repay($order)
     {
-        load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
-        load::plugin("payment/alipay/type/AliPay.Repay");
-        $AliPayRepay = new AliPayRepay();
-        $result      = $AliPayRepay->Order($config, $order['order']);
-        if ($result['alipay_trade_refund_response']['code'] == "10000") {
-            return ["code" => 1, "msg" => "退款成功", "order_no" => $result['alipay_trade_refund_response']['out_trade_no']];
+        $AliPay = new AliPayOrder(self::init($order));
+        $result = $AliPay->Repay();
+        if ($result['code'] == "10000") {
+            return [
+                "code"     => 1,
+                "msg"      => "退款成功",
+                "order_no" => $result['out_trade_no'],
+            ];
         } else {
-            return ["code" => 0, "msg" => "退款失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
+            return [
+                "code" => 0,
+                "msg"  => "退款失败：{$result['sub_msg']}",
+            ];
         }
     }
     /**
-     * [notify 必要 支付后回调通知]
-     * @return [type] [description]
+     * @description: 必须 支付后回调通知
+     * @param {*}
+     * @return array
      */
     public static function notify()
     {
-        load::plugin("payment/alipay/type/AliPay.Notify");
-        $AliPayNotify = new AliPayNotify();
-        return $AliPayNotify->check();
+        $Notify = new AliPayNotify();
+        return $Notify->Check(self::$payname);
     }
     /**
-     * [payto 非必要 转账给个人接口]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 可选 转账给个人接口
+     * @param array $order
+     * @return array
      */
     public static function payto($order)
     {
-        load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
-        load::plugin("payment/alipay/type/AliPay.To");
-        $AliPayTo = new AliPayTo();
-        $result   = $AliPayTo->Order($config, $order['order']);
-        if ($result['alipay_trade_refund_response']['code'] == "10000") {
-            return ["code" => 1, "msg" => "转账成功", "order_no" => $result['alipay_trade_refund_response']['out_biz_no']];
+        require_once "libs/AliPay.To.php";
+        $AliPayTo = new AliPayTo(self::init($order));
+        $result   = $AliPayTo->Pay();
+        if ($result['code'] == "10000") {
+            return [
+                "code"     => 1,
+                "msg"      => "转账成功",
+                "order_no" => $result['out_biz_no'],
+            ];
         } else {
-            return ["code" => 0, "msg" => "转账失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
+            return [
+                "code" => 0,
+                "msg"  => "转账失败：{$result['sub_msg']}",
+            ];
         }
     }
     /**
-     * [payto 非必要 转账给个人接口]
-     * @param  [type] $order [description]
-     * @return [type]        [description]
+     * @description: 可选 转账结果查询
+     * @param array $order
+     * @return array
      */
     public static function payto_check($order)
     {
-        load::plugin("payment/alipay/Config");
-        $config = new AliPayConfig($order['payment']);
-        load::plugin("payment/alipay/type/AliPay.To");
-        $AliPayTo = new AliPayTo();
-        $result   = $AliPayTo->Check($config, $order['order']);
-        if ($result['alipay_trade_refund_response']['code'] == "10000") {
-            return ["code" => 1, "msg" => "转账成功", "order_no" => $result['alipay_trade_refund_response']['out_biz_no']];
+        require_once "libs/AliPay.To.php";
+        $AliPayTo = new AliPayTo(self::init($order));
+        $result   = $AliPayTo->Check();
+        if ($result['code'] == "10000") {
+            return [
+                "code"     => 1,
+                "msg"      => "转账成功",
+                "order_no" => $result['out_biz_no'],
+            ];
         } else {
-            return ["code" => 0, "msg" => "转账失败：{$result['alipay_trade_refund_response']['sub_msg']}"];
+            return [
+                "code" => 0,
+                "msg"  => "转账失败：{$result['sub_msg']}",
+            ];
         }
     }
 }

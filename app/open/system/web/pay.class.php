@@ -28,7 +28,7 @@ class pay extends webbase
     public function donotify()
     {
         global $_L;
-        $result = PAYS::notify(PLUGIN_PAYMENT);
+        $result  = PAYS::notify($_L['form']['payment']);
         if ($result && $result['order']['order_no']) {
             PAYS::order([
                 "order_no" => $result['order']['order_no'],
@@ -36,6 +36,9 @@ class pay extends webbase
                 "response" => arr2sql($result['response']),
             ]);
         }
-        echo "success";
+        echo json_encode([
+            "code"    => "SUCCESS",
+            "message" => "成功",
+        ]);
     }
 }

@@ -3,30 +3,28 @@
     <head>
         <title>订单支付</title>
         <meta name="renderer" content="webkit"/>
-        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <meta content="yes" name="apple-mobile-web-app-capable"/>
-        <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
-        <meta content="telephone=no" name="format-detection"/>
-        <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link href="data:image/ico;base64,aWNv" rel="shortcut icon" type="image/x-icon"/>
         <link rel="stylesheet" href="{{$_L['url']['static']}}amazeui/amazeui.min.css?{{$_L['config']['ver']}}"/>
+        <link rel="stylesheet" href="{{$_L['url']['static']}}mescroll/mescroll.min.css?{{$_L['config']['ver']}}"/>
         <style type="text/css">
         body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box{max-width:600px;margin:0 auto}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._qr{text-align:center;padding:0 0 20px 0;border-bottom:1px #ccc dashed}.pay-box ._qr img{width:220px;height:220px}.pay-box ._tips{text-align:center;color:#a0a0a0;margin-top:20px;padding-bottom:20px;border-bottom:1px #ccc dashed}.pay-box ._tips i{font-size:60px;line-height:60px;position:absolute;margin-left:-100px}.pay-box ._tips p{margin:0 0 0 100px;line-height:30px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}
         </style>
     </head>
     <body>
-        <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order']['order_no']}}" data-goback="{{$order['other']['return_url']}}">
+        <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
             <div class="_title">
-                <img src="{{$_L['url']['site']}}core/plugin/payment/wechat/icon.png"/>
+                <img src="{{$_L['url']['site']}}core/plugin/payment/{{self::$payname}}/icon.png"/>
             </div>
             <div class="_body">
                 <h1>
                     ￥
-                    <span>{{$order['order']['pay']}}</span>
+                    <span>{{$order['pay']}}</span>
                 </h1>
                 <div class="_qr">
-                    <img src="{{$_L['url']['own']}}n=system&c=qr&text={{$qrcode}}"/>
+                    <img src="{{$_L['url']['qrcode']}}{{$qrcode}}"/>
                 </div>
                 <div class="_tips">
                     <i class="am-icon-qrcode"> </i>
@@ -40,27 +38,27 @@
                 <div class="_info">
                     <div>
                         <p class="am-fl">商品名</p>
-                        <p class="am-fr">{{$order['order']['body']}}</p>
+                        <p class="am-fr">{{$order['body']}}</p>
                         <div class="am-cf"> </div>
                     </div>
                     <div>
                         <p class="am-fl">订单金额</p>
-                        <p class="am-fr">￥{{$order['order']['pay']}}</p>
+                        <p class="am-fr">￥{{$order['pay']}}</p>
                         <div class="am-cf"> </div>
                     </div>
                     <div>
                         <p class="am-fl">商户单号</p>
-                        <p class="am-fr">{{$order['other']['order_no_own']}}</p>
+                        <p class="am-fr">{{$order['order_no_own']}}</p>
                         <div class="am-cf"> </div>
                     </div>
                     <div>
                         <p class="am-fl">交易单号</p>
-                        <p class="am-fr">{{$order['order']['order_no']}}</p>
+                        <p class="am-fr">{{$order['order_no']}}</p>
                         <div class="am-cf"> </div>
                     </div>
                     <div>
                         <p class="am-fl">下单时间</p>
-                        <p class="am-fr">{{$order['order']['addtime']}}</p>
+                        <p class="am-fr">{{$order['addtime']}}</p>
                         <div class="am-cf"> </div>
                     </div>
                 </div>

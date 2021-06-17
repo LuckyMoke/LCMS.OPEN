@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-22 17:18:58
+ * @LastEditTime: 2021-06-16 21:52:24
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -246,9 +246,9 @@ class web extends adminbase
                     "do"    => "get",
                     "id"    => $_L['form']['id'],
                 ]);
-                $payment_config = PAYS::payment_config();
-                foreach ($payment_config as $key => $val) {
-                    $val                       = json_decode($val, true);
+                foreach (PAYS::payment_config() as $key => $val) {
+                    $val = json_decode($val, true);
+
                     $payment_list['payment'][] = [
                         "title" => $val['info']['title'],
                         "value" => $val['info']['name'],
@@ -290,14 +290,6 @@ class web extends adminbase
                 require LCMS::template("own/payment-edit");
                 break;
             case 'payment-save':
-                foreach (["wechat" => "mch_id", "wechat_agent" => "sub_mch_id"] as $payment => $mch_id) {
-                    if ($_L['form']['LC'][$payment][$mch_id] && $_L['form']['LC'][$payment]['apiclient_cert'] && $_L['form']['LC'][$payment]['apiclient_key']) {
-                        $dir  = PATH_CORE_PLUGIN . "payment/{$payment}/cert/";
-                        $file = $dir . md5($_L['form']['LC'][$payment][$mch_id]);
-                        file_put_contents("{$file}_cert.pem", $_L['form']['LC'][$payment]['apiclient_cert']);
-                        file_put_contents("{$file}_key.pem", $_L['form']['LC'][$payment]['apiclient_key']);
-                    }
-                }
                 $_L['form']['LC']['lcms'] = $_L['ROOTID'];
                 LCMS::form([
                     "table" => "payment",

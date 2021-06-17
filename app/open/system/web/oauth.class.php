@@ -13,7 +13,9 @@ class oauth extends webbase
         global $_L;
         $config = $_L['config']['admin'];
         if ($config['oauth_code']) {
-            ajaxout(1, "success", "", ["code" => $config['oauth_code']]);
+            ajaxout(1, "success", "", [
+                "code" => $config['oauth_code'],
+            ]);
         }
     }
 }
