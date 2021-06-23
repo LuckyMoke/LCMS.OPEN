@@ -16,20 +16,20 @@
         <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?{{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {
-                url: {{json_encode($_L['url'])}},
+                url: JSON.parse('{{json_encode($_L["url"])}}'),
                 config: {
-                    oss: '{{$_L['plugin']['oss']['type']}}',
-                    cdn: '{{$_L['plugin']['oss']['domain']}}',
+                    oss: '{{$_L["plugin"]["oss"]["type"]}}',
+                    cdn: '{{$_L["plugin"]["oss"]["domain"]}}',
                     isupload: {
-                        img: {{$_L['LCMSADMIN']['level']['sys']['upload']['index']['img']??1}},
-                        file: {{$_L['LCMSADMIN']['level']['sys']['upload']['index']['file']??1}},
+                        img: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["img"]??1}}'),
+                        file: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["file"]??1}}'),
                     },
-                    attsize: '{{$_L['config']['admin']['attsize']}}',
-                    mimelist: '{{$_L['config']['admin']['mimelist']}}',
-                    ver: '{{$_L['config']['ver']}}'
+                    attsize: '{{$_L["config"]["admin"]["attsize"]}}',
+                    mimelist: '{{$_L["config"]["admin"]["mimelist"]}}',
+                    ver: '{{$_L["config"]["ver"]}}'
                 },
-                app: {{json_encode($_L['APP']['info'])}},
-                ROOTID: {{$_L['ROOTID']}}
+                app: JSON.parse('{{json_encode($_L["APP"]["info"])}}'),
+                ROOTID: parseInt('{{$_L["ROOTID"]}}')
             };
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js?ver='+LCMS.config.ver+'"></scr'+'ipt>');
@@ -39,8 +39,8 @@
     </head>
     <body>
         <template "ui/top" />
-        <div id="APPIFRAME" style="padding-left:{{$_L['form']['n']!='appstore'&&count((array)$_L['APP']['menu'])>1?'150px':'0'}};">
-            <if $_L['form']['n']!='appstore' && count((array)$_L['APP']['menu']) gt 1>
+        <if $_L['form']['n']!='appstore' && $_L['APP']['menu'] && count($_L['APP']['menu']) gt 1>
+            <div id="APPIFRAME" style="padding-left:150px">
                 <div id="APPNAV">
                     <div>
                         <i class="layui-icon layui-icon-spread-left"></i>
@@ -56,6 +56,8 @@
                         </loop>
                     </ul>
                 </div>
-            </if>
-            <template "ui/tab" />
-            <div id="LCONTENT">
+                <else />
+                <div id="APPIFRAME" style="padding-left:0">
+        </if>
+        <template "ui/tab" />
+        <div id="LCONTENT">

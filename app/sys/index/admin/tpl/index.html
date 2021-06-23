@@ -1,21 +1,23 @@
 <!DOCTYPE html>
     <html>
     <head>
-        <title>{{ $_L['config']['admin']['title'] }}</title>
+        <title>{{$_L['config']['admin']['title']}}</title>
         <meta name="generator" content="盘企®PHP开发框架" />
-        <meta name="anthor" content="运城市盘石网络科技有限公司 www.panshi18.com" />
         <meta name="renderer" content="webkit" />
-        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
-        <link href="{{ $_L['url']['site'] }}favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="{{ $_L['url']['static'] }}layui/css/layui.css?{{ $_L['config']['ver'] }}" />
-        <link rel="stylesheet" href="{{ $_L['url']['public'] }}ui/admin/static/style.css?{{ $_L['config']['ver'] }}" />
-        <link rel="stylesheet" href="{{ $_L['url']['own_path'] }}admin/tpl/static/style.css?{{ $_L['config']['ver'] }}" />
+        <if $_L['url']['secure']=="https://">
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+        </if>
+        <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?{{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?{{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?{{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {
-                url: {{ echo json_encode($_L['url']) }},
+                url: JSON.parse('{{json_encode($_L["url"])}}'),
                 config: {
                     ver: "{{$_L['config']['ver']}}"
                 }
@@ -34,7 +36,7 @@
                         <a href="{{$_L['url']['admin']}}">
                             <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                         </a>
-                        <else/>
+                        <else />
                         <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                     </if>
                 </div>
@@ -42,7 +44,7 @@
                     <loop $open,$list,$index>
                         <if $list['menu']||$index==0>
                             <li class="layui-nav-item layui-nav-itemed">
-                                <a href="javascript:;">{{ $list['title'] }}</a>
+                                <a href="javascript:;">{{$list['title']}}</a>
                                 <dl class="layui-nav-child">
                                     <loop $list['menu'],$li,$name>
                                         <dd>
