@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-06-16 21:52:24
+ * @LastEditTime: 2021-06-26 11:19:00
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -140,7 +140,7 @@ class web extends adminbase
                     ]);
                 }
                 $form = array_merge($form, [
-                    ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的所有文件先手动上传到云存储！！",
+                    ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的所有文件先手动上传到云存储！！注意设置跨域访问CORS权限！！",
                         "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun"],
                     ["layui"      => "input", "title" => "CDN域名",
                         "name"        => "LC[oss][domain]",
@@ -151,11 +151,11 @@ class web extends adminbase
                         "name"   => "LC[oss][qiniu][AccessKey]",
                         "value"  => $plugin['oss']['qiniu']['AccessKey'],
                         "cname"  => "hidden oss-qiniu"],
-                    ["layui" => "input", "title" => "secretKey",
+                    ["layui" => "input", "title" => "SecretKey",
                         "name"   => "LC[oss][qiniu][secretKey]",
                         "value"  => $plugin['oss']['qiniu']['secretKey'],
                         "cname"  => "hidden oss-qiniu"],
-                    ["layui" => "input", "title" => "bucket",
+                    ["layui" => "input", "title" => "Bucket",
                         "name"   => "LC[oss][qiniu][bucket]",
                         "value"  => $plugin['oss']['qiniu']['bucket'],
                         "cname"  => "hidden oss-qiniu"],
@@ -177,22 +177,13 @@ class web extends adminbase
                         "name"   => "LC[oss][tencent][SecretKey]",
                         "value"  => $plugin['oss']['tencent']['SecretKey'],
                         "cname"  => "hidden oss-tencent"],
+                    ["layui" => "input", "title" => "请求域名",
+                        "name"   => "LC[oss][tencent][Region]",
+                        "value"  => $plugin['oss']['tencent']['Region'],
+                        "cname"  => "hidden oss-tencent"],
                     ["layui" => "input", "title" => "Bucket",
                         "name"   => "LC[oss][tencent][Bucket]",
                         "value"  => $plugin['oss']['tencent']['Bucket'],
-                        "cname"  => "hidden oss-tencent"],
-                    ["layui" => "radio", "title" => "存储区域",
-                        "name"   => "LC[oss][tencent][Region]",
-                        "value"  => $plugin['oss']['tencent']['Region'],
-                        "verify" => "required",
-                        "radio"  => [
-                            ["title" => "北京", "value" => "ap-beijing"],
-                            ["title" => "南京", "value" => "ap-nanjing"],
-                            ["title" => "上海", "value" => "ap-shanghai"],
-                            ["title" => "广州", "value" => "ap-guangzhou"],
-                            ["title" => "成都", "value" => "ap-chengdu"],
-                            ["title" => "重庆", "value" => "ap-chongqing"],
-                        ],
                         "cname"  => "hidden oss-tencent"],
                     ["layui" => "input", "title" => "AccessKeyId",
                         "name"   => "LC[oss][aliyun][AccessKeyId]",
@@ -202,28 +193,13 @@ class web extends adminbase
                         "name"   => "LC[oss][aliyun][AccessKeySecret]",
                         "value"  => $plugin['oss']['aliyun']['AccessKeySecret'],
                         "cname"  => "hidden oss-aliyun"],
+                    ["layui" => "input", "title" => "Endpoint",
+                        "name"   => "LC[oss][aliyun][Region]",
+                        "value"  => $plugin['oss']['aliyun']['Region'],
+                        "cname"  => "hidden oss-aliyun"],
                     ["layui" => "input", "title" => "Bucket",
                         "name"   => "LC[oss][aliyun][Bucket]",
                         "value"  => $plugin['oss']['aliyun']['Bucket'],
-                        "cname"  => "hidden oss-aliyun"],
-                    ["layui" => "radio", "title" => "存储区域",
-                        "name"   => "LC[oss][aliyun][Region]",
-                        "value"  => $plugin['oss']['aliyun']['Region'],
-                        "verify" => "required",
-                        "radio"  => [
-                            ["title" => "杭州", "value" => "cn-hangzhou"],
-                            ["title" => "上海", "value" => "cn-shanghai"],
-                            ["title" => "青岛", "value" => "cn-qingdao"],
-                            ["title" => "北京", "value" => "cn-beijing"],
-                            ["title" => "张家口", "value" => "cn-zhangjiakou"],
-                            ["title" => "呼和浩特", "value" => "cn-huhehaote"],
-                            ["title" => "乌兰察布", "value" => "cn-wulanchabu"],
-                            ["title" => "深圳", "value" => "cn-shenzhen"],
-                            ["title" => "河源", "value" => "cn-heyuan"],
-                            ["title" => "广州", "value" => "cn-guangzhou"],
-                            ["title" => "成都", "value" => "cn-chengdu"],
-                            ["title" => "香港", "value" => "cn-hongkong"],
-                        ],
                         "cname"  => "hidden oss-aliyun"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ]);

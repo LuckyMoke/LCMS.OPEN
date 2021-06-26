@@ -2,11 +2,13 @@
 class AliyunOSS
 {
     public $cfg = [];
-    public $api = ".aliyuncs.com";
     public function __construct($config)
     {
         $this->cfg = $config;
-        $this->api = $this->cfg['Bucket'] . ".oss-" . $this->cfg['Region'] . $this->api;
+        // 截取区域参数
+        $this->cfg['Region'] = str_replace(["oss-", ".aliyuncs.com"], "", $this->cfg['Region']);
+        // 拼接接口地址
+        $this->api = "{$this->cfg['Bucket']}.oss-{$this->cfg['Region']}.aliyuncs.com";
     }
     /**
      * @description: 获取临时token

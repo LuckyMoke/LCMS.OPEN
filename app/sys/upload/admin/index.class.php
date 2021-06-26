@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-08 01:09:41
+ * @LastEditTime: 2021-06-26 11:13:36
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -76,8 +76,9 @@ class index extends adminbase
                     ajaxout(1, "删除成功");
                     break;
                 default:
-                    if (delfile($file)) {
-                        $this->sql("delete", $file);
+                    $this->sql("delete", $file);
+                    if (!sql_error()) {
+                        delfile($file);
                         ajaxout(1, "删除成功");
                     } else {
                         ajaxout(0, "删除失败");
@@ -214,8 +215,8 @@ class index extends adminbase
         switch ($LF['action']) {
             case 'token':
                 $token           = $Tencent->token();
-                $token['Bucket'] = $_L['plugin']['oss']['tencent']['Bucket'];
-                $token['Region'] = $_L['plugin']['oss']['tencent']['Region'];
+                $token['Bucket'] = $Tencent->cfg['Bucket'];
+                $token['Region'] = $Tencent->cfg['Region'];
                 ajaxout(1, "success", "", $token);
                 break;
             case 'success':

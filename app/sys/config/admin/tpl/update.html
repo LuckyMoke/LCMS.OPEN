@@ -6,32 +6,36 @@
             <td width="100px">当前域名：</td>
             <td>
                 {{HTTP_HOST}}
-                <if !$info || $info['lasttime'] lte datenow()>
-                    <a style="cursor:pointer;color:#F56C6C;padding-left:10px;font-size:12px;" class="update-buy" data-url="{{$buyurl}}"><i class="layui-icon layui-icon-upload"></i> 购买框架在线更新服务</a>
+                <if $_L['developer']['updatetime']!==0>
+                    <if !$info || $info['lasttime'] lte datenow()>
+                        <a style="cursor:pointer;color:#F56C6C;padding-left:10px;font-size:12px;" class="update-buy" data-url="{{$buyurl}}"><i class="layui-icon layui-icon-upload"></i> 购买框架在线更新服务</a>
+                    </if>
                 </if>
             </td>
         </tr>
-        <tr>
-            <td>服务状态：</td>
-            <td>
-                <if $info && $info['lasttime'] gte datenow()>
-                    服务中
-                    <else />
-                    <span class="update-type">已关闭</span>
-                    <a href="https://gitee.com/luckymoke/LCMS.OPEN#%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F" target="_blank" style="font-size:12px;color:#909399;">&nbsp;&nbsp;<i class="layui-icon layui-icon-survey"></i>如何免费手动更新框架？</a>
-                </if>
-            </td>
-        </tr>
-        <tr>
-            <td>到期时间：</td>
-            <td>
-                <if $info && $info['lasttime'] gte datenow()>
-                    {{$info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime']}}
-                    <else />
-                    0000-00-00 00:00:00
-                </if>
-            </td>
-        </tr>
+        <if $_L['developer']['updatetime']!==0>
+            <tr>
+                <td>服务状态：</td>
+                <td>
+                    <if $info && $info['lasttime'] gte datenow()>
+                        服务中
+                        <else />
+                        <span class="update-type">已关闭</span>
+                        <a href="https://gitee.com/luckymoke/LCMS.OPEN#%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F" target="_blank" style="font-size:12px;color:#909399;">&nbsp;&nbsp;<i class="layui-icon layui-icon-survey"></i>如何免费手动更新框架？</a>
+                    </if>
+                </td>
+            </tr>
+            <tr>
+                <td>到期时间：</td>
+                <td>
+                    <if $info && $info['lasttime'] gte datenow()>
+                        {{$info['lasttime']>'2050-12-31'?'永久授权':$info['lasttime']}}
+                        <else />
+                        0000-00-00 00:00:00
+                    </if>
+                </td>
+            </tr>
+        </if>
         <tr>
             <td>当前版本：</td>
             <td>

@@ -5,6 +5,10 @@ class TencentOSS
     public function __construct($config)
     {
         $this->cfg = $config;
+        // 截取区域参数
+        $this->cfg['Region'] = str_replace(["{$this->cfg['Bucket']}.cos.", ".myqcloud.com"], "", $this->cfg['Region']);
+        // 拼接接口地址
+        $this->api = "{$this->cfg['Bucket']}.cos.{$this->cfg['Region']}.myqcloud.com";
     }
     /**
      * @description: 获取临时token
@@ -52,7 +56,7 @@ class TencentOSS
             ];
         }
         $body  = file_get_contents($file);
-        $url   = "{$this->cfg['Bucket']}.cos.{$this->cfg['Region']}.myqcloud.com";
+        $url   = $this->api;
         $finfo = finfo_open(FILEINFO_MIME);
         $mime  = finfo_file($finfo, $file);
         finfo_close($finfo);
@@ -78,7 +82,7 @@ class TencentOSS
      */
     public function delete($file)
     {
-        $url     = "{$this->cfg['Bucket']}.cos.{$this->cfg['Region']}.myqcloud.com";
+        $url     = $this->api;
         $headers = [
             "DELETE" => "/{$file} HTTP/1.1",
             "Host"   => $url,
