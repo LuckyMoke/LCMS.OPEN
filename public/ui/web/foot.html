@@ -11,6 +11,9 @@
         <script type="text/javascript" defer src="{{$xhr}}"></script>
     </loop>
 </if>
+<if $_L['ui']['htmlfoot']>
+    {{implode(PHP_EOL, $_L['ui']['htmlfoot'])}}
+</if>
 {{$_L['config']['web']['tongji']}}
 </body>
 </html>

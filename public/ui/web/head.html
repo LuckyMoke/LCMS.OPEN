@@ -25,10 +25,13 @@
                 <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?'.TPL::$ver}}"></script>
             </loop>
         </if>
+        <if $_L['ui']['htmlhead']>
+            {{implode(PHP_EOL, $_L['ui']['htmlhead'])}}
+        </if>
         <script type="text/javascript">
-            var LCMS = {"url":{{json_encode($_L['url'])}} };
+            var LCMS = {"url":JSON.parse('{{json_encode($_L["url"])}}')};
             if (window.location.href.search('console=true') != -1) {
-                document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js?ver={{$_L['config']['ver']}}"></scr'+'ipt>');
+                document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js"></scr'+'ipt>');
                 eruda.init();
             };
         </script>
