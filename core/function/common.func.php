@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-27 17:49:08
+ * @LastEditTime: 2021-07-05 17:39:03
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -335,7 +335,7 @@ function sqlinsert($string)
         ], [
             "_", "_", "/*", "&#92;", "&#34;", "&#39;", "sel/ect", "ins/ert", "up/date", "del/ete", "un/ion", "in/to", "load/_file", "out/file", "sl/eep",
         ], $string);
-        $string = trim($string);
+        $string = trim(htmlspecialchars($string));
     }
     return $string;
 }
