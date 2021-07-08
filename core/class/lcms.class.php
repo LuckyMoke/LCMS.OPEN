@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-06-26 13:24:10
+ * @LastEditTime: 2021-07-08 16:04:24
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,7 +12,7 @@ class LCMS
     /**
      * @获取客户端真实IP
      * @param {*}
-     * @return {*}
+     * @return string
      */
     public static function IP()
     {
@@ -24,7 +24,10 @@ class LCMS
                 break;
             }
         }
-        return $ip;
+        if ($ip && filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $ip;
+        }
+        return "";
     }
     /**
      * @输出错误提示页面
