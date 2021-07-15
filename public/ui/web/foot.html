@@ -8,7 +8,7 @@
 </if>
 <if $_L['ui']['xhr']>
     <loop $_L['ui']['xhr'],$xhr>
-        <script type="text/javascript" defer src="{{$xhr}}"></script>
+        <script type="text/javascript" defer="defer" src="{{$xhr}}"></script>
     </loop>
 </if>
 <if $_L['ui']['htmlfoot']>
