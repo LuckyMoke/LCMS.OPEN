@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-16 21:34:54
+ * @LastEditTime: 2021-07-17 11:43:50
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -44,7 +44,7 @@ class TPL
             foreach ($paths as $val) {
                 if ($val) {
                     $val = explode("?", $val)[0];
-                    if (stripos($val, PATH_WEB) === false) {
+                    if (stripos($val, PATH_WEB) === false && !is_url($val)) {
                         $val = "{$tpath}/{$val}";
                     }
                     $suffix = substr($val, strrpos($val, ".") + 1);
