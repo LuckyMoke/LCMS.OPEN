@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-27 16:52:50
+ * @LastEditTime: 2021-07-27 17:02:56
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -92,7 +92,7 @@ class web extends adminbase
                         "value"  => $PLG['smtp']['Port'],
                         "tips"   => "一般情况下<br>SSL端口为465，TLS端口为25",
                         "cname"  => "hidden email-smtp"],
-                    ["layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/directmail?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/directmail</a>", "cname" => "hidden email-aliyun"],
+                    ["layui" => "des", "title" => "阿里云邮件推送开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/directmail?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/directmail</a>", "cname" => "hidden email-aliyun"],
                     ["layui" => "input", "title" => "AccessKeyId",
                         "name"   => "LC[email][aliyun][AccessKeyId]",
                         "value"  => $PLG['aliyun']['AccessKeyId'],
