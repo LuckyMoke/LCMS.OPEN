@@ -3,7 +3,6 @@ defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class("captcha");
 load::sys_class("email");
-load::plugin("Aliyun/DySMS");
 class reg extends adminbase
 {
     public function __construct()
@@ -81,14 +80,15 @@ class reg extends adminbase
                             $sendcode = randstr(6, "num");
                             SESSION::set("LCMSREGMOBILE", $_L['form']['mobile']);
                             SESSION::set("LCMSREGSENDCODE", $sendcode);
-                            $dysms = new DYSMS([
-                                "id"     => $this->plugin['alisms']['id'],
-                                "secret" => $this->plugin['alisms']['secret'],
-                                "sign"   => $this->plugin['alisms']['sign'],
-                            ]);
-                            $result = $dysms->send($config['reg']['sms_tplcode'], $_L['form']['mobile'], [
-                                "code" => $sendcode,
-                            ]);
+                            load::sys_class("sms");
+                            $result = SMS::send([
+                                "ID"    => $config['reg']['sms_tplcode'],
+                                "Name"  => $config['reg']['sms_signname'],
+                                "Phone" => $_L['form']['mobile'],
+                                "Param" => [
+                                    "code" => $sendcode,
+                                ],
+                            ], $this->plugin['sms']);
                             if ($result['code'] == 1) {
                                 SESSION::set("LCMSREGCODETIME", time() + 120);
                                 ajaxout(1, "验证码已发送");
@@ -142,17 +142,10 @@ class reg extends adminbase
                         SESSION::set("LCMSREGEMAIL", $_L['form']['email']);
                         SESSION::set("LCMSREGSENDCODE", $sendcode);
                         $result = EMAIL::send([
-                            "to"       => $_L['form']['email'],
-                            "toname"   => $_L['form']['name'],
-                            "subject"  => "邮箱验证码",
-                            "body"     => "验证码：{$sendcode}，5分钟有效！",
-                            "fromname" => $this->plugin['email']['fromname'],
-                            "from"     => $this->plugin['email']['from'],
-                            "pass"     => $this->plugin['email']['pass'],
-                            "smtp"     => $this->plugin['email']['smtp'],
-                            "ssl"      => $this->plugin['email']['ssl'],
-                            "port"     => $this->plugin['email']['port'],
-                        ]);
+                            "TO"    => $_L['form']['email'],
+                            "Title" => "邮箱验证码",
+                            "Body"  => "验证码为：{$sendcode}，5分钟有效！",
+                        ], $this->plugin['email']);
                         if ($result['code'] == 1) {
                             SESSION::set("LCMSREGCODETIME", time() + 120);
                             ajaxout(1, "验证码已发送");

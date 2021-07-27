@@ -2,59 +2,130 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-13 15:25:58
+ * @LastEditTime: 2021-07-27 16:31:54
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::plugin("PHPMailer/Exception");
-load::plugin("PHPMailer/PHPMailer");
-load::plugin("PHPMailer/SMTP");
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class EMAIL
 {
-    public static function cfg()
+    /**
+     * @description: 初始化邮件配置
+     * @param array $config
+     * @return array
+     */
+    public static function init($config = [])
     {
         global $_L;
-        $config = LCMS::config([
+        $config = $config ?: LCMS::config([
             "type" => "sys",
             "name" => "config",
             "cate" => "plugin",
-        ]);
-        return $config['email'];
+        ])['email'];
+        $type = $config['type'];
+        return [
+            "type" => $type,
+            "cfg"  => $config[$type],
+        ];
     }
-    public static function send($para)
+    /**
+     * @description: 发送邮件
+     * @param array $Param [TO, Title, Body]
+     * @param array $config
+     * @return array
+     */
+    public static function send($Param = [], $config = [])
     {
         global $_L;
-        $config = array_merge(self::cfg(), $para);
-        $email  = new PHPMailer(true);
-        $email->setLanguage('zh_cn', PATH_CORE_PLUGIN . 'PHPMailer/language/');
-        $email->SMTPDebug = 0;
-        $email->isSMTP();
-        $email->Host       = $config['smtp'];
-        $email->SMTPAuth   = true;
-        $email->Username   = $config['from'];
-        $email->Password   = $config['pass'];
-        $email->SMTPSecure = $config['ssl'] ? 'ssl' : 'tls';
-        $email->Port       = $config['port'];
-        $email->Timeout    = 30;
-        try {
-            $email->setFrom($config['from'], $config['fromname']);
-            $email->addAddress($config['to'], $config['toname']);
-            if ($config['attachment']) {
-                foreach ($config['attachment'] as $key => $val) {
-                    $email->addAttachment($val['path'], $val['title']);
+        $init = self::init($config);
+        $cfg  = array_merge($init['cfg'], $Param);
+        switch ($init['type']) {
+            case 'smtp':
+                load::plugin("PHPMailer/Exception");
+                load::plugin("PHPMailer/PHPMailer");
+                load::plugin("PHPMailer/SMTP");
+                $email = new PHPMailer(true);
+                $email->setLanguage("zh_cn", PATH_CORE_PLUGIN . "PHPMailer/language/");
+                $email->SMTPDebug = 0;
+                $email->isSMTP();
+                $email->Host       = $cfg['Smtp'];
+                $email->SMTPAuth   = true;
+                $email->Username   = $cfg['From'];
+                $email->Password   = $cfg['Pass'];
+                $email->SMTPSecure = $cfg['SSL'] ? "ssl" : "tls";
+                $email->Port       = $cfg['Port'];
+                $email->Timeout    = 30;
+                $EM                = [];
+                if (is_array($Param['TO'])) {
+                    foreach ($Param['TO'] as $val) {
+                        if ($val && is_email($val)) {
+                            $PN[] = $val;
+                        }
+                    }
+                } elseif (is_email($Param['TO'])) {
+                    $EM[] = $Param['TO'];
                 }
-            }
-            $email->isHTML(true);
-            $email->Subject = $config['subject'] ? $config['subject'] : "邮件主题";
-            $email->Body    = $config['body'] ? $config['body'] : "邮件内容";
-            $email->send();
-            return array("code" => 1, "msg" => "发送成功");
-        } catch (Exception $e) {
-            return array("code" => 0, "msg" => $email->ErrorInfo);
+                if ($EM) {
+                    $email->setFrom($cfg['From'], $cfg['Alias']);
+                    foreach ($EM as $val) {
+                        $email->addAddress($val);
+                    }
+                    if ($cfg['Reply']) {
+                        $email->AddReplyTo($cfg['Reply']);
+                    }
+                    if ($Param['Att']) {
+                        foreach ($Param['Att'] as $val) {
+                            $email->addAttachment($val['path'], $val['title']);
+                        }
+                    }
+                    $email->isHTML(true);
+                    $email->Subject = $Param['Title'];
+                    $email->Body    = $Param['Body'];
+                    try {
+
+                        $email->send();
+                        return [
+                            "code" => 1,
+                            "msg"  => "发送成功",
+                        ];
+                    } catch (Exception $e) {
+                        return [
+                            "code" => 0,
+                            "msg"  => $email->ErrorInfo,
+                        ];
+                    }
+                } else {
+                    return [
+                        "code" => 0,
+                        "msg"  => "收件地址不能为空",
+                    ];
+                }
+                break;
+            case 'aliyun':
+                load::plugin('Aliyun/AliyunEMAIL');
+                $EMAIL = new AliyunEMAIL([
+                    "AccessKeyId"     => $cfg['AccessKeyId'],
+                    "AccessKeySecret" => $cfg['AccessKeySecret'],
+                    "From"            => $cfg['From'],
+                    "Reply"           => $cfg['Reply'],
+                    "Alias"           => $cfg['Alias'],
+                ]);
+                return $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
+                break;
+            case 'tencent':
+                load::plugin('Tencent/TencentEMAIL');
+                $EMAIL = new TencentEMAIL([
+                    "secretId"  => $cfg['secretId'],
+                    "secretkey" => $cfg['secretkey'],
+                    "From"      => $cfg['From'],
+                    "Reply"     => $cfg['Reply'],
+                    "Alias"     => $cfg['Alias'],
+                ]);
+                return $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
+                break;
         }
     }
 }

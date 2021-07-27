@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-05 17:39:03
+ * @LastEditTime: 2021-07-27 14:22:49
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -609,13 +609,35 @@ function is_https($url = "")
     }
 }
 /**
- * @description: 判断一个字符串是否为url
+ * @description: 验证是否为URL
  * @param string $str
  * @return bool
  */
 function is_url($str = "")
 {
-    if (is_string($str) && strpos($str, "://") !== false) {
+    if (filter_var($str, FILTER_VALIDATE_URL)) {
+        return true;
+    }
+}
+/**
+ * @description: 验证是否为邮箱
+ * @param string $str
+ * @return bool
+ */
+function is_email($str = "")
+{
+    if (filter_var($str, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    }
+}
+/**
+ * @description: 验证是否为IP地址
+ * @param string $str
+ * @return bool
+ */
+function is_ip($str = "")
+{
+    if (filter_var($str, FILTER_VALIDATE_IP)) {
         return true;
     }
 }

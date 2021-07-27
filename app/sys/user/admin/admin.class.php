@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-31 19:16:46
+ * @LastEditTime: 2021-07-26 18:32:30
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -545,6 +545,12 @@ class admin extends adminbase
                     ["layui" => "input", "title" => "短信ID",
                         "name"   => "LC[reg][sms_tplcode]",
                         "value"  => $config['reg']['sms_tplcode'],
+                        "cname"  => "hidden tab_mobile",
+                        "tips"   => "请先到全局设置中配置短信插件",
+                    ],
+                    ["layui" => "input", "title" => "短信签名",
+                        "name"   => "LC[reg][sms_signname]",
+                        "value"  => $config['reg']['sms_signname'],
                         "cname"  => "hidden tab_mobile",
                         "tips"   => "请先到全局设置中配置短信插件",
                     ],

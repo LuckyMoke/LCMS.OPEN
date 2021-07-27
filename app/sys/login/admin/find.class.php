@@ -3,7 +3,6 @@ defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class("captcha");
 load::sys_class("email");
-load::plugin("Aliyun/DySMS");
 class find extends adminbase
 {
     public function __construct()
@@ -135,17 +134,10 @@ class find extends adminbase
         SESSION::set("LCMSFINDNAME", $email);
         SESSION::set("LCMSFINDSENDCODE", $code);
         $result = EMAIL::send([
-            "to"       => $email,
-            "toname"   => $title,
-            "subject"  => "邮箱验证码",
-            "body"     => "验证码：{$code}，5分钟有效！",
-            "fromname" => $this->plugin['email']['fromname'],
-            "from"     => $this->plugin['email']['from'],
-            "pass"     => $this->plugin['email']['pass'],
-            "smtp"     => $this->plugin['email']['smtp'],
-            "ssl"      => $this->plugin['email']['ssl'],
-            "port"     => $this->plugin['email']['port'],
-        ]);
+            "TO"    => $email,
+            "Title" => "邮箱验证码",
+            "Body"  => "验证码为：{$code}，5分钟有效！",
+        ], $this->plugin['email']);
         if ($result['code'] == 1) {
             SESSION::set("LCMSFINDCODETIME", time() + 120);
             ajaxout(1, "验证码已发送");
@@ -161,14 +153,15 @@ class find extends adminbase
             $code = randstr(6, "num");
             SESSION::set("LCMSFINDNAME", $mobile);
             SESSION::set("LCMSFINDSENDCODE", $code);
-            $dysms = new DYSMS([
-                "id"     => $this->plugin['alisms']['id'],
-                "secret" => $this->plugin['alisms']['secret'],
-                "sign"   => $this->plugin['alisms']['sign'],
-            ]);
-            $result = $dysms->send($config['reg']['sms_tplcode'], $mobile, [
-                "code" => $code,
-            ]);
+            load::sys_class("sms");
+            $result = SMS::send([
+                "ID"    => $config['reg']['sms_tplcode'],
+                "Name"  => $config['reg']['sms_signname'],
+                "Phone" => $mobile,
+                "Param" => [
+                    "code" => $code,
+                ],
+            ], $this->plugin['sms']);
             if ($result['code'] == 1) {
                 SESSION::set("LCMSFINDCODETIME", time() + 120);
                 ajaxout(1, "验证码已发送");

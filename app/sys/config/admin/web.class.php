@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-06-26 11:19:00
+ * @LastEditTime: 2021-07-27 16:52:50
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -29,26 +29,19 @@ class web extends adminbase
                 ajaxout(1, "保存成功");
                 break;
             case 'test_eamil':
-                $email = $_L['form']['LC']['email'];
-                if ($email) {
+                $email = $_L['form']['email'];
+                if (is_email($email)) {
                     load::sys_class("email");
-                    $r = EMAIL::send([
-                        "to"       => $email['from'],
-                        "toname"   => "发送测试",
-                        "subject"  => "邮件发送测试",
-                        "body"     => "恭喜您！邮件服务配置成功！",
-                        "fromname" => $email['fromname'],
-                        "from"     => $email['from'],
-                        "pass"     => $email['pass'],
-                        "smtp"     => $email['smtp'],
-                        "ssl"      => $email['ssl'],
-                        "port"     => $email['port'],
+                    $result = EMAIL::send([
+                        "TO"    => $email,
+                        "Title" => "邮件发送测试",
+                        "Body"  => "恭喜您，邮件服务配置成功！",
                     ]);
                 }
-                if ($r['code'] == "1") {
+                if ($result['code'] == "1") {
                     ajaxout(1, "邮件服务配置成功");
                 } else {
-                    ajaxout(0, "邮件服务配置失败！{$r['msg']}");
+                    ajaxout(0, "邮件服务配置失败！{$result['msg']}");
                 }
                 break;
             default:
@@ -56,43 +49,126 @@ class web extends adminbase
                     "type" => "sys",
                     "cate" => "plugin",
                 ]);
-                $email = [
+                $PLG         = $plugin['email'] ?: [];
+                $PLG['smtp'] = is_array($PLG['smtp']) ? $PLG['smtp'] : [];
+                $email       = [
                     ["layui" => "title", "title" => "邮箱配置"],
+                    ["layui" => "radio", "title" => "邮箱接口",
+                        "name"   => "LC[email][type]",
+                        "value"  => $PLG['type'] ?: "smtp",
+                        "radio"  => [
+                            ["title" => "SMTP", "value" => "smtp", "tab" => "email-smtp"],
+                            ["title" => "阿里云", "value" => "aliyun", "tab" => "email-aliyun"],
+                            ["title" => "腾讯云", "value" => "tencent", "tab" => "email-tencent"],
+                        ]],
                     ["layui" => "input", "title" => "发件人",
-                        "name"   => "LC[email][fromname]",
-                        "value"  => $plugin['email']['fromname']],
-                    ["layui" => "input", "title" => "邮箱账号",
-                        "name"   => "LC[email][from]",
-                        "value"  => $plugin['email']['from']],
-                    ["layui" => "input", "title" => "SMTP密码",
-                        "name"   => "LC[email][pass]",
-                        "value"  => $plugin['email']['pass'],
-                        "type"   => "password"],
+                        "name"   => "LC[email][smtp][Alias]",
+                        "value"  => $PLG['smtp']['Alias'],
+                        "cname"  => "hidden email-smtp"],
+                    ["layui" => "input", "title" => "发件地址",
+                        "name"   => "LC[email][smtp][From]",
+                        "value"  => $PLG['smtp']['From'],
+                        "cname"  => "hidden email-smtp"],
+                    ["layui" => "input", "title" => "回信地址",
+                        "name"   => "LC[email][smtp][Reply]",
+                        "value"  => $PLG['smtp']['Reply'],
+                        "cname"  => "hidden email-smtp"],
                     ["layui" => "input", "title" => "SMTP服务器",
-                        "name"   => "LC[email][smtp]",
-                        "value"  => $plugin['email']['smtp']],
+                        "name"   => "LC[email][smtp][Smtp]",
+                        "value"  => $PLG['smtp']['Smtp'],
+                        "cname"  => "hidden email-smtp"],
+                    ["layui" => "input", "title" => "SMTP密码",
+                        "name"   => "LC[email][smtp][Pass]",
+                        "value"  => $PLG['smtp']['Pass'],
+                        "type"   => "password",
+                        "cname"  => "hidden email-smtp"],
                     ["layui" => "on", "title" => "TLS/SSL",
-                        "name"   => "LC[email][ssl]",
-                        "value"  => $plugin['email']['ssl'],
-                        "text"   => "SSL|TLS"],
+                        "name"   => "LC[email][smtp][SSL]",
+                        "value"  => $PLG['smtp']['SSL'],
+                        "text"   => "SSL|TLS",
+                        "cname"  => "hidden email-smtp"],
                     ["layui" => "input", "title" => "端口",
-                        "name"   => "LC[email][port]",
-                        "value"  => $plugin['email']['port'],
-                        "tips"   => "一般情况下<br>SSL端口为465，TLS端口为25"],
-                ];
-                $alisms = [
-                    ["layui" => "title", "title" => "阿里云短信配置"],
-                    ["layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/sms?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/sms</a>"],
-                    ["layui" => "input", "title" => "AccessKey ID",
-                        "name"   => "LC[alisms][id]",
-                        "value"  => $plugin['alisms']['id']],
+                        "name"   => "LC[email][smtp][Port]",
+                        "value"  => $PLG['smtp']['Port'],
+                        "tips"   => "一般情况下<br>SSL端口为465，TLS端口为25",
+                        "cname"  => "hidden email-smtp"],
+                    ["layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/directmail?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/directmail</a>", "cname" => "hidden email-aliyun"],
+                    ["layui" => "input", "title" => "AccessKeyId",
+                        "name"   => "LC[email][aliyun][AccessKeyId]",
+                        "value"  => $PLG['aliyun']['AccessKeyId'],
+                        "cname"  => "hidden email-aliyun"],
                     ["layui" => "input",
-                        "title"  => "Access Key Secret",
-                        "name"   => "LC[alisms][secret]",
-                        "value"  => $plugin['alisms']['secret']],
-                    ["layui" => "input", "title" => "短信签名",
-                        "name"   => "LC[alisms][sign]",
-                        "value"  => $plugin['alisms']['sign']],
+                        "title"  => "AccessKeySecret",
+                        "name"   => "LC[email][aliyun][AccessKeySecret]",
+                        "value"  => $PLG['aliyun']['AccessKeySecret'],
+                        "cname"  => "hidden email-aliyun"],
+                    ["layui" => "input", "title" => "发件人",
+                        "name"   => "LC[email][aliyun][Alias]",
+                        "value"  => $PLG['aliyun']['Alias'],
+                        "cname"  => "hidden email-aliyun"],
+                    ["layui" => "input", "title" => "发件地址",
+                        "name"   => "LC[email][aliyun][From]",
+                        "value"  => $PLG['aliyun']['From'],
+                        "cname"  => "hidden email-aliyun"],
+                    ["layui" => "input", "title" => "回信地址",
+                        "name"   => "LC[email][aliyun][Reply]",
+                        "value"  => $PLG['aliyun']['Reply'],
+                        "cname"  => "hidden email-aliyun"],
+                    ["layui" => "des", "title" => "腾讯云邮件推送开通地址&nbsp;&nbsp;<a href='https://cloud.tencent.com/act/cps/redirect?redirect=33757&cps_key=b06f66f7257d2a8946c7df2d011c303b' target='_blank'>[点击访问] https://cloud.tencent.com/product/ses</a>", "cname" => "hidden email-tencent"],
+                    ["layui" => "input", "title" => "secretId",
+                        "name"   => "LC[email][tencent][secretId]",
+                        "value"  => $PLG['tencent']['secretId'],
+                        "cname"  => "hidden email-tencent"],
+                    ["layui" => "input", "title" => "secretkey",
+                        "name"   => "LC[email][tencent][secretkey]",
+                        "value"  => $PLG['tencent']['secretkey'],
+                        "cname"  => "hidden email-tencent"],
+                    ["layui" => "input", "title" => "发件人",
+                        "name"   => "LC[email][tencent][Alias]",
+                        "value"  => $PLG['tencent']['Alias'],
+                        "cname"  => "hidden email-tencent"],
+                    ["layui" => "input", "title" => "发件地址",
+                        "name"   => "LC[email][tencent][From]",
+                        "value"  => $PLG['tencent']['From'],
+                        "cname"  => "hidden email-tencent"],
+                    ["layui" => "input", "title" => "回信地址",
+                        "name"   => "LC[email][tencent][Reply]",
+                        "value"  => $PLG['tencent']['Reply'],
+                        "cname"  => "hidden email-tencent"],
+                ];
+                $PLG = $plugin['sms'] ?: [];
+                $sms = [
+                    ["layui" => "title", "title" => "短信配置"],
+                    ["layui" => "radio", "title" => "短信接口",
+                        "name"   => "LC[sms][type]",
+                        "value"  => $PLG['type'] ?: "aliyun",
+                        "radio"  => [
+                            ["title" => "阿里云", "value" => "aliyun", "tab" => "sms-aliyun"],
+                            ["title" => "腾讯云", "value" => "tencent", "tab" => "sms-tencent"],
+                        ]],
+                    ["layui" => "des", "title" => "阿里云短信开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/sms?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/sms</a>", "cname" => "hidden sms-aliyun"],
+                    ["layui" => "input", "title" => "AccessKeyId",
+                        "name"   => "LC[sms][aliyun][AccessKeyId]",
+                        "value"  => $PLG['aliyun']['AccessKeyId'],
+                        "cname"  => "hidden sms-aliyun"],
+                    ["layui" => "input",
+                        "title"  => "AccessKeySecret",
+                        "name"   => "LC[sms][aliyun][AccessKeySecret]",
+                        "value"  => $PLG['aliyun']['AccessKeySecret'],
+                        "cname"  => "hidden sms-aliyun"],
+                    ["layui" => "des", "title" => "腾讯云短信开通地址&nbsp;&nbsp;<a href='https://cloud.tencent.com/act/cps/redirect?redirect=10068&cps_key=b06f66f7257d2a8946c7df2d011c303b' target='_blank'>[点击访问] https://cloud.tencent.com/product/sms</a>", "cname" => "hidden sms-tencent"],
+                    ["layui" => "input", "title" => "secretId",
+                        "name"   => "LC[sms][tencent][secretId]",
+                        "value"  => $PLG['tencent']['secretId'],
+                        "cname"  => "hidden sms-tencent"],
+                    ["layui" => "input", "title" => "secretkey",
+                        "name"   => "LC[sms][tencent][secretkey]",
+                        "value"  => $PLG['tencent']['secretkey'],
+                        "cname"  => "hidden sms-tencent"],
+                    ["layui" => "input", "title" => "AppId",
+                        "name"   => "LC[sms][tencent][SmsSdkAppId]",
+                        "value"  => $PLG['tencent']['SmsSdkAppId'],
+                        "cname"  => "hidden sms-tencent"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];
                 require LCMS::template("own/web_plugin");
