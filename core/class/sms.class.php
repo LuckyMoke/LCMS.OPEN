@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-07-26 17:56:47
- * @LastEditTime: 2021-07-27 16:32:11
+ * @LastEditTime: 2021-08-05 12:29:18
  * @Description: 短信发送类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -40,7 +40,7 @@ class SMS
                 $SMS = new AliyunSMS([
                     "AccessKeyId"     => $cfg['AccessKeyId'],
                     "AccessKeySecret" => $cfg['AccessKeySecret'],
-                    "TemplateId"      => $Param['ID'],
+                    "TemplateCode"    => $Param['ID'],
                     "SignName"        => $Param['Name'],
                 ]);
                 return $SMS->send($Param['Phone'], $Param['Param']);

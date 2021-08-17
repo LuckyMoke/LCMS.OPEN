@@ -46,7 +46,6 @@ cd /www/wwwroot/127.0.0.1
 git init
 git remote add origin https://gitee.com/luckymoke/LCMS.OPEN
 
-
 // 之后每次更新，只用输入下方命令回车执行即可
 cd /www/wwwroot/127.0.0.1
 git fetch --all
