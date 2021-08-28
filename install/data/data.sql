@@ -67,11 +67,13 @@ CREATE TABLE `[_PRE]upload`  (
   `datey` varchar(6) NULL COMMENT '上传目录',
   `name` varchar(32) NULL COMMENT '文件名称',
   `src` varchar(255) NULL COMMENT '文件链接',
+  `uid` int(11) NOT NULL DEFAULT 0,
   `lcms` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX(`type`),
   INDEX(`datey`),
   INDEX(`name`),
+  INDEX(`uid`),
   INDEX(`lcms`)
 ) ENGINE = MyISAM CHARACTER SET = utf8mb4 COMMENT='上传文件表';
 

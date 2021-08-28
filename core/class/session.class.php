@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-19 14:34:58
+ * @LastEditTime: 2021-08-25 16:51:04
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -48,9 +48,11 @@ class SESSION
         global $_L;
         $SESSION = $_L['SESSION'];
         if ($SESSION['type'] == "1") {
-            load::plugin("Redis/rds");
-            $SESSION['redis'] = new RDS();
-            $etime            = $SESSION['redis']->do->hGet($SESSION['id'], "LCMSSIDTIME");
+            if (!$SESSION['redis']) {
+                load::plugin("Redis/rds");
+                $SESSION['redis'] = $_L['SESSION']['redis'] = new RDS();
+            }
+            $etime = $SESSION['redis']->do->hGet($SESSION['id'], "LCMSSIDTIME");
             if ($etime && $etime < time()) {
                 $SESSION['redis']->do->hDel($SESSION['id'], "LCMSADMIN");
             }

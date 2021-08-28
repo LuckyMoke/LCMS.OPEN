@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-06-26 11:13:36
+ * @LastEditTime: 2021-08-27 20:43:02
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -275,7 +275,15 @@ class index extends adminbase
         switch ($type) {
             case 'delete':
                 $data = explode("/", $datey);
-                sql_delete(["upload", "type = '{$data[3]}' AND datey = '{$data[4]}' AND name = '{$data[5]}' AND lcms = '{$_L['ROOTID']}'"]);
+                sql_delete([
+                    "upload",
+                    "type = :type AND datey = :datey AND name = :name AND lcms = '{$_L['ROOTID']}'",
+                    [
+                        ":type"  => $data[3],
+                        ":datey" => $data[4],
+                        ":name"  => $data[5],
+                    ],
+                ]);
                 break;
             default:
                 $data && sql_insert(["upload", [
@@ -283,6 +291,7 @@ class index extends adminbase
                     "datey" => $datey,
                     "name"  => $data['filename'],
                     "src"   => $data['src'],
+                    "uid"   => $_L['LCMSADMIN']['id'],
                     "lcms"  => $_L['ROOTID'],
                 ]]);
                 break;
