@@ -29,7 +29,7 @@
             {{implode(PHP_EOL, $_L['ui']['htmlhead'])}}
         </if>
         <script type="text/javascript">
-            var LCMS = {"url":JSON.parse('{{json_encode($_L["url"])}}')};
+            var LCMS = {"url":JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}')};
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js"></scr'+'ipt>');
                 eruda.init();
