@@ -11,9 +11,9 @@ class qr extends webbase
     }
     public function doindex()
     {
-    	global $_L;
+        global $_L;
         if ($_L['form']['text']) {
-            phpqrcode::png($_L['form']['text'], false, "L", 10, 1);
+            phpqrcode::png(str_replace("&amp;", "&", $_L['form']['text']), false, "L", 10, 1);
         } else {
             LCMS::X(403, "缺少必要参数，禁止访问");
         }

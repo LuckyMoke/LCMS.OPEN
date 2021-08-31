@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-08-05 13:39:19
+ * @LastEditTime: 2021-08-31 14:30:25
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -150,6 +150,10 @@ class LAY
                     <div class='lcms-form-tags-box'></div>
                     <input type='hidden' name='{$para['name']}' data-value='{$para['value']}'/>
                     <textarea class='hide{$para['tipsbox']}' placeholder='{$para['placeholder']}'/></textarea>
+                    <div class='hide lcms-form-tags-button'>
+                        <a class='layui-btn layui-btn-warm layui-btn-sm _more'>批量添加</a>
+                        <a class='layui-btn layui-btn-danger layui-btn-sm _delall'>清空所有</a>
+                    </div>
                 </div>
             </div>";
         echo $html;
