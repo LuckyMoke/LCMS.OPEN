@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-28 15:36:08
+ * @LastEditTime: 2021-09-02 15:46:23
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,8 @@ class admin extends adminbase
         }
         switch ($_L['form']['action']) {
             case 'save':
-                $_L['form']['LC']['domain'] = str_replace(["http://", "https://", "/"], "", $_L['form']['LC']['domain']);
+                $_L['form']['LC']['domain']     = str_replace(["http://", "https://", "/"], "", $_L['form']['LC']['domain']);
+                $_L['form']['LC']['oauth_code'] = strtoupper(md5(HTTP_HOST));
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
@@ -38,8 +39,7 @@ class admin extends adminbase
                     "cate" => "admin",
                     "lcms" => true,
                 ]);
-                $config['oauth_code'] = $config['oauth_code'] ?: strtoupper(md5(HTTP_HOST)) . randstr(32);
-                $form                 = array(
+                $form = array(
                     ["layui" => "title", "title" => "基础信息"],
                     ["layui" => "input", "title" => "系统名称",
                         "name"   => "LC[title]",

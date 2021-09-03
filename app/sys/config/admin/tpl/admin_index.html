@@ -1,6 +1,5 @@
 <template "ui/head"/>
 <form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}index&action=save" method="post" target="_self">
-    <input type="hidden" name="LC[oauth_code]" value="{{ $config['oauth_code'] }}"/>
     <ui form($form)/>
 </form>
 <template "ui/foot"/>
