@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-31 17:37:14
+ * @LastEditTime: 2021-09-03 17:42:39
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class local extends adminbase
         $level   = level::app('appstore');
         $applist = level::appall();
         foreach ($applist['open'] as $name => $list) {
-            if (count($list['menu']) > 1) {
+            if ($list['menu'] && count($list['menu']) > 1) {
                 $open[$name] = $applist['open'][$name]['url']['all'];
             } elseif ($list['menu']) {
                 $open[$name] = $applist['open'][$name]['url']['all'];
