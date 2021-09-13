@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-26 18:32:30
+ * @LastEditTime: 2021-09-09 16:15:40
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -398,6 +398,9 @@ class admin extends adminbase
                 $level && ksort($level['sys']);
                 $level && ksort($level['open']);
                 $appall = LEVEL::appall();
+                if ($_L['developer'] && $_L['developer']['appstore'] === 0) {
+                    unset($appall['sys']['appstore']['class']['store']);
+                }
                 foreach ($appall as $type => $val) {
                     foreach ($val as $name => $info) {
                         if (!empty($info['class'])) {

@@ -72,6 +72,9 @@ class index extends adminbase
         $tempopen[0]['title'] = "常用应用";
         foreach ($config['open'] as $index => $list) {
             foreach ($list['menu'] as $name => $cls) {
+                if ($_L['developer'] && $_L['developer']['appstore'] === 0 && $name == "appstore") {
+                    unset($cls['class']['store']);
+                }
                 if (is_array($cls)) {
                     foreach ($cls['class'] as $cname => $type) {
                         if ($type) {
