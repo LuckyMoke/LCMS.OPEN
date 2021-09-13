@@ -5,11 +5,11 @@
         <tr>
             <th width="50px" style="text-align:center;">图标</th>
             <th width="200px">应用名</th>
-            <if $level['url']['store'] && $_L['developer'] && $_L['developer']['appstore'] !== 0>
+            <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
                 <th width="200px" class="layui-hide-xs app-hide-sm">开发者</th>
             </if>
             <th width="100px" class="layui-hide-xs" style="text-align:center;">本地版本</th>
-            <if $level['url']['store'] && $_L['developer'] && $_L['developer']['appstore'] !== 0>
+            <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
                 <th width="100px" class="layui-hide-xs" style="text-align:center;">最新版本</th>
             </if>
             <th class="layui-hide-xs app-hide-sm">应用描述</th>
@@ -32,18 +32,18 @@
                 <td>
                     <a href="{{ $applist['open'][$app]['url']['all'] }}" title="{{ $applist['open'][$app]['info']['title'] }}">{{ $applist['open'][$app]['info']['title'] }}</a>
                 </td>
-                <if $level['url']['store'] && $_L['developer'] && $_L['developer']['appstore'] !== 0>
+                <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
                     <td class="layui-hide-xs app-hide-sm">{{ $applist['open'][$app]['info']['author'] }}</td>
                 </if>
                 <td class="layui-hide-xs" style="text-align:center;">V{{ $applist['open'][$app]['info']['ver'] }}</td>
-                <if $level['url']['store'] && $_L['developer'] && $_L['developer']['appstore'] !== 0>
+                <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
                     <td class="layui-hide-xs newver" style="text-align:center;"></td>
                 </if>
                 <td class="layui-hide-xs app-hide-sm">{{ $applist['open'][$app]['info']['description'] }}</td>
                 <if $level['url']['store']>
                     <td class="layui-hide-xs" style="text-align:center;">
                         <div class="layui-btn-group">
-                            <if $_L['developer'] && $_L['developer']['appstore'] !== 0>
+                            <if $_L['developer']['appstore'] !== 0>
                                 <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
                             </if>
                             <if LCMS::SUPER()>
