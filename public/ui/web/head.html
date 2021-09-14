@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
         </if>
         <if $_L['ui']['js']>
-            <loop $_L['ui']['js'],$js>
+            <loop array_unique($_L['ui']['js']),$js>
                 <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?'.TPL::$ver}}"></script>
             </loop>
         </if>
