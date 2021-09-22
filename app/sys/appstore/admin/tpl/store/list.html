@@ -2,9 +2,12 @@
 <if $LF['iframe']>
     <template "ui/iframe"/>
 </if>
-<style type="text/css">.layui-table-cell{height:auto !important;white-space: normal;}.layui-table-cell img{width:100%;height:auto}</style>
+<style type="text/css">.layui-table-cell img{height:100%;display:block;}</style>
 <if $LF['apply']>
     <style type="text/css">#APPTAB{display:none;}</style>
+</if>
+<if $LF['tips']>
+    <p class="lcms-form-des hide oauth-domain" style="display:block;">{{base64_decode($LF['tips'])}}</p>
 </if>
 <ui table($table)/>
 <template "ui/foot"/>
