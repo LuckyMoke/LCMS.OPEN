@@ -24,6 +24,15 @@
                     "menu": 0
                 }
             }
+        },
+        "files": {
+            "title": "文件管理",
+            "level": {
+                "index": {
+                    "title": "文件管理",
+                    "menu": 0
+                }
+            }
         }
     }
 }

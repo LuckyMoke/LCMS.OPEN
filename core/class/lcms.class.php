@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-14 15:06:46
+ * @LastEditTime: 2021-09-22 15:25:02
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -130,11 +130,9 @@ class LCMS
         };
     }
     /**
-     * [form 处理非config数据表的数据序列化保存与读取]
-     * @param  [type] $table  [description]
-     * @param  string $getid  [description]
-     * @param  string $arrkey [description]
-     * @return [type]         [description]
+     * @description: 处理非config数据表的数据序列化保存与读取
+     * @param {*} $paran [do, table, id, key, unset]
+     * @return {*}
      */
     public static function form($paran = [])
     {

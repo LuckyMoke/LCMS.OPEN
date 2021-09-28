@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-14 15:05:14
+ * @LastEditTime: 2021-09-28 14:30:02
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,7 +24,7 @@ class UPLOAD
                 if ($result['code'] == 200 && $result['length'] > 0) {
                     $file = $result['body'];
                     $mime = $mime ? $mime : self::mime($result['type']);
-                    $size = round($result['length'] / 1024);
+                    $size = $result['length'];
                 } else {
                     self::out(0, "远程文件下载失败");
                 }
@@ -35,18 +35,18 @@ class UPLOAD
                     return self::out(0, "上传失败 CODE:{$file['error']}");
                 }
                 $mime = substr($file['name'], strrpos($file['name'], ".") + 1);
-                $size = round($file['size'] / 1024);
+                $size = $file['size'];
             }
-            if ($size > $_L['config']['admin']['attsize']) {
+            if (round($size / 1024) > $_L['config']['admin']['attsize']) {
                 // 如果文件大小超过上传限制
                 $return = self::out(0, "文件大小超过{$_L['config']['admin']['attsize']}KB");
             } else {
                 if (stripos($_L['config']['admin']['mimelist'], $mime) !== false) {
                     $name = randstr(3, "let") . preg_replace("/[0-9]/", '', str_replace(["+", "-", "=", "/"], "", base64_encode(strval(time()) . microseconds()))) . ".{$mime}";
                     if (is_url($para) && file_put_contents("{$dir}{$name}", $file)) {
-                        $return = self::out(1, "上传成功", path_relative($dir), $name);
+                        $return = self::out(1, "上传成功", path_relative($dir), $name, $size);
                     } elseif (move_uploaded_file($file['tmp_name'], "{$dir}{$name}")) {
-                        $return = self::out(1, "上传成功", path_relative($dir), $name);
+                        $return = self::out(1, "上传成功", path_relative($dir), $name, $size);
                     } else {
                         $return = self::out(0, "上传失败");
                     }
@@ -64,13 +64,14 @@ class UPLOAD
      * @param {*}
      * @return {*}
      */
-    public static function out($code, $msg, $dir = "", $filename = "")
+    public static function out($code, $msg, $dir = "", $filename = "", $size = 0)
     {
         return [
             "code"     => $code,
             "msg"      => $msg,
             "dir"      => $dir,
             "filename" => $filename,
+            "size"     => $size,
         ];
     }
     /**

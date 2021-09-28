@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-08-27 15:54:16
+ * @LastEditTime: 2021-09-28 15:36:42
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -89,7 +89,7 @@ class repair extends adminbase
                             $diff = array_merge([
                                 "type"    => $val['type'],
                                 "index"   => "",
-                                "default" => "",
+                                "default" => $val['default'],
                             ], $diff);
                             $result[$name]['data'][$key] = $diff;
                         };

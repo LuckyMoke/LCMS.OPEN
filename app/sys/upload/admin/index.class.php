@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-27 20:43:02
+ * @LastEditTime: 2021-09-28 15:20:17
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -13,9 +13,10 @@ class index extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF;
+        global $_L, $LF, $LC;
         parent::__construct();
         $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     /**
      * @description: 上传图片
@@ -33,6 +34,7 @@ class index extends adminbase
                 $data = [
                     "dir"      => $res['dir'],
                     "filename" => $res['filename'],
+                    "size"     => $res['size'],
                     "src"      => $res['dir'] . $res['filename'],
                 ];
                 $this->sql($LF['type'], $datey, $data);
@@ -49,37 +51,38 @@ class index extends adminbase
      */
     public function dodelimg()
     {
-        global $_L;
-        $file = $_L['form']['dir'];
-        $preg = "../upload/{$_L['ROOTID']}/image";
+        global $_L, $LF, $LC;
+        $file = $LC['src'] ?: $LF['dir'];
+        $file = str_replace(["../", "./"], "", $file);
+        $preg = "upload/{$_L['ROOTID']}/";
         if (stripos($file, $preg) !== false) {
             switch ($_L['plugin']['oss']['type']) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
                     $Qiniu = new QiniuOSS($_L['plugin']['oss']['qiniu']);
-                    $Qiniu->delete(str_replace("../", "", $file));
-                    $this->sql("delete", $file);
-                    ajaxout(1, "删除成功");
+                    $Qiniu->delete($file);
+                    $this->sql("delete", "../{$file}");
+                    ajaxout(1, "删除成功", "reload");
                     break;
                 case 'tencent':
                     load::plugin("Tencent/TencentOSS");
                     $Tencent = new TencentOSS($_L['plugin']['oss']['tencent']);
-                    $Tencent->delete(str_replace("../", "", $file));
-                    $this->sql("delete", $file);
-                    ajaxout(1, "删除成功");
+                    $Tencent->delete($file);
+                    $this->sql("delete", "../{$file}");
+                    ajaxout(1, "删除成功", "reload");
                     break;
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
                     $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
-                    $Aliyun->delete(str_replace("../", "", $file));
-                    $this->sql("delete", $file);
-                    ajaxout(1, "删除成功");
+                    $Aliyun->delete($file);
+                    $this->sql("delete", "../{$file}");
+                    ajaxout(1, "删除成功", "reload");
                     break;
                 default:
-                    $this->sql("delete", $file);
+                    $this->sql("delete", "../{$file}");
                     if (!sql_error()) {
-                        delfile($file);
-                        ajaxout(1, "删除成功");
+                        delfile("../{$file}");
+                        ajaxout(1, "删除成功", "reload");
                     } else {
                         ajaxout(0, "删除失败");
                     }
@@ -161,6 +164,7 @@ class index extends adminbase
                 }
                 $this->sql("image", $datey, [
                     "filename" => $res['filename'],
+                    "size"     => $res['size'],
                     "src"      => $path,
                 ]);
             } else {
@@ -191,6 +195,7 @@ class index extends adminbase
             case 'success':
                 $this->sql($LF['type'], $LF['datey'], [
                     "filename" => $LF['name'],
+                    "size"     => $LF['size'],
                     "src"      => "../" . $LF['file'],
                 ]);
                 ajaxout(1, "上传成功", "", [
@@ -222,6 +227,7 @@ class index extends adminbase
             case 'success':
                 $this->sql($LF['type'], $LF['datey'], [
                     "filename" => $LF['name'],
+                    "size"     => $LF['size'],
                     "src"      => "../" . $LF['file'],
                 ]);
                 ajaxout(1, "上传成功", "", [
@@ -251,6 +257,7 @@ class index extends adminbase
             case 'success':
                 $this->sql($LF['type'], $LF['datey'], [
                     "filename" => $LF['name'],
+                    "size"     => $LF['size'],
                     "src"      => "../" . $LF['file'],
                 ]);
                 ajaxout(1, "上传成功", "", [
@@ -287,12 +294,14 @@ class index extends adminbase
                 break;
             default:
                 $data && sql_insert(["upload", [
-                    "type"  => $type,
-                    "datey" => $datey,
-                    "name"  => $data['filename'],
-                    "src"   => $data['src'],
-                    "uid"   => $_L['LCMSADMIN']['id'],
-                    "lcms"  => $_L['ROOTID'],
+                    "type"    => $type,
+                    "datey"   => $datey,
+                    "name"    => $data['filename'],
+                    "size"    => $data['size'],
+                    "src"     => $data['src'],
+                    "addtime" => datenow(),
+                    "uid"     => $_L['LCMSADMIN']['id'],
+                    "lcms"    => $_L['ROOTID'],
                 ]]);
                 break;
         }

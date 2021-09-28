@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-29 19:11:30
+ * @LastEditTime: 2021-09-28 14:45:29
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -216,7 +216,7 @@ function delfile($fileUrl)
 /**
  * @description: 获取文件的大小
  * @param string $filename 要获取的文件名
- * @param string|null $unit 返回文件的大小
+ * @param string|null $unit null、GB、MB、KB、B
  * @return string
  */
 function getfilesize($filename, $unit = null)
