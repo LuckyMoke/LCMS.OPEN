@@ -6,11 +6,11 @@
             <td width="100px">当前域名：</td>
             <td>
                 {{HTTP_HOST}}
-                <if $_L['developer']['updatetime']!==0>
+                <!--if $_L['developer']['updatetime']!==0>
                     <if !$info || $info['lasttime'] lte datenow()>
                         <a style="cursor:pointer;color:#F56C6C;padding-left:10px;font-size:12px;" class="update-buy" data-url="{{$buyurl}}"><i class="layui-icon layui-icon-upload"></i> 购买框架在线更新服务</a>
                     </if>
-                </if>
+                </if-->
             </td>
         </tr>
         <if $_L['developer']['updatetime']!==0>

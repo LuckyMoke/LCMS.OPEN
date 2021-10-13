@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-14 15:10:23
+ * @LastEditTime: 2021-10-09 14:38:42
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -261,16 +261,19 @@ class OA
     public function user($para = [])
     {
         global $_L;
-        $userinfo = sql_get(["open_wechat_user", "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'"]);
+        $userinfo = sql_get([
+            "open_wechat_user",
+            "openid = :openid AND lcms = :lcms",
+            "", [
+                ":openid" => $para['openid'],
+                ":lcms"   => $_L['ROOTID'],
+            ],
+        ]);
         if ($para['do'] == "save") {
             $form = [
                 "openid"          => $para['wechat']['openid'],
                 "subscribe"       => $para['wechat']['subscribe'],
                 "nickname"        => $para['wechat']['nickname'],
-                "sex"             => $para['wechat']['sex'],
-                "city"            => $para['wechat']['city'],
-                "country"         => $para['wechat']['country'],
-                "province"        => $para['wechat']['province'],
                 "language"        => $para['wechat']['language'],
                 "headimgurl"      => $para['wechat']['headimgurl'],
                 "subscribe_time"  => $para['wechat']['subscribe_time'],
@@ -293,7 +296,11 @@ class OA
                 sql_update([
                     "open_wechat_user",
                     $form,
-                    "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'",
+                    "openid = :openid AND lcms = :lcms",
+                    [
+                        ":openid" => $para['openid'],
+                        ":lcms"   => $_L['ROOTID'],
+                    ],
                 ]);
             } elseif ($form) {
                 $form['lcms'] = $_L['ROOTID'];
@@ -309,7 +316,11 @@ class OA
         if ($para['openid']) {
             $userinfo = $userinfo ? $userinfo : sql_get([
                 "open_wechat_user",
-                "openid = '{$para['openid']}' AND lcms = '{$_L['ROOTID']}'",
+                "openid = :openid AND lcms = :lcms",
+                "", [
+                    ":openid" => $para['openid'],
+                    ":lcms"   => $_L['ROOTID'],
+                ],
             ]);
             if ($userinfo) {
                 $userinfo['wechat'] = $userinfo;
@@ -531,24 +542,58 @@ class OA
         switch ($para['do']) {
             case 'del':
                 if ($para['name']) {
-                    $words = sql_get(["open_wechat_reply_words", "name = '{$para['name']}' AND app = '" . L_NAME . "' AND lcms = '{$_L['ROOTID']}'"]);
-                    sql_delete(["open_wechat_reply", "id = '{$words['rid']}'"]);
-                    sql_delete(["open_wechat_reply_words", "rid = '{$words['rid']}'"]);
-                    sql_delete(["open_wechat_reply_contents", "rid = '{$words['rid']}'"]);
+                    $words = sql_get([
+                        "open_wechat_reply_words",
+                        "name = :name AND app = :app AND lcms = :lcms",
+                        "", [
+                            ":name" => $para['name'],
+                            ":app"  => L_NAME,
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                    ]);
+                    foreach ([
+                        "reply", "reply_words", "reply_contents",
+                    ] as $table) {
+                        $name = $table == "reply" ? "id" : "rid";
+                        sql_delete([
+                            "open_wechat_{$table}",
+                            "{$name} = :rid",
+                            [
+                                ":rid" => $words['rid'],
+                            ],
+                        ]);
+                    }
                     return true;
                 } else {
                     return false;
                 }
                 break;
             case 'delall':
-                sql_delete(["open_wechat_reply", "app = '" . L_NAME . "' AND lcms = '{$_L['ROOTID']}'"]);
-                sql_delete(["open_wechat_reply_words", "app = '" . L_NAME . "' AND lcms = '{$_L['ROOTID']}'"]);
-                sql_delete(["open_wechat_reply_contents", "app = '" . L_NAME . "' AND lcms = '{$_L['ROOTID']}'"]);
+                foreach ([
+                    "reply", "reply_words", "reply_contents",
+                ] as $table) {
+                    sql_delete([
+                        "open_wechat_{$table}",
+                        "app = :app AND lcms = :lcms",
+                        [
+                            ":app"  => L_NAME,
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                    ]);
+                }
                 return true;
                 break;
             default:
                 if ($para['name'] && $para['class'] && $para['func']) {
-                    $words = sql_get(["open_wechat_reply_words", "name = '{$para['name']}' AND app = '" . L_NAME . "' AND lcms = '{$_L['ROOTID']}'"]);
+                    $words = sql_get([
+                        "open_wechat_reply_words",
+                        "name = :name AND app = :app AND lcms = :lcms",
+                        "", [
+                            ":name" => $para['name'],
+                            ":app"  => L_NAME,
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                    ]);
                     if ($words) {
                         sql_update(["open_wechat_reply_contents", [
                             "parameter" => arr2sql([
@@ -557,30 +602,41 @@ class OA
                                     "func"  => $para['func'],
                                 ],
                             ]),
-                        ], "rid = '{$words['rid']}'"]);
+                        ], "rid = :rid", [
+                            ":rid" => $words['rid'],
+                        ]]);
                         return $words['rid'];
                     } else {
-                        $insert_id = sql_insert(["open_wechat_reply", [
-                            "type"     => "2",
-                            "app"      => L_NAME,
-                            "order_no" => "999999",
-                            "lcms"     => $_L['ROOTID'],
-                        ]]);
+                        $insert_id = sql_insert([
+                            "open_wechat_reply",
+                            [
+                                "type"     => "2",
+                                "app"      => L_NAME,
+                                "order_no" => "999999",
+                                "lcms"     => $_L['ROOTID'],
+                            ],
+                        ]);
                         if ($insert_id) {
-                            sql_insert(["open_wechat_reply_words", [
-                                "rid"  => $insert_id,
-                                "name" => $para['name'],
-                                "app"  => L_NAME,
-                                "type" => "1",
-                                "lcms" => $_L['ROOTID'],
-                            ]]);
+                            sql_insert([
+                                "open_wechat_reply_words",
+                                [
+                                    "rid"  => $insert_id,
+                                    "name" => $para['name'],
+                                    "app"  => L_NAME,
+                                    "type" => "1",
+                                    "lcms" => $_L['ROOTID'],
+                                ],
+                            ]);
                             if ($para['type']) {
-                                sql_insert(["open_wechat_reply_contents", [
-                                    "rid"       => $insert_id,
-                                    "type"      => $para['type'],
-                                    "order_no"  => "999999",
-                                    "parameter" => arr2sql($para[$para['type']]),
-                                ]]);
+                                sql_insert([
+                                    "open_wechat_reply_contents",
+                                    [
+                                        "rid"       => $insert_id,
+                                        "type"      => $para['type'],
+                                        "order_no"  => "999999",
+                                        "parameter" => arr2sql($para[$para['type']]),
+                                    ],
+                                ]);
                             }
                             return $insert_id;
                         } else {

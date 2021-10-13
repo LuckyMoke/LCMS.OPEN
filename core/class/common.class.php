@@ -89,7 +89,7 @@ class common
             "lcms" => true,
         ]);
         if ($_L['config']['admin']['development']) {
-            $_L['config']['ver'] = "9999." . time();
+            $_L['config']['ver'] = date("Y.mdHis");
             ob_start();
         } else {
             $version = PATH_CORE . "version";
