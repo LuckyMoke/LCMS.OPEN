@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-17 11:43:50
+ * @LastEditTime: 2021-10-28 15:52:10
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -35,6 +35,7 @@ class TPL
         $_L['ui'] = [
             "nocache" => 0,
             "css"     => [],
+            "js-head" => [],
             "js"      => [],
             "xhr"     => [],
         ];
@@ -51,7 +52,11 @@ class TPL
                     if ($suffix == "css") {
                         $_L['ui']['css'][] = $val;
                     } elseif ($suffix == "js") {
-                        $_L['ui']['js'][] = $val;
+                        if (preg_match("/jquery+[-|.]+(.*).js/i", $val)) {
+                            $_L['ui']['js-head'][] = $val;
+                        } else {
+                            $_L['ui']['js'][] = $val;
+                        }
                     } else {
                         $_L['ui']['xhr'][] = $val;
                     }

@@ -1,0 +1,55 @@
+<template "own/public/mhead" />
+<div class="qrcode">
+    <div class="weui-cells__title">请选择登陆账号</div>
+    <div class="weui-cells">
+        <loop $admin,$val>
+            <div role="link" class="weui-cell weui-cell_active weui-cell_access qrcode-list" name="{{$val['name']}}">
+                <div class="weui-cell__bd">
+                    <h3>账号：{{$val['name']}}</h3>
+                    <p>姓名：{{$val['title']}}</p>
+                    <if $val['mobile']>
+                        <p>手机：{{$val['mobile']}}</p>
+                    </if>
+                    <if $val['email']>
+                        <p>邮箱：{{$val['email']}}</p>
+                    </if>
+                </div>
+                <div class="weui-cell__ft"></div>
+            </div>
+        </loop>
+    </div>
+    <a class="qrcode-add" href="?rootid={{$RID}}&n=login&action=band">+ 绑定账号</a>
+</div>
+<div class="weui-mask hide action-btn" name="cancel"></div>
+<div class="weui-actionsheet">
+    <div class="weui-actionsheet__title">
+        <p class="weui-actionsheet__title-text">请选择需要进行的操作</p>
+    </div>
+    <div class="weui-actionsheet__menu">
+        <div class="weui-actionsheet__cell action-btn" name="login">
+            登陆此账号
+        </div>
+        <div class="weui-actionsheet__cell weui-actionsheet__cell_warn action-btn" name="unband">
+            解绑此账号
+        </div>
+    </div>
+    <div class="weui-actionsheet__action">
+        <div class="weui-actionsheet__cell action-btn" name="cancel">
+            取消
+        </div>
+    </div>
+</div>
+<div class="weui-dialog hide">
+    <div class="weui-dialog__hd">
+        <strong class="weui-dialog__title">提示</strong>
+    </div>
+    <div class="weui-dialog__bd">
+        确认将此账号与当前微信解绑？<br />
+        解绑后可重新绑定！
+    </div>
+    <div class="weui-dialog__ft">
+        <a href="javascript:" class="weui-dialog__btn weui-dialog__btn_default action-btn" name="cancel">我再想想</a>
+        <a href="javascript:" class="weui-dialog__btn weui-dialog__btn_primary action-btn" name="gounband">确认解绑</a>
+    </div>
+</div>
+<template "own/public/mfoot" />

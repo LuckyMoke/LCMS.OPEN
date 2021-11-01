@@ -20,8 +20,13 @@
         <if !$_L['ui']['nocache']>
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
         </if>
-        <if $_L['ui']['js']>
-            <loop array_unique($_L['ui']['js']),$js>
+        <if $_L['ui']['css']>
+            <loop array_unique($_L['ui']['css']),$css>
+                <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],$css).'?'.TPL::$ver}}" />
+            </loop>
+        </if>
+        <if $_L['ui']['js-head']>
+            <loop array_unique($_L['ui']['js-head']),$js>
                 <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?'.TPL::$ver}}"></script>
             </loop>
         </if>

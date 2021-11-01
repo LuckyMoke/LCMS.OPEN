@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-27 14:22:49
+ * @LastEditTime: 2021-10-31 16:16:48
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -44,6 +44,7 @@ function ajaxout($code = 1, $msg = "", $go = "", $data = "")
         "go"   => $go,
         "data" => $data,
     );
+    header("content-type: application/json");
     echo json_encode_ex($arr);
     exit;
 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-09-09 16:15:40
+ * @LastEditTime: 2021-10-28 20:26:58
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -30,7 +30,7 @@ class admin extends adminbase
                     "align"  => "center"],
                 ["title"   => "帐号", "field" => "name",
                     "minWidth" => 90],
-                ["title" => "用户名", "field" => "title",
+                ["title" => "姓名", "field" => "title",
                     "width"  => 150],
                 ["title" => "邮箱", "field" => "email",
                     "width"  => 120],
@@ -75,7 +75,7 @@ class admin extends adminbase
                     "tips"   => "确认删除？"],
             ],
             "search"  => [
-                ["title" => "账号/用户名/邮箱/手机", "name" => "name"],
+                ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
             ],
         ];
         $acount = sql_counter(["admin"]);
@@ -258,10 +258,10 @@ class admin extends adminbase
                         "verify"      => "required|name",
                         "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? "1" : "",
                     ],
-                    ["layui"      => "input", "title" => "用户名",
+                    ["layui"      => "input", "title" => "姓名",
                         "name"        => "LC[title]",
                         "value"       => $admin['title'],
-                        "placeholder" => "用户名字只做显示",
+                        "placeholder" => "姓名只做显示",
                         "verify"      => "required",
                     ],
                     ["layui"      => "input", "title" => "密码",
@@ -518,6 +518,17 @@ class admin extends adminbase
                         "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                         "disabled" => true,
                     ],
+                    ["layui" => "title", "title" => "登陆设置"],
+                    ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！"],
+                    ["layui" => "radio", "title" => "微信扫码",
+                        "name"   => "LC[reg][qrcode]",
+                        "value"  => $config['reg']['qrcode'] ?? "0",
+                        "radio"  => [
+                            ["title" => "关闭", "value" => "0"],
+                            ["title" => "开启", "value" => "1"],
+                        ],
+                    ],
+                    ["layui" => "title", "title" => "注册设置"],
                     ["layui" => "radio", "title" => "用户注册",
                         "name"   => "LC[reg][on]",
                         "value"  => $config['reg']['on'] ?? "0",
@@ -565,7 +576,7 @@ class admin extends adminbase
                     ],
                     ["layui"   => "checkbox", "title" => "注册字段",
                         "checkbox" => [
-                            ["title" => "用户名",
+                            ["title" => "姓名",
                                 "name"   => "LC[reg][input_title]",
                                 "value"  => $config['reg']['input_title']],
                         ],
@@ -599,10 +610,10 @@ class admin extends adminbase
                         "verify"      => "required|name",
                         "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? "1" : "",
                     ],
-                    ["layui"      => "input", "title" => "用户名",
+                    ["layui"      => "input", "title" => "姓名",
                         "name"        => "LC[title]",
                         "value"       => $admin['title'],
-                        "placeholder" => "用户名字只做显示",
+                        "placeholder" => "姓名只做显示",
                         "verify"      => "required",
                     ],
                     ["layui"      => "input", "title" => "密码",

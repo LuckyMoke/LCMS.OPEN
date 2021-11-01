@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-22 15:25:02
+ * @LastEditTime: 2021-10-28 21:50:21
  * @Description:LCMS操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -222,7 +222,6 @@ class LCMS
             $html = file_get_contents($file);
             preg_match_all("/{{(.*?)}}/i", $html, $match);
             preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
-            // 新版模板标签处理
             foreach ($tags[0] as $index => $tag) {
                 switch (self::tpltags($tag)) {
                     case 'php':
@@ -232,7 +231,7 @@ class LCMS
                         $html = str_replace($tag, "<?php require " . str_replace("template ", "LCMS::template(", $tags[1][$index]) . ", '" . ($uipath ? $ui : "") . "');?>", $html);
                         break;
                     case 'ui':
-                        $html = str_replace($tag, "<?php " . str_replace(["ui table", "ui tree", "ui "], ["table::html", "table::tree", "LAY::"], $tags[1][$index]) . ";?>", $html);
+                        $html = str_replace($tag, "<?php " . str_replace(["ui table", "ui tree", "ui "], ["TABLE::html", "TABLE::tree", "LAY::"], $tags[1][$index]) . ";?>", $html);
                         break;
                     case 'loop':
                         $str  = explode(",", str_replace("loop ", "", $tags[1][$index]));
@@ -277,50 +276,27 @@ class LCMS
                         break;
                 }
             }
-            // 旧版模板标签处理，淘汰中
             foreach ($match[0] as $key => $val) {
-                $newval         = str_replace(array("{{  ", "{{ ", "  }}", " }}"), array("{{", "{{", "}}", "}}"), $val);
-                $match[1][$key] = ltrim($match[1][$key], " ");
-                $match[1][$key] = rtrim($match[1][$key], " ");
-                if (stristr($newval, '{{$')) {
-                    $html = str_replace($val, '<?php echo ' . $match[1][$key] . '; ?>', $html);
-                } elseif (stristr($newval, '{{if')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . '{ ?>', $html);
-                } elseif (stristr($newval, '{{else')) {
-                    $html = str_replace($val, '<?php }' . $match[1][$key] . '{ ?>', $html);
-                } elseif (stristr($newval, '{{foreach')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . '{ ?>', $html);
-                } elseif (stristr($newval, '{{loop')) {
-                    $str  = str_replace("loop ", "", $match[1][$key]);
-                    $str  = explode(",", $str);
-                    $str  = $str[2] ? "foreach ({$str[0]} as {$str[2]}=>{$str[1]})" : "foreach ({$str[0]} as {$str[1]})";
-                    $html = str_replace($val, '<?php ' . $str . '{ ?>', $html);
-                } elseif (stristr($newval, '{{switch')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . '{ default: ?>', $html);
-                } elseif (stristr($newval, '{{case')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . ': ?>', $html);
-                } elseif (stristr($newval, '{{/case') || stristr($newval, '{{/break')) {
-                    $html = str_replace($val, '<?php break;?>', $html);
-                } elseif (stristr($newval, '{{php}}')) {
-                    $html = str_replace($val, '<?' . $match[1][$key], $html);
-                } elseif (stristr($newval, '{{/php}}')) {
-                    $html = str_replace($val, ' ?>', $html);
-                } elseif (stristr($newval, 'LCMS::template')) {
-                    $html = str_replace($val, '<?php require ' . $match[1][$key] . ';?>', $html);
-                } elseif (stristr($newval, '{{/')) {
-                    $html = str_replace($val, '<?php }?>', $html);
-                } elseif (stristr($newval, '{{echo')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . ' ?>', $html);
-                } elseif (stristr($newval, '{{LCMS ')) {
-                    $match[1][$key] = str_replace("LCMS ", "", $match[1][$key]);
-                    $html           = str_replace($val, '<?php ' . $match[1][$key] . ' ?>', $html);
-                } elseif (stristr($newval, '{{LAY::')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . ';?>', $html);
-                } elseif (stristr($newval, '{{table::')) {
-                    $html = str_replace($val, '<?php ' . $match[1][$key] . ';?>', $html);
-                } elseif (stristr($newval, '{{#') === false) {
-                    $match[1][$key] = str_replace("echo ", "", $match[1][$key]);
-                    $html           = str_replace($val, "<?php echo {$match[1][$key]} ?>", $html);
+                $para = $match[1][$key];
+                $nval = str_replace([
+                    "{{  ", "{{ ", "  }}", " }}",
+                ], [
+                    "{{", "{{", "}}", "}}",
+                ], $val);
+                $para = rtrim(ltrim($para, " "), " ");
+                if (stristr($nval, '{{$')) {
+                    $rval = "<?php echo {$para}; ?>";
+                } elseif (stristr($nval, '{{echo')) {
+                    $rval = "<?php {$para}; ?>";
+                } elseif (stristr($nval, '{{LCMS ')) {
+                    $para = str_replace("LCMS ", "", $para);
+                    $rval = "<?php {$para}; ?>";
+                } elseif (stristr($nval, '{{#') === false) {
+                    $para = str_replace("echo ", "", $para);
+                    $rval = "<?php echo {$para}; ?>";
+                }
+                if ($rval) {
+                    $html = str_replace($val, $rval, $html);
                 }
             }
             mkdir(PATH_CACHE . "tpl/");

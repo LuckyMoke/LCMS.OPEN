@@ -24,6 +24,15 @@ CREATE TABLE `[_PRE]admin` (
   KEY `tuid` (`tuid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='管理员信息';
 
+CREATE TABLE `[_PRE]admin_band` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `aid` int(11) NOT NULL DEFAULT '0' COMMENT '账号ID',
+  `openid` varchar(32) DEFAULT NULL COMMENT 'OPENID',
+  PRIMARY KEY (`id`),
+  KEY `aid` (`aid`),
+  KEY `openid` (`openid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
 CREATE TABLE `[_PRE]admin_level` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) DEFAULT '0' COMMENT '上级是谁',

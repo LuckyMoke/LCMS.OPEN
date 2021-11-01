@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+    <html>
+    <head>
+        <title>{{$page['title']}}</title>
+        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="renderer" content="webkit" />
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?{{$_L['config']['ver']}}" />
+        <script type="text/javascript">var LCMS = {'url':JSON.parse('{{json_encode($_L["url"])}}')};</script>
+    </head>
+    <body>
+        <div class="login">
+            <div class="login-left" id="lizitexiao"></div>
+            <div class="login-right">
+                <div class="login-form">
+                    <div class="login-tab login-tab{{count($page['tab'])}}">
+                        <loop $page['tab'],$tab,$index>
+                            <a href="javascript:;" name="{{$tab['name']}}" class="{{$index=='0'?'active':''}}">{{$tab['title']}}</a>
+                        </loop>
+                    </div>
