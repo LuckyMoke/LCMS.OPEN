@@ -18,7 +18,6 @@
                     "title": "安全性能",
                     "menu": 1
                 }
-
             }
         },
         "web": {
@@ -35,15 +34,6 @@
                 "payment": {
                     "title": "支付设置",
                     "menu": 1
-                }
-            }
-        },
-        "update": {
-            "title": "框架升级",
-            "level": {
-                "index": {
-                    "title": "框架升级",
-                    "menu": 0
                 }
             }
         }

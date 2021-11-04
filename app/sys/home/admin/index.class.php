@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2021-03-13 16:11:14
+ * @LastEditTime: 2021-11-02 15:38:36
+ * @Description: 欢迎页
+ * Copyright 2021 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class('level');
@@ -16,7 +23,7 @@ class index extends adminbase
         }
         $info   = server_info();
         $level  = level::app('config');
-        $update = $level['url']['update'] ? "1" : "0";
+        $update = LCMS::SUPER() ? 1 : 0;
         if ($_L['LCMSADMIN']['lasttime'] && $_L['LCMSADMIN']['lasttime'] > "0000-00-00 00:00:00") {
             $lasttime = (strtotime($_L['LCMSADMIN']['lasttime']) - time()) / 86400;
         }

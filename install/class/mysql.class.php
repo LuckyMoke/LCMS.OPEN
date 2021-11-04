@@ -138,6 +138,7 @@ class DB
     public static function halt($dbhost)
     {
         ajaxout(0, iconv('gbk', 'utf-8', self::$link->connect_error));
+        exit;
     }
     /**
      * [get_dbs 获取所有库名称]

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-09-28 15:36:42
+ * @LastEditTime: 2021-11-02 16:33:15
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -12,17 +12,18 @@ class repair extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         parent::__construct();
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
+        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
     }
     public function doindex()
     {
-        global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "仅超级管理员可设置");
-        }
-        $new  = $this->new_sql();
-        $diff = $this->get_diff($new, $this->get_key($new));
+        global $_L, $LF, $LC;
+        $title = $LF['datatitle'] ?: "修复";
+        $new   = $this->new_sql($LF['datafile']);
+        $diff  = $this->get_diff($new, $this->get_key($new));
         foreach ($diff as $name => $val) {
             $sql = [];
             if ($val['type'] == "create") {
@@ -54,11 +55,11 @@ class repair extends adminbase
         if ($mysql) {
             sql_query($mysql);
             if (sql_error()) {
-                ajaxout(0, "修复失败：" . sql_error());
+                ajaxout(0, "{$title}失败：" . sql_error());
             }
-            ajaxout(1, "修复成功");
+            ajaxout(1, "{$title}成功");
         } else {
-            ajaxout(0, "您的框架数据不需要修复");
+            ajaxout(0, "数据库不需要{$title}");
         }
     }
     /**
@@ -66,10 +67,11 @@ class repair extends adminbase
      * @param {*}
      * @return {*}
      */
-    private function new_sql()
+    private function new_sql($file = "")
     {
-        global $_L;
-        return json_decode(file_get_contents(PATH_APP_NOW . "include/data/mysql.json"), true);
+        global $_L, $LF, $LC;
+        $file = $file ?: PATH_APP_NOW . "include/data/mysql.json";
+        return json_decode(file_get_contents($file), true);
     }
     /**
      * @description: 对比数据结构不同
@@ -79,7 +81,7 @@ class repair extends adminbase
      */
     private function get_diff($new, $old)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         foreach ($new as $name => $data) {
             if ($old[$name]) {
                 foreach ($data as $key => $val) {
@@ -117,7 +119,7 @@ class repair extends adminbase
      */
     private function get_key($new)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         foreach (DB::$mysql->get_tables() as $name) {
             $name = str_replace($_L['mysql']['pre'], "", $name);
             if ($new[$name]) {
@@ -143,7 +145,7 @@ class repair extends adminbase
      */
     private function get_index($table)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         foreach (sql_query("SHOW INDEX FROM {$_L['mysql']['pre']}{$table}") as $val) {
             if (isset($val['Key_name']) && $val['Key_name'] == "PRIMARY") {
                 $key = "PRIMARY";
@@ -165,7 +167,7 @@ class repair extends adminbase
      */
     private function sql_key($key, $data, $create = false)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $sql = $create ? "`{$key}` {$data['type']}" : ($data['update'] ? "ADD" : "MODIFY") . " COLUMN `{$key}` {$data['type']}";
         if ($data['default'] === "AUTO_INCREMENT") {
             $sql .= " NOT NULL AUTO_INCREMENT";
@@ -186,7 +188,7 @@ class repair extends adminbase
      */
     private function sql_index($key, $data, $create = false)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         switch ($data['index']) {
             case 'PRIMARY':
                 $sql = " PRIMARY";

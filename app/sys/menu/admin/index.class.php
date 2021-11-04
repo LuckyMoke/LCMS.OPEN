@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2020-12-13 20:31:06
+ * @LastEditTime: 2021-11-03 11:33:47
  * @Description: 常用应用设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -34,34 +34,33 @@ class index extends adminbase
                 ];
                 if (LCMS::SUPER()) {
                     $_L['form']['LC']['sys'] = [
-                        [
-                            "title" => "用户中心",
-                            "menu"  => [
-                                "user" => [
-                                    "class" => [
-                                        "admin" => 1,
-                                    ],
+                        ["title" => "用户中心", "menu" => [
+                            "user" => [
+                                "class" => [
+                                    "admin" => 1,
                                 ],
                             ],
-                        ],
-                        [
-                            "title" => "框架设置",
-                            "menu"  => [
-                                "config" => [
-                                    "class" => [
-                                        "admin"  => 1,
-                                        "web"    => 1,
-                                        "update" => 1,
-                                    ],
-                                ],
-                                "backup" => [
-                                    "class" => [
-                                        "database" => 1,
-                                        "optimize" => 1,
-                                    ],
+                        ]],
+                        ["title" => "框架配置", "menu" => [
+                            "config" => [
+                                "class" => [
+                                    "admin"  => 1,
+                                    "web"    => 1,
+                                    "update" => 1,
                                 ],
                             ],
-                        ],
+                            "backup" => [
+                                "class" => [
+                                    "database" => 1,
+                                    "optimize" => 1,
+                                ],
+                            ],
+                            "update" => [
+                                "class" => [
+                                    "gitee" => 1,
+                                ],
+                            ],
+                        ]],
                     ];
                 }
                 LCMS::config([

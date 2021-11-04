@@ -24,7 +24,7 @@
         <tbody>
             <loop $mysql,$info>
                 <tr>
-                    <td><a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank">{{$info['name']}}</a></td>
+                    <td><a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank"><i class="layui-icon layui-icon-unlink"></i> {{$info['name']}}</a></td>
                     <td align="center">{{$info['size']}}</td>
                     <td align="center">{{$info['time']}}</td>
                     <td align="center">{{$info['ver']}}</td>

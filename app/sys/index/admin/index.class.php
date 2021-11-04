@@ -18,7 +18,37 @@ class index extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if (!LCMS::SUPER()) {
+        if (LCMS::SUPER()) {
+            $config['sys'] = [
+                ["title" => "用户中心", "menu" => [
+                    "user" => [
+                        "class" => [
+                            "admin" => 1,
+                        ],
+                    ],
+                ]],
+                ["title" => "框架配置", "menu" => [
+                    "config" => [
+                        "class" => [
+                            "admin"  => 1,
+                            "web"    => 1,
+                            "update" => 1,
+                        ],
+                    ],
+                    "backup" => [
+                        "class" => [
+                            "database" => 1,
+                            "optimize" => 1,
+                        ],
+                    ],
+                    "update" => [
+                        "class" => [
+                            "gitee" => 1,
+                        ],
+                    ],
+                ]],
+            ];
+        } else {
             $config['open'] = LCMS::config([
                 "type" => "sys",
                 "name" => "menu",

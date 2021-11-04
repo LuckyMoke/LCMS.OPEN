@@ -30,37 +30,6 @@ PHP扩展：zip扩展（宝塔默认开启）、fileinfo扩展（请手动开启
  - 方式一： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
  - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
 
-#### 更新方法
-
- - 方法一：购买在线更新服务，在线自动更新
- - 方法二：下载最新版安装包直接覆盖即可，记得删除 `install` 目录
- - 方法三：使用宝塔面板（或者服务器安装了git）的情况下，可以使用git进行快速更新。
-
-```
-// 注意下方命令中的 /www/wwwroot/127.0.0.1 替换为你网站的目录
-// 如果使用宝塔面板，下方所有命令均在 宝塔终端 里执行即可
-// 如果其它服务器在自己的终端执行下方的命令。
-
-// 第一次使用此方法，输入下方命令回车执行，初始化git
-cd /www/wwwroot/127.0.0.1
-git init
-git remote add origin https://gitee.com/luckymoke/LCMS.OPEN
-
-// 之后每次更新，只用输入下方命令回车执行即可
-cd /www/wwwroot/127.0.0.1
-git fetch --all
-git reset --hard origin/master
-
-// 每次更新完注意删除 install 目录
-// 如果是linux服务器，可以接着上边的命令，执行 rm -rf install 即可删除install目录
-// 建议手动删除，比较安全！！！
-
-// 既然使用命令了，你可以在宝塔定时任务里加上更新命令，那么就能自动更新了！
-
-```
-
- - 注：如果更新出现数据库不匹配情况，请在后台“数据中心”修复框架数据库！
-
 #### QQ讨论群
 
 [849966898](https://jq.qq.com/?\_wv=1027&k=5hOL21w)

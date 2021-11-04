@@ -1,0 +1,102 @@
+<template "ui/head" />
+<template "ui/css" />
+<style type="text/css">
+    #LCONTENT {
+        min-height: calc(100vh - 200px);
+    }
+</style>
+<div class="layui-row layui-col-space20 update-gitee" data-power="{{$powertest}}">
+    <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
+        <div class="update-gitee-version">
+            <p>当前版本：V{{$this->ver()}}</p>
+            <p>最新版本：<span>
+                    <font color="#f56c6c"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
+                        &nbsp;正在检测更新</font>
+                </span></p>
+            <a class="layui-btn layui-btn-primary layui-btn-sm" href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank">
+                Gitee仓库
+            </a>
+            <button class="layui-btn layui-btn-normal layui-btn-sm update-gitee-setting">
+                令牌设置
+            </button>
+            <button class="layui-btn layui-btn-sm update-gitee-button">
+                立即更新
+            </button>
+        </div>
+        <div class="update-gitee-logs">
+            <h1>更新日志：</h1>
+            <ul class="layui-timeline"></ul>
+        </div>
+    </div>
+    <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
+        <div class="update-gitee-power">
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th width="80" style="text-align:center">
+                            目录
+                        </th>
+                        <th>读写权限</th>
+                        <th width="80" style="text-align:center">
+                            目录
+                        </th>
+                        <th>读写权限</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/app</td>
+                        <td>{{$powers['app']}}</td>
+                        <td>/cache</td>
+                        <td>{{$powers['cache']}}</td>
+                    </tr>
+                    <tr>
+                        <td>/core</td>
+                        <td>{{$powers['core']}}</td>
+                        <td>/upload</td>
+                        <td>{{$powers['upload']}}</td>
+                    </tr>
+                    <tr>
+                        <td>/public</td>
+                        <td>{{$powers['public']}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="update-gitee-files">
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>文件</th>
+                        <th width="80" style="text-align:center">
+                            操作
+                        </th>
+                        <th width="80" style="text-align:center">
+                            状态
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/template" class="update-gitee-tpl-log">
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis layui-icon-radio"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">{time}</h3>
+            <p>{info}</p>
+        </div>
+    </li>
+</script>
+<script type="text/template" class="update-gitee-tpl-file">
+    <tr>
+        <td>{file}</td>
+        <td style="text-align:center">{info}</td>
+        <td style="text-align:center" class="update-gitee-file-status">等待中</td>
+    </tr>
+</script>
+<template "ui/foot" />

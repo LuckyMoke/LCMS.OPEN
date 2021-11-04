@@ -20,7 +20,5 @@ $_L['memcached']['pconnect'] = 1;
 $_L['memcached']['timeout']  = 30;
 $_L['memcached']['session']  = 1;
 
-// 是否显示框架更新服务时间 1 OR 0
-$_L['developer']['updatetime'] = 1;
 // 是否显示应用商店 1 OR 0
 $_L['developer']['appstore'] = 1;

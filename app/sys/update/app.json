@@ -1,0 +1,17 @@
+{
+    "info": {
+        "title": "框架升级"
+    },
+    "class": {
+        "gitee": {
+            "title": "Gitee升级",
+            "level": {
+                "index": {
+                    "title": "Gitee升级",
+                    "menu": 1
+                }
+
+            }
+        }
+    }
+}
