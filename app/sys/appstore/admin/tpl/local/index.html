@@ -6,16 +6,16 @@
         <tr>
             <th width="50px" style="text-align:center;">图标</th>
             <th width="200px">应用名</th>
-            <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
+            <if $level['url']['store'] && $_L['developer']['appstore'] !==0>
                 <th width="200px" class="layui-hide-xs app-hide-sm">开发者</th>
             </if>
             <th width="100px" class="layui-hide-xs" style="text-align:center;">本地版本</th>
-            <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
+            <if $level['url']['store'] && $_L['developer']['appstore'] !==0>
                 <th width="100px" class="layui-hide-xs" style="text-align:center;">最新版本</th>
             </if>
             <th class="layui-hide-xs app-hide-sm">应用描述</th>
-            <if $level['url']['store']>
-                <th class="layui-hide-xs" style="text-align:center;" width="{{echo LCMS::SUPER()?'100px':'60px'}}">操作</th>
+            <if LCMS::SUPER()>
+                <th class="layui-hide-xs" style="text-align:center;" width="110px">操作</th>
             </if>
         </tr>
     </thead>
@@ -33,21 +33,22 @@
                 <td>
                     <a href="{{$applist['open'][$app]['url']['all']}}" title="{{$applist['open'][$app]['info']['title']}}"><i class="layui-icon layui-icon-unlink"></i> {{$applist['open'][$app]['info']['title']}}</a>
                 </td>
-                <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
+                <if $level['url']['store'] && $_L['developer']['appstore'] !==0>
                     <td class="layui-hide-xs app-hide-sm">{{$applist['open'][$app]['info']['author']}}</td>
                 </if>
                 <td class="layui-hide-xs" style="text-align:center;">V{{$applist['open'][$app]['info']['ver']}}</td>
-                <if $level['url']['store'] && $_L['developer']['appstore'] !== 0>
+                <if $level['url']['store'] && $_L['developer']['appstore'] !==0>
                     <td class="layui-hide-xs newver" style="text-align:center;"></td>
                 </if>
                 <td class="layui-hide-xs app-hide-sm">{{$applist['open'][$app]['info']['description']}}</td>
                 <if $level['url']['store']>
                     <td class="layui-hide-xs" style="text-align:center;">
                         <div class="layui-btn-group">
-                            <if $_L['developer']['appstore'] !== 0>
-                                <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">暂无更新</button>
-                            </if>
                             <if LCMS::SUPER()>
+                                <if $_L['developer']['appstore'] !==0>
+                                    <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">更新</button>
+                                </if>
+                                <button class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&appname={{$app}}">修复</button>
                                 <button class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$app}}">卸载</button>
                             </if>
                         </div>

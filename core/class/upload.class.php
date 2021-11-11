@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-28 14:30:02
+ * @LastEditTime: 2021-11-11 14:43:05
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -42,7 +42,7 @@ class UPLOAD
                 $return = self::out(0, "文件大小超过{$_L['config']['admin']['attsize']}KB");
             } else {
                 if (stripos($_L['config']['admin']['mimelist'], $mime) !== false) {
-                    $name = randstr(3, "let") . preg_replace("/[0-9]/", '', str_replace(["+", "-", "=", "/"], "", base64_encode(strval(time()) . microseconds()))) . ".{$mime}";
+                    $name = date("dHis") . randstr(6) . ".{$mime}";
                     if (is_url($para) && file_put_contents("{$dir}{$name}", $file)) {
                         $return = self::out(1, "上传成功", path_relative($dir), $name, $size);
                     } elseif (move_uploaded_file($file['tmp_name'], "{$dir}{$name}")) {

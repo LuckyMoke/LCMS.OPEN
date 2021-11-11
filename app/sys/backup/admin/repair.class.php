@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-02 16:33:15
+ * @LastEditTime: 2021-11-10 17:32:08
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -21,8 +21,8 @@ class repair extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC;
-        $title = $LF['datatitle'] ?: "修复";
-        $new   = $this->new_sql($LF['datafile']);
+        $title = $LF['apptitle'] ?: "修复";
+        $new   = $this->new_sql($LF['appname']);
         $diff  = $this->get_diff($new, $this->get_key($new));
         foreach ($diff as $name => $val) {
             $sql = [];
@@ -59,19 +59,30 @@ class repair extends adminbase
             }
             ajaxout(1, "{$title}成功");
         } else {
-            ajaxout(0, "数据库不需要{$title}");
+            ajaxout(0, "数据表不需要{$title}");
         }
     }
     /**
-     * @description: 获取数据表格式
-     * @param {*}
+     * @description: 获取数据结构
+     * @param string $app
      * @return {*}
      */
-    private function new_sql($file = "")
+    private function new_sql($app = "")
     {
         global $_L, $LF, $LC;
-        $file = $file ?: PATH_APP_NOW . "include/data/mysql.json";
-        return json_decode(file_get_contents($file), true);
+        if ($app) {
+            $file = "open/{$app}/app";
+        } else {
+            $file = "sys/backup/include/data/base";
+        }
+        $file = PATH_APP . "{$file}.sql";
+        if (is_file($file)) {
+            $file = file_get_contents($file);
+            $file = ssl_decode($file, "SQL");
+            $file = gzinflate($file);
+            return json_decode($file, true);
+        }
+        ajaxout(0, "未找到对应数据结构文件");
     }
     /**
      * @description: 对比数据结构不同

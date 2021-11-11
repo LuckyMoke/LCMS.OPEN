@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-28 15:20:17
+ * @LastEditTime: 2021-11-11 14:39:05
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -25,7 +25,7 @@ class index extends adminbase
      */
     public function dolocal()
     {
-        global $_L, $LF;
+        global $_L, $LF, $LC;
         $datey = date("Ym");
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$LF['type']}/{$datey}/";
         if ($_FILES['file']) {
@@ -89,7 +89,8 @@ class index extends adminbase
                     break;
             }
         }
-        ajaxout(0, "文件不存在");
+        $this->sql("deletebyid", $LC['id']);
+        ajaxout(1, "删除成功", "reload");
     }
     /**
      * @description: 远程图片多图上传
@@ -98,7 +99,7 @@ class index extends adminbase
      */
     public function doeditor()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $datey = date("Ym");
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/image/{$datey}/";
         $files = $_L['form']['files'] ?? [];
@@ -183,7 +184,7 @@ class index extends adminbase
      */
     public function doqiniu()
     {
-        global $_L, $LF;
+        global $_L, $LF, $LC;
         load::plugin("Qiniu/QiniuOSS");
         $Qiniu = new QiniuOSS($_L['plugin']['oss']['qiniu']);
         switch ($LF['action']) {
@@ -214,7 +215,7 @@ class index extends adminbase
      */
     public function dotencent()
     {
-        global $_L, $LF;
+        global $_L, $LF, $LC;
         load::plugin("Tencent/TencentOSS");
         $Tencent = new TencentOSS($_L['plugin']['oss']['tencent']);
         switch ($LF['action']) {
@@ -246,7 +247,7 @@ class index extends adminbase
      */
     public function doaliyun()
     {
-        global $_L, $LF;
+        global $_L, $LF, $LC;
         load::plugin("Aliyun/AliyunOSS");
         $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
         switch ($LF['action']) {
@@ -278,17 +279,28 @@ class index extends adminbase
      */
     private function sql($type = "image", $datey, $data = [])
     {
-        global $_L;
+        global $_L, $LF, $LC;
         switch ($type) {
             case 'delete':
                 $data = explode("/", $datey);
                 sql_delete([
                     "upload",
-                    "type = :type AND datey = :datey AND name = :name AND lcms = '{$_L['ROOTID']}'",
+                    "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
                     [
                         ":type"  => $data[3],
                         ":datey" => $data[4],
                         ":name"  => $data[5],
+                        ":lcms"  => $_L['ROOTID'],
+                    ],
+                ]);
+                break;
+            case 'deletebyid':
+                $datey && sql_delete([
+                    "upload",
+                    "id = :id AND lcms = :lcms",
+                    [
+                        ":id"   => $datey,
+                        ":lcms" => $_L['ROOTID'],
                     ],
                 ]);
                 break;
