@@ -2,13 +2,13 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-11-01 13:25:25
+ * @LastEditTime: 2021-11-17 16:23:43
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 class OA
 {
-    public $cfg;
+    public $cfg, $sid;
     public function __construct($config = [])
     {
         global $_L, $LF, $SID;
@@ -27,7 +27,7 @@ class OA
                 "thirdapi"  => $config['thirdapi'],
             ];
         };
-        $SID = "WX" . strtoupper(substr(md5($this->cfg['appid']), 8, 16)) . "-RID{$_L['ROOTID']}-";
+        $SID = $this->sid = "WX" . strtoupper(substr(md5($this->cfg['appid'] . "RID{$_L['ROOTID']}"), 8, 16));
         $this->cache();
     }
     /**
@@ -134,56 +134,38 @@ class OA
         } elseif ($openid['openid'] && $scope == "snsapi_userinfo" && $openid['expires_time'] > time()) {
             return $openid;
         } else {
-            if ($LF['wechatoauthopenid']) {
-                // 设置数据Session
-                $userinfo = $this->user([
-                    "openid" => $LF['wechatoauthopenid'],
-                ]);
-                if ($userinfo['openid']) {
-                    SESSION::set("{$SID}snsapi_base", [
-                        "openid" => $userinfo['openid'],
-                    ]);
-                    okinfo(url_clear($_L['url']['now'], "wechatoauthopenid"));
-                }
+            $goback = urlencode($_L['url']['now']);
+            if ($this->cfg['thirdapi']) {
+                // 如果启用第三方接口，跳转到第三方接口
+                okinfo($this->cfg['thirdapi'] . "oauth&scope={$scope}&rid={$_L['ROOTID']}&sid={$SID}&goback={$goback}");
             } else {
-                if ($this->cfg['thirdapi']) {
-                    // 如果启用第三方接口，跳转到第三方接口
-                    $goback = urlencode($_L['url']['now']);
-                    okinfo($this->cfg['thirdapi'] . "oauth&scope={$scope}&goback={$goback}&key=wechatoauthopenid");
-                    exit();
+                //使用系统API域名进行授权
+                if (stripos($_L['config']['web']['domain_api'], HTTP_HOST) === false) {
+                    okinfo("{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
+                }
+                // 用户授权登陆，获取code
+                if (!isset($LF['code'])) {
+                    $query = http_build_query([
+                        "appid"         => $this->cfg['appid'],
+                        "redirect_uri"  => $_L['url']['now'],
+                        "response_type" => "code",
+                        "scope"         => $scope,
+                    ]);
+                    $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
                 } else {
-                    //使用系统API域名进行授权
-                    if (stripos($_L['config']['web']['domain_api'], HTTP_HOST) === false) {
-                        $goback = urlencode($_L['url']['now']);
-                        okinfo("{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
-                        exit();
-                    }
-                    // 用户授权登陆，获取code
-                    $code = $LF['code'];
-                    if (!isset($code)) {
-                        $query = http_build_query([
-                            "appid"         => $this->cfg['appid'],
-                            "redirect_uri"  => $_L['url']['now'],
-                            "response_type" => "code",
-                            "scope"         => $scope,
-                        ]);
-                        $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
-                        exit();
-                    } else {
-                        // 使用code获取用户数据
-                        $openid = $this->getOpenidFromMp($code);
-                        if ($openid['openid']) {
-                            $this->user([
-                                "do"     => "save",
+                    // 使用code获取用户数据
+                    $openid = $this->getOpenidFromMp($LF['code']);
+                    if ($openid['openid']) {
+                        $this->user([
+                            "do"     => "save",
+                            "openid" => $openid['openid'],
+                            "wechat" => [
                                 "openid" => $openid['openid'],
-                                "wechat" => [
-                                    "openid" => $openid['openid'],
-                                ],
-                            ]);
-                            $openid['expires_time'] = time() + 3600;
-                            SESSION::set($SID . $scope, $openid);
-                            okinfo(url_clear($_L['url']['now'], "code|state"));
-                        }
+                            ],
+                        ]);
+                        $openid['expires_time'] = time() + 3600;
+                        SESSION::set($SID . $scope, $openid);
+                        okinfo(url_clear($_L['url']['now'], "code|state"));
                     }
                 }
             }
@@ -197,6 +179,7 @@ class OA
     public function userinfo($para = [])
     {
         global $_L, $LF, $SID;
+        // SESSION::delall();die;
         if ($para['type'] == "subscribe") {
             // 用户关注后获取用户信息
             $this->access_token();
@@ -216,46 +199,20 @@ class OA
         } else {
             $userinfo = SESSION::get("{$SID}userinfo");
             if (!$userinfo['openid'] || $userinfo['errcode']) {
-                if ($LF['wechatoauthopenid']) {
-                    // 跳转获取用户信息
-                    if ($this->cfg['thirdapi']) {
-                        // 如果启用第三方接口
-                        $user = json_decode(HTTP::get($this->cfg['thirdapi'] . "userinfo&openid={$LF['wechatoauthopenid']}"), true);
-                        if ($user['code'] == 1 && $user['data']['openid']) {
-                            $userinfo = $this->user([
-                                "do"     => "save",
-                                "openid" => $user['data']['openid'],
-                                "wechat" => $user['data'],
-                            ]);
-                        } else {
-                            return $user;
-                        }
-                    } else {
-                        $userinfo = $this->user([
-                            "openid" => $LF['wechatoauthopenid'],
-                        ]);
-                    }
-                    if ($userinfo['openid']) {
-                        SESSION::set("{$SID}userinfo", $userinfo);
-                        okinfo(url_clear($_L['url']['now'], "wechatoauthopenid"));
-                        exit();
-                    }
-                } else {
-                    $openid = $this->openid(true);
-                    $query  = http_build_query(array(
-                        "access_token" => $openid['access_token'],
-                        "openid"       => $openid['openid'],
-                        "lang"         => "zh_CN",
-                    ));
-                    $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/sns/userinfo?{$query}"), true);
-                    if ($userinfo && !$userinfo['errcode']) {
-                        $userinfo = $this->user([
-                            "do"     => "save",
-                            "openid" => $userinfo['openid'],
-                            "wechat" => $userinfo,
-                        ]);
-                        SESSION::set("{$SID}userinfo", $userinfo);
-                    }
+                $openid = $this->openid(true);
+                $query  = http_build_query(array(
+                    "access_token" => $openid['access_token'],
+                    "openid"       => $openid['openid'],
+                    "lang"         => "zh_CN",
+                ));
+                $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/sns/userinfo?{$query}"), true);
+                if ($userinfo && !$userinfo['errcode']) {
+                    $userinfo = $this->user([
+                        "do"     => "save",
+                        "openid" => $userinfo['openid'],
+                        "wechat" => $userinfo,
+                    ]);
+                    SESSION::set("{$SID}userinfo", $userinfo);
                 }
             }
         }
@@ -739,6 +696,7 @@ class OA
         header('Pragma: no-cache');
         header("HTTP/1.1 301 Moved Permanently");
         header("Location: $url");
+        exit;
     }
     /**
      * @description: 数组转xml

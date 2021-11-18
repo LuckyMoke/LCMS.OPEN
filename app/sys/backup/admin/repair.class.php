@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-10 17:32:08
+ * @LastEditTime: 2021-11-18 10:16:24
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -161,7 +161,7 @@ class repair extends adminbase
             if (isset($val['Key_name']) && $val['Key_name'] == "PRIMARY") {
                 $key = "PRIMARY";
             } elseif (isset($val['Non_unique']) && $val['Non_unique'] == "1") {
-                $key = "NORMAL";
+                $key = $val['Index_type'];
             } else {
                 $key = "UNIQUE";
             }
@@ -185,7 +185,12 @@ class repair extends adminbase
         } elseif ($data['default'] === "NULL") {
             $sql .= " NULL";
         } elseif ($data['default'] !== "") {
-            $sql .= " NOT NULL DEFAULT {$data['default']}";
+            $sql .= " NOT NULL DEFAULT";
+            if (is_numeric($data['default'])) {
+                $sql .= " {$data['default']}";
+            } else {
+                $sql .= " '{$data['default']}'";
+            }
         }
         return $sql;
     }
@@ -203,15 +208,28 @@ class repair extends adminbase
         switch ($data['index']) {
             case 'PRIMARY':
                 $sql = " PRIMARY";
+                $end = true;
                 break;
             case 'UNIQUE':
                 $sql = " UNIQUE";
+                $end = true;
+                break;
+            case 'BTREE':
+                $end = true;
+                break;
+            case 'FULLTEXT':
+                $sql = " FULLTEXT";
+                $end = false;
+                break;
+            case 'SPATIAL':
+                $sql = " SPATIAL";
+                $end = false;
                 break;
         }
         $sql = $create ? "{$sql} KEY" : "ADD{$sql} INDEX";
         $sql .= $data['index'] != "PRIMARY" ? " `{$key}`" : " ";
         $sql .= "(`{$key}`)";
-        $sql .= " USING BTREE";
+        $sql .= $end ? " USING BTREE" : "";
         return $sql;
     }
 }

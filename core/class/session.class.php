@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-25 16:51:04
+ * @LastEditTime: 2021-11-17 16:23:59
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -161,12 +161,16 @@ class SESSION
     }
     /**
      * @description: 获取SESSIONID
-     * @param {*}
+     * @param bool $type
      * @return string
      */
-    public static function getid()
+    public static function getid($type = false)
     {
         $SESSION = self::start();
-        return $SESSION['id'];
+        if ($type) {
+            return str_replace("LCMS", "", $SESSION['id']);
+        } else {
+            return $SESSION['id'];
+        }
     }
 }

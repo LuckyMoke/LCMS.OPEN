@@ -18,7 +18,7 @@
                 <div class="layui-col-xs12">
                     <div class="setup setup1">
                         <h1 class="title">阅读使用协议
-                            <p style="text-align:center;font-size:12px;">本框架需PHP7.2及以上版本</p>
+                            <p style="text-align:center;font-size:14px;">本框架需PHP7.2及以上版本</p>
                         </h1>
                         <div class="_content"> </div>
                         <div class="btn center">
@@ -27,7 +27,9 @@
                         </div>
                     </div>
                     <div class="setup setup2 hide">
-                        <h1 class="title">系统环境检测</h1>
+                        <h1 class="title">系统环境检测
+                            <p style="text-align:center;font-size:14px;">必须满足所有条件才可进行下一步</p>
+                        </h1>
                         <h3>环境信息</h3>
                         <table class="layui-table">
                             <thead>
@@ -57,7 +59,9 @@
                         </div>
                     </div>
                     <div class="setup setup3 hide">
-                        <h1 class="title">数据库设置</h1>
+                        <h1 class="title">数据库信息
+                            <p style="text-align:center;font-size:14px;">服务器上生成的数据库的连接信息</p>
+                        </h1>
                         <form class="layui-form layui-form-pane">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">连接地址</label>
@@ -103,24 +107,26 @@
                         </form>
                     </div>
                     <div class="setup setup4 hide">
-                        <h1 class="title">管理员设置</h1>
+                        <h1 class="title">超级管理员
+                            <p style="text-align:center;font-size:14px;">设置当前框架的超级管理员账号，请牢记账号密码</p>
+                        </h1>
                         <form class="layui-form layui-form-pane">
                             <div class="layui-form-item">
-                                <label class="layui-form-label">管理员账号</label>
+                                <label class="layui-form-label">账号</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="admin[name]" placeholder="请输入管理员账号" class="layui-input" lay-verify="required" />
+                                    <input type="text" name="admin[name]" placeholder="请输入超级管理员账号" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label">管理员密码</label>
+                                <label class="layui-form-label">密码</label>
                                 <div class="layui-input-block">
-                                    <input type="password" name="admin[pass]" placeholder="请输入管理员密码" class="layui-input" lay-verify="required" />
+                                    <input type="password" name="admin[pass]" placeholder="请输入超级管理员密码" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">重复密码</label>
                                 <div class="layui-input-block">
-                                    <input type="password" name="admin[repass]" placeholder="请再次输入管理员密码" class="layui-input" lay-verify="required" />
+                                    <input type="password" name="admin[repass]" placeholder="请再次输入超级管理员密码" class="layui-input" lay-verify="required" />
                                 </div>
                             </div>
                             <div class="btn">
