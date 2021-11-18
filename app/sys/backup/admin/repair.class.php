@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-18 10:16:24
+ * @LastEditTime: 2021-11-18 13:56:05
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -12,43 +12,48 @@ class repair extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         parent::__construct();
-        $LF = $_L['form'];
-        $LC = $LF['LC'];
+        $LF  = $_L['form'];
+        $LC  = $LF['LC'];
+        $PRE = $_L['mysql']['pre'];
         LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
     }
     public function doindex()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         $title = $LF['apptitle'] ?: "修复";
         $new   = $this->new_sql($LF['appname']);
         $diff  = $this->get_diff($new, $this->get_key($new));
         foreach ($diff as $name => $val) {
-            $sql = [];
+            $sqls = [];
             if ($val['type'] == "create") {
                 foreach ($val['data'] as $key => $data) {
-                    $sql[] = $this->sql_key($key, $data, true);
+                    $sqls[] = $this->sql_key($key, $data, true);
                 }
                 foreach ($val['data'] as $key => $data) {
                     if ($data['index']) {
-                        $sql[] = $this->sql_index($key, $data, true);
+                        $sqls[] = $this->sql_index($key, $data, true);
                     }
                 }
-                if (!$sql) {
+                if (!$sqls) {
                     continue;
                 }
-                $mysql[] = "CREATE TABLE `{$_L['mysql']['pre']}{$name}` ( " . implode(",\n", $sql) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
+                $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
             } else {
                 foreach ($val['data'] as $key => $data) {
-                    $sql[] = $this->sql_key($key, $data);
+                    $ups[]  = $this->sql_val($key, $data);
+                    $sqls[] = $this->sql_key($key, $data);
                 }
                 foreach ($val['data'] as $key => $data) {
                     if ($data['index']) {
-                        $sql[] = $this->sql_index($key, $data);
+                        $sqls[] = $this->sql_index($key, $data);
                     }
                 }
-                $mysql[] = "ALTER TABLE `{$_L['mysql']['pre']}{$name}` " . implode(",\n", $sql) . ";";
+                foreach ($ups as $up) {
+                    $mysql[] = "UPDATE `{$PRE}{$name}` {$up};";
+                }
+                $mysql[] = "ALTER TABLE `{$PRE}{$name}` " . implode(",\n", $sqls) . ";";
             }
         }
         $mysql = $mysql ? implode("\n\n", $mysql) : [];
@@ -69,7 +74,7 @@ class repair extends adminbase
      */
     private function new_sql($app = "")
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         if ($app) {
             $file = "open/{$app}/app";
         } else {
@@ -92,7 +97,7 @@ class repair extends adminbase
      */
     private function get_diff($new, $old)
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         foreach ($new as $name => $data) {
             if ($old[$name]) {
                 foreach ($data as $key => $val) {
@@ -130,16 +135,16 @@ class repair extends adminbase
      */
     private function get_key($new)
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         foreach (DB::$mysql->get_tables() as $name) {
-            $name = str_replace($_L['mysql']['pre'], "", $name);
+            $name = str_replace($PRE, "", $name);
             if ($new[$name]) {
                 $tables[] = $name;
             }
         }
         foreach ($tables as $name) {
             $indexs = $this->get_index($name);
-            foreach (sql_query("SHOW FULL COLUMNS FROM {$_L['mysql']['pre']}{$name}") as $key) {
+            foreach (sql_query("SHOW FULL COLUMNS FROM {$PRE}{$name}") as $key) {
                 $result[$name][$key['Field']] = [
                     "type"    => $key['Type'],
                     "index"   => $indexs[$key['Field']],
@@ -156,8 +161,8 @@ class repair extends adminbase
      */
     private function get_index($table)
     {
-        global $_L, $LF, $LC;
-        foreach (sql_query("SHOW INDEX FROM {$_L['mysql']['pre']}{$table}") as $val) {
+        global $_L, $LF, $LC, $PRE;
+        foreach (sql_query("SHOW INDEX FROM {$PRE}{$table}") as $val) {
             if (isset($val['Key_name']) && $val['Key_name'] == "PRIMARY") {
                 $key = "PRIMARY";
             } elseif (isset($val['Non_unique']) && $val['Non_unique'] == "1") {
@@ -178,7 +183,7 @@ class repair extends adminbase
      */
     private function sql_key($key, $data, $create = false)
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         $sql = $create ? "`{$key}` {$data['type']}" : ($data['update'] ? "ADD" : "MODIFY") . " COLUMN `{$key}` {$data['type']}";
         if ($data['default'] === "AUTO_INCREMENT") {
             $sql .= " NOT NULL AUTO_INCREMENT";
@@ -195,6 +200,25 @@ class repair extends adminbase
         return $sql;
     }
     /**
+     * @description: 更新字段已有数据语句
+     * @param string $key
+     * @param array $data
+     * @return string
+     */
+    private function sql_val($key, $data)
+    {
+        global $_L, $LF, $LC, $PRE;
+        if (!$data['update'] && $data['default'] !== "") {
+            if (is_numeric($data['default'])) {
+                $val = $data['default'];
+            } else {
+                $val = "'{$data['default']}'";
+            }
+            $sql = "SET {$key} = {$val} WHERE {$key} IS NULL";
+        }
+        return $sql;
+    }
+    /**
      * @description: 创建索引语句
      * @param {*} $key
      * @param {*} $data
@@ -204,7 +228,7 @@ class repair extends adminbase
      */
     private function sql_index($key, $data, $create = false)
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         switch ($data['index']) {
             case 'PRIMARY':
                 $sql = " PRIMARY";
