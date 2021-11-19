@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-10-28 15:52:10
+ * @LastEditTime: 2021-11-19 10:46:19
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class TPL
     public static function cachename()
     {
         global $_L;
-        $cachefile = PATH_CACHE . "static/" . md5(L_NAME . self::$tplpath . self::$ver);
+        $cachefile = PATH_CACHE . "static/" . substr(md5(L_NAME . self::$tplpath . self::$ver), 8, 16);
         return $cachefile;
     }
     /**

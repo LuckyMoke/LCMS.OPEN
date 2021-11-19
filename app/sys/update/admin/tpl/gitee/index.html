@@ -23,9 +23,21 @@
                 立即更新
             </button>
         </div>
-        <div class="update-gitee-logs">
-            <h1>更新日志：</h1>
-            <ul class="layui-timeline"></ul>
+        <div class="update-gitee-files">
+            <table class="layui-table" lay-even>
+                <thead>
+                    <tr>
+                        <th>文件</th>
+                        <th width="80" style="text-align:center">
+                            操作
+                        </th>
+                        <th width="80" style="text-align:center">
+                            状态
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
     <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
@@ -65,21 +77,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="update-gitee-files">
-            <table class="layui-table" lay-even>
-                <thead>
-                    <tr>
-                        <th>文件</th>
-                        <th width="80" style="text-align:center">
-                            操作
-                        </th>
-                        <th width="80" style="text-align:center">
-                            状态
-                        </th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="update-gitee-logs">
+            <h1>更新日志：</h1>
+            <ul class="layui-timeline"></ul>
         </div>
     </div>
 </div>
@@ -96,7 +96,9 @@
     <tr>
         <td>{file}</td>
         <td style="text-align:center">{info}</td>
-        <td style="text-align:center" class="update-gitee-file-status">等待中</td>
+        <td style="text-align:center" class="update-gitee-file-status">
+            <font color="#CCCCCC">待更新</font>
+        </td>
     </tr>
 </script>
 <template "ui/foot" />

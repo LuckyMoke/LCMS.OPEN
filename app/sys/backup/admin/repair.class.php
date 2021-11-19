@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-18 13:56:05
+ * @LastEditTime: 2021-11-18 14:16:40
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -42,16 +42,18 @@ class repair extends adminbase
                 $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
             } else {
                 foreach ($val['data'] as $key => $data) {
-                    $ups[]  = $this->sql_val($key, $data);
-                    $sqls[] = $this->sql_key($key, $data);
+                    $sqls[]  = $this->sql_key($key, $data);
+                    $upkey[] = $this->sql_val($key, $data);
                 }
                 foreach ($val['data'] as $key => $data) {
                     if ($data['index']) {
                         $sqls[] = $this->sql_index($key, $data);
                     }
                 }
-                foreach ($ups as $up) {
-                    $mysql[] = "UPDATE `{$PRE}{$name}` {$up};";
+                foreach ($upkey as $val) {
+                    if ($val) {
+                        $mysql[] = "UPDATE `{$PRE}{$name}` {$val};";
+                    }
                 }
                 $mysql[] = "ALTER TABLE `{$PRE}{$name}` " . implode(",\n", $sqls) . ";";
             }
@@ -208,7 +210,7 @@ class repair extends adminbase
     private function sql_val($key, $data)
     {
         global $_L, $LF, $LC, $PRE;
-        if (!$data['update'] && $data['default'] !== "") {
+        if (!$data['update'] && $data['default'] !== "" && $data['default'] !== "NULL") {
             if (is_numeric($data['default'])) {
                 $val = $data['default'];
             } else {
@@ -216,7 +218,7 @@ class repair extends adminbase
             }
             $sql = "SET {$key} = {$val} WHERE {$key} IS NULL";
         }
-        return $sql;
+        return $sql ?: "";
     }
     /**
      * @description: 创建索引语句
@@ -231,26 +233,26 @@ class repair extends adminbase
         global $_L, $LF, $LC, $PRE;
         switch ($data['index']) {
             case 'PRIMARY':
-                $sql = " PRIMARY";
+                $sql = "PRIMARY";
                 $end = true;
                 break;
             case 'UNIQUE':
-                $sql = " UNIQUE";
+                $sql = "UNIQUE";
                 $end = true;
                 break;
             case 'BTREE':
                 $end = true;
                 break;
             case 'FULLTEXT':
-                $sql = " FULLTEXT";
+                $sql = "FULLTEXT";
                 $end = false;
                 break;
             case 'SPATIAL':
-                $sql = " SPATIAL";
+                $sql = "SPATIAL";
                 $end = false;
                 break;
         }
-        $sql = $create ? "{$sql} KEY" : "ADD{$sql} INDEX";
+        $sql = $create ? "{$sql} KEY" : "DROP INDEX IF EXISTS `{$key}`, ADD {$sql} INDEX";
         $sql .= $data['index'] != "PRIMARY" ? " `{$key}`" : " ";
         $sql .= "(`{$key}`)";
         $sql .= $end ? " USING BTREE" : "";

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2021-11-04 13:50:32
+ * @LastEditTime: 2021-11-19 10:59:32
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -109,8 +109,10 @@ class gitee extends adminbase
                                 "info" => str_replace("\n", "<br/>", $val['commit']['message']),
                             ];
                         }
+                        $logs = $logs ? array_unique($logs, SORT_REGULAR) : [];
+                        rsort($logs);
                         ajaxout(1, "success", "", [
-                            "logs"  => $logs ? array_unique($logs, SORT_REGULAR) : [],
+                            "logs"  => $logs,
                             "files" => $this->get_files($result['files']),
                         ]);
                     }
