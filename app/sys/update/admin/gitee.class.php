@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2021-11-19 10:59:32
+ * @LastEditTime: 2021-11-19 17:32:17
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -87,34 +87,37 @@ class gitee extends adminbase
                 $result = json_decode($result, true);
                 if ($result['name']) {
                     ajaxout(1, "success", "", [
-                        "version" => $result['name'],
-                        "status"  => "V{$this->ver()}" >= $result['name'] ? 0 : 1,
+                        "version"          => $result['name'],
+                        "status"           => $this->ver() >= $result['tag_name'] ? 0 : 1,
+                        "target_commitish" => $result['target_commitish'],
                     ]);
                 } else {
                     ajaxout(0, "错误/{$result['message']}");
                 }
                 break;
             case 'logs':
-                $query  = "{$this->api}releases/tags/{$this->ver()}{$this->token}";
-                $result = HTTP::get($query);
-                $result = json_decode($result, true);
-                if ($result['target_commitish']) {
-                    $query  = "{$this->api}compare/{$result['target_commitish']}...master{$this->token}";
+                if ($LF['target_commitish']) {
+                    $query  = "{$this->api}releases/tags/{$this->ver()}{$this->token}";
                     $result = HTTP::get($query);
                     $result = json_decode($result, true);
-                    if ($result['commits'] || $result['files']) {
-                        foreach ($result['commits'] as $val) {
-                            $logs[] = [
-                                "time" => explode("T", $val['commit']['committer']['date'])[0],
-                                "info" => str_replace("\n", "<br/>", $val['commit']['message']),
-                            ];
+                    if ($result['target_commitish']) {
+                        $query  = "{$this->api}compare/{$result['target_commitish']}...{$LF['target_commitish']}{$this->token}";
+                        $result = HTTP::get($query);
+                        $result = json_decode($result, true);
+                        if ($result['commits'] || $result['files']) {
+                            foreach ($result['commits'] as $val) {
+                                $logs[] = [
+                                    "time" => explode("T", $val['commit']['committer']['date'])[0],
+                                    "info" => str_replace("\n", "<br/>", $val['commit']['message']),
+                                ];
+                            }
+                            $logs = $logs ? array_unique($logs, SORT_REGULAR) : [];
+                            rsort($logs);
+                            ajaxout(1, "success", "", [
+                                "logs"  => $logs,
+                                "files" => $this->get_files($result['files']),
+                            ]);
                         }
-                        $logs = $logs ? array_unique($logs, SORT_REGULAR) : [];
-                        rsort($logs);
-                        ajaxout(1, "success", "", [
-                            "logs"  => $logs,
-                            "files" => $this->get_files($result['files']),
-                        ]);
                     }
                 }
                 ajaxout(0, $result['message'] ?: "更新失败");

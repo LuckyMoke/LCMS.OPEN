@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-18 14:16:40
+ * @LastEditTime: 2021-11-19 16:19:07
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -26,7 +26,8 @@ class repair extends adminbase
         $new   = $this->new_sql($LF['appname']);
         $diff  = $this->get_diff($new, $this->get_key($new));
         foreach ($diff as $name => $val) {
-            $sqls = [];
+            $sqls  = [];
+            $upkey = [];
             if ($val['type'] == "create") {
                 foreach ($val['data'] as $key => $data) {
                     $sqls[] = $this->sql_key($key, $data, true);
@@ -106,6 +107,9 @@ class repair extends adminbase
                     if ($old[$name][$key]) {
                         $diff = array_diff($val, $old[$name][$key]);
                         if ($diff) {
+                            if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
+                                $diff['indexdrop'] = true;
+                            }
                             $diff = array_merge([
                                 "type"    => $val['type'],
                                 "index"   => "",
@@ -114,8 +118,9 @@ class repair extends adminbase
                             $result[$name]['data'][$key] = $diff;
                         };
                     } else {
-                        $val['update']               = true;
-                        $result[$name]['data'][$key] = $val;
+                        $result[$name]['data'][$key] = array_merge($val, [
+                            "add" => true,
+                        ]);
                     }
                 }
                 if ($result[$name]['data']) {
@@ -186,7 +191,7 @@ class repair extends adminbase
     private function sql_key($key, $data, $create = false)
     {
         global $_L, $LF, $LC, $PRE;
-        $sql = $create ? "`{$key}` {$data['type']}" : ($data['update'] ? "ADD" : "MODIFY") . " COLUMN `{$key}` {$data['type']}";
+        $sql = $create ? "`{$key}` {$data['type']}" : ($data['add'] ? "ADD" : "MODIFY") . " COLUMN `{$key}` {$data['type']}";
         if ($data['default'] === "AUTO_INCREMENT") {
             $sql .= " NOT NULL AUTO_INCREMENT";
         } elseif ($data['default'] === "NULL") {
@@ -210,7 +215,7 @@ class repair extends adminbase
     private function sql_val($key, $data)
     {
         global $_L, $LF, $LC, $PRE;
-        if (!$data['update'] && $data['default'] !== "" && $data['default'] !== "NULL") {
+        if (!$data['add'] && $data['default'] !== "" && $data['default'] !== "NULL") {
             if (is_numeric($data['default'])) {
                 $val = $data['default'];
             } else {
@@ -233,26 +238,26 @@ class repair extends adminbase
         global $_L, $LF, $LC, $PRE;
         switch ($data['index']) {
             case 'PRIMARY':
-                $sql = "PRIMARY";
+                $sql = " PRIMARY";
                 $end = true;
                 break;
             case 'UNIQUE':
-                $sql = "UNIQUE";
+                $sql = " UNIQUE";
                 $end = true;
                 break;
             case 'BTREE':
                 $end = true;
                 break;
             case 'FULLTEXT':
-                $sql = "FULLTEXT";
+                $sql = " FULLTEXT";
                 $end = false;
                 break;
             case 'SPATIAL':
-                $sql = "SPATIAL";
+                $sql = " SPATIAL";
                 $end = false;
                 break;
         }
-        $sql = $create ? "{$sql} KEY" : "DROP INDEX IF EXISTS `{$key}`, ADD {$sql} INDEX";
+        $sql = $create ? "{$sql} KEY" : ($data['indexdrop'] ? "DROP INDEX `{$key}`, " : "") . "ADD{$sql} INDEX";
         $sql .= $data['index'] != "PRIMARY" ? " `{$key}`" : " ";
         $sql .= "(`{$key}`)";
         $sql .= $end ? " USING BTREE" : "";
