@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2021-11-19 17:32:17
+ * @LastEditTime: 2021-11-23 15:34:32
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -24,7 +24,6 @@ class gitee extends adminbase
             "lcms" => true,
         ]);
         $this->token = "?access_token={$this->cfg['gitee_token']}";
-        LCMS::SUPER() ?: LCMS::X(403, "请在超级管理员账号下使用");
     }
     public function doindex()
     {

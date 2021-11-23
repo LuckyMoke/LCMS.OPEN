@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-11-17 16:23:43
+ * @LastEditTime: 2021-11-23 14:33:31
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -179,7 +179,6 @@ class OA
     public function userinfo($para = [])
     {
         global $_L, $LF, $SID;
-        // SESSION::delall();die;
         if ($para['type'] == "subscribe") {
             // 用户关注后获取用户信息
             $this->access_token();

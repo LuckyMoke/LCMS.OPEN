@@ -57,6 +57,9 @@ class index extends adminbase
         }
         foreach ($config['sys'] as $index => $list) {
             foreach ($list['menu'] as $name => $li) {
+                if ($name == "backup" && !LCMS::SUPER()) {
+                    continue;
+                }
                 foreach ($li['class'] as $class => $type) {
                     if ($type) {
                         $tempsys[$index]['title']         = $list['title'];
@@ -102,7 +105,7 @@ class index extends adminbase
         $tempopen[0]['title'] = "常用应用";
         foreach ($config['open'] as $index => $list) {
             foreach ($list['menu'] as $name => $cls) {
-                if ($_L['developer'] && $_L['developer']['appstore'] === 0 && $name == "appstore") {
+                if ($_L['developer'] && $_L['developer']['appstore'] === 0 && $name == "appstore" || !LCMS::SUPER()) {
                     unset($cls['class']['store']);
                 }
                 if (is_array($cls)) {

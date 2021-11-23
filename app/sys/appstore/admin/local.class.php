@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-03 17:42:39
+ * @LastEditTime: 2021-11-23 15:38:06
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,6 +26,11 @@ class local extends adminbase
             } elseif ($list['menu']) {
                 $open[$name] = $applist['open'][$name]['url']['all'];
             }
+        }
+        if ($level['url']['store'] && $_L['developer']['appstore'] !== 0) {
+            $appstore = true;
+        } else {
+            $appstore = false;
         }
         require LCMS::template("own/local/index");
     }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-19 16:19:07
+ * @LastEditTime: 2021-11-23 15:40:44
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -17,7 +17,6 @@ class repair extends adminbase
         $LF  = $_L['form'];
         $LC  = $LF['LC'];
         $PRE = $_L['mysql']['pre'];
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
     }
     public function doindex()
     {
