@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2021-03-13 16:11:14
+ * @LastEditTime: 2021-11-23 17:50:01
+ * @Description: 框架菜单处理
+ * Copyright 2021 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 class index extends adminbase
@@ -16,50 +23,50 @@ class index extends adminbase
             "type" => "sys",
             "name" => "menu",
             "cate" => "admin",
-            "lcms" => true,
         ]);
-        if (LCMS::SUPER()) {
-            $config['sys'] = [
-                ["title" => "用户中心", "menu" => [
-                    "user" => [
-                        "class" => [
-                            "admin" => 1,
-                        ],
+        $config['sys'] = [
+            ["title" => "用户中心", "menu" => [
+                "user" => [
+                    "class" => [
+                        "admin" => 1,
                     ],
-                ]],
-                ["title" => "框架配置", "menu" => [
-                    "config" => [
-                        "class" => [
-                            "admin"  => 1,
-                            "web"    => 1,
-                            "update" => 1,
-                        ],
+                ],
+            ]],
+            ["title" => "框架配置", "menu" => [
+                "config" => [
+                    "class" => [
+                        "admin"  => 1,
+                        "web"    => 1,
+                        "update" => 1,
                     ],
-                    "backup" => [
-                        "class" => [
-                            "database" => 1,
-                            "optimize" => 1,
-                        ],
+                ],
+                "backup" => [
+                    "class" => [
+                        "database" => 1,
+                        "optimize" => 1,
+                        "files"    => 1,
                     ],
-                    "update" => [
-                        "class" => [
-                            "gitee" => 1,
-                        ],
+                ],
+                "update" => [
+                    "class" => [
+                        "gitee" => 1,
                     ],
-                ]],
-            ];
-        } else {
-            $config['open'] = LCMS::config([
-                "type" => "sys",
-                "name" => "menu",
-                "cate" => "admin",
-            ])['open'];
-        }
+                ],
+            ]],
+        ];
+        $config['open'][1] = [
+            "title" => "应用中心",
+            "menu"  => [
+                "appstore" => [
+                    "class" => [
+                        "local" => 1,
+                        "store" => 1,
+                    ],
+                ],
+            ],
+        ];
         foreach ($config['sys'] as $index => $list) {
             foreach ($list['menu'] as $name => $li) {
-                if ($name == "backup" && !LCMS::SUPER()) {
-                    continue;
-                }
                 foreach ($li['class'] as $class => $type) {
                     if ($type) {
                         $tempsys[$index]['title']         = $list['title'];
@@ -80,10 +87,10 @@ class index extends adminbase
                         ];
                         foreach ($li as $class) {
                             if ($app[$name]['menu'][$class]) {
-                                $sys[$index]['menu'][$name]['menu'][] = array(
+                                $sys[$index]['menu'][$name]['menu'][] = [
                                     "title" => $app[$name]['menu'][$class]['title'],
                                     "url"   => $app[$name]['url'][$class],
-                                );
+                                ];
 
                             }
                         }
@@ -105,8 +112,13 @@ class index extends adminbase
         $tempopen[0]['title'] = "常用应用";
         foreach ($config['open'] as $index => $list) {
             foreach ($list['menu'] as $name => $cls) {
-                if ($_L['developer'] && $_L['developer']['appstore'] === 0 && $name == "appstore" || !LCMS::SUPER()) {
-                    unset($cls['class']['store']);
+                if ($name == "appstore") {
+                    if (!LCMS::SUPER()) {
+                        unset($cls['class']['store']);
+                    }
+                    if ($_L['developer'] && $_L['developer']['appstore'] === 0) {
+                        unset($cls['class']['store']);
+                    }
                 }
                 if (is_array($cls)) {
                     foreach ($cls['class'] as $cname => $type) {
