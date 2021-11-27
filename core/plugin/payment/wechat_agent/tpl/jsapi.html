@@ -15,7 +15,7 @@
         </style>
     </head>
     <body>
-        <div id="mescroll" class="mescroll">
+        <div class="mescroll">
             <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
                 <div class="_title">
                     <img src="{{$_L['url']['site']}}core/plugin/payment/{{self::$payname}}/icon.png"/>
@@ -61,10 +61,10 @@
         </div>
         <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
         <script type="text/javascript" src="{{$_L['url']['static']}}layer/mlayer.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}mescroll/mescroll.min.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
         <script type="text/javascript" src="{{$_L['url']['static']}}../ui/web/static/ljs.js?{{$_L['config']['ver']}}"></script>
         <script type="text/javascript">
-            var jsApiCall=function(){WeixinJSBridge.invoke('getBrandWCPayRequest',JSON.parse('{{$result}}'),function(res){if(res.err_msg!="get_brand_wcpay_request:ok"){LJS._tips('支付失败',0)}})};var JSAPIPay=function(){if(typeof WeixinJSBridge=="undefined"){if(document.addEventListener){document.addEventListener('WeixinJSBridgeReady',jsApiCall,false)}else if(document.attachEvent){document.attachEvent('WeixinJSBridgeReady',jsApiCall);document.attachEvent('onWeixinJSBridgeReady',jsApiCall)}}else{jsApiCall()}};new MeScroll("mescroll",{down:{use:false},up:{use:false}});var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);
+            wx.config({debug:false,appId:'{{$signpackage["appId"]}}',timestamp:'{{$signpackage["timestamp"]}}',nonceStr:'{{$signpackage["nonceStr"]}}',signature:'{{$signpackage["signature"]}}',jsApiList:['hideAllNonBaseMenuItem']});wx.ready(function(){wx.hideAllNonBaseMenuItem()});var jsApiCall=function(){WeixinJSBridge.invoke('getBrandWCPayRequest',JSON.parse('{{$result}}'),function(res){if(res.err_msg!="get_brand_wcpay_request:ok"){LJS._tips('支付失败',0)}})};var JSAPIPay=function(){if(typeof WeixinJSBridge=="undefined"){if(document.addEventListener){document.addEventListener('WeixinJSBridgeReady',jsApiCall,false)}else if(document.attachEvent){document.attachEvent('WeixinJSBridgeReady',jsApiCall);document.attachEvent('onWeixinJSBridgeReady',jsApiCall)}}else{jsApiCall()}};var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);
         </script>
     </body>
 </html>

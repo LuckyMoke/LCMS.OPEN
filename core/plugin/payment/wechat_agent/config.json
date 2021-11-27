@@ -48,8 +48,8 @@
     }, {
         "layui": "input",
         "title": "授权借调",
-        "name": "LC[wechat_agent][oauth]",
-        "value": "oauth",
+        "name": "LC[wechat_agent][thirdapi]",
+        "value": "thirdapi",
         "tips": "公众号借调权限使用，不借调不要填写内容",
         "cname": "hidden payment_wechat_agent"
     }, {

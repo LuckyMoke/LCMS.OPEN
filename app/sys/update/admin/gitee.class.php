@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2021-11-23 15:34:32
+ * @LastEditTime: 2021-11-25 14:11:26
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -100,7 +100,15 @@ class gitee extends adminbase
                     $result = HTTP::get($query);
                     $result = json_decode($result, true);
                     if ($result['target_commitish']) {
-                        $query  = "{$this->api}compare/{$result['target_commitish']}...{$LF['target_commitish']}{$this->token}";
+                        $ocommit = $result['target_commitish'];
+                    } elseif (is_file(PATH_CORE . "commit")) {
+                        $ocommit = file_get_contents(PATH_CORE . "commit");
+                    }
+                    if ($ocommit) {
+                        if ($ocommit == $LF['target_commitish']) {
+                            ajaxout(1, "已是最新版");
+                        }
+                        $query  = "{$this->api}compare/{$ocommit}...{$LF['target_commitish']}{$this->token}";
                         $result = HTTP::get($query);
                         $result = json_decode($result, true);
                         if ($result['commits'] || $result['files']) {
@@ -139,6 +147,9 @@ class gitee extends adminbase
                 if (copydir($path, PATH_WEB)) {
                     deldir($path);
                 };
+                if ($LF['target_commitish']) {
+                    file_put_contents(PATH_CORE . "commit", $LF['target_commitish']);
+                }
                 ajaxout(1, "success");
                 break;
             case 'remove':

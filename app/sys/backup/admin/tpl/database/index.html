@@ -5,26 +5,21 @@
 <span class="backup-span" style="color:#f56c6c;padding-left:10px"></span>
 <div style="overflow-x:auto;">
     <table class="layui-table" style="min-width:1020px;" lay-even>
-        <colgroup>
-            <col />
-            <col width="100" />
-            <col width="180" />
-            <col width="150" />
-            <col width="130" />
-        </colgroup>
         <thead>
             <tr>
                 <th>备份名称</th>
-                <th style="text-align:center">文件大小</th>
-                <th style="text-align:center">备份时间</th>
-                <th style="text-align:center">框架版本</th>
-                <th style="text-align:center">操作</th>
+                <th width="100" style="text-align:center">文件大小</th>
+                <th width="180" style="text-align:center">备份时间</th>
+                <th width="150" style="text-align:center">框架版本</th>
+                <th width="130" style="text-align:center">操作</th>
             </tr>
         </thead>
         <tbody>
             <loop $mysql,$info>
                 <tr>
-                    <td><a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank"><i class="layui-icon layui-icon-unlink"></i> {{$info['name']}}</a></td>
+                    <td>
+                        <a href="{{$_L['url']['site']}}backup/data/{{urlencode($info['name'])}}" target="_blank"><i class="layui-icon layui-icon-unlink"></i> {{$info['name']}}</a>
+                    </td>
                     <td align="center">{{$info['size']}}</td>
                     <td align="center">{{$info['time']}}</td>
                     <td align="center">{{$info['ver']}}</td>

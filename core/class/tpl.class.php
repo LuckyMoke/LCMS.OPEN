@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-11-19 10:46:19
+ * @LastEditTime: 2021-11-24 15:18:09
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -52,7 +52,7 @@ class TPL
                     if ($suffix == "css") {
                         $_L['ui']['css'][] = $val;
                     } elseif ($suffix == "js") {
-                        if (preg_match("/jquery+[-|.]+(.*).js/i", $val)) {
+                        if (preg_match("/jquery+(-|.?)+(.*).js/i", $val)) {
                             $_L['ui']['js-head'][] = $val;
                         } else {
                             $_L['ui']['js'][] = $val;

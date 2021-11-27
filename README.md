@@ -12,9 +12,9 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.2-8.0，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.2-8.1，Mysql5.6以上
 
-PHP扩展：zip扩展（宝塔默认开启）、fileinfo扩展（请手动开启）
+PHP扩展：zip扩展（宝塔默认开启）
 
 硬件要求：CPU 1GHz，内存1G，硬盘空余10G
 

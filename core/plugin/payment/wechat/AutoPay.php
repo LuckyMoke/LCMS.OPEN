@@ -35,6 +35,13 @@ class AutoPay
         switch ($order['paytype']) {
             case 'jsapi':
                 $result = json_encode($WxPay->Jsapi());
+                load::plugin('WeChat/OA');
+                $WX = new OA([
+                    "appid"     => $init['config']['appid'],
+                    "appsecret" => $init['config']['appsecret'],
+                    "thirdapi"  => $init['config']['thirdapi'],
+                ]);
+                $signpackage = $WX->signpackage();
                 require LCMS::template(self::$tpl . "jsapi");
                 break;
             case 'h5':

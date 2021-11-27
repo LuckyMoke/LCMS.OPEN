@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-06-15 20:12:23
+ * @LastEditTime: 2021-11-26 18:49:58
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -42,7 +42,7 @@ class PAYS
             return $payment;
         } else {
             load::plugin("payment/{$payment['payment']}/AutoPay");
-            $payment = AutoPay::cfg([
+            $payment = AutoPay::init([
                 "payment" => $payment[$payment['payment']],
             ]);
             return $payment['payment'];
@@ -116,11 +116,8 @@ class PAYS
             } elseif ($order['status'] == "2") {
                 $order['repaytime'] = datenow();
             }
-            sql_update([
-                "order",
-                $order,
-                "order_no = :order_no",
-                [
+            sql_update(["order",
+                $order, "order_no = :order_no", [
                     ":order_no" => $order['order_no'],
                 ],
             ]);
@@ -136,9 +133,9 @@ class PAYS
         return self::order_info($order['order_no']);
     }
     /**
-     * [get 获取支付页面链接]
-     * @param  array  $para [description]
-     * @return [type]       [description]
+     * @description: 获取支付页面链接
+     * @param array $para
+     * @return string
      */
     public static function get($para = array())
     {
@@ -157,8 +154,7 @@ class PAYS
                 "parameter"    => $para['parameter'],
                 "goback"       => $para['goback'],
             ])));
-            $url = $_L['url']['sys']['own'] ?: $_L['url']['web']['own'];
-            $url = "{$url}n=system&c=pay&paycode={$paycode}";
+            $url = "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=system&c=pay&paycode={$paycode}";
             return $url;
         }
     }

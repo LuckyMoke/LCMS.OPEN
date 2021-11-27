@@ -186,19 +186,24 @@ class WxPayOrder
     private function getOpenid()
     {
         global $_L;
-        $sname  = "LCMS" . strtoupper(substr(md5($this->cfg['appid']), 8, 16)) . "-snsapi_base";
-        $openid = SESSION::get($sname);
-        if ($openid['openid']) {
-            return $openid['openid'];
+        load::plugin('WeChat/OA');
+        $WX = new OA([
+            "appid"     => $this->cfg['appid'],
+            "appsecret" => $this->cfg['appsecret'],
+        ]);
+        $sname = $WX->SID . "snsapi_base";
+        $user  = SESSION::get($sname);
+        if ($user['openid']) {
+            return $user['openid'];
         } else {
-            if ($this->cfg['oauth']) {
-                if ($_L['form']['wechatpayoauth']) {
+            if ($this->cfg['thirdapi']) {
+                if ($_L['form']['openid']) {
                     SESSION::set($sname, [
-                        "openid" => $_L['form']['wechatpayoauth'],
+                        "openid" => $_L['form']['openid'],
                     ]);
-                    goheader(url_clear($_L['url']['now'], "code|state"));
+                    return $_L['form']['openid'];
                 } else {
-                    goheader($this->cfg['oauth'] . urlencode($_L['url']['now']) . "&key=wechatpayoauth");
+                    okinfo($this->cfg['thirdapi'] . "oauth&scope=snsapi_base&goback=" . urlencode($_L['url']['now']));
                 }
             } else {
                 if (!isset($_L['form']['code'])) {
@@ -208,36 +213,16 @@ class WxPayOrder
                         "response_type" => "code",
                         "scope"         => "snsapi_base",
                     ]);
-                    $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
+                    $WX->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
                     exit();
                 } else {
-                    $openid = $this->getOpenidFromMp($_L['form']['code']);
-                    if ($openid['openid']) {
-                        SESSION::set($sname, $openid);
-                        goheader(url_clear($_L['url']['now'], "code|state"));
+                    $user = $WX->getOpenidFromMp($_L['form']['code']);
+                    if ($user['openid']) {
+                        SESSION::set($sname, $user);
+                        return $user['openid'];
                     }
                 }
             }
         }
-    }
-    private function getOpenidFromMp($code)
-    {
-        $query = http_build_query([
-            "appid"      => $this->cfg['appid'],
-            "secret"     => $this->cfg['appsecret'],
-            "code"       => $code,
-            "grant_type" => "authorization_code",
-        ]);
-        return json_decode(http::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
-    }
-    private function header_nocache($url)
-    {
-        header('Expires:0');
-        header('Last-Modified:' . gmdate('D, d M Y H:i:s') . ' GMT');
-        header('Cache-Control:no-store, no-cahe, must-revalidate');
-        header('Cache-Control:post-chedk=0, pre-check=0', false);
-        header('Pragma:no-cache');
-        header("HTTP/1.1 301 Moved Permanently");
-        header("Location:{$url}");
     }
 }

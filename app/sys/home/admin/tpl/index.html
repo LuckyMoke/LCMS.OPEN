@@ -29,10 +29,13 @@
                     <tr>
                         <td>PHP版本</td>
                         <td>
-                            <if $info['php'] gte "7.1.0">
+                            <if $info['php'] gte "7.2.0">
                                 {{$info['php']}}
+                                <if $info['php'] lt "8.0.0">
+                                    / 推荐 PHP8.0 及其以上版本
+                                </if>
                                 <else />
-                                <span style="color:red;">{{$info['php']}} PHP版本太低，需>=7.1</span>
+                                <span style="color:red;">{{$info['php']}} PHP版本太低，需>=7.2</span>
                             </if>
                         </td>
                     </tr>
@@ -43,10 +46,10 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
-                            <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[Zip/必须]</span>
-                            <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[Fileinfo/必须]</span>
-                            <span style="padding-right:2px;color:{{$info['redis']?'green':'red';}}">[Redis]</span>
-                            <span style="padding-right:2px;color:{{$info['memcached']?'green':'red';}}">[Memcached]</span>
+                            <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[zip/必须]</span>
+                            <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[fileinfo]</span>
+                            <span style="padding-right:2px;color:{{$info['redis']?'green':'red';}}">[redis]</span>
+                            <span style="padding-right:2px;color:{{$info['memcached']?'green':'red';}}">[memcached]</span>
                         </td>
                     </tr>
                     <tr>

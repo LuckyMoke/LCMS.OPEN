@@ -26,22 +26,21 @@ switch ($action) {
                 "desc" => PHP_VERSION . " <span style='color:red'><i class='layui-icon layui-icon-close'></i>最低要求7.2.0</span>",
             ];
             $code = 0;
+        } elseif (PHP_VERSION < "8.0.0") {
+            $serv[] = [
+                "name" => "PHP版本",
+                "desc" => PHP_VERSION . " <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本可用 / 推荐 PHP8.0 及其以上版本</span>",
+            ];
         } else {
             $serv[] = [
                 "name" => "PHP版本",
-                "desc" => PHP_VERSION . " <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本符合</span>",
+                "desc" => PHP_VERSION . " <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本可用</span>",
             ];
         }
         if (extension_loaded("zip")) {
             $desc = "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>zip]</span>";
         } else {
             $desc = "<a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFzip%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>zip]</a>";
-            $code = 0;
-        }
-        if (extension_loaded("fileinfo")) {
-            $desc .= " <span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>fileinfo]</span>";
-        } else {
-            $desc .= " <a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFfileinfo%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>fileinfo]</a>";
             $code = 0;
         }
         if (class_exists('pdo')) {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-07-27 17:02:56
+ * @LastEditTime: 2021-11-26 20:04:47
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -192,15 +192,28 @@ class web extends adminbase
                     "type" => "sys",
                     "cate" => "plugin",
                 ]);
-                $form = [
+                $phpext = extension_loaded("fileinfo") ? false : true;
+                $form   = [
+                    ["layui" => "des", "title" => "使用云存储必须开启当前PHP的 fileinfo 扩展！！！"],
                     ["layui" => "radio", "title" => "存储方式",
                         "name"   => "LC[oss][type]",
                         "value"  => $plugin['oss']['type'] ?: "local",
                         "radio"  => [
-                            ["title" => "本地存储", "value" => "local", "tab" => "oss-0"],
-                            ["title" => "七牛云存储", "value" => "qiniu", "tab" => "oss-qiniu"],
-                            ["title" => "腾讯云存储", "value" => "tencent", "tab" => "oss-tencent"],
-                            ["title" => "阿里云存储", "value" => "aliyun", "tab" => "oss-aliyun"],
+                            ["title" => "本地存储",
+                                "value"  => "local",
+                                "tab"    => "oss-0"],
+                            ["title"   => "七牛云存储",
+                                "value"    => "qiniu",
+                                "tab"      => "oss-qiniu",
+                                "disabled" => $phpext],
+                            ["title"   => "腾讯云存储",
+                                "value"    => "tencent",
+                                "tab"      => "oss-tencent",
+                                "disabled" => $phpext],
+                            ["title"   => "阿里云存储",
+                                "value"    => "aliyun",
+                                "tab"      => "oss-aliyun",
+                                "disabled" => $phpext],
                         ]],
                 ];
                 if (LCMS::SUPER()) {
