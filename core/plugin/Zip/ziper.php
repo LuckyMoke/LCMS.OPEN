@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-12-13 17:04:20
- * @LastEditTime: 2021-05-29 18:50:07
+ * @LastEditTime: 2021-11-29 13:17:37
  * @Description:压缩解压文件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -58,7 +58,8 @@ class Ziper
                     $npre = $fromfile[1] ?: $pre;
                     $npre = rtrim(ltrim($npre, '/'), "/") . "/";
                     foreach ($list as $file) {
-                        if (preg_match_all("/^({$jump})/", $file, $out)) {
+                        preg_match_all("/^({$jump})/", $file, $match);
+                        if ($match && $match[0][0]) {
                             continue;
                         }
                         $nfile = str_replace($pre, "", $file);
