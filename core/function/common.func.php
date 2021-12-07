@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-12-01 13:26:28
+ * @LastEditTime: 2021-12-06 16:03:09
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -94,30 +94,25 @@ function arr2sql($old = [], $new = [], $unarr = "")
 /**
  * @description: 反序列化
  * @param mixed $data
- * @return array|bool
+ * @return array
  */
 function sql2arr($data = "")
 {
-    if (empty($data)) {
-        return false;
-    }
     if (is_array($data)) {
-        return $data;
+        $result = $data;
     }
-    if (!is_serialize($data)) {
-        return false;
+    if (!empty($data) && is_serialize($data)) {
+        $result = unserialize($data, [
+            'allowed_classes' => false,
+        ]);
+        if ($result === false) {
+            $cache = preg_replace_callback('!s:(\d+):"(.*?)";!s', function ($matchs) {
+                return 's:' . strlen($matchs[2]) . ':"' . $matchs[2] . '";';
+            }, $data);
+            $result = unserialize($cache);
+        }
     }
-    $result = unserialize($data, [
-        'allowed_classes' => false,
-    ]);
-    if (false === $result) {
-        $cache = preg_replace_callback('!s:(\d+):"(.*?)";!s', function ($matchs) {
-            return 's:' . strlen($matchs[2]) . ':"' . $matchs[2] . '";';
-        }, $data);
-        return unserialize($cache);
-    } else {
-        return $result;
-    }
+    return $result ?: [];
 }
 /**
  * @description: 获取当前时间
@@ -302,21 +297,21 @@ function goheader($url)
 }
 /**
  * @description: 编码转换
- * @param string $str
- * @return string
+ * @param mixed $str
+ * @return mixed
  */
-function gbk2utf8($str = "")
+function gbk2utf8($mixed = "")
 {
-    return mb_convert_encoding($str, "UTF-8", "GBK, GB2312, BIG5, ASCII");
+    return mb_convert_encoding($mixed, "UTF-8", "GBK, GB2312, BIG5, ASCII");
 }
 /**
  * @description: 编码转换
- * @param string $str
- * @return string
+ * @param mixed $str
+ * @return mixed
  */
-function utf82gbk($str = "")
+function utf82gbk($mixed = "")
 {
-    return mb_convert_encoding($str, "GBK", "UTF-8");
+    return mb_convert_encoding($mixed, "GBK", "UTF-8");
 }
 /**
  * @description: 字符串过滤
