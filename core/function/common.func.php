@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-12-06 16:03:09
+ * @LastEditTime: 2021-12-08 16:43:12
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -642,7 +642,7 @@ function is_ip($str = "")
  * @param bool $lazyload
  * @return string
  */
-function html_editor($content = "", $lazyload = true)
+function html_editor($content = "", $lazyload = false)
 {
     if ($content) {
         $content = is_base64($content) ? base64_decode($content) : $content;

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-05-28 15:00:39
+ * @LastEditTime: 2021-12-11 13:56:08
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,7 +12,7 @@ class SQLPDO
     private $pdo;
     private $psm;
     private $errorInfo;
-    private $errorcode;
+    private $errorCode;
     /**
      * @description: 连接数据库
      * @param string $sqlinfo
@@ -50,7 +50,7 @@ class SQLPDO
         if ($this->psm) {
             try {
                 foreach ($params as $key => $val) {
-                    if ($val == "") {
+                    if ($val === "" || $val === null) {
                         $params[$key] = null;
                     }
                 }
