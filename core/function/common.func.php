@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-12-08 16:43:12
+ * @LastEditTime: 2021-12-13 15:08:50
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -98,10 +98,7 @@ function arr2sql($old = [], $new = [], $unarr = "")
  */
 function sql2arr($data = "")
 {
-    if (is_array($data)) {
-        $result = $data;
-    }
-    if (!empty($data) && is_serialize($data)) {
+    if (is_serialize($data)) {
         $result = unserialize($data, [
             'allowed_classes' => false,
         ]);
@@ -111,6 +108,8 @@ function sql2arr($data = "")
             }, $data);
             $result = unserialize($cache);
         }
+    } elseif ($data) {
+        $result = $data;
     }
     return $result ?: [];
 }
@@ -564,8 +563,11 @@ function is_phone($phone)
  * @param mixed $data
  * @return boolean
  */
-function is_serialize($data)
+function is_serialize($data = "")
 {
+    if (empty($data)) {
+        return false;
+    }
     if (!is_string($data)) {
         return false;
     }

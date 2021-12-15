@@ -7,9 +7,18 @@
     </loop>
 </if>
 <if $_L['ui']['xhr']>
-    <loop array_unique($_L['ui']['xhr']),$xhr>
-        <script type="text/javascript" defer="defer" src="{{$xhr}}"></script>
-    </loop>
+    <script type="text/javascript">
+        var xhrs = JSON.parse('{{json_encode(array_unique($_L["ui"]["xhr"]))}}');
+        setTimeout(function(){
+            for (var i = 0; i < xhrs.length; i++) {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = xhrs[i];
+                script.defer = 'defer';
+                document.body.appendChild(script);
+            };
+        }, 500);
+    </script>
 </if>
 <if $_L['ui']['htmlfoot']>
     {{implode(PHP_EOL, $_L['ui']['htmlfoot'])}}

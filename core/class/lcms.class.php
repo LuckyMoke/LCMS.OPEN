@@ -2,61 +2,62 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-10-28 21:50:21
- * @Description:LCMS操作类
- * @Copyright 2020 运城市盘石网络科技有限公司
+ * @LastEditTime: 2021-12-13 15:27:20
+ * @Description: LCMS操作类
+ * @Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class LCMS
 {
     /**
-     * @获取客户端真实IP
+     * @description: 获取客户端真实IP
      * @param {*}
      * @return string
      */
     public static function IP()
     {
-        $iplib = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
-        foreach ($iplib as $val) {
-            if (isset($_SERVER[$val]) && $_SERVER[$val] && strcasecmp($_SERVER[$val], "unknown")) {
-                $ips = explode(',', $_SERVER[$val]);
-                $ip  = $ips[0];
-                break;
+        $headers = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
+        foreach ($headers as $header) {
+            if ($_SERVER[$header]) {
+                $ips = explode(',', $_SERVER[$header]);
+                if ($ips[0] && filter_var($ips[0], FILTER_VALIDATE_IP)) {
+                    $ip = $ips[0];
+                    break;
+                }
             }
         }
-        if ($ip && filter_var($ip, FILTER_VALIDATE_IP)) {
-            return $ip;
-        }
-        return "";
+        return $ip ?: "";
     }
     /**
-     * @输出错误提示页面
-     * @param {*}
+     * @description: 输出错误提示页面
+     * @param int $code
+     * @param string $msg
+     * @param string $go
      * @return {*}
      */
-    public static function X($errcode, $errmsg, $go = "")
+    public static function X($code = 403, $msg = "拒绝访问！", $go = "")
     {
-        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest")) {
-            ajaxout(0, $errmsg ?: "拒绝访问！");
+        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+            ajaxout(0, $msg);
         } else {
             global $_L;
-            $X["code"] = $errcode ?: 403;
-            $X["msg"]  = $errmsg ?: "拒绝访问！";
+            $X = [
+                "code" => $code,
+                "msg"  => $msg,
+            ];
             require self::template(PATH_PUBLIC . "ui/admin/X");
         }
         exit;
     }
     /**
-     * @判断是否为超级管理员
+     * @description:判断是否为超级管理员
      * @param {*}
-     * @return {*}
+     * @return bool
      */
     public static function SUPER()
     {
         global $_L;
-        if ($_L['LCMSADMIN']['type'] == "lcms") {
-            return true;
-        }
+        return $_L['LCMSADMIN']['type'] == "lcms" ? true : false;
     }
     /**
      * @description:
@@ -65,23 +66,40 @@ class LCMS
      * @param {bool} $lcms
      * @return {*}
      */
-    public static function cache($name = "", $para = "", $lcms = false)
+    /**
+     * @description: 系统缓存读写操作
+     * @param string $name
+     * @param string|array $para
+     * @param bool $lcms
+     * @return array
+     */
+    public static function cache($name, $para = [], $lcms = false)
     {
         global $_L;
-        $lcms  = $lcms ? "0" : $_L['ROOTID'];
         $name  = substr(md5(L_NAME . $name), 8, 16);
-        $where = "name = '{$name}' AND lcms = '{$lcms}'";
-        $cache = sql_get(["cache", $where]);
+        $lcms  = $lcms ? 0 : $_L['ROOTID'];
+        $cache = sql_get(["cache",
+            "name = :name AND lcms = :lcms", "", [
+                ":name" => $name,
+                ":lcms" => $lcms,
+            ]]);
         if (!$para && $cache) {
             return sql2arr($cache['parameter']);
         } elseif ($para == "clear") {
-            sql_delete(["cache", $where]);
+            sql_delete(["cache",
+                "name = :name AND lcms = :lcms", [
+                    ":name" => $name,
+                    ":lcms" => $lcms,
+                ]]);
         } elseif (is_array($para)) {
             if ($cache) {
                 sql_update(["cache", [
                     "parameter"  => arr2sql($para),
                     "updatetime" => datenow(),
-                ], $where]);
+                ], "name = :name AND lcms = :lcms", [
+                    ":name" => $name,
+                    ":lcms" => $lcms,
+                ]]);
             } else {
                 sql_insert(["cache", [
                     "name"       => $name,
@@ -93,64 +111,72 @@ class LCMS
         }
     }
     /**
-     * @全自动序列化配置保存操作
-     * @param {array}  do, name, type, cate, lcms, unset
-     * @return {*}
+     * @description: 全自动序列化配置保存操作
+     * @param array $paran[do, form, name, type, cate, lcms, unset]
+     * @return array
      */
     public static function config($paran = [])
     {
         global $_L;
-        $form = $_L['form']['LC'];
-        $para = array(
-            "do"    => $paran['do'] ? $paran['do'] : "get",
-            "name"  => $paran['name'] ? $paran['name'] : L_NAME,
-            "type"  => $paran['type'] ? $paran['type'] : "open",
-            "cate"  => $paran['cate'] ? $paran['cate'] : "auto",
-            "lcms"  => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : "0") : $_L['ROOTID'],
-            "unset" => $paran['unset'] ? $paran['unset'] : "",
-        );
-        $config = sql_get(["config", "name = '{$para['name']}' AND type = '{$para['type']}' AND cate = '{$para['cate']}' AND lcms = '{$para['lcms']}'"]);
+        $para = [
+            "do"    => $paran['do'] ?: "get",
+            "form"  => $paran['form'] ?: $_L['form']['LC'],
+            "name"  => $paran['name'] ?: L_NAME,
+            "type"  => $paran['type'] ?: "open",
+            "cate"  => $paran['cate'] ?: "auto",
+            "lcms"  => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
+            "unset" => $paran['unset'] ?: "",
+        ];
+        $config = sql_get(["config",
+            "name = :name AND type = :type AND cate = :cate AND lcms = :lcms",
+            "", [
+                ":name" => $para['name'],
+                ":type" => $para['type'],
+                ":cate" => $para['cate'],
+                ":lcms" => $para['lcms'],
+            ]]);
         if ($para['do'] == "save") {
             if ($config) {
                 sql_update(["config", [
-                    "parameter" => arr2sql($config['parameter'], $form, $para['unset']),
-                ], "id = '{$config['id']}'"]);
+                    "parameter" => arr2sql($config['parameter'], $para['form'], $para['unset']),
+                ], "id = :id", [
+                    ":id" => $config['id'],
+                ]]);
             } else {
                 sql_insert(["config", [
                     "name"      => $para['name'],
                     "type"      => $para['type'],
                     "cate"      => $para['cate'],
-                    "parameter" => arr2sql($form),
+                    "parameter" => arr2sql($para['form']),
                     "lcms"      => $para['lcms'],
                 ]]);
             }
         } else {
-            $config = sql2arr($config['parameter']);
-            return $config != "N;" ? $config : "";
+            return $config['parameter'] != "N;" ? sql2arr($config['parameter']) : [];
         };
     }
     /**
-     * @description: 处理非config数据表的数据序列化保存与读取
-     * @param {*} $paran [do, table, id, key, unset]
-     * @return {*}
+     * @description: 处理一般数据表的数据序列化保存与读取
+     * @param array $paran[do, table, form, id, key, unset]
+     * @return array
      */
     public static function form($paran = [])
     {
         global $_L;
-        $form = $_L['form']['LC'] ?: [];
-        $para = array(
-            "do"    => $paran['do'] ? $paran['do'] : "save",
-            "table" => $paran['table'] ? $paran['table'] : "",
-            "id"    => $paran['id'] ? $paran['id'] : (is_numeric($form['id']) ? $form['id'] : ""),
-            "key"   => $paran['key'] ? $paran['key'] : "parameter",
-            "unset" => $paran['unset'] ? $paran['unset'] : false,
-        );
-        $data = $para['id'] ? sql_get([$para['table'], "id = '{$para['id']}'"]) : [];
+        $form = $paran['form'] ?: ($_L['form']['LC'] ?: []);
+        $para = [
+            "do"    => $paran['do'] ?: "save",
+            "table" => $paran['table'] ?: "",
+            "id"    => $paran['id'] ?: (is_numeric($form['id']) ? $form['id'] : null),
+            "key"   => $paran['key'] ?: "parameter",
+            "unset" => $paran['unset'] ?: "",
+        ];
+        $data = $para['id'] ? sql_get([$para['table'],
+            "id = :id", "", [
+                ":id" => $para['id'],
+            ]]) : [];
         if ($para['do'] == "get") {
-            $parameter = sql2arr($data[$para['key']]);
-            foreach ($parameter as $key => $val) {
-                $data[$key] = $val;
-            }
+            $data = array_merge($data, sql2arr($data[$para['key']]));
             return $data;
         }
         foreach ($form as $key => $val) {
@@ -162,16 +188,24 @@ class LCMS
         if ($data) {
             if ($parameter) {
                 if ($para['unset'] === true) {
-                    $form[$para['key']] = empty($parameter) ? "" : arr2sql($parameter);
+                    //清空所有旧数据更新
+                    $form[$para['key']] = arr2sql($parameter);
                 } elseif ($para['unset']) {
-                    $form[$para['key']] = empty($parameter) ? "" : arr2sql($data[$para['key']], $parameter, $para['unset']);
+                    //清空指定旧数据更新
+                    $form[$para['key']] = arr2sql($data[$para['key']], $parameter, $para['unset']);
                 } else {
-                    $form[$para['key']] = empty($parameter) ? "" : arr2sql($data[$para['key']], $parameter);
+                    //不清空旧数据直接覆盖
+                    $form[$para['key']] = arr2sql($data[$para['key']], $parameter);
                 }
             }
-            sql_update([$para['table'], $form, "id = '{$para['id']}'"]);
+            sql_update([$para['table'],
+                $form, "id = :id", [
+                    ":id" => $para['id'],
+                ]]);
         } else {
-            $parameter ? $form[$para['key']] = arr2sql($parameter) : "";
+            if ($parameter) {
+                $form[$para['key']] = arr2sql($parameter);
+            }
             sql_insert([$para['table'], $form]);
         }
     }

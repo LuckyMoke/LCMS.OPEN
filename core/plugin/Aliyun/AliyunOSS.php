@@ -44,16 +44,13 @@ class AliyunOSS
                 "code" => 0, "msg" => "未找到文件",
             ];
         }
-        $body  = file_get_contents($file);
-        $finfo = finfo_open(FILEINFO_MIME);
-        $mime  = finfo_file($finfo, $file);
-        finfo_close($finfo);
+        $body    = file_get_contents($file);
         $file    = str_replace(PATH_WEB, "", $file);
         $path    = "/" . $this->cfg['Bucket'] . "/{$file}";
         $headers = [
             "PUT"          => "/{$file} HTTP/1.1",
             "Content-Md5"  => base64_encode(md5($body, true)),
-            "Content-Type" => explode(";", $mime)[0],
+            "Content-Type" => mime_content_type($file),
             "Date"         => gmdate('D, d M Y H:i:s T'),
             "Host"         => $this->api,
         ];

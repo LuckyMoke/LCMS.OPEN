@@ -55,15 +55,12 @@ class TencentOSS
                 "code" => 0, "msg" => "未找到文件",
             ];
         }
-        $body  = file_get_contents($file);
-        $url   = $this->api;
-        $finfo = finfo_open(FILEINFO_MIME);
-        $mime  = finfo_file($finfo, $file);
-        finfo_close($finfo);
+        $body    = file_get_contents($file);
+        $url     = $this->api;
         $headers = [
             "PUT"          => "/{$name} HTTP/1.1",
             "Host"         => $url,
-            "Content-Type" => explode(";", $mime)[0],
+            "Content-Type" => mime_content_type($file),
         ];
         $headers['Authorization'] = $this->sign("put", $name, [], $headers);
 

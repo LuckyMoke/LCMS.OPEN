@@ -41,9 +41,6 @@ class QiniuOSS
             'key'   => $name,
             'crc32' => $this->crc32_data($body),
         ];
-        $finfo = finfo_open(FILEINFO_MIME);
-        $mime  = finfo_file($finfo, $file);
-        finfo_close($finfo);
         $data         = [];
         $mimeBoundary = md5(microtime());
         foreach ($fields as $key => $val) {
@@ -54,7 +51,7 @@ class QiniuOSS
         }
         array_push($data, '--' . $mimeBoundary);
         array_push($data, "Content-Disposition: form-data; name=\"file\"; filename=\"$name\"");
-        array_push($data, "Content-Type: " . explode(";", $mime)[0]);
+        array_push($data, "Content-Type: " . mime_content_type($file));
         array_push($data, '');
         array_push($data, $body);
         array_push($data, '--' . $mimeBoundary . '--');
