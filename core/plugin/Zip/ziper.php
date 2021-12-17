@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-12-13 17:04:20
- * @LastEditTime: 2021-11-29 13:17:37
+ * @LastEditTime: 2021-12-15 17:34:28
  * @Description:压缩解压文件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -30,7 +30,7 @@ class Ziper
      * @param array|string $jump
      * @return bool
      */
-    public function zip($fromfiles, $zipname, $jump = "")
+    public function zip($fromfiles = [], $zipname = "", $jump = "")
     {
         if ($zipname) {
             $zipname = path_absolute($zipname);
@@ -44,10 +44,12 @@ class Ziper
         $jump = str_replace([
             "\/", "/",
         ], "\/", is_array($jump) ? implode('|', $jump) : $jump);
+        $fromfiles = is_array($fromfiles[0]) ? $fromfiles : [$fromfiles];
         foreach ($fromfiles as $fromfile) {
             if (is_array($fromfile)) {
                 $fromfile[0] = path_absolute($fromfile[0]);
                 if (is_file($fromfile[0])) {
+                    $fromfile[1] = ltrim($fromfile[1], '/');
                     $fromfile[1] = $fromfile[1] ?: pathinfo($fromfile[0], PATHINFO_BASENAME);
                     $fromfile[1] = $fromfile[1] ?: str_replace(PATH_WEB, "", $fromfile[0]);
                     $fromfile[1] = ltrim($fromfile[1], '/');
@@ -56,7 +58,8 @@ class Ziper
                     $list = traversal_all($fromfile[0], "", $jump);
                     $pre  = str_replace(PATH_WEB, "", $fromfile[0]);
                     $npre = $fromfile[1] ?: $pre;
-                    $npre = rtrim(ltrim($npre, '/'), "/") . "/";
+                    $npre = rtrim(ltrim($npre, '/'), "/");
+                    $npre = $npre ? $npre . "/" : "";
                     foreach ($list as $file) {
                         preg_match_all("/^({$jump})/", $file, $match);
                         if ($match && $match[0][0]) {

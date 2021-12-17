@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-12-13 15:27:20
+ * @LastEditTime: 2021-12-16 20:29:40
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -333,9 +333,9 @@ class LCMS
                     $html = str_replace($val, $rval, $html);
                 }
             }
-            mkdir(PATH_CACHE . "tpl/");
             $html = str_replace(["<%", "%>"], ["{{", "}}"], $html);
             $html = "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html;
+            mkdir(PATH_CACHE . "tpl/");
             file_put_contents($cache, $html);
         }
         return $cache;
