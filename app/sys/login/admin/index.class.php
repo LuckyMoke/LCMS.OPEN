@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2021-10-31 14:42:09
+ * @LastEditTime: 2021-12-23 15:41:45
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -165,7 +165,7 @@ class index extends adminbase
                     ]);
                     unset($admin['pass']);
                     SESSION::set("LCMSADMIN", $admin);
-                    ajaxout(1, "登录成功", $LF['go'] ? $LF['go'] : $_L['url']['admin']);
+                    ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
                 }
             }
         } else {
@@ -200,7 +200,7 @@ class index extends adminbase
     {
         global $_L, $LF, $CFG, $USER, $RID;
         if ($_L['LCMSADMIN']) {
-            ajaxout(1, "登陆成功", $_L['url']['admin']);
+            ajaxout(1, "登陆成功", $LF['go'] ?: $_L['url']['admin']);
         } else {
             ajaxout(0, "failed");
         }

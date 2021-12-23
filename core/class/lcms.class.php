@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-12-16 20:29:40
+ * @LastEditTime: 2021-12-23 13:48:55
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -254,6 +254,10 @@ class LCMS
         $cache = PATH_CACHE . "tpl/{$cname}.php";
         if (filemtime($file) > filemtime($cache)) {
             $html = file_get_contents($file);
+            //删除注释内容
+            preg_match_all("/<!--(.*?)-->/is", $html, $notes);
+            $html = str_replace($notes[0], "", $html);
+            //标签替换
             preg_match_all("/{{(.*?)}}/i", $html, $match);
             preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
             foreach ($tags[0] as $index => $tag) {
