@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-17 16:16:29
+ * @LastEditTime: 2022-01-03 11:02:41
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -57,11 +57,11 @@ class THUMB
                 $url = oss($path);
                 if (is_url($url)) {
                     if ($x != 0 && $y == 0) {
-                        return "{$url}?image/auto-orient,1/interlace,1/resize,m_lfit,w_{$x},limit_0/quality,q_75";
+                        return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_{$x},limit_0/quality,q_75";
                     } elseif ($x == 0 && $y != 0) {
-                        return "{$url}?image/auto-orient,1/interlace,1/resize,m_lfit,h_{$y},limit_0/quality,q_75";
+                        return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,h_{$y},limit_0/quality,q_75";
                     }
-                    return "{$url}?image/auto-orient,1/interlace,1/resize,m_fill,w_{$x},h_{$y},limit_0/quality,q_75";
+                    return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_fill,w_{$x},h_{$y},limit_0/quality,q_75";
                 }
                 break;
         }

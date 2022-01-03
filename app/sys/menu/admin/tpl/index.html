@@ -1,8 +1,8 @@
 <template "ui/head" />
 <template "ui/css" />
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
-    <input type="hidden" name="LC[open][0][title]" value="常用应用" />
-    <p class="lcms-form-des">单击选择常用的应用，拖动应用进行排序，然后点击 “立即保存” 即可！</p>
+    <input type="hidden" name="LC[open][0][title]" value="快捷菜单" />
+    <p class="lcms-form-des">单击选择常用的功能，拖动进行排序，然后点击 “立即保存” 即可！</p>
     <div id="applist">
         <loop $list,$app,$name>
             <if $app['title']>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2021-11-23 17:50:01
+ * @LastEditTime: 2021-12-30 17:12:28
  * @Description: 框架菜单处理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -109,7 +109,7 @@ class index extends adminbase
                 }
             }
         }
-        $tempopen[0]['title'] = "常用应用";
+        $tempopen[0]['title'] = "快捷菜单";
         foreach ($config['open'] as $index => $list) {
             foreach ($list['menu'] as $name => $cls) {
                 if ($name == "appstore") {
