@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-12-13 15:08:50
+ * @LastEditTime: 2022-01-10 14:23:21
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -504,32 +504,47 @@ function lazyload($str = "")
 }
 /**
  * @description: 检测是否手机端
- * @param string $ua
+ * @param string|array $needle
  * @return bool
  */
-function is_mobile($ua = "")
+function is_mobile($needle = [])
 {
-    $ismobile = 0;
-    if (isset($_SERVER['HTTP_X_WAP_PROFILE'])) {
-        $ismobile++;
+    if (is_pad()) {
+        return false;
     }
-    if (isset($_SERVER['HTTP_CLIENT']) && 'PhoneClient' == $_SERVER['HTTP_CLIENT']) {
-        $ismobile++;
+    $needle = is_array($needle) ? $needle : [$needle];
+    $needle = array_merge([
+        "mobile", "mobi", "wap", "android", "iphone",
+    ], $needle);
+    return in_ua($needle);
+}
+/**
+ * @description: 检测是否平板端
+ * @param string|array $needle
+ * @return bool
+ */
+function is_pad($needle = [])
+{
+    $needle = is_array($needle) ? $needle : [$needle];
+    $needle = array_merge([
+        "ipad", "tablet",
+    ], $needle);
+    return in_ua($needle);
+}
+/**
+ * @description: 检测是否PC端
+ * @param string|array $needle
+ * @return bool
+ */
+function is_pc($needle = [])
+{
+    if (is_mobile()) {
+        return false;
     }
-    if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) {
-        $ismobile++;
+    if (is_pad()) {
+        return false;
     }
-    if (isset($_SERVER['HTTP_USER_AGENT'])) {
-        if (preg_match("/(nokia|sony|ericsson|mot|samsung|htc|sgh|lg|sharp|sie-|philips|panasonic|alcatel|lenovo|iphone|ipod|blackberry|meizu|android|netfront|symbian|ucweb|windowsce|palm|operamini|operamobi|openwave|nexusone|cldc|midp|wap|mobile" . ($ua ? '|' . $ua : '') . ")/i", strtolower($_SERVER['HTTP_USER_AGENT']))) {
-            $ismobile++;
-        }
-    }
-    if (isset($_SERVER['HTTP_ACCEPT'])) {
-        if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html')))) {
-            $ismobile++;
-        }
-    }
-    return $ismobile > 0 ? true : false;
+    return true;
 }
 /**
  * @description: 判断是否为base64编码
@@ -637,6 +652,34 @@ function is_ip($str = "")
     if (filter_var($str, FILTER_VALIDATE_IP)) {
         return true;
     }
+}
+/**
+ * @description: 判断字符串是否包含
+ * @param string $string
+ * @param string|array $needle
+ * @return bool
+ */
+function in_string($string = "", $needle = [])
+{
+    $needle = is_array($needle) ? $needle : [$needle];
+    foreach ($needle as $val) {
+        if (stripos($string, $val) !== false) {
+            return true;
+        }
+    }
+    return false;
+}
+/**
+ * @description: 判断UA中是否包含
+ * @param string|array $needle
+ * @return bool
+ */
+function in_ua($needle = [])
+{
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        return in_string($_SERVER['HTTP_USER_AGENT'], $needle);
+    }
+    return false;
 }
 /**
  * @description: HTML内容解码懒加载

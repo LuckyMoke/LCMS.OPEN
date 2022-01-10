@@ -32,12 +32,12 @@
             </div>
             <div class="__box_l layui-bg-cyan">
                 <div class="__box_logo">
-                    <if strpos($_SERVER['HTTP_USER_AGENT'],"YeeClient")===false>
+                    <if in_ua(["YeeClient", "DingTalk", "wxwork"])>
+                        <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
+                        <else />
                         <a href="{{$_L['url']['admin']}}">
                             <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                         </a>
-                        <else />
-                        <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
                     </if>
                 </div>
                 <ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="lcmsleftnav">
