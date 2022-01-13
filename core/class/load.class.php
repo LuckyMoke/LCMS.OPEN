@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-01-12 20:44:41
+ * @LastEditTime: 2022-01-13 14:27:21
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -74,6 +74,8 @@ class LOAD
     {
         if (in_string($fname, PATH_WEB)) {
             $file = $fname;
+        } elseif (in_string($fname, "/")) {
+            $file = PATH_APP_NOW . $fname;
         } else {
             $file = PATH_APP_NOW . "include/function/{$fname}";
         }
