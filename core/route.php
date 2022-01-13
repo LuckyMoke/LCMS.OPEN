@@ -29,4 +29,4 @@ if ((!L_NAME || !L_CLASS || !L_ACTION) && !preg_match('/^[A-Za-z0-9_]+$/', L_TYP
 }
 require_once PATH_CORE_CLASS . 'load.class.php';
 define('CLIENT_IP', LCMS::IP());
-load::module();
+LOAD::init();
