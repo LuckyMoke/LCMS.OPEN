@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2021-10-30 10:30:39
+ * @LastEditTime: 2022-02-26 20:36:52
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -137,12 +137,13 @@ class find extends adminbase
         if (!PUB::is_email($number) && !is_phone($number)) {
             okinfo("?rootid={$RID}&n=login&c=find");
         }
-        sql_get(["admin",
+        $admin = sql_get(["admin",
             "email = :number OR mobile = :number",
             "id DESC", [
                 ":number" => $number,
             ],
-        ]) || LCMS::X(404, "未找到页面");
+        ]);
+        $admin || LCMS::X(404, "未找到页面");
         switch ($LF['action']) {
             case 'save':
                 if (mb_strlen($LF['pass'], "UTF8") < 6) {
@@ -153,6 +154,11 @@ class find extends adminbase
                 ], "email = :number OR mobile = :number", [
                     ":number" => $number,
                 ]]);
+                LCMS::log([
+                    "user" => $admin['name'],
+                    "type" => "login",
+                    "info" => "找回密码",
+                ]);
                 ajaxout(1, "密码设置成功", "?rootid={$RID}&n=login");
                 break;
             default:

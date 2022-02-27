@@ -1,5 +1,20 @@
-<template "ui/head"/>
+<template "ui/head" />
 <form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}config&action=save" method="post" target="_self">
-    <ui form($form)/>
+    <ui form($form['base']) />
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">用户协议</li>
+            <li>隐私声明</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <ui form($readme['user']) />
+            </div>
+            <div class="layui-tab-item">
+                <ui form($readme['privacy']) />
+            </div>
+        </div>
+    </div>
+    <ui form($form['btn']) />
 </form>
-<template "ui/foot"/>
+<template "ui/foot" />

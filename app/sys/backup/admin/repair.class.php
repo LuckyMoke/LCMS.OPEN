@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-11-23 15:40:44
+ * @LastEditTime: 2022-02-27 14:31:00
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -22,18 +22,18 @@ class repair extends adminbase
     {
         global $_L, $LF, $LC, $PRE;
         $title = $LF['apptitle'] ?: "修复";
-        $new   = $this->new_sql($LF['appname']);
-        $diff  = $this->get_diff($new, $this->get_key($new));
+        $new   = $this->getNewSql($LF['appname']);
+        $diff  = $this->getDiff($new, $this->getKey($new));
         foreach ($diff as $name => $val) {
             $sqls  = [];
             $upkey = [];
             if ($val['type'] == "create") {
                 foreach ($val['data'] as $key => $data) {
-                    $sqls[] = $this->sql_key($key, $data, true);
+                    $sqls[] = $this->setKey($key, $data, true);
                 }
                 foreach ($val['data'] as $key => $data) {
                     if ($data['index']) {
-                        $sqls[] = $this->sql_index($key, $data, true);
+                        $sqls[] = $this->setIndex($key, $data, true);
                     }
                 }
                 if (!$sqls) {
@@ -42,12 +42,12 @@ class repair extends adminbase
                 $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
             } else {
                 foreach ($val['data'] as $key => $data) {
-                    $sqls[]  = $this->sql_key($key, $data);
-                    $upkey[] = $this->sql_val($key, $data);
+                    $sqls[]  = $this->setKey($key, $data);
+                    $upkey[] = $this->setVal($key, $data);
                 }
                 foreach ($val['data'] as $key => $data) {
                     if ($data['index']) {
-                        $sqls[] = $this->sql_index($key, $data);
+                        $sqls[] = $this->setIndex($key, $data);
                     }
                 }
                 foreach ($upkey as $val) {
@@ -62,8 +62,16 @@ class repair extends adminbase
         if ($mysql) {
             sql_query($mysql);
             if (sql_error()) {
+                LCMS::log([
+                    "type" => "system",
+                    "info" => "数据{$title}-{$title}失败",
+                ]);
                 ajaxout(0, "{$title}失败：" . sql_error());
             }
+            LCMS::log([
+                "type" => "system",
+                "info" => "数据{$title}-{$title}成功",
+            ]);
             ajaxout(1, "{$title}成功");
         } else {
             ajaxout(0, "数据表不需要{$title}");
@@ -72,9 +80,9 @@ class repair extends adminbase
     /**
      * @description: 获取数据结构
      * @param string $app
-     * @return {*}
+     * @return array
      */
-    private function new_sql($app = "")
+    private function getNewSql($app = "")
     {
         global $_L, $LF, $LC, $PRE;
         if ($app) {
@@ -93,11 +101,11 @@ class repair extends adminbase
     }
     /**
      * @description: 对比数据结构不同
-     * @param {*} $new
-     * @param {*} $old
-     * @return {*}
+     * @param array $new
+     * @param array $old
+     * @return array
      */
-    private function get_diff($new, $old)
+    private function getDiff($new, $old)
     {
         global $_L, $LF, $LC, $PRE;
         foreach ($new as $name => $data) {
@@ -136,10 +144,10 @@ class repair extends adminbase
     }
     /**
      * @description: 获取数据库中表键
-     * @param {*} $table
-     * @return {*}
+     * @param array $table
+     * @return array
      */
-    private function get_key($new)
+    private function getKey($new)
     {
         global $_L, $LF, $LC, $PRE;
         foreach (DB::$mysql->get_tables() as $name) {
@@ -149,7 +157,7 @@ class repair extends adminbase
             }
         }
         foreach ($tables as $name) {
-            $indexs = $this->get_index($name);
+            $indexs = $this->getIndex($name);
             foreach (sql_query("SHOW FULL COLUMNS FROM {$PRE}{$name}") as $key) {
                 $result[$name][$key['Field']] = [
                     "type"    => $key['Type'],
@@ -162,10 +170,10 @@ class repair extends adminbase
     }
     /**
      * @description: 获取数据库中表索引
-     * @param {*} $table
-     * @return {*}
+     * @param string $table
+     * @return array
      */
-    private function get_index($table)
+    private function getIndex($table)
     {
         global $_L, $LF, $LC, $PRE;
         foreach (sql_query("SHOW INDEX FROM {$PRE}{$table}") as $val) {
@@ -182,12 +190,12 @@ class repair extends adminbase
     }
     /**
      * @description: 创建字段语句
-     * @param {*} $key
-     * @param {*} $data
-     * @param {*} $create
-     * @return {*}
+     * @param string $key
+     * @param array $data
+     * @param bool $create
+     * @return string
      */
-    private function sql_key($key, $data, $create = false)
+    private function setKey($key, $data, $create = false)
     {
         global $_L, $LF, $LC, $PRE;
         $sql = $create ? "`{$key}` {$data['type']}" : ($data['add'] ? "ADD" : "MODIFY") . " COLUMN `{$key}` {$data['type']}";
@@ -211,7 +219,7 @@ class repair extends adminbase
      * @param array $data
      * @return string
      */
-    private function sql_val($key, $data)
+    private function setVal($key, $data)
     {
         global $_L, $LF, $LC, $PRE;
         if (!$data['add'] && $data['default'] !== "" && $data['default'] !== "NULL") {
@@ -226,13 +234,12 @@ class repair extends adminbase
     }
     /**
      * @description: 创建索引语句
-     * @param {*} $key
-     * @param {*} $data
-     * @param {*} $create
-     * @param {*} $del
-     * @return {*}
+     * @param string $key
+     * @param array $data
+     * @param bool $create
+     * @return string
      */
-    private function sql_index($key, $data, $create = false)
+    private function setIndex($key, $data, $create = false)
     {
         global $_L, $LF, $LC, $PRE;
         switch ($data['index']) {

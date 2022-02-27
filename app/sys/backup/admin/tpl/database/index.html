@@ -1,4 +1,10 @@
 <template "ui/head" />
+<style type="text/css">
+    .layui-table td,
+    .layui-table th {
+        padding: 5px 15px;
+    }
+</style>
 <p class="lcms-form-des">数据库将备份在网站根目录 <code>/backup/data/</code> 目录下，请勿修改文件名称！！！恢复数据时，请在对应版本的框架下操作！如果数据量很大，此功能非常耗费系统资源，建议使用服务器备份！</p>
 <button type="button" class="layui-btn backup">立即备份</button>
 <button type="button" class="layui-btn layui-btn-warm repair">修复框架数据库</button>

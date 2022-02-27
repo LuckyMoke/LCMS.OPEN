@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-10-28 20:26:58
+ * @LastEditTime: 2022-02-27 14:12:34
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -33,18 +33,13 @@ class admin extends adminbase
                 ["title" => "姓名", "field" => "title",
                     "width"  => 150],
                 ["title" => "邮箱", "field" => "email",
-                    "width"  => 120],
+                    "width"  => 200],
                 ["title" => "手机号", "field" => "mobile",
                     "width"  => 120],
                 ["title" => "用户权限", "field" => "type",
-                    "width"  => 120],
+                    "width"  => 200],
                 ["title" => "上级用户", "field" => "lcms",
-                    "width"  => 120],
-                ["title" => "最后登录时间", "field" => "logintime",
-                    "width"  => 170,
-                    "align"  => "center"],
-                ["title" => "最后登录IP", "field" => "ip",
-                    "width"  => 150],
+                    "width"  => 200],
                 ["title" => "到期时间", "field" => "lasttime",
                     "width"  => 170,
                     "align"  => "center"],
@@ -148,7 +143,7 @@ class admin extends adminbase
                         "type"   => $val['type'] == "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
                         "status" => [
                             "type"  => "switch",
-                            "url"   => "ajax&action=admin-list-status",
+                            "url"   => "ajax&action=admin-list-save",
                             "text"  => "启用|禁用",
                             "value" => $val['status'],
                         ],
@@ -157,9 +152,15 @@ class admin extends adminbase
                 TABLE::out($data);
                 break;
             case 'admin-list-save':
+                if ($LF['id'] == $_L['LCMSADMIN']['id']) {
+                    ajaxout(0, "禁止修改");
+                    exit;
+                }
                 sql_update(["admin", [
                     $LC['name'] => $LC['value'],
-                ], "id = '{$LC['id']}'"]);
+                ], "id = :id", [
+                    ":id" => $LC['id'],
+                ]]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
                 } else {
@@ -179,23 +180,13 @@ class admin extends adminbase
                     }
                 }
                 if (TABLE::del("admin")) {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "用户管理-删除用户-{$LC['name']}",
+                    ]);
                     ajaxout(1, "删除成功", "reload");
                 } else {
                     ajaxout(0, "删除失败");
-                }
-                break;
-            case 'admin-list-status':
-                if ($LF['id'] == $_L['LCMSADMIN']['id']) {
-                    ajaxout(0, "禁止修改");
-                    exit;
-                }
-                sql_update(["admin", [
-                    "status" => $LC['value'] ? "1" : "0",
-                ], "id = '{$LF['id']}'"]);
-                if (sql_error()) {
-                    ajaxout(0, "保存失败");
-                } else {
-                    ajaxout(1, "保存成功");
                 }
                 break;
             case 'admin-level-list':
@@ -219,7 +210,9 @@ class admin extends adminbase
             case 'admin-level-list-save':
                 sql_update(["admin_level", [
                     $LC['name'] => $LC['value'],
-                ], "id = '{$LC['id']}'"]);
+                ], "id = :id", [
+                    ":id" => $LC['id'],
+                ]]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败");
                 } else {
@@ -232,6 +225,10 @@ class admin extends adminbase
                     ajaxout(0, "有用户使用此权限");
                 } else {
                     if (TABLE::del("admin_level")) {
+                        LCMS::log([
+                            "type" => "system",
+                            "info" => "用户管理-删除权限-{$LC['name']}",
+                        ]);
                         ajaxout(1, "删除成功", "reload");
                     } else {
                         ajaxout(0, "删除失败");
@@ -386,6 +383,10 @@ class admin extends adminbase
                 if (sql_error()) {
                     ajaxout(0, "保存失败", "", sql_error());
                 } else {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "用户管理-" . ($LC['id'] ? "修改" : "添加") . "用户-{$LC['name']}",
+                    ]);
                     ajaxout(1, "保存成功", "close");
                 }
                 break;
@@ -457,8 +458,8 @@ class admin extends adminbase
                 require LCMS::template("own/iframe/admin-level-edit");
                 break;
             case 'admin-level-save':
-                if ($_L['form']['level']) {
-                    $level = json_decode(base64_decode($_L['form']['level']), true);
+                if ($LF['level']) {
+                    $level = json_decode(base64_decode($LF['level']), true);
                     if (is_array($level)) {
                         $_L['form']['LC'] = array_merge_recursive($level, $LC);
                     }
@@ -470,6 +471,10 @@ class admin extends adminbase
                 if (sql_error()) {
                     ajaxout(0, sql_error());
                 } else {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "用户管理-" . ($LC['id'] ? "修改" : "添加") . "权限-{$LC['name']}",
+                    ]);
                     ajaxout(1, "保存成功", "close");
                 }
                 break;
@@ -508,80 +513,97 @@ class admin extends adminbase
                     "cate" => "admin",
                 ]);
                 $form = [
-                    ["layui"   => "input", "title" => "登陆地址",
-                        "name"     => "login_url",
-                        "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
-                        "disabled" => true,
-                    ],
-                    ["layui"   => "input", "title" => "注册地址",
-                        "name"     => "login_url",
-                        "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
-                        "disabled" => true,
-                    ],
-                    ["layui" => "title", "title" => "登陆设置"],
-                    ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！"],
-                    ["layui" => "radio", "title" => "微信扫码",
-                        "name"   => "LC[reg][qrcode]",
-                        "value"  => $config['reg']['qrcode'] ?? "0",
-                        "radio"  => [
-                            ["title" => "关闭", "value" => "0"],
-                            ["title" => "开启", "value" => "1"],
+                    "base" => [
+                        ["layui"   => "input", "title" => "登陆地址",
+                            "name"     => "login_url",
+                            "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
+                            "disabled" => true,
                         ],
-                    ],
-                    ["layui" => "title", "title" => "注册设置"],
-                    ["layui" => "radio", "title" => "用户注册",
-                        "name"   => "LC[reg][on]",
-                        "value"  => $config['reg']['on'] ?? "0",
-                        "radio"  => [
-                            ["title" => "关闭", "value" => "0", "tab" => "tab0"],
-                            ["title" => "账号验证", "value" => "justuser", "tab" => "tab_justuser"],
-                            ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
-                            ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
+                        ["layui"   => "input", "title" => "注册地址",
+                            "name"     => "login_url",
+                            "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
+                            "disabled" => true,
                         ],
-                    ],
-                    ["layui" => "radio", "title" => "找回密码",
-                        "name"   => "LC[reg][findpass]",
-                        "value"  => $config['reg']['findpass'] ?? "0",
-                        "radio"  => [
-                            ["title" => "关闭", "value" => "0"],
-                            ["title" => "开启", "value" => "1"],
+                        ["layui" => "title", "title" => "登陆设置"],
+                        ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！"],
+                        ["layui" => "radio", "title" => "微信扫码",
+                            "name"   => "LC[reg][qrcode]",
+                            "value"  => $config['reg']['qrcode'] ?? "0",
+                            "radio"  => [
+                                ["title" => "关闭", "value" => "0"],
+                                ["title" => "开启", "value" => "1"],
+                            ],
                         ],
-                        "tips"   => "需配置邮箱或短信接口！",
-                    ],
-                    ["layui" => "radio", "title" => "注册审核",
-                        "name"   => "LC[reg][status]",
-                        "value"  => $config['reg']['status'] ?? "0",
-                        "radio"  => [
-                            ["title" => "手动审核", "value" => "0"],
-                            ["title" => "自动审核", "value" => "1"],
+                        ["layui" => "title", "title" => "注册设置"],
+                        ["layui" => "radio", "title" => "用户注册",
+                            "name"   => "LC[reg][on]",
+                            "value"  => $config['reg']['on'] ?? "0",
+                            "radio"  => [
+                                ["title" => "关闭", "value" => "0", "tab" => "tab0"],
+                                ["title" => "账号验证", "value" => "justuser", "tab" => "tab_justuser"],
+                                ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
+                                ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
+                            ],
                         ],
-                    ],
-                    ["layui" => "input", "title" => "短信ID",
-                        "name"   => "LC[reg][sms_tplcode]",
-                        "value"  => $config['reg']['sms_tplcode'],
-                        "cname"  => "hidden tab_mobile",
-                        "tips"   => "请先到全局设置中配置短信插件",
-                    ],
-                    ["layui" => "input", "title" => "短信签名",
-                        "name"   => "LC[reg][sms_signname]",
-                        "value"  => $config['reg']['sms_signname'],
-                        "cname"  => "hidden tab_mobile",
-                        "tips"   => "请先到全局设置中配置短信插件",
-                    ],
-                    ["layui" => "selectN", "title" => "默认权限",
-                        "name"   => "admin_level",
-                        "value"  => "{$config['reg']['lcms']}/{$config['reg']['level']}",
-                        "verify" => "required",
-                        "url"    => "select&action=admin-level",
-                    ],
-                    ["layui"   => "checkbox", "title" => "注册字段",
-                        "checkbox" => [
-                            ["title" => "姓名",
-                                "name"   => "LC[reg][input_title]",
-                                "value"  => $config['reg']['input_title']],
+                        ["layui" => "radio", "title" => "找回密码",
+                            "name"   => "LC[reg][findpass]",
+                            "value"  => $config['reg']['findpass'] ?? "0",
+                            "radio"  => [
+                                ["title" => "关闭", "value" => "0"],
+                                ["title" => "开启", "value" => "1"],
+                            ],
+                            "tips"   => "需配置邮箱或短信接口！",
                         ],
+                        ["layui" => "radio", "title" => "注册审核",
+                            "name"   => "LC[reg][status]",
+                            "value"  => $config['reg']['status'] ?? "0",
+                            "radio"  => [
+                                ["title" => "手动审核", "value" => "0"],
+                                ["title" => "自动审核", "value" => "1"],
+                            ],
+                        ],
+                        ["layui" => "input", "title" => "短信ID",
+                            "name"   => "LC[reg][sms_tplcode]",
+                            "value"  => $config['reg']['sms_tplcode'],
+                            "cname"  => "hidden tab_mobile",
+                            "tips"   => "请先到全局设置中配置短信插件",
+                        ],
+                        ["layui" => "input", "title" => "短信签名",
+                            "name"   => "LC[reg][sms_signname]",
+                            "value"  => $config['reg']['sms_signname'],
+                            "cname"  => "hidden tab_mobile",
+                            "tips"   => "请先到全局设置中配置短信插件",
+                        ],
+                        ["layui" => "selectN", "title" => "默认权限",
+                            "name"   => "admin_level",
+                            "value"  => "{$config['reg']['lcms']}/{$config['reg']['level']}",
+                            "verify" => "required",
+                            "url"    => "select&action=admin-level",
+                        ],
+                        ["layui"   => "checkbox", "title" => "注册字段",
+                            "checkbox" => [
+                                ["title" => "姓名",
+                                    "name"   => "LC[reg][input_title]",
+                                    "value"  => $config['reg']['input_title']],
+                            ],
+                        ],
+                        ["layui" => "title", "title" => "用户协议"],
                     ],
-                    ["layui" => "btn", "title" => "立即保存"],
+                    "btn"  => [
+                        ["layui" => "btn", "title" => "立即保存"],
+                    ],
+                ];
+                $readme = [
+                    "user"    => [
+                        ["layui" => "editor", "title" => "内容",
+                            "name"   => "LC[readme][user]",
+                            "value"  => $config['readme']['user']],
+                    ],
+                    "privacy" => [
+                        ["layui" => "editor", "title" => "内容",
+                            "name"   => "LC[readme][privacy]",
+                            "value"  => $config['readme']['privacy']],
+                    ],
                 ];
                 require LCMS::template("own/admin-config");
                 break;
@@ -661,6 +683,10 @@ class admin extends adminbase
                 if (sql_error()) {
                     ajaxout(0, "保存失败", "", sql_error());
                 } else {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "用户管理-修改资料",
+                    ]);
                     ajaxout(1, "保存成功", "close");
                 }
                 break;

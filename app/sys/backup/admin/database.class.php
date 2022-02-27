@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2021-05-27 19:41:10
+ * @LastEditTime: 2022-02-27 15:22:17
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -12,40 +12,47 @@ class database extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         parent::__construct();
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     public function doindex()
     {
-        global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "仅超级管理员可设置");
-        }
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可访问");
+        switch ($LF['action']) {
             case 'backup':
-                $table                     = sql_query("SHOW TABLE STATUS");
-                is_array($table) && $table = array_column($table, "Name");
-                makedir("/backup/data/");
-                delfile("/backup/backup.sql");
-                ajaxout(1, "success", "", $table);
+                $table = sql_query("SHOW TABLE STATUS");
+                if (is_array($table)) {
+                    $table = array_column($table, "Name");
+                    makedir("/backup/data/");
+                    delfile("/backup/backup.sql");
+                    ajaxout(1, "success", "", $table);
+                }
+                ajaxout(0, "备份失败");
                 break;
             case 'backup-table':
                 set_time_limit(300);
-                $this->export_table($_L['form']['name']);
+                $this->exportTable($LF['name']);
                 ajaxout(1, "success");
                 break;
             case 'backup-ok':
                 set_time_limit(300);
-                $this->export_mysql();
+                $this->exportMysql();
                 break;
             case 'restore':
                 ini_set("memory_limit", -1);
                 set_time_limit(300);
-                $this->insertsql();
+                $this->insertMysql();
                 break;
             case 'del':
-                $file = "/backup/data/{$_L['form']['name']}";
+                $file = "/backup/data/{$LF['name']}";
                 if (delfile($file)) {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "数据备份-删除备份-{$LF['name']}",
+                    ]);
                     ajaxout(1, "删除成功");
                 } else {
                     ajaxout(0, "文件不存在");
@@ -64,7 +71,7 @@ class database extends adminbase
      */
     private function get_mysql()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $dir   = PATH_WEB . "backup/data/";
         $files = traversal_one($dir, "LCMS");
         foreach ($files['file'] as $file) {
@@ -83,18 +90,18 @@ class database extends adminbase
         return $result;
     }
     /**
-     * @导入数据库:
+     * @description: 导入数据库
      * @param {*}
      * @return {*}
      */
-    private function insertsql()
+    private function insertMysql()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $path  = PATH_WEB . "backup/";
-        $file  = "{$path}data/{$_L['form']['name']}";
+        $file  = "{$path}data/{$LF['name']}";
         $cache = "{$path}backup.sql";
         if (is_file($file)) {
-            if ($_L['form']['ver'] == $_L['config']['ver']) {
+            if ($LF['ver'] == $_L['config']['ver']) {
                 unzipfile($file, $path);
                 if (is_file($cache)) {
                     $sqldata = file_get_contents($cache);
@@ -105,25 +112,34 @@ class database extends adminbase
                         }
                     }
                     delfile($cache);
-                    ajaxout(1, "恢复成功！");
-                } else {
-                    ajaxout(0, "恢复失败，文件不存在！");
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "数据恢复-恢复成功-{$LF['name']}",
+                    ]);
+                    ajaxout(1, "恢复成功");
                 }
             } else {
-                ajaxout(0, "恢复失败，框架版本不匹配！");
+                LCMS::log([
+                    "type" => "system",
+                    "info" => "数据恢复-恢复失败-框架版本不匹配",
+                ]);
+                ajaxout(0, "恢复失败-框架版本不匹配");
             }
-        } else {
-            ajaxout(0, "恢复失败，文件不存在！");
         }
+        LCMS::log([
+            "type" => "system",
+            "info" => "数据恢复-恢复失败",
+        ]);
+        ajaxout(0, "恢复失败");
     }
     /**
-     * @导出数据表:
-     * @param {*}
+     * @description: 导出数据表
+     * @param string $name
      * @return {*}
      */
-    private function export_table($name)
+    private function exportTable($name)
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $start  = 0;
         $cache  = PATH_WEB . "backup/backup.sql";
         $create = sql_query("SHOW CREATE TABLE {$name}");
@@ -132,7 +148,7 @@ class database extends adminbase
         }
         $tablename = str_replace($_L['mysql']['pre'], "", $name);
         $numrows   = sql_counter([$tablename]);
-        if ($tablename != "cache") {
+        if ($tablename != "cache" && $tablename != "log") {
             while ($start < $numrows) {
                 $rows = sql_getall([$tablename, "", "", "", "", "", [$start, 500]]);
                 if (!empty($rows)) {
@@ -155,13 +171,13 @@ class database extends adminbase
         }
     }
     /**
-     * @备份数据库操作:
+     * @description: 备份数据库
      * @param {*}
      * @return {*}
      */
-    private function export_mysql()
+    private function exportMysql()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         $path  = PATH_WEB . "backup/";
         $cache = "{$path}backup.sql";
         if (is_file($cache)) {
@@ -171,12 +187,17 @@ class database extends adminbase
                 [$cache, "backup.sql"],
             ], "{$bpath}{$bname}.LCMS")) {
                 delfile($cache);
+                LCMS::log([
+                    "type" => "system",
+                    "info" => "数据备份-备份成功-{$bname}.LCMS",
+                ]);
                 ajaxout(1, "备份成功");
-            } else {
-                ajaxout(0, "备份失败");
             }
-        } else {
-            ajaxout(0, "备份失败");
         }
+        LCMS::log([
+            "type" => "system",
+            "info" => "数据备份-备份失败",
+        ]);
+        ajaxout(0, "备份失败");
     }
 }

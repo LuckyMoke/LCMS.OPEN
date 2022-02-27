@@ -64,7 +64,7 @@ class AliyunEMAIL
             if ($result['EnvId']) {
                 $result = [
                     "code" => 1,
-                    "msg"  => "success",
+                    "msg"  => "发送成功",
                     "data" => $EM,
                 ];
             } else {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-12-23 13:48:55
+ * @LastEditTime: 2022-02-27 16:11:05
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -16,6 +16,7 @@ class LCMS
      */
     public static function IP()
     {
+        $ip      = "";
         $headers = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
         foreach ($headers as $header) {
             if ($_SERVER[$header]) {
@@ -208,6 +209,28 @@ class LCMS
             }
             sql_insert([$para['table'], $form]);
         }
+    }
+    /**
+     * @description: 日志操作
+     * @param array $paran[user, type, ip, info, url, postdata]
+     * @return {*}
+     */
+    public static function log($paran = [])
+    {
+        global $_L;
+        $para = [
+            "user"      => $paran['user'] ?: ($_L['LCMSADMIN'] ? $_L['LCMSADMIN']['name'] : ""),
+            "type"      => $paran['type'] ?: "",
+            "ip"        => $paran['ip'] ?: CLIENT_IP . ":" . HTTP_PORT,
+            "info"      => $paran['info'] ?: "",
+            "url"       => $paran['url'] ?: "",
+            "addtime"   => datenow(),
+            "parameter" => $paran['postdata'] ? arr2sql([
+                "postdata" => $paran['postdata'],
+            ]) : "",
+            "lcms"      => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
+        ];
+        $para['type'] && sql_insert(["log", $para]);
     }
     /**
      * @模板标签处理

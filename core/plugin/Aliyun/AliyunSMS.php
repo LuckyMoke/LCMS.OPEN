@@ -53,7 +53,7 @@ class AliyunSMS
             if ($result['Code'] == "OK") {
                 $result = [
                     "code" => 1,
-                    "msg"  => "success",
+                    "msg"  => "发送成功",
                     "data" => $PN,
                 ];
             } else {

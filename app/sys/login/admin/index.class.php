@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2021-12-23 15:41:45
+ * @LastEditTime: 2022-02-27 16:10:27
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -128,11 +128,21 @@ class index extends adminbase
         ]);
         //如果无用户数据
         if (!$admin) {
+            LCMS::log([
+                "user" => $LF['name'],
+                "type" => "login",
+                "info" => "登陆失败-账号或密码错误",
+            ]);
             ajaxout(0, "账号或密码错误");
         }
         //如果有用户数据
-        if ($admin['status'] == '1') {
+        if ($admin && $admin['status'] == 1) {
             if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
+                LCMS::log([
+                    "user" => $admin['name'],
+                    "type" => "login",
+                    "info" => "登陆失败-此账户已到期",
+                ]);
                 ajaxout(0, "此账户已到期");
             } else {
                 $openid = SESSION::get("LOGINOPENID");
@@ -151,6 +161,11 @@ class index extends adminbase
                             "aid"    => $admin['id'],
                         ]]);
                     }
+                    LCMS::log([
+                        "user" => $admin['name'],
+                        "type" => "login",
+                        "info" => "绑定账号-{$openid}",
+                    ]);
                     ajaxout(1, "绑定成功", "goback");
                 } else {
                     //登陆账号
@@ -165,6 +180,11 @@ class index extends adminbase
                     ]);
                     unset($admin['pass']);
                     SESSION::set("LCMSADMIN", $admin);
+                    LCMS::log([
+                        "user" => $admin['name'],
+                        "type" => "login",
+                        "info" => "登录成功",
+                    ]);
                     ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
                 }
             }
@@ -185,6 +205,11 @@ class index extends adminbase
             if ($admin) {
                 $admin = json_decode($admin, true);
                 SESSION::set("LCMSADMIN", $admin);
+                LCMS::log([
+                    "user" => $admin['name'],
+                    "type" => "login",
+                    "info" => "登陆成功-第三方登陆",
+                ]);
                 ajaxout(1, "success");
             }
         }
@@ -220,6 +245,29 @@ class index extends adminbase
         ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}");
     }
     /**
+     * @description: 获取用户协议
+     * @param {*}
+     * @return {*}
+     */
+    public function doreadme()
+    {
+        global $_L, $LF, $CFG, $USER, $RID;
+        $config = LCMS::config([
+            "name" => "user",
+            "type" => "sys",
+            "cate" => "admin",
+        ]);
+        switch ($LF['action']) {
+            case 'user':
+                $content = $config['readme']['user'];
+                break;
+            case 'privacy':
+                $content = $config['readme']['privacy'];
+                break;
+        }
+        ajaxout(1, "success", "", html_editor($content));
+    }
+    /**
      * @description: 退出登陆
      * @param {*}
      * @return {*}
@@ -227,6 +275,11 @@ class index extends adminbase
     public function dologinout()
     {
         global $_L, $LF, $CFG, $USER, $RID;
+        LCMS::log([
+            "user" => $_L['LCMSADMIN']['name'],
+            "type" => "login",
+            "info" => "退出登陆",
+        ]);
         $RID = $_L['LCMSADMIN']['lcms'];
         SESSION::del("LCMSADMIN");
         okinfo("?rootid={$RID}&n=login&go=" . urlencode($LF['go']));

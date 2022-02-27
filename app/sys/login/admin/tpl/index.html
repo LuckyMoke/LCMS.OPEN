@@ -16,6 +16,14 @@
                 <img src="{{$_L['url']['app']}}index.php?n=system&c=pin" title="点击刷新" onclick="this.src=LCMS.url.app+'index.php?n=system&c=pin&'+Math.random()" />
             </div>
         </if>
+        <div class="login-readme">
+            <label>
+                <input type="checkbox" checked="checked" required="required" />
+                阅读并同意
+            </label>
+            <a href="javascript:;" type="user">《用户协议》</a>
+            <a href="javascript:;" type="privacy">《隐私声明》</a>
+        </div>
         <button class="login-btn" type="submit">{{$page['btn']}}</button>
     </form>
 </div>

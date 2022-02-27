@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-11-11 14:39:05
+ * @LastEditTime: 2022-02-27 14:40:41
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -62,34 +62,34 @@ class index extends adminbase
                     $Qiniu = new QiniuOSS($_L['plugin']['oss']['qiniu']);
                     $Qiniu->delete($file);
                     $this->sql("delete", "../{$file}");
-                    ajaxout(1, "删除成功", "reload");
                     break;
                 case 'tencent':
                     load::plugin("Tencent/TencentOSS");
                     $Tencent = new TencentOSS($_L['plugin']['oss']['tencent']);
                     $Tencent->delete($file);
                     $this->sql("delete", "../{$file}");
-                    ajaxout(1, "删除成功", "reload");
                     break;
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
                     $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
                     $Aliyun->delete($file);
                     $this->sql("delete", "../{$file}");
-                    ajaxout(1, "删除成功", "reload");
                     break;
                 default:
                     $this->sql("delete", "../{$file}");
-                    if (!sql_error()) {
-                        delfile("../{$file}");
-                        ajaxout(1, "删除成功", "reload");
-                    } else {
+                    if (sql_error()) {
                         ajaxout(0, "删除失败");
+                    } else {
+                        delfile("../{$file}");
                     }
                     break;
             }
         }
         $this->sql("deletebyid", $LC['id']);
+        LCMS::log([
+            "type" => "system",
+            "info" => "删除文件-{$file}",
+        ]);
         ajaxout(1, "删除成功", "reload");
     }
     /**

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2021-10-30 10:30:47
+ * @LastEditTime: 2022-02-27 15:42:27
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -150,8 +150,18 @@ class reg extends adminbase
         //写入数据库
         sql_insert(["admin", $admin]);
         if (sql_error()) {
+            LCMS::log([
+                "user" => $admin['name'],
+                "type" => "login",
+                "info" => "用户注册-注册失败-" . sql_error(),
+            ]);
             ajaxout(0, "注册失败，请联系管理员");
         } else {
+            LCMS::log([
+                "user" => $admin['name'],
+                "type" => "login",
+                "info" => "用户注册-注册成功",
+            ]);
             ajaxout(1, "注册成功，请登陆", "?rootid={$RID}&n=login");
         }
     }

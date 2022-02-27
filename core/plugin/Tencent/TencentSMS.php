@@ -49,7 +49,7 @@ class TencentSMS
                 if ($result['SendStatusSet'][0]['SerialNo']) {
                     $result = [
                         "code" => 1,
-                        "msg"  => "success",
+                        "msg"  => "发送成功",
                         "data" => $PN,
                     ];
                 } else {

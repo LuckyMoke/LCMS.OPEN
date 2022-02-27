@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-07-27 16:31:54
+ * @LastEditTime: 2022-02-27 14:48:35
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -87,18 +87,18 @@ class EMAIL
                     try {
 
                         $email->send();
-                        return [
+                        $result = [
                             "code" => 1,
                             "msg"  => "发送成功",
                         ];
                     } catch (Exception $e) {
-                        return [
+                        $result = [
                             "code" => 0,
                             "msg"  => $email->ErrorInfo,
                         ];
                     }
                 } else {
-                    return [
+                    $result = [
                         "code" => 0,
                         "msg"  => "收件地址不能为空",
                     ];
@@ -113,7 +113,7 @@ class EMAIL
                     "Reply"           => $cfg['Reply'],
                     "Alias"           => $cfg['Alias'],
                 ]);
-                return $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
+                $result = $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
                 break;
             case 'tencent':
                 load::plugin('Tencent/TencentEMAIL');
@@ -124,8 +124,17 @@ class EMAIL
                     "Reply"     => $cfg['Reply'],
                     "Alias"     => $cfg['Alias'],
                 ]);
-                return $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
+                $result = $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
                 break;
         }
+        LCMS::log([
+            "type"     => "email",
+            "info"     => "{$Param['TO']}-{$result['msg']}",
+            "postdata" => [
+                "title" => $Param['Title'],
+                "body"  => $Param['Body'],
+            ],
+        ]);
+        return $result ?: [];
     }
 }

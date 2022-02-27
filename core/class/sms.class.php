@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-07-26 17:56:47
- * @LastEditTime: 2021-08-05 12:29:18
+ * @LastEditTime: 2022-02-27 14:49:50
  * @Description: 短信发送类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -43,7 +43,7 @@ class SMS
                     "TemplateCode"    => $Param['ID'],
                     "SignName"        => $Param['Name'],
                 ]);
-                return $SMS->send($Param['Phone'], $Param['Param']);
+                $result = $SMS->send($Param['Phone'], $Param['Param']);
                 break;
             case 'tencent':
                 load::plugin('Tencent/TencentSMS');
@@ -54,8 +54,14 @@ class SMS
                     "TemplateId"  => $Param['ID'],
                     "SignName"    => $Param['Name'],
                 ]);
-                return $SMS->send($Param['Phone'], array_values($Param['Param']));
+                $result = $SMS->send($Param['Phone'], array_values($Param['Param']));
                 break;
         }
+        LCMS::log([
+            "type"     => "sms",
+            "info"     => "{$Param['Phone']}-{$result['msg']}",
+            "postdata" => $Param['Param'],
+        ]);
+        return $result ?: [];
     }
 }
