@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-02-27 16:11:05
+ * @LastEditTime: 2022-03-04 11:43:14
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -36,15 +36,42 @@ class LCMS
      * @param string $go
      * @return {*}
      */
-    public static function X($code = 403, $msg = "拒绝访问！", $go = "")
+    public static function X($code = 403, $msg = "拒绝访问", $go = "")
     {
         if ($_SERVER['CONTENT_TYPE'] == "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
             ajaxout(0, $msg);
         } else {
             global $_L;
             $X = [
-                "code" => $code,
-                "msg"  => $msg,
+                "icon"  => "layui-icon-face-cry",
+                "color" => "#F56C6C",
+                "title" => "SORRY",
+                "code"  => $code,
+                "msg"   => $msg,
+            ];
+            require self::template(PATH_PUBLIC . "ui/admin/X");
+        }
+        exit;
+    }
+    /**
+     * @description: 输出成功提示页面
+     * @param int $code
+     * @param string $msg
+     * @param string $go
+     * @return {*}
+     */
+    public static function Y($code = 200, $msg = "处理完成", $go = "")
+    {
+        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+            ajaxout(1, $msg);
+        } else {
+            global $_L;
+            $X = [
+                "icon"  => "layui-icon-face-smile",
+                "color" => "#67C23A",
+                "title" => "SUCCESS",
+                "code"  => $code,
+                "msg"   => $msg,
             ];
             require self::template(PATH_PUBLIC . "ui/admin/X");
         }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-11-03 11:08:03
+ * @LastEditTime: 2022-03-07 14:15:03
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,12 +20,14 @@ class LAY
         $para['tipsbox']   = $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "";
         return $para;
     }
-    public static function form($list)
+    public static function form($list = [])
     {
         foreach ($list as $para) {
-            $para = self::start($para);
-            $type = $para['layui'];
-            self::$type($para);
+            if ($para) {
+                $para = self::start($para);
+                $type = $para['layui'];
+                self::$type($para);
+            }
         }
     }
     public static function title($para)
@@ -161,13 +163,14 @@ class LAY
     public static function color($para)
     {
         $para                = self::start($para);
+        $para['format']      = $para['format'] ?: "rgb";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请选择颜色";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block lcms-form-colorpicker' data-value='{$para['value']}'>
+                <div class='layui-input-block lcms-form-colorpicker' data-value='{$para['value']}' data-format='{$para['format']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' />
+                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}'{$para['verifybox']} />
                     </div>
                     <div class='_color'></div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
