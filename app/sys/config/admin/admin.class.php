@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-09-02 15:46:23
+ * @LastEditTime: 2022-03-15 13:58:19
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,23 +12,24 @@ class admin extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         parent::__construct();
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     public function doindex()
     {
-        global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "仅超级管理员可设置");
-        }
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        switch ($LF['action']) {
             case 'save':
-                $_L['form']['LC']['domain']     = str_replace(["http://", "https://", "/"], "", $_L['form']['LC']['domain']);
-                $_L['form']['LC']['oauth_code'] = strtoupper(md5(HTTP_HOST));
+                $LC['domain']     = str_replace(["http://", "https://", "/"], "", $LC['domain']);
+                $LC['oauth_code'] = strtoupper(md5(HTTP_HOST));
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "admin",
+                    "form" => $LC,
                     "lcms" => true,
                 ]);
                 ajaxout(1, "保存成功");
@@ -83,21 +84,20 @@ class admin extends adminbase
     }
     public function doweb()
     {
-        global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "仅超级管理员可设置");
-        }
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        switch ($LF['action']) {
             case 'save':
-                $domain = parse_url($_L['form']['LC']['domain']);
+                $domain = parse_url($LC['domain']);
                 if ($domain['host']) {
-                    $_L['form']['LC']['https']  = $domain['scheme'] == "https" ? "1" : "0";
-                    $_L['form']['LC']['domain'] = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+                    $LC['https']  = $domain['scheme'] == "https" ? "1" : "0";
+                    $LC['domain'] = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
                 }
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "web",
+                    "form" => $LC,
                     "lcms" => true,
                 ]);
                 ajaxout(1, "保存成功");
@@ -153,31 +153,30 @@ class admin extends adminbase
     }
     public function dosafe()
     {
-        global $_L;
-        if (!LCMS::SUPER()) {
-            LCMS::X(403, "仅超级管理员可设置");
-        }
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        switch ($LF['action']) {
             case 'save':
-                if ($_L['form']['LC']['dir'] != $_L['config']['admin']['dir']) {
+                if ($LC['dir'] != $_L['config']['admin']['dir']) {
                     if (!getdirpower(PATH_WEB)) {
-                        unset($_L['form']['LC']['dir']);
+                        unset($LC['dir']);
                         ajaxout(1, "根目录没有写权限", "reload");
                     } else {
                         $change = true;
                     }
                 }
-                $_L['form']['LC']['mimelist'] = str_ireplace([
+                $LC['mimelist'] = str_ireplace([
                     "|php", "php", "|pht", "pht",
-                ], "", $_L['form']['LC']['mimelist']);
+                ], "", $LC['mimelist']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "admin",
+                    "form" => $LC,
                     "lcms" => true,
                 ]);
                 if ($change) {
-                    ajaxout(1, "保存成功", "{$_L['url']['own_form']}change&olddir={$_L['config']['admin']['dir']}&newdir={$_L['form']['LC']['dir']}");
+                    ajaxout(1, "保存成功", "{$_L['url']['own_form']}change&olddir={$_L['config']['admin']['dir']}&newdir={$LC['dir']}");
                 } else {
                     ajaxout(1, "保存成功", "reload");
                 }
@@ -190,7 +189,7 @@ class admin extends adminbase
                 ));
                 $form = [
                     ["layui" => "title", "title" => "登陆安全"],
-                    ["layui" => "input", "title" => "后台目录",
+                    ["layui" => "input_sort", "title" => "后台目录",
                         "name"   => "LC[dir]",
                         "value"  => $config['dir'] ?: "admin",
                         "tips"   => "建议修改后台目录提高安全性",
@@ -233,11 +232,19 @@ class admin extends adminbase
                         "value"  => $config['login_code']['luosimao']['api_key'],
                         "cname"  => "hidden login_code_luosimao"],
                     ["layui" => "title", "title" => "上传安全"],
-                    ["layui" => "input", "title" => "上传大小",
+                    ["layui" => "input_sort", "title" => "上传大小",
                         "name"   => "LC[attsize]",
                         "value"  => $config['attsize'],
                         "tips"   => "限制上传文件的大小，单位KB",
                         "verify" => "required"],
+                    ["layui"  => "slider", "title" => "图片压缩率",
+                        "name"    => "LC[attquality]",
+                        "value"   => $config['attquality'] ?: 0.7,
+                        "tips"    => "jpg格式图片压缩率",
+                        "min"     => 10,
+                        "max"     => 100,
+                        "step"    => 10,
+                        "settips" => "%"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",
                         "value"  => $config['mimelist'],
@@ -266,29 +273,26 @@ class admin extends adminbase
     }
     public function dochange()
     {
-        global $_L;
-        if (LCMS::SUPER()) {
-            if ($_L['form']['olddir'] && $_L['form']['newdir'] && is_dir(PATH_WEB . $_L['form']['olddir']) && !is_dir(PATH_WEB . $_L['form']['newdir']) && movedir(PATH_WEB . $_L['form']['olddir'], PATH_WEB . $_L['form']['newdir'])) {
-                echo '<script type="text/javascript">top.location.href = "' . $_L['url']['site'] . $_L['form']['newdir'] . '";</script>';
-            } else {
-                LCMS::X(500, "发生致命错误，您需要在FTP中手动修改后台目录");
-            }
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || LCMS::X(403, "您没有权限修改后台目录");
+        if ($LF['olddir'] && $LF['newdir'] && is_dir(PATH_WEB . $LF['olddir']) && !is_dir(PATH_WEB . $LF['newdir']) && movedir(PATH_WEB . $LF['olddir'], PATH_WEB . $LF['newdir'])) {
+            echo '<script type="text/javascript">top.location.href = "' . $_L['url']['site'] . $LF['newdir'] . '";</script>';
         } else {
-            LCMS::X(403, "您没有权限修改后台目录");
+            LCMS::X(500, "发生致命错误，您需要在FTP中手动修改后台目录");
         }
     }
     public function doclear()
     {
-        global $_L;
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
             case 'save':
-                if ($_L['form']['tpl']) {
+                if ($LF['tpl']) {
                     deldir(PATH_CACHE . "tpl");
                 }
-                if ($_L['form']['static']) {
+                if ($LF['static']) {
                     deldir(PATH_CACHE . "static");
                 }
-                if ($_L['form']['cfg']) {
+                if ($LF['cfg']) {
                     sql_delete(["cache"]);
                 }
                 ajaxout(1, "清除成功", "close");
@@ -310,8 +314,8 @@ class admin extends adminbase
     }
     public function docheckredis()
     {
-        global $_L;
-        if ($_L['form']['checked'] == "1") {
+        global $_L, $LF, $LC;
+        if ($LF['checked'] == "1") {
             load::plugin("Redis/rds");
             $redis = new RDS();
             $redis->do->setex("LCMSREDISTEST", 60, "success");

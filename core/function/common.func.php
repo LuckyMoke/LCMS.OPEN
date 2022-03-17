@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-03-09 14:45:18
+ * @LastEditTime: 2022-03-14 17:44:00
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -720,8 +720,8 @@ function oss($url)
     if (!is_url($url) && $_L['plugin']['oss']['type'] != "local") {
         $preg = "../upload/";
         if (strpos($url, $preg) !== false) {
-            $url = str_replace("../", "", $url);
-            return $_L['plugin']['oss']['domain'] . $url;
+            $url = str_replace("../", $_L['plugin']['oss']['domain'], $url);
+            return $url;
         }
     }
     return $url;
