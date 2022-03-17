@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-03-15 13:58:19
+ * @LastEditTime: 2022-03-17 11:53:55
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -239,7 +239,7 @@ class admin extends adminbase
                         "verify" => "required"],
                     ["layui"  => "slider", "title" => "图片压缩率",
                         "name"    => "LC[attquality]",
-                        "value"   => $config['attquality'] ?: 0.7,
+                        "value"   => $config['attquality'] ?: 70,
                         "tips"    => "jpg格式图片压缩率",
                         "min"     => 10,
                         "max"     => 100,
