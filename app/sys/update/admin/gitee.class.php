@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2022-02-27 14:14:39
+ * @LastEditTime: 2022-03-18 15:43:45
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -51,10 +51,11 @@ class gitee extends adminbase
                             ["title" => "香港", "value" => 2],
                             ["title" => "备用", "value" => 3],
                         ]],
-                    ["layui" => "input", "title" => "私人令牌",
-                        "name"   => "LC[gitee_token]",
-                        "value"  => $CFG['gitee_token'],
-                        "verify" => "required"],
+                    ["layui"      => "input", "title" => "私人令牌",
+                        "name"        => "LC[gitee_token]",
+                        "value"       => $CFG['gitee_token'],
+                        "placeholder" => "输入私人令牌后可进行在线更新操作",
+                        "verify"      => "required"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];
                 require LCMS::template("own/gitee/config");

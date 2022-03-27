@@ -2,7 +2,7 @@
     "info": {
         "title": "应用中心",
         "description": "",
-        "ver": "1.0.2",
+        "ver": "1.0.3",
         "author": "运城市盘石网络科技有限公司"
     },
     "class": {
@@ -11,6 +11,10 @@
             "level": {
                 "index": {
                     "title": "应用列表",
+                    "menu": 0
+                },
+                "uninstall": {
+                    "title": "卸载应用",
                     "menu": 0
                 }
             }

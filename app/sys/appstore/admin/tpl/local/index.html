@@ -41,7 +41,7 @@
                 <td class="layui-hide-xs app-hide-sm">{{$applist['open'][$app]['info']['description']}}</td>
                 <td class="layui-hide-xs" style="text-align:center;">
                     <div class="layui-btn-group">
-                        <if $_L['developer']['appstore']!==0>
+                        <if $appstore>
                             <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">更新</button>
                         </if>
                         <button class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&appname={{$app}}">修复</button>

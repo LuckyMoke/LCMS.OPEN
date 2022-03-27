@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-11-23 15:38:06
+ * @LastEditTime: 2022-03-27 13:25:26
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -27,7 +27,7 @@ class local extends adminbase
                 $open[$name] = $applist['open'][$name]['url']['all'];
             }
         }
-        if ($level['url']['store'] && $_L['developer']['appstore'] !== 0) {
+        if ($level['power']['store']['index'] != "no" && $_L['developer']['appstore'] !== 0) {
             $appstore = true;
         } else {
             $appstore = false;
@@ -48,7 +48,7 @@ class local extends adminbase
             $this->updatesql(str_replace("[TABLE_PRE]", $_L['mysql']['pre'], file_get_contents($dir . "uninstall.sql")));
         }
         deldir($dir);
-        ajaxout(1, 'success');
+        ajaxout(1, '卸载成功');
     }
     /**
      * @description: 更新数据库
