@@ -1,1 +1,0 @@
-if($('#applist').length>0){Sortable.create(document.getElementById('applist'))}

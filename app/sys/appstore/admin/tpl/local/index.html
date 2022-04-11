@@ -1,55 +1,41 @@
 <template "ui/head" />
 <template "ui/css" />
-<table class="layui-table app-local">
-    <p class="lcms-form-des hide oauth-domain" style="display: block;">点击应用名称，可直接打开应用！卸载应用会删除应用文件和应用所有数据！</p>
-    <thead>
-        <tr>
-            <th width="50px" style="text-align:center;">图标</th>
-            <th width="200px">应用名</th>
-            <if $appstore>
-                <th width="200px" class="layui-hide-xs app-hide-sm">开发者</th>
-            </if>
-            <th width="100px" class="layui-hide-xs" style="text-align:center;">本地版本</th>
-            <if $appstore>
-                <th width="100px" class="layui-hide-xs" style="text-align:center;">最新版本</th>
-            </if>
-            <th class="layui-hide-xs app-hide-sm">应用描述</th>
-            <th class="layui-hide-xs" style="text-align:center;" width="110px">操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        <loop $open,$url,$app>
-            <tr data-name="{{$app}}" data-ver="{{$applist['open'][$app]['info']['ver']}}">
-                <td style="text-align:center;padding:0;">
-                    <a href="{{$url}}" title="{{$applist['open'][$app]['info']['title']}}">
-                        <if is_file(PATH_APP."open/{$app}/icon.gif")> <img src="{{$_L['url']['app']}}open/{{$app}}/icon.gif?ver={{$applist['open'][$app]['info']['ver']}}" width="28px" height="28px" />
-                        <else />
-                        <img src="{{$_L['url']['static']}}images/appicon.gif" width="28px" height="28px" />
-                        </if>
+<if $isindex>
+    <p class="lcms-form-des">
+        拖动左上角可排序，点击应用LOGO可直接打开应用，卸载应用会删除应用文件和应用所有数据！
+    </p>
+</if>
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}saveindex" method="post" target="_self">
+    <div class="layui-row app-local">
+        <loop $open,$app,$name>
+            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2">
+                <input type="hidden" name="LC[{{$name}}]" value="1" />
+                <div class="li" data-name="{{$name}}" data-ver="{{$app['ver']}}">
+                    <a href="{{$app['url']}}">
+                        <img src="{{$app['icon']}}" title="{{$app['title']}}" />
+                        <h3 title="{{$app['title']}}">
+                            {{$app['title']}}
+                        </h3>
                     </a>
-                </td>
-                <td>
-                    <a href="{{$applist['open'][$app]['url']['all']}}" title="{{$applist['open'][$app]['info']['title']}}"><i class="layui-icon layui-icon-unlink"></i> {{$applist['open'][$app]['info']['title']}}</a>
-                </td>
-                <if $appstore>
-                    <td class="layui-hide-xs app-hide-sm">{{$applist['open'][$app]['info']['author']}}</td>
-                </if>
-                <td class="layui-hide-xs" style="text-align:center;">V{{$applist['open'][$app]['info']['ver']}}</td>
-                <if $appstore>
-                    <td class="layui-hide-xs newver" style="text-align:center;"></td>
-                </if>
-                <td class="layui-hide-xs app-hide-sm">{{$applist['open'][$app]['info']['description']}}</td>
-                <td class="layui-hide-xs" style="text-align:center;">
-                    <div class="layui-btn-group">
-                        <if $appstore>
-                            <button class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">更新</button>
-                        </if>
-                        <button class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&appname={{$app}}">修复</button>
-                        <button class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$app}}">卸载</button>
-                    </div>
-                </td>
-            </tr>
+                    <if LCMS::SUPER()>
+                        <div class="layui-btn-group">
+                            <if $_L['developer']['appstore'] !== 0>
+                                <a class="layui-btn layui-btn-xs layui-btn-normal layui-btn-disabled app-update-btn">更新</a>
+                            </if>
+                            <a class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&appname={{$name}}">修复</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$name}}">卸载</a>
+                        </div>
+                    </if>
+                    <if $isindex>
+                        <div class="move">
+                            <i class="layui-icon layui-icon-slider"></i>
+                        </div>
+                    </if>
+                    <div class="version">V{{$app['ver']}}</div>
+                </div>
+            </div>
         </loop>
-    </tbody>
-</table>
+    </div>
+    <button class="submit" lay-submit lay-filter="lcmsformsubmit" style="display:none;">立即保存</button>
+</form>
 <template "ui/foot" />

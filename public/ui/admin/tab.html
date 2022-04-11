@@ -1,11 +1,7 @@
 <if count((array) $_L['APP']['menu'][L_CLASS]['level']) gt 1>
-    <div id="APPTAB" class="layui-tab layui-tab-brief">
-        <ul class="layui-tab-title">
-            <loop $_L['APP']['menu'][L_CLASS]['level'],$val,$key>
-                <li class="{{L_ACTION=='do'.$key?'layui-this':''}}">
-                    <a href="{{ $_L['url']['own_form'] . $key }}" title="{{ $val['title'] }}">{{ $val['title'] }}</a>
-                </li>
-            </loop>
-        </ul>
+    <div id="APPTAB">
+        <loop $_L['APP']['menu'][L_CLASS]['level'],$val,$func>
+            <a href="{{$_L['url']['own_form']}}{{$func}}" class="{{L_ACTION=='do'.$func?'active':''}}" title="{{$val['title']}}">{{$val['title']}}</a>
+        </loop>
     </div>
 </if>

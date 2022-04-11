@@ -38,23 +38,30 @@
         </script>
     </head>
     <body>
-        <template "ui/top" />
-        <if $_L['form']['n']!='appstore' && $_L['APP']['menu'] && count($_L['APP']['menu']) gt 1>
+        <if $_L['APP']['menu'] && count($_L['APP']['menu']) gt 1>
             <div id="APPIFRAME" style="padding-left:150px">
                 <div id="APPNAV">
-                    <div>
-                        <i class="layui-icon layui-icon-spread-left"></i>
-                        子菜单
+                    <div class="mobile">
+                        <div class="background"></div>
+                        <div class="button">
+                            <i class="layui-icon layui-icon-right"></i>
+                        </div>
                     </div>
-                    <ul>
-                        <loop $_L['APP']['menu'],$val,$cname>
-                            <li class="{{$_L['form']['c']==$cname?'active':''}}">
-                                <a href="{{$_L['APP']['url'][$cname]}}">
-                                    {{$val['title']}}
-                                </a>
-                            </li>
-                        </loop>
-                    </ul>
+                    <div class="menu">
+                        <div class="title">
+                            <i class="layui-icon layui-icon-spread-left"></i>
+                            子菜单
+                        </div>
+                        <ul>
+                            <loop $_L['APP']['menu'],$val,$cname>
+                                <li class="{{$_L['form']['c']==$cname?'active':''}}">
+                                    <a href="{{$_L['APP']['url'][$cname]}}">
+                                        {{$val['title']}}
+                                    </a>
+                                </li>
+                            </loop>
+                        </ul>
+                    </div>
                 </div>
                 <else />
                 <div id="APPIFRAME" style="padding-left:0">

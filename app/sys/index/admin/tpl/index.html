@@ -26,63 +26,98 @@
     </head>
     <body>
         <div id="LCMS">
-            <div class="__showbox"></div>
-            <div class="layui-bg-cyan __mobnavbtn">
-                <i class="layui-icon layui-icon-right"></i>
-            </div>
-            <div class="__box_l layui-bg-cyan">
-                <div class="__box_logo">
-                    <if in_ua(["YeeClient", "DingTalk", "wxwork"])>
-                        <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
-                        <else />
-                        <a href="{{$_L['url']['admin']}}">
-                            <img src="{{oss($_L['config']['admin']['logo'])}}" width="100%" />
+            <header>
+                <ul class="layui-nav main-menu-mobile">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <span>主菜单</span>
                         </a>
-                    </if>
-                </div>
-                <ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="lcmsleftnav">
-                    <loop $open,$list,$index>
-                        <if $list['menu']||$index==0>
-                            <li class="layui-nav-item layui-nav-itemed">
-                                <a href="javascript:;">{{$list['title']}}</a>
-                                <dl class="layui-nav-child">
-                                    <loop $list['menu'],$li,$name>
-                                        <dd>
-                                            <a href="javascript:;" data-url="{{$li['url']}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
-                                        </dd>
-                                    </loop>
-                                    <if $index==0&&(LCMS::SUPER()||$_L['LCMSADMIN']['id']==$_L['ROOTID'])>
-                                        <dd class="__add-app">
-                                            <a href="javascript:;" data-url="{{$_L['url']['admin']}}index.php?t=sys&n=menu&c=index&a=index">
-                                                <i class="layui-icon layui-icon-star-fill"></i>
-                                                设置快捷菜单
-                                            </a>
-                                        </dd>
-                                    </if>
-                                </dl>
-                            </li>
-                        </if>
-                    </loop>
-                    <loop $sys,$list,$index>
-                        <if $list['menu']>
-                            <li class="layui-nav-item layui-nav-itemed">
-                                <a href="javascript:;">{{$list['title']}}</a>
-                                <dl class="layui-nav-child">
-                                    <loop $list['menu'],$li,$name>
-                                        <dd>
-                                            <a href="javascript:;" data-url="{{$li['url']}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$li['title']}}</a>
-                                        </dd>
-                                    </loop>
-                                </dl>
-                            </li>
-                        </if>
-                    </loop>
+                        <dl class="layui-nav-child"></dl>
+                    </li>
                 </ul>
-            </div>
-            <div class="__box_r">
-                <iframe id="LBOX" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto"></iframe>
-            </div>
+                <div class="main-menu" data-url="{{$homeurl}}">
+                    <ul>
+                        <li>
+                            <a href="{{$_L['url']['admin']}}">
+                                <i class="layui-icon layui-icon-home"></i>首页
+                            </a>
+                        </li>
+                        <loop $sys,$info>
+                            <li>
+                                <a href="javascript:;" data-url="{{$info['url']}}">
+                                    <if $info['name']=="appstore">
+                                        <i class="layui-icon layui-icon-app"></i>应用
+                                    </if>
+                                    <if $info['name']=="user">
+                                        <i class="layui-icon layui-icon-user"></i>用户
+                                    </if>
+                                    <if $info['name']=="backup">
+                                        <i class="layui-icon layui-icon-template-1"></i>数据
+                                    </if>
+                                    <if $info['name']=="config">
+                                        <i class="layui-icon layui-icon-set"></i>设置
+                                    </if>
+                                    <if $info['name']=="update">
+                                        <i class="layui-icon layui-icon-upload-drag"></i>升级
+                                    </if>
+                                </a>
+                                <if $info['name']=="appstore" && $applist>
+                                    <ol>
+                                        <loop $applist,$app>
+                                            <li>
+                                                <a href="javascript:;" data-url="{{$app['url']}}">
+                                                    <img src="{{$app['icon']}}" />
+                                                    <h3>{{$app['title']}}</h3>
+                                                </a>
+                                            </li>
+                                        </loop>
+                                    </ol>
+                                </if>
+                            </li>
+                        </loop>
+                    </ul>
+                </div>
+                <ul class="layui-nav user">
+                    <li class="layui-nav-item">
+                        <a class="user-name" href="javascript:;" title="{{$_L['LCMSADMIN']['title']}}">
+                            <i class="layui-icon layui-icon-username"></i>
+                            <span>{{$_L['LCMSADMIN']['title']}}</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd>
+                                <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=profile&action=admin-edit', '个人资料', 1, ['550px', '480px'])">个人资料</div>
+                            </dd>
+                            <if LCMS::SUPER()||$_L['LCMSADMIN']['god']>
+                                <dd>
+                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=god', '上帝视角', 1, ['550px', '550px'])">上帝视角</div>
+                                </dd>
+                            </if>
+                            <if LCMS::SUPER()>
+                                <dd>
+                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=config&c=admin&a=clear&action=admin-edit', '清除缓存', 1, ['400px', '220px'])">清除缓存</div>
+                                </dd>
+                            </if>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item quit">
+                        <a href="javascript:;" onclick="this.href=LCMS.url.admin+'index.php?n=login&a=loginout&go='+encodeURIComponent(top.location.href)" target="_parent" title="退出登录">
+                            <i class="layui-icon layui-icon-logout"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="layui-nav custom"></ul>
+                <div class="clear"></div>
+            </header>
+            <iframe id="LBOX" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto"></iframe>
         </div>
+        <script type="text/template" class="header-custom">
+            <li class="layui-nav-item" style="background:{bgcolor} !important">
+                <a href="{url}" target="{target}" style="color:{color} !important">
+                    <i class="layui-icon layui-icon-{icon}"></i>
+                    <span>{title}</span>
+                </a>
+            </li>
+        </script>
         <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.js?{{$_L['config']['ver']}}"></script>
         <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?{{$_L['config']['ver']}}"></script>
     </body>

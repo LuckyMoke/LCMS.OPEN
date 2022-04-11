@@ -1,13 +1,83 @@
 <template "ui/head" />
+<style type="text/css">
+    .app-list {
+        margin-top: -1px;
+        width: calc(100% + 7px);
+    }
+
+    .app-list .box {
+        border: 1px #EBEEF5 solid;
+        margin: 0 0 -1px -1px;
+    }
+
+    .app-list .li {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 20px 10px;
+        box-sizing: border-box;
+    }
+
+    .app-list .li.active,
+    .app-list .li:hover {
+        background: rgb(237, 246, 255);
+        color: #000000;
+        box-shadow: inset 0 0 10px 5px rgb(64 158 255 / 10%);
+    }
+
+    .app-list .li.active img,
+    .app-list .li:hover img {
+        mix-blend-mode: darken;
+    }
+
+    .app-list img {
+        display: block;
+        width: 80%;
+        max-width: 120px;
+        margin: 0 auto;
+    }
+
+    .app-list h3 {
+        text-align: center;
+        font-size: 14px;
+        word-wrap: normal;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        padding-top: 10px;
+    }
+</style>
 <if $update>
     <div class="check-update hide"></div>
 </if>
 <div class="layui-fluid" style="padding:0">
     <if $lasttime && $lasttime lt 15>
-        <blockquote class="layui-elem-quote" style="background:#fdf6ec;color:#e6a23c;border:none;">
-            <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i>
-            友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
-        </blockquote>
+        <p class="lcms-form-des">
+            <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i> 友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
+        </p>
+    </if>
+    <if $open>
+        <div class="layui-tab layui-tab-card">
+            <ul class="layui-tab-title">
+                <li class="layui-this">常用应用</li>
+            </ul>
+            <div class="layui-tab-content" style="padding:0;overflow:hidden">
+                <div class="layui-row app-list">
+                    <loop $open,$app,$name>
+                        <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
+                            <div class="li" data-name="{{$name}}" data-ver="{{$app['ver']}}">
+                                <a href="{{$app['url']}}">
+                                    <img src="{{$app['icon']}}" title="{{$app['title']}}" />
+                                    <h3 title="{{$app['title']}}">
+                                        {{$app['title']}}
+                                    </h3>
+                                </a>
+                            </div>
+                        </div>
+                    </loop>
+                </div>
+            </div>
+        </div>
     </if>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md{{$_L['config']['admin']['gonggao']?'6':'12'}} layui-col-xs12">

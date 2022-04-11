@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-02-27 14:12:34
+ * @LastEditTime: 2022-04-09 17:38:37
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -47,7 +47,7 @@ class admin extends adminbase
                     "width"  => 90,
                     "align"  => "center"],
                 ["title"  => "操作", "field" => "do",
-                    "width"   => 90,
+                    "width"   => 95,
                     "align"   => "center",
                     "fixed"   => "right",
                     "toolbar" => [
@@ -398,10 +398,7 @@ class admin extends adminbase
                 ]) : [];
                 $level && ksort($level['sys']);
                 $level && ksort($level['open']);
-                $appall = LEVEL::appall();
-                if ($_L['developer'] && $_L['developer']['appstore'] === 0) {
-                    unset($appall['sys']['appstore']['class']['store']);
-                }
+                $appall = LEVEL::applist();
                 foreach ($appall as $type => $val) {
                     foreach ($val as $name => $info) {
                         if (!empty($info['class'])) {
@@ -452,7 +449,7 @@ class admin extends adminbase
                         "tips"     => "请输入账号名搜索更多",
                         "disabled" => LCMS::SUPER() ? "" : true,
                     ],
-                    ["layui" => "des", "title" => "点击左侧模块名称、或者点击每个小模块的标题，均可进行全选操作！"],
+                    ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！"],
                 ];
                 $hide = $hide ? base64_encode(json_encode($hide)) : "";
                 require LCMS::template("own/iframe/admin-level-edit");

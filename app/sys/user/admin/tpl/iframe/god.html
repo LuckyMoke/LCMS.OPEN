@@ -3,13 +3,14 @@
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}god&action=save" method="post" target="_self">
     <ui form($form) />
 </form>
-<h3>功能介绍：</h3>
-<br />
-<p>此功能允许超级管理员切换到任意用户登录状态，方便超级管理员帮助用户进行后台的设置。</p>
-<p style="color:red">默认只显示10个用户，切换更多用户请直接输入帐号显示更多。</p>
+<p class="lcms-form-des">
+    <b>功能介绍：</b><br />
+    超级管理员可快速切换到任意用户登录，方便帮助用户进行后台的设置。<br />
+    <span style="color:red">默认只显示10个用户，切换更多用户请直接输入帐号显示更多。</span>
+</p>
 <script type="text/javascript">
 var reloadall = function() {
-    top.window.location.href = LCMS.url.admin;
+    top.location.href = LCMS.url.admin;
 };
 </script>
 <template "ui/foot" />

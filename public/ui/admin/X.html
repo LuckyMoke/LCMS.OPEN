@@ -1,8 +1,8 @@
 <if $_L['APP']['info']>
     <template "ui/head"/>
-    <style>@media screen and (max-width: 750px) {#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}}</style>
+    <style>@media screen and (max-width: 970px) {#NAVTOP,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}}</style>
     <script type="text/javascript">
-        if(self!=top&&window.parent.document.getElementById("NAVTOP")){document.write('<style>#NAVTOP,#APPTAB,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}#APPNAV{display:none;}</style>');};
+        if(self!=top&&window.parent.document.getElementById("APPTAB")){document.write('<style>#APPTAB,#LFOOT {display:none;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}</style>');};
     </script>
 <else />
     <!DOCTYPE html>
@@ -23,10 +23,10 @@
     <body style="background:#ffffff;">
 </if>
     <style type="text/css">.msg a{color:#ffadad;text-decoration:underline;}.msg a:hover{color:#F56C6C}.msg img{max-width:100%;}</style>
-    <div style="text-align:center;position:relative;box-sizing:border-box;padding-top:20vh;height:calc(100vh - 300px);">
+    <div style="text-align:center;position:relative;box-sizing:border-box;padding-top:20vh;height:calc(100vh - 140px);">
         <i class="layui-icon {{$X['icon']}}" style="font-size:130px;color:{{$X['color']}};"></i>
         <p style="color:#303133;font-size:24px;padding-top:10px;font-weight:bold;">{{$X['title']}}</p>
-        <div class="msg" style="color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;">
+        <div class="msg" style="color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;word-break:break-all;">
             [{{$X['code']}}] : {{$X['msg']}}
         </div>
         <if $go>

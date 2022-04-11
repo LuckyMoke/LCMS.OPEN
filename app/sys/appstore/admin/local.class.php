@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-03-27 13:25:26
+ * @LastEditTime: 2022-04-09 17:11:34
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,27 +12,104 @@ class local extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         parent::__construct();
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     public function doindex()
     {
         global $_L;
-        $level   = level::app('appstore');
-        $applist = level::appall();
-        foreach ($applist['open'] as $name => $list) {
-            if ($list['menu'] && count($list['menu']) > 1) {
-                $open[$name] = $applist['open'][$name]['url']['all'];
-            } elseif ($list['menu']) {
-                $open[$name] = $applist['open'][$name]['url']['all'];
-            }
-        }
-        if ($level['power']['store']['index'] != "no" && $_L['developer']['appstore'] !== 0) {
-            $appstore = true;
+        $open = LEVEL::applist("open", true);
+        $open || LCMS::X(404, "您未安装任何应用", LCMS::SUPER() ? [[
+            "title" => "应用商店",
+            "url"   => "{$_L['url']['own_form']}index&c=store",
+        ]] : "");
+        if (LCMS::SUPER() || $_L['LCMSADMIN']['id'] == $_L['ROOTID']) {
+            $isindex = true;
         } else {
-            $appstore = false;
+            $isindex = false;
         }
         require LCMS::template("own/local/index");
+    }
+    /**
+     * @description: 保存应用排序
+     * @param {*}
+     * @return {*}
+     */
+    public function dosaveindex()
+    {
+        global $_L, $LF, $LC;
+        LCMS::config([
+            "do"    => "save",
+            "name"  => "menu",
+            "type"  => "sys",
+            "cate"  => "admin",
+            "form"  => [
+                "open" => $LC,
+            ],
+            "unset" => "sys|open",
+        ]);
+        if (sql_error()) {
+            ajaxout(0, "保存失败", "", sql_error());
+        } else {
+            ajaxout(1, "保存成功");
+        }
+    }
+    /**
+     * @description: 设置默认应用
+     * @param {*}
+     * @return {*}
+     */
+    public function dosetdefault()
+    {
+        global $_L, $LF, $LC;
+        LCMS::SUPER() && LCMS::X(403, "请在子账号下设置");
+        switch ($LF['action']) {
+            case 'save':
+                LCMS::config([
+                    "do"   => "save",
+                    "name" => "menu",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "form" => [
+                        "default" => $LC,
+                    ],
+                ]);
+                ajaxout(1, "保存成功", "close");
+                break;
+            default:
+                $open = LEVEL::applist("open", true);
+                $open || LCMS::X(404, "您未安装任何应用");
+                $config = LCMS::config([
+                    "name" => "menu",
+                    "type" => "sys",
+                    "cate" => "admin",
+                ]);
+                foreach ($open as $name => $app) {
+                    $applist[] = [
+                        "title" => $app['title'],
+                        "value" => $name,
+                    ];
+                }
+                $form = [
+                    ["layui" => "radio", "title" => "功能状态",
+                        "name"   => "LC[on]",
+                        "value"  => $config['default']['on'] ?: 0,
+                        "radio"  => [
+                            ["title" => "关闭", "value" => 0],
+                            ["title" => "打开第一个应用", "value" => 1],
+                            ["title" => "打开指定应用", "value" => 2],
+                        ]],
+                    ["layui" => "select", "title" => "指定应用",
+                        "name"   => "LC[name]",
+                        "value"  => $config['default']['name'],
+                        "option" => $applist],
+                    ["layui" => "btn", "title" => "立即保存"],
+                ];
+                require LCMS::template("own/local/default");
+                break;
+        }
     }
     /**
      * @description: 卸载应用
@@ -42,6 +119,7 @@ class local extends adminbase
     public function douninstall()
     {
         global $_L;
+        LCMS::SUPER() || LCMS::X(403, "无操作权限");
         $app = str_replace(["../", "./", "..\\", ".\\", "/", "\\"], "", $_L['form']['app']);
         $dir = PATH_APP . "open/{$app}/";
         if (is_file($dir . "uninstall.sql")) {

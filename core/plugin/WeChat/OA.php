@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-11-26 17:57:36
+ * @LastEditTime: 2022-04-01 18:58:23
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -159,7 +159,7 @@ class OA
                         $this->user([
                             "do"     => "save",
                             "openid" => $openid['openid'],
-                            "wechat" => [
+                            "data"   => [
                                 "openid" => $openid['openid'],
                             ],
                         ]);
@@ -179,41 +179,44 @@ class OA
     public function userinfo($para = [])
     {
         global $_L, $LF, $SID;
-        if ($para['type'] == "subscribe") {
-            // 用户关注后获取用户信息
-            $this->access_token();
-            $query = http_build_query([
-                "access_token" => $this->CFG['access_token']['token'],
-                "openid"       => $para['openid'],
-                "lang"         => "zh_CN",
-            ]);
-            $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/user/info?{$query}"), true);
-            if ($userinfo && !$userinfo['errcode']) {
-                $userinfo = $this->user([
-                    "do"     => "save",
-                    "openid" => $userinfo['openid'],
-                    "wechat" => $userinfo,
-                ]);
-            }
-        } else {
-            $userinfo = SESSION::get("{$SID}userinfo");
-            if (!$userinfo['openid'] || $userinfo['errcode']) {
-                $openid = $this->openid(true);
-                $query  = http_build_query(array(
-                    "access_token" => $openid['access_token'],
-                    "openid"       => $openid['openid'],
+        switch ($para['type']) {
+            case 'subscribe':
+                $this->access_token();
+                $token  = $this->CFG['access_token']['token'];
+                $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/user/info?" . http_build_query([
+                    "access_token" => $token,
+                    "openid"       => $para['openid'],
                     "lang"         => "zh_CN",
-                ));
-                $userinfo = json_decode(HTTP::get("https://api.weixin.qq.com/sns/userinfo?{$query}"), true);
+                ]));
+                $userinfo = json_decode($result, true);
                 if ($userinfo && !$userinfo['errcode']) {
                     $userinfo = $this->user([
                         "do"     => "save",
                         "openid" => $userinfo['openid'],
-                        "wechat" => $userinfo,
+                        "data"   => $userinfo,
                     ]);
-                    SESSION::set("{$SID}userinfo", $userinfo);
                 }
-            }
+                break;
+            default:
+                $userinfo = SESSION::get("{$SID}userinfo");
+                if (!$userinfo['openid'] || $userinfo['errcode']) {
+                    $openid = $this->openid(true);
+                    $result = HTTP::get("https://api.weixin.qq.com/sns/userinfo?" . http_build_query([
+                        "access_token" => $openid['access_token'],
+                        "openid"       => $openid['openid'],
+                        "lang"         => "zh_CN",
+                    ]));
+                    $userinfo = json_decode($result, true);
+                    if ($userinfo && !$userinfo['errcode']) {
+                        $userinfo = $this->user([
+                            "do"     => "save",
+                            "openid" => $userinfo['openid'],
+                            "data"   => $userinfo,
+                        ]);
+                        SESSION::set("{$SID}userinfo", $userinfo);
+                    }
+                }
+                break;
         }
         return $userinfo ?: [];
     }
@@ -225,69 +228,56 @@ class OA
     public function user($para = [])
     {
         global $_L, $LF, $SID;
-        $userinfo = sql_get([
-            "open_wechat_user",
-            "openid = :openid AND lcms = :lcms",
-            "", [
+        $userinfo = sql_get(["open_wechat_user",
+            "openid = :openid AND lcms = :lcms", "", [
                 ":openid" => $para['openid'],
                 ":lcms"   => $_L['ROOTID'],
-            ],
-        ]);
+            ]]);
+        $userinfo = $userinfo ?: [];
         if ($para['do'] == "save") {
             $form = [
-                "openid"          => $para['wechat']['openid'],
-                "subscribe"       => $para['wechat']['subscribe'],
-                "nickname"        => $para['wechat']['nickname'],
-                "language"        => $para['wechat']['language'],
-                "headimgurl"      => $para['wechat']['headimgurl'],
-                "subscribe_time"  => $para['wechat']['subscribe_time'],
-                "unionid"         => $para['wechat']['unionid'],
-                "remark"          => $para['wechat']['remark'],
-                "groupid"         => $para['wechat']['groupid'],
-                "subscribe_scene" => $para['wechat']['subscribe_scene'],
-                "qr_scene"        => $para['wechat']['qr_scene'],
-                "qr_scene_str"    => $para['wechat']['qr_scene_str'],
-                "location"        => $para['wechat']['location'],
-                "activetime"      => $para['wechat']['activetime'],
-                "parameter"       => $para['wechat']['parameter'],
+                "openid"          => $para['data']['openid'],
+                "subscribe"       => $para['data']['subscribe'],
+                "nickname"        => $para['data']['nickname'],
+                "language"        => $para['data']['language'],
+                "headimgurl"      => $para['data']['headimgurl'],
+                "subscribe_time"  => $para['data']['subscribe_time'],
+                "unionid"         => $para['data']['unionid'],
+                "remark"          => $para['data']['remark'],
+                "groupid"         => $para['data']['groupid'],
+                "subscribe_scene" => $para['data']['subscribe_scene'],
+                "qr_scene"        => $para['data']['qr_scene'],
+                "qr_scene_str"    => $para['data']['qr_scene_str'],
+                "location"        => $para['data']['location'],
+                "activetime"      => $para['data']['activetime'],
+                "parameter"       => $para['data']['parameter'],
             ];
             foreach ($form as $key => $val) {
                 if ($val === false || $val === "" || $val === null) {
                     unset($form[$key]);
                 }
             }
+            $form = $form ?: [];
             if ($userinfo && $form) {
-                sql_update([
-                    "open_wechat_user",
-                    $form,
-                    "openid = :openid AND lcms = :lcms",
-                    [
+                sql_update(["open_wechat_user",
+                    $form, "openid = :openid AND lcms = :lcms", [
                         ":openid" => $para['openid'],
                         ":lcms"   => $_L['ROOTID'],
-                    ],
+                    ]]);
+            } elseif ($form['openid']) {
+                $form['lcms']   = $_L['ROOTID'];
+                $userinfo['id'] = sql_insert([
+                    "open_wechat_user", $form,
                 ]);
-            } elseif ($form) {
-                $form['lcms'] = $_L['ROOTID'];
-                if ($form['openid']) {
-                    $userinfo['id'] = sql_insert([
-                        "open_wechat_user",
-                        $form,
-                    ]);
-
-                }
             }
-            $userinfo = $userinfo && $form ? array_merge($userinfo, $form) : false;
+            $userinfo = array_merge($userinfo, $form);
         }
         if ($para['openid']) {
-            $userinfo = $userinfo ? $userinfo : sql_get([
-                "open_wechat_user",
-                "openid = :openid AND lcms = :lcms",
-                "", [
+            return $userinfo ?: sql_get(["open_wechat_user",
+                "openid = :openid AND lcms = :lcms", "", [
                     ":openid" => $para['openid'],
                     ":lcms"   => $_L['ROOTID'],
-                ],
-            ]);
-            return $userinfo;
+                ]]);
         }
     }
     /**
@@ -382,41 +372,6 @@ class OA
         $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$this->CFG['access_token']['token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result ?: [];
-    }
-    /**
-     * @description: 一次性订阅消息
-     * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1500374289_66bvB
-     * @param array $para
-     * @return {*}
-     */
-    public function send_once($para = [])
-    {
-        global $_L, $LF, $SID;
-        $this->access_token();
-        $reserved = SESSION::get("{$SID}reserved");
-        if (!$LF['reserved']) {
-            $reserved = randstr(32);
-            SESSION::set("{$SID}reserved", $reserved);
-            $query = http_build_query([
-                "action"       => "get_confirm",
-                "appid"        => $this->CFG['appid'],
-                "scene"        => 1,
-                "template_id"  => $para['template_id'],
-                "redirect_url" => $para['redirect_url'],
-                "reserved"     => $reserved,
-            ]);
-            okinfo("https://mp.weixin.qq.com/mp/subscribemsg?{$query}#wechat_redirect");
-        } elseif ($LF['reserved'] == $reserved) {
-            $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token={$this->CFG['access_token']['token']}", json_encode_ex([
-                "touser"      => $para['touser'],
-                "template_id" => $para['template_id'],
-                "miniprogram" => $para['miniprogram'],
-                "scene"       => $LF['scene'],
-                "title"       => $para['title'],
-                "data"        => $para['data'],
-            ]));
-            return $result ?: [];
-        }
     }
     /**
      * @description: 添加模板消息

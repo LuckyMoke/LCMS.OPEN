@@ -1,0 +1,12 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}setdefault&action=save" method="post" target="_self">
+    <ui form($form) />
+</form>
+<p class="lcms-form-des">
+    <b>使用说明：</b><br />
+    1、关闭：登录后台后，默认打开欢迎页<br />
+    2、打开第一个应用：登录后台后，默认打开应用列表里的第一个应用<br />
+    3、打开指定应用：登录后台后，默认打开选择的指定应用
+</p>
+<template "ui/foot" />

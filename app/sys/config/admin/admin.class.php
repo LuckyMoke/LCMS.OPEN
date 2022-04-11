@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-03-17 11:53:55
+ * @LastEditTime: 2022-04-09 14:01:52
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -66,11 +66,6 @@ class admin extends adminbase
                         "name"   => "LC[developer]",
                         "value"  => $config['developer'],
                         "verify" => "required"],
-                    ["layui" => "upload",
-                        "title"  => "后台LOGO",
-                        "name"   => "LC[logo]",
-                        "value"  => $config['logo'],
-                    ],
                     ["layui" => "title", "title" => "通知公告"],
                     ["layui" => "editor", "title" => "后台公告",
                         "name"   => "LC[gonggao]",
