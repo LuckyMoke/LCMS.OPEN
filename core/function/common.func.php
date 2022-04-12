@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-03-14 17:44:00
+ * @LastEditTime: 2022-04-11 13:42:31
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,14 +10,18 @@ defined('IN_LCMS') or exit('No permission');
 /**
  * @description: 输出字符串或数组
  * @param mixed $vars
+ * @param bool $type
  * @return string
  */
-function dump($vars)
+function dump($vars, $type = false)
 {
-    $content = "<pre>\n";
-    $content .= htmlspecialchars(print_r($vars, true), ENT_COMPAT, 'ISO-8859-1');
-    $content .= "</pre>\n";
-    echo $content;
+    echo "<pre>\n";
+    if ($type) {
+        var_dump($vars);
+    } else {
+        echo htmlspecialchars(print_r($vars, true), ENT_COMPAT, 'ISO-8859-1');
+    }
+    echo "</pre>\n";
 }
 /**
  * @description: 数组转换为json，不转义中文

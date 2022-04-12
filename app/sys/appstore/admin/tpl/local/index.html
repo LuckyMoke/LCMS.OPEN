@@ -2,7 +2,10 @@
 <template "ui/css" />
 <if $isindex>
     <p class="lcms-form-des">
-        拖动左上角可排序，点击应用LOGO可直接打开应用，卸载应用会删除应用文件和应用所有数据！
+        拖动左上角可排序，点击应用LOGO可直接打开应用。
+        <if LCMS::SUPER()>
+            [修复]应用数据表有问题可点击修复。[卸载]卸载应用会删除应用文件和应用所有数据。
+        </if>
     </p>
 </if>
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}saveindex" method="post" target="_self">

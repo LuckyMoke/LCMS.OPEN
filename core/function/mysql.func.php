@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-31 17:26:10
+ * @LastEditTime: 2022-04-11 13:42:44
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -130,6 +130,9 @@ function sql_insert($sql = [])
     $table  = sql_tablename($sql[0]);
     if ($sql[1][0]) {
         foreach ($sql[1] as $val) {
+            if (isset($val['id']) && $val['id'] === "") {
+                $val['id'] = null;
+            }
             $sql_key = array_keys($val);
             $nkey    = [];
             foreach ($val as $v) {
@@ -142,6 +145,9 @@ function sql_insert($sql = [])
         }
         $sql_val = "(" . implode("), (", $sql_val) . ")";
     } else {
+        if (isset($sql[1]['id']) && $sql[1]['id'] === "") {
+            $sql[1]['id'] = null;
+        }
         $sql_key = array_keys($sql[1]);
         $nkey    = [];
         foreach ($sql[1] as $v) {
