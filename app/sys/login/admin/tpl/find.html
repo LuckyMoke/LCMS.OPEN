@@ -13,11 +13,9 @@
                 <div name="email">发送验证码</div>
             </div>
         </if>
-        <if $UCFG['reg']['on']=="email" || $UCFG['reg']['on']=="mobile">
-            <div class="login-input">
-                <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="6" required="required" />
-            </div>
-        </if>
+        <div class="login-input">
+            <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="6" required="required" />
+        </div>
         <button class="login-btn" type="submit">验证</button>
     </form>
 </div>

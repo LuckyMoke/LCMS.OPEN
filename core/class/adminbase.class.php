@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-10-29 17:24:00
+ * @LastEditTime: 2022-04-15 15:49:07
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -124,7 +124,7 @@ class adminbase extends common
     protected function check_level()
     {
         global $_L;
-        if (L_NAME == "appstore" && L_CLASS == "store" && ($_L['form']['action'] == "content" || $_L['form']['apply'])) {
+        if (L_NAME === "appstore" && L_CLASS === "store" && ($_L['form']['action'] === "content" || $_L['form']['apply'])) {
             return;
         }
         $fun = str_replace("do", "", L_ACTION);
@@ -137,7 +137,7 @@ class adminbase extends common
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $secure = $domain['scheme'] == "https" ? "https://" : "http://";
+            $secure = $domain['scheme'] === "https" ? "https://" : "http://";
             $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
         }
         if ($domain && $autodomain) {

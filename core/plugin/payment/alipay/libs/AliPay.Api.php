@@ -31,7 +31,7 @@ class AliPayApi
         unset($input['sign'], $input['sign_type']);
         if ($config['publickey']) {
             $config['publickey'] = "-----BEGIN PUBLIC KEY-----\n" . wordwrap($config['publickey'], 64, "\n", true) . "\n-----END PUBLIC KEY-----";
-            if ($signType == "RSA2") {
+            if ($signType === "RSA2") {
                 $result = (bool) openssl_verify(self::ToUrlParams($input), $sign, $config['publickey'], OPENSSL_ALGO_SHA256);
             } else {
                 $result = (bool) openssl_verify(self::ToUrlParams($input), $sign, $config['publickey']);

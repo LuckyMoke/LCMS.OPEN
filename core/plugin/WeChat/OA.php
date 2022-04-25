@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-01 18:58:23
+ * @LastEditTime: 2022-04-15 16:00:11
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -18,7 +18,7 @@ class OA
             $this->CFG = [
                 "appid"     => $config['appid'],
                 "appsecret" => $config['appsecret'],
-                "thirdapi"  => $config['mode'] == "other" ? $config['access_api'] : "",
+                "thirdapi"  => $config['mode'] === "other" ? $config['access_api'] : "",
             ];
         } else {
             $this->CFG = [
@@ -129,9 +129,9 @@ class OA
         $this->cache();
         $scope  = $type ? "snsapi_userinfo" : "snsapi_base";
         $openid = SESSION::get($SID . $scope);
-        if ($openid['openid'] && $scope == "snsapi_base") {
+        if ($openid['openid'] && $scope === "snsapi_base") {
             return $openid;
-        } elseif ($openid['openid'] && $scope == "snsapi_userinfo" && $openid['expires_time'] > time()) {
+        } elseif ($openid['openid'] && $scope === "snsapi_userinfo" && $openid['expires_time'] > time()) {
             return $openid;
         } else {
             $goback = urlencode($_L['url']['now']);
@@ -234,7 +234,7 @@ class OA
                 ":lcms"   => $_L['ROOTID'],
             ]]);
         $userinfo = $userinfo ?: [];
-        if ($para['do'] == "save") {
+        if ($para['do'] === "save") {
             $form = [
                 "openid"          => $para['data']['openid'],
                 "subscribe"       => $para['data']['subscribe'],
@@ -414,7 +414,7 @@ class OA
         $this->access_token();
         if (is_array($para)) {
             $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->CFG['access_token']['token']}", json_encode_ex($para));
-        } elseif ($para == "get") {
+        } elseif ($para === "get") {
             $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$this->CFG['access_token']['token']}");
         }
         $result = json_decode($result, true);
@@ -482,7 +482,7 @@ class OA
                     foreach ([
                         "reply", "reply_words", "reply_contents",
                     ] as $table) {
-                        $name = $table == "reply" ? "id" : "rid";
+                        $name = $table === "reply" ? "id" : "rid";
                         sql_delete([
                             "open_wechat_{$table}",
                             "{$name} = :rid",

@@ -67,7 +67,7 @@ class AutoPay
     {
         $WxPay  = new WxPayOrder(self::init($order));
         $result = $WxPay->Check();
-        if ($result['trade_state'] == "SUCCESS") {
+        if ($result['trade_state'] === "SUCCESS") {
             return [
                 "code"     => 1,
                 "msg"      => "订单已支付",
@@ -90,7 +90,7 @@ class AutoPay
     {
         $WxPay  = new WxPayOrder(self::init($order));
         $result = $WxPay->Repay();
-        if ($result['status'] == "SUCCESS" || $result['status'] == "PROCESSING") {
+        if ($result['status'] === "SUCCESS" || $result['status'] === "PROCESSING") {
             return [
                 "code"     => 1,
                 "msg"      => "退款成功",
@@ -133,7 +133,7 @@ class AutoPay
             $result = $WxPayTo->Pay();
             $type   = "partner_trade_no";
         }
-        if ($result['result_code'] == "SUCCESS") {
+        if ($result['result_code'] === "SUCCESS") {
             return [
                 "code"     => 1,
                 "msg"      => "发送成功",

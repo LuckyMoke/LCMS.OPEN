@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-02-27 15:42:27
+ * @LastEditTime: 2022-04-20 13:10:48
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -28,7 +28,7 @@ class reg extends adminbase
             header("HTTP/1.1 404 Not Found");
             exit;
         }
-        if ($UCFG['reg']['on'] == null || $UCFG['reg']['on'] == "0") {
+        if (!in_array($UCFG['reg']['on'], ["mobile", "email"])) {
             header("HTTP/1.1 404 Not Found");
             exit;
         }
@@ -110,7 +110,7 @@ class reg extends adminbase
     public function docheck()
     {
         global $_L, $LF, $UCFG, $PLG, $RID;
-        //验证码验证
+        //判断短信邮箱验证码是否正确
         $code = SESSION::get("LOGINSENDCODE");
         if (!$code || $code != strtoupper($LF['code'])) {
             ajaxout(0, "验证码错误");

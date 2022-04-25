@@ -29,7 +29,7 @@ class common
             require_once PATH_CORE . 'config.php';
             DB::dbconn($_L['mysql']);
         } else {
-            okinfo("../install/");
+            okinfo("/install/");
             exit;
         }
     }

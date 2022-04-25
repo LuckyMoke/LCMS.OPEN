@@ -50,7 +50,7 @@ class AliyunSMS
                 "TemplateParam" => $Param ? json_encode_ex($Param) : "",
             ]);
             $result = json_decode(HTTP::post($this->api, $this->sign(), true), true);
-            if ($result['Code'] == "OK") {
+            if ($result['Code'] === "OK") {
                 $result = [
                     "code" => 1,
                     "msg"  => "发送成功",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2022-03-27 13:20:28
+ * @LastEditTime: 2022-04-15 15:40:28
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -27,7 +27,7 @@ class repair extends adminbase
         foreach ($diff as $name => $val) {
             $sqls  = [];
             $upkey = [];
-            if ($val['type'] == "create") {
+            if ($val['type'] === "create") {
                 foreach ($val['data'] as $key => $data) {
                     $sqls[] = $this->setKey($key, $data, true);
                 }
@@ -162,7 +162,7 @@ class repair extends adminbase
                 $result[$name][$key['Field']] = [
                     "type"    => $key['Type'],
                     "index"   => $indexs[$key['Field']],
-                    "default" => $key['Extra'] == "auto_increment" ? "AUTO_INCREMENT" : ($key['Default'] != "" ? $key['Default'] : "NULL"),
+                    "default" => $key['Extra'] === "auto_increment" ? "AUTO_INCREMENT" : ($key['Default'] != "" ? $key['Default'] : "NULL"),
                 ];
             }
         }
@@ -177,7 +177,7 @@ class repair extends adminbase
     {
         global $_L, $LF, $LC, $PRE;
         foreach (sql_query("SHOW INDEX FROM {$PRE}{$table}") as $val) {
-            if (isset($val['Key_name']) && $val['Key_name'] == "PRIMARY") {
+            if (isset($val['Key_name']) && $val['Key_name'] === "PRIMARY") {
                 $key = "PRIMARY";
             } elseif (isset($val['Non_unique']) && $val['Non_unique'] == "1") {
                 $key = $val['Index_type'];

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2022-02-26 20:36:52
+ * @LastEditTime: 2022-04-20 15:40:04
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -28,7 +28,7 @@ class find extends adminbase
             header("HTTP/1.1 404 Not Found");
             exit;
         }
-        if ($UCFG['reg']['on'] == null || $UCFG['reg']['on'] == "0") {
+        if (!in_array($UCFG['reg']['on'], ["mobile", "email"])) {
             header("HTTP/1.1 404 Not Found");
             exit;
         }
@@ -70,7 +70,7 @@ class find extends adminbase
     {
         global $_L, $LF, $UCFG, $PLG, $RID;
         //得到号码
-        $number = $LF[$LF['action']];
+        $number = $LF['value'][$LF['action']];
         //判断验证码是否正确
         CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
         //判断是否已发送过验证码
@@ -114,12 +114,11 @@ class find extends adminbase
         if (!$code || $code != strtoupper($LF['code'])) {
             ajaxout(0, "验证码错误");
         }
-        //读取号码
-        $number = SESSION::get("LOGINNUMBER");
         //删除缓存
-        SESSION::del("LOGINNUMBER");
         SESSION::del("LOGINSENDCODE");
-        ajaxout(1, "验证成功", "?rootid={$RID}&n=login&c=find&a=reset&code=" . ssl_encode($number));
+        //读取号码
+        $code = ssl_encode(SESSION::get("LOGINNUMBER"));
+        ajaxout(1, "验证成功", "?rootid={$RID}&n=login&c=find&a=reset&code={$code}");
     }
     /**
      * @description: 密码重置页面
@@ -131,11 +130,13 @@ class find extends adminbase
         global $_L, $LF, $UCFG, $PLG, $RID;
         //判断页面权限
         $number = $LF['code'] ? ssl_decode($LF['code']) : "";
-        if (!$number) {
-            LCMS::X("404", "未找到页面");
+        if ($number != SESSION::get("LOGINNUMBER")) {
+            header("HTTP/1.1 404 Not Found");
+            exit;
         }
+        SESSION::del("LOGINNUMBER");
         if (!PUB::is_email($number) && !is_phone($number)) {
-            okinfo("?rootid={$RID}&n=login&c=find");
+            okinfo("{$_L['url']['own']}?rootid={$RID}&n=login&c=find");
         }
         $admin = sql_get(["admin",
             "email = :number OR mobile = :number",

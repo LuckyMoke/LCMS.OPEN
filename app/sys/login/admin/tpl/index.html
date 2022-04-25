@@ -29,7 +29,7 @@
 </div>
 <div class="login-body hide">
     <div class="login-wx-tips">
-        <if $UCFG['reg']['on'] && $UCFG['reg']['on']!="0">
+        <if in_array($UCFG['reg']['on'],["mobile","email"])>
             请先 <a href="?rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>微信扫码绑定</span><br />
             <else />
             请先使用 <span>微信扫码绑定</span>
@@ -46,7 +46,7 @@
 </div>
 <if $LF['action']!="band">
     <div class="login-link">
-        <if $UCFG['reg']['on'] && $UCFG['reg']['on']!="0">
+        <if in_array($UCFG['reg']['on'],["mobile","email"])>
             <a href="?rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
             <if $UCFG['reg']['findpass'] gt 0>
                 <div class="login-link-line"></div>

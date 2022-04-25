@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-11-26 20:04:47
+ * @LastEditTime: 2022-04-20 14:42:55
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -84,12 +84,13 @@ class web extends adminbase
                         "cname"  => "hidden email-smtp"],
                     ["layui" => "on", "title" => "TLS/SSL",
                         "name"   => "LC[email][smtp][SSL]",
-                        "value"  => $PLG['smtp']['SSL'],
+                        "value"  => $PLG['smtp']['SSL'] ?? 1,
                         "text"   => "SSL|TLS",
+                        "tips"   => "一般情况下<br>SSL端口为465，TLS端口为25",
                         "cname"  => "hidden email-smtp"],
                     ["layui" => "input", "title" => "端口",
                         "name"   => "LC[email][smtp][Port]",
-                        "value"  => $PLG['smtp']['Port'],
+                        "value"  => $PLG['smtp']['Port'] ?: 465,
                         "tips"   => "一般情况下<br>SSL端口为465，TLS端口为25",
                         "cname"  => "hidden email-smtp"],
                     ["layui" => "des", "title" => "阿里云邮件推送开通地址&nbsp;&nbsp;<a href='https://www.aliyun.com/product/directmail?userCode=kabw9nx2&tag=share_component&share_source=copy_link' target='_blank'>[点击访问] https://www.aliyun.com/product/directmail</a>", "cname" => "hidden email-aliyun"],
@@ -323,7 +324,7 @@ class web extends adminbase
                         if (!empty($payment[$key][$val2['value']])) {
                             $val2['value'] = $payment[$key][$val2['value']];
                         } else {
-                            $val2['value'] = $val2['layui'] == "radio" ? "0" : "";
+                            $val2['value'] = $val2['layui'] === "radio" ? "0" : "";
                         }
                         $payment_list['form'][$key][] = $val2;
                     }

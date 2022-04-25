@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-12-12 18:15:24
+ * @LastEditTime: 2022-04-15 15:53:39
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -49,9 +49,9 @@ class TPL
                         $val = "{$tpath}/{$val}";
                     }
                     $suffix = substr($val, strrpos($val, ".") + 1);
-                    if ($suffix == "css") {
+                    if ($suffix === "css") {
                         $_L['ui']['css'][] = $val;
-                    } elseif ($suffix == "js") {
+                    } elseif ($suffix === "js") {
                         if (preg_match("/jquery+(-|.?)+(.*).js/i", $val)) {
                             $_L['ui']['js-head'][] = $val;
                         } else {
@@ -74,10 +74,10 @@ class TPL
                 $files = array_merge_recursive($paths, $files);
                 foreach ($files as $val) {
                     $suffix = pathinfo($val, PATHINFO_EXTENSION);
-                    if ($suffix == 'css') {
+                    if ($suffix === 'css') {
                         $css[] = $val;
                     }
-                    if ($suffix == 'js') {
+                    if ($suffix === 'js') {
                         $js[] = $val;
                     }
                 }
@@ -137,7 +137,7 @@ class TPL
         global $_L;
         $code = file_get_contents($file);
         $file = str_replace(PATH_WEB, "", $file);
-        if ($suffix == 'css') {
+        if ($suffix === 'css') {
             $adurl = "../../" . dirname($file) . '/';
             preg_match_all("/(?<=url\()[^\)]+/i", $code, $urls);
             $urls = $urls[0] ?: [];
@@ -148,7 +148,7 @@ class TPL
                 }
             }
         }
-        if ($suffix == 'js') {
+        if ($suffix === 'js') {
             // JS过滤规则
         }
         $code = str_replace(array("  ", "\t", "\n", "\r"), "", $code);

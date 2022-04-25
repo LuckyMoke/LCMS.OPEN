@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-09-28 14:32:25
- * @LastEditTime: 2021-12-29 12:25:26
+ * @LastEditTime: 2022-04-15 15:40:21
  * @Description: 文件管理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -35,7 +35,7 @@ class files extends adminbase
                 foreach ($data as $index => $val) {
                     $src          = str_replace("../", "", $val['src']);
                     $data[$index] = array_merge($val, [
-                        "type" => $val['type'] == "file" ? "文件" : "图片",
+                        "type" => $val['type'] === "file" ? "文件" : "图片",
                         "size" => $this->getsize($val['size']),
                         "href" => "<a href='{$doamin}{$src}' target='_blank'><i class='layui-icon layui-icon-unlink'></i> /{$src}</a>",
                     ]);

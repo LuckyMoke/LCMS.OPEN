@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-09 14:01:52
+ * @LastEditTime: 2022-04-25 16:30:37
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -85,7 +85,7 @@ class admin extends adminbase
             case 'save':
                 $domain = parse_url($LC['domain']);
                 if ($domain['host']) {
-                    $LC['https']  = $domain['scheme'] == "https" ? "1" : "0";
+                    $LC['https']  = $domain['scheme'] === "https" ? "1" : "0";
                     $LC['domain'] = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
                 }
                 LCMS::config([
@@ -210,12 +210,14 @@ class admin extends adminbase
                         "value"  => $config['login_code']['type'] ?? "0",
                         "radio"  => [
                             ["title" => "图片验证码", "value" => "0", "tab" => "login_code"],
-                            ["title" => "Luosimao人机验证", "value" => "luosimao", "tab" => "login_code_luosimao"],
+                            ["title" => "Luosimao", "value" => "luosimao", "tab" => "login_code_luosimao"],
+                            ["title" => "Vaptcha", "value" => "vaptcha", "tab" => "login_code_vaptcha"],
+                            ["title" => "极验行为验", "value" => "geetest", "tab" => "login_code_geetest"],
                         ]],
                     ["layui"      => "input", "title" => "使用域名",
                         "name"        => "LC[login_code][domain]",
                         "value"       => $config['login_code']['domain'],
-                        "cname"       => "hidden login_code_luosimao login_code_tencent",
+                        "cname"       => "hidden login_code_luosimao login_code_geetest login_code_vaptcha",
                         "placeholder" => "请填写主域名！",
                         "tips"        => "请填写主域名！"],
                     ["layui" => "input", "title" => "site_key",
@@ -226,6 +228,22 @@ class admin extends adminbase
                         "name"   => "LC[login_code][luosimao][api_key]",
                         "value"  => $config['login_code']['luosimao']['api_key'],
                         "cname"  => "hidden login_code_luosimao"],
+                    ["layui" => "input", "title" => "VID",
+                        "name"   => "LC[login_code][vaptcha][vid]",
+                        "value"  => $config['login_code']['vaptcha']['vid'],
+                        "cname"  => "hidden login_code_vaptcha"],
+                    ["layui" => "input", "title" => "KEY",
+                        "name"   => "LC[login_code][vaptcha][key]",
+                        "value"  => $config['login_code']['vaptcha']['key'],
+                        "cname"  => "hidden login_code_vaptcha"],
+                    ["layui" => "input", "title" => "验证ID",
+                        "name"   => "LC[login_code][geetest][captcha_id]",
+                        "value"  => $config['login_code']['geetest']['captcha_id'],
+                        "cname"  => "hidden login_code_geetest"],
+                    ["layui" => "input", "title" => "验证Key",
+                        "name"   => "LC[login_code][geetest][captcha_key]",
+                        "value"  => $config['login_code']['geetest']['captcha_key'],
+                        "cname"  => "hidden login_code_geetest"],
                     ["layui" => "title", "title" => "上传安全"],
                     ["layui" => "input_sort", "title" => "上传大小",
                         "name"   => "LC[attsize]",
@@ -314,7 +332,7 @@ class admin extends adminbase
             load::plugin("Redis/rds");
             $redis = new RDS();
             $redis->do->setex("LCMSREDISTEST", 60, "success");
-            if ($redis->do->get('LCMSREDISTEST') == "success") {
+            if ($redis->do->get('LCMSREDISTEST') === "success") {
                 ajaxout(1);
             } else {
                 ajaxout(0, "Redis未成功开启");

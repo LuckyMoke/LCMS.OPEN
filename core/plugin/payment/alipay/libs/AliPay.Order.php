@@ -19,7 +19,7 @@ class AliPayOrder
      */
     public function Jsapi($paytype = "h5")
     {
-        if ($paytype == "pc") {
+        if ($paytype === "pc") {
             $method       = "alipay.trade.page.pay";
             $product_code = "FAST_INSTANT_TRADE_PAY";
         } else {

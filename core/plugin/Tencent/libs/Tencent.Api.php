@@ -62,7 +62,7 @@ class TencentApi
      */
     public function reQuest($method = "POST", $PData)
     {
-        if ($method == "POST") {
+        if ($method === "POST") {
             $PData  = json_encode($PData, JSON_UNESCAPED_UNICODE);
             $result = json_decode(HTTP::post("https://{$this->cfg['Host']}/", $PData, false, $this->getHeader($method, $PData)), true);
         }

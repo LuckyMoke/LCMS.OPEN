@@ -20,7 +20,7 @@ class AliPayNotify
                     "id"    => $order['payid'],
                 ]);
                 $result = AliPayApi::Verify($payment[$payname], $POST);
-                if ($result === true && $POST['total_amount'] == $order['pay'] && $POST['trade_status'] == "TRADE_SUCCESS") {
+                if ($result === true && $POST['total_amount'] == $order['pay'] && $POST['trade_status'] === "TRADE_SUCCESS") {
                     return [
                         "order"    => $order,
                         "response" => $POST,

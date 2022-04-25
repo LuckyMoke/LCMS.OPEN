@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-09-28 14:45:29
+ * @LastEditTime: 2022-04-15 15:56:49
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -88,7 +88,7 @@ function copydir($oldDir, $targetDir, $overWrite = true)
         if ($resource = opendir($oldDir)) {
             while (($filename = readdir($resource)) !== false) {
                 $filename = gbk2utf8($filename);
-                if ($filename == '.' || $filename == '..') {
+                if ($filename === '.' || $filename === '..') {
                     continue;
                 } elseif (!is_dir($oldDir . $filename)) {
                     copyfile($oldDir . $filename, $targetDir . $filename, $overWrite);
@@ -138,7 +138,7 @@ function movedir($oldDir, $targetDir, $overWrite = true)
         if ($resource = opendir($oldDir)) {
             while (($filename = readdir($resource)) !== false) {
                 $filename = gbk2utf8($filename);
-                if ($filename == '.' || $filename == '..') {
+                if ($filename === '.' || $filename === '..') {
                     continue;
                 } elseif (!is_dir($oldDir . $filename)) {
                     movefile($oldDir . $filename, $targetDir . $filename, $overWrite);
@@ -187,7 +187,7 @@ function deldir($fileDir, $type = false)
         if ($resource = opendir($fileDir)) {
             while (($filename = readdir($resource)) !== false) {
                 $filename = gbk2utf8($filename);
-                if ($filename == '.' || $filename == '..') {
+                if ($filename === '.' || $filename === '..') {
                     continue;
                 } elseif (!is_dir($fileDir . $filename)) {
                     delfile($fileDir . $filename);
@@ -346,7 +346,7 @@ function modifydirpower($dir, $power)
         if ($resource = opendir($dir)) {
             while (($filename = readdir($resource)) !== false) {
                 $filename = gbk2utf8($filename);
-                if ($filename == '.' || $filename == '..') {
+                if ($filename === '.' || $filename === '..') {
                     continue;
                 } elseif (!is_dir($dir . $filename)) {
                     modifyfilepower($dir . $filename, $power);
@@ -382,7 +382,7 @@ function modifyfilepower($file, $power)
  */
 function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
 {
-    $jkdir = $jkdir == '.' || $jkdir == './' ? "" : $jkdir;
+    $jkdir = $jkdir === '.' || $jkdir === './' ? "" : $jkdir;
     $jkdir = path_absolute($jkdir);
     if ($resource = opendir($jkdir)) {
         while (($file = readdir($resource)) !== false) {
@@ -418,7 +418,7 @@ function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
  */
 function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamearray = array())
 {
-    $jkdir = $jkdir == '.' || $jkdir == './' ? "" : $jkdir;
+    $jkdir = $jkdir === '.' || $jkdir === './' ? "" : $jkdir;
     $jkdir = path_absolute($jkdir);
     if ($resource = opendir($jkdir)) {
         while (($file = readdir($resource)) !== false) {

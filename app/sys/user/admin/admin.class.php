@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-09 17:38:37
+ * @LastEditTime: 2022-04-20 14:02:53
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -140,7 +140,7 @@ class admin extends adminbase
                     $level        = $levellist[$val['type']];
                     $data[$index] = array_merge($val, [
                         "lcms"   => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
-                        "type"   => $val['type'] == "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
+                        "type"   => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
                         "status" => [
                             "type"  => "switch",
                             "url"   => "ajax&action=admin-list-save",
@@ -537,7 +537,6 @@ class admin extends adminbase
                             "value"  => $config['reg']['on'] ?? "0",
                             "radio"  => [
                                 ["title" => "关闭", "value" => "0", "tab" => "tab0"],
-                                ["title" => "账号验证", "value" => "justuser", "tab" => "tab_justuser"],
                                 ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
                                 ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
                             ],
@@ -768,7 +767,7 @@ class admin extends adminbase
                     $val['title'] .= " - [{$val['name']}]";
                     $val['title'] .= $val['lasttime'] > "0000-00-00 00:00:00" && $val['lasttime'] < datenow() ? " - 已到期" : "";
                     $arr[$index] = [
-                        "value" => $val['type'] == "lcms" ? "0" : $val['id'],
+                        "value" => $val['type'] === "lcms" ? "0" : $val['id'],
                         "title" => $val['title'],
                     ];
                     foreach ($llist as $level) {

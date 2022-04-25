@@ -51,6 +51,11 @@
     <div class="check-update hide"></div>
 </if>
 <div class="layui-fluid" style="padding:0">
+    <if $_L['config']['admin']['dir'] == "admin">
+        <p class="lcms-form-des">
+            系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，请尽快 <a href="?t=sys&n=config&c=admin&a=safe">修改后台目录</a>，以提高安全性！
+        </p>
+    </if>
     <if $lasttime && $lasttime lt 15>
         <p class="lcms-form-des">
             <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i> 友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
@@ -116,10 +121,10 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
+                            <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">[gd/必须]</span>
                             <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[zip/必须]</span>
                             <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[fileinfo]</span>
-                            <span style="padding-right:2px;color:{{$info['redis']?'green':'red';}}">[redis]</span>
-                            <span style="padding-right:2px;color:{{$info['memcached']?'green':'red';}}">[memcached]</span>
+                            <span style="padding-right:2px;color:{{class_exists('Redis')?'green':'red';}}">[redis]</span>
                         </td>
                     </tr>
                     <tr>

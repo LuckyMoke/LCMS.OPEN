@@ -24,17 +24,9 @@
                 <div name="email">发送验证码</div>
             </div>
         </if>
-        <if $UCFG['reg']['on']=="justuser">
-            <div class="login-input login-code">
-                <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="4" required="required" />
-                <img src="{{$_L['url']['app']}}index.php?n=system&c=pin" title="点击刷新" onclick="this.src=LCMS.url.app+'index.php?n=system&c=pin&'+Math.random()" />
-            </div>
-        </if>
-        <if $UCFG['reg']['on']=="email" || $UCFG['reg']['on']=="mobile">
-            <div class="login-input">
-                <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="6" required="required" />
-            </div>
-        </if>
+        <div class="login-input">
+            <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="6" required="required" />
+        </div>
         <div class="login-readme">
             <label>
                 <input type="checkbox" checked="checked" required="required" />

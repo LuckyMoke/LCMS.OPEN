@@ -99,7 +99,7 @@ class AutoPay
     {
         $AliPay = new AliPayOrder(self::init($order));
         $result = $AliPay->Check();
-        if ($result['code'] == "10000" && $result['trade_status'] == "TRADE_SUCCESS") {
+        if ($result['code'] == "10000" && $result['trade_status'] === "TRADE_SUCCESS") {
             return [
                 "code"     => 1,
                 "msg"      => "订单已支付",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-02-27 16:10:27
+ * @LastEditTime: 2022-04-25 16:11:28
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -51,9 +51,19 @@ class index extends adminbase
                     $captcha = new CAPTCHA($CFG['login_code']['luosimao']);
                     $yzcode  = $captcha->get();
                     break;
+                case 'vaptcha':
+                    load::plugin("Vaptcha/captcha");
+                    $captcha = new CAPTCHA($CFG['login_code']['vaptcha']);
+                    $yzcode  = $captcha->get();
+                    break;
+                case 'geetest':
+                    load::plugin("Geetest/captcha");
+                    $captcha = new CAPTCHA($CFG['login_code']['geetest']);
+                    $yzcode  = $captcha->get();
+                    break;
             }
         }
-        if ($LF['action'] == "band") {
+        if ($LF['action'] === "band") {
             $openid = SESSION::get("LOGINOPENID");
             if ($openid) {
                 $page = [
@@ -94,11 +104,32 @@ class index extends adminbase
         global $_L, $LF, $CFG, $USER, $RID;
         switch ($CFG['login_code']['type']) {
             case 'luosimao':
-                //luosimao人机验证
                 if ($LF['luotest_response']) {
                     load::plugin("Luosimao/captcha");
                     $YZ = new CAPTCHA($CFG['login_code']['luosimao']);
                     if (!$YZ->check($LF['luotest_response'])) {
+                        ajaxout(0, "人机验证失败");
+                    }
+                } else {
+                    ajaxout(0, "请进行人机验证");
+                }
+                break;
+            case 'vaptcha':
+                if ($LF['vaptcha_token']) {
+                    load::plugin("Vaptcha/captcha");
+                    $YZ = new CAPTCHA($CFG['login_code']['vaptcha']);
+                    if (!$YZ->check($LF['vaptcha_server'], $LF['vaptcha_token'])) {
+                        ajaxout(0, "人机验证失败");
+                    }
+                } else {
+                    ajaxout(0, "请进行人机验证");
+                }
+                break;
+            case 'geetest':
+                if ($LF['GEETEST']) {
+                    load::plugin("Geetest/captcha");
+                    $YZ = new CAPTCHA($CFG['login_code']['geetest']);
+                    if (!$YZ->check($LF['GEETEST'])) {
                         ajaxout(0, "人机验证失败");
                     }
                 } else {
@@ -282,6 +313,6 @@ class index extends adminbase
         ]);
         $RID = $_L['LCMSADMIN']['lcms'];
         SESSION::del("LCMSADMIN");
-        okinfo("?rootid={$RID}&n=login&go=" . urlencode($LF['go']));
+        okinfo("{$_L['url']['own']}rootid={$RID}&n=login&go=" . urlencode($LF['go']));
     }
 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-11 13:42:31
+ * @LastEditTime: 2022-04-23 16:58:54
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -270,23 +270,12 @@ function url_auto($url)
 /**
  * @description: JS页面跳转
  * @param string $url
- * @param string $info
+ * @param int $time
  * @return {*}
  */
-function okinfo($url, $info = "")
+function okinfo($url, $time = 0)
 {
-    $url = url_clear($url, "lcmstips");
-    $url = $url ?: "";
-    if ($info) {
-        $info = urlencode($info);
-        if (stristr($url, "?")) {
-            $url = $url . "&lcmstips=" . $info;
-        } else {
-            $url = $url . "?lcmstips=" . $info;
-        }
-    }
-    echo '<!DOCTYPE html><html><head><title>LOADING</title><meta name="renderer" content="webkit" /><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" /><link rel="icon" href="data:image/ico;base64,aWNv" /></head><body><style>body,html{margin:0;width:100%;height:100%;background:#fff}.ml-loader{position:relative;width:66px;height:66px;margin:0 auto}.ml-loader div{-webkit-transform-origin:32px 32px;-ms-transform-origin:32px 32px;transform-origin:32px 32px;-webkit-animation:1.2s opaque ease-in-out infinite both;animation:1.2s opaque ease-in-out infinite both}.ml-loader div::after{content:"";display:block;position:absolute;top:10px;left:30px;width:3px;height:10px;border-radius:10px;background-color:#000}.ml-loader div:nth-child(1){-webkit-transform:rotate(0);-ms-transform:rotate(0);transform:rotate(0)}.ml-loader div:nth-child(2){-webkit-transform:rotate(30deg);-ms-transform:rotate(30deg);transform:rotate(30deg);-webkit-animation-delay:.1s;animation-delay:.1s}.ml-loader div:nth-child(3){-webkit-transform:rotate(60deg);-ms-transform:rotate(60deg);transform:rotate(60deg);-webkit-animation-delay:.2s;animation-delay:.2s}.ml-loader div:nth-child(4){-webkit-transform:rotate(90deg);-ms-transform:rotate(90deg);transform:rotate(90deg);-webkit-animation-delay:.3s;animation-delay:.3s}.ml-loader div:nth-child(5){-webkit-transform:rotate(120deg);-ms-transform:rotate(120deg);transform:rotate(120deg);-webkit-animation-delay:.4s;animation-delay:.4s}.ml-loader div:nth-child(6){-webkit-transform:rotate(150deg);-ms-transform:rotate(150deg);transform:rotate(150deg);-webkit-animation-delay:.5s;animation-delay:.5s}.ml-loader div:nth-child(7){-webkit-transform:rotate(180deg);-ms-transform:rotate(180deg);transform:rotate(180deg);-webkit-animation-delay:.6s;animation-delay:.6s}.ml-loader div:nth-child(8){-webkit-transform:rotate(210deg);-ms-transform:rotate(210deg);transform:rotate(210deg);-webkit-animation-delay:.7s;animation-delay:.7s}.ml-loader div:nth-child(9){-webkit-transform:rotate(240deg);-ms-transform:rotate(240deg);transform:rotate(240deg);-webkit-animation-delay:.8s;animation-delay:.8s}.ml-loader div:nth-child(10){-webkit-transform:rotate(270deg);-ms-transform:rotate(270deg);transform:rotate(270deg);-webkit-animation-delay:.9s;animation-delay:.9s}.ml-loader div:nth-child(11){-webkit-transform:rotate(300deg);-ms-transform:rotate(300deg);transform:rotate(300deg);-webkit-animation-delay:1s;animation-delay:1s}.ml-loader div:nth-child(12){-webkit-transform:rotate(330deg);-ms-transform:rotate(330deg);transform:rotate(330deg);-webkit-animation-delay:1.1s;animation-delay:1.1s}.ml-loader div:nth-child(13){-webkit-transform:rotate(360deg);-ms-transform:rotate(360deg);transform:rotate(360deg);-webkit-animation-delay:1.2s;animation-delay:1.2s}@-webkit-keyframes opaque{0%{opacity:.1}40%{opacity:1}80%{opacity:.1}100%{opacity:.1}}@keyframes opaque{0%{opacity:.1}40%{opacity:1}80%{opacity:.1}100%{opacity:.1}}</style><div style="width:100px;height:100px;position:absolute;margin:-50px 0 0 -50px;top:50%;left:50%;text-align:center;"><div class="ml-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><p style="position:relative;margin:0 0 0 0;font-size:12px;">LOADING</p></div><script type="text/javascript">window.onload=function(){window.location.href="' . $url . '"};</script></body></html>';
-    exit;
+    goheader("/public/static/loading/index.html#go=" . urlencode($url) . "&time={$time}");
 }
 /**
  * @description: 302跳转
@@ -557,7 +546,7 @@ function is_pc($needle = [])
  */
 function is_base64($str = "")
 {
-    return $str == base64_encode(base64_decode($str)) ? true : false;
+    return $str === base64_encode(base64_decode($str)) ? true : false;
 }
 /**
  * @description: 判断是否为手机号
@@ -591,7 +580,7 @@ function is_serialize($data = "")
         return false;
     }
     $data = trim($data);
-    if ('N;' == $data) {
+    if ('N;' === $data) {
         return false;
     }
     if (strlen($data) < 4) {
@@ -737,12 +726,10 @@ function oss($url)
  */
 function server_info()
 {
-    $serverinfo['os']        = php_uname('s');
-    $serverinfo['sys']       = $_SERVER["SERVER_SOFTWARE"];
-    $serverinfo['php']       = PHP_VERSION;
-    $serverinfo['mysql']     = "Mysql " . DB::$mysql->version();
-    $serverinfo['redis']     = !class_exists("Redis") ? false : true;
-    $serverinfo['memcached'] = !class_exists("Memcached") ? false : true;
+    $serverinfo['os']    = php_uname('s');
+    $serverinfo['sys']   = $_SERVER["SERVER_SOFTWARE"];
+    $serverinfo['php']   = PHP_VERSION;
+    $serverinfo['mysql'] = "Mysql " . DB::$mysql->version();
     return $serverinfo;
 }
 /**

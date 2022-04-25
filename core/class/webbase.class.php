@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-03-26 17:38:06
+ * @LastEditTime: 2022-04-15 15:54:10
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -116,7 +116,7 @@ class webbase extends common
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $secure = $domain['scheme'] == "https" ? "https://" : "http://";
+            $secure = $domain['scheme'] === "https" ? "https://" : "http://";
             $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
         }
         if ($domain && $autodomain) {

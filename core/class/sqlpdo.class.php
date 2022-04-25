@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-12-11 13:56:08
+ * @LastEditTime: 2022-04-15 15:52:46
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -206,7 +206,7 @@ class SQLPDO
      */
     public function affected_rows()
     {
-        if (gettype($this->psm) == "object") {
+        if (gettype($this->psm) === "object") {
             return $this->psm->rowCount();
         }
     }
@@ -222,7 +222,7 @@ class SQLPDO
             $this->errorInfo = "";
             return $errorInfo;
         }
-        if (gettype($this->psm) == "object") {
+        if (gettype($this->psm) === "object") {
             $error = $this->psm->errorInfo();
         } else {
             $error = $this->pdo->errorInfo();
@@ -243,7 +243,7 @@ class SQLPDO
             $this->errorCode = "";
             return $errorCode;
         }
-        if (gettype($this->psm) == "object") {
+        if (gettype($this->psm) === "object") {
             $errno = $this->psm->errorCode();
         } else {
             $errno = $this->pdo->errorCode();

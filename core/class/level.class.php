@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-10 21:51:28
+ * @LastEditTime: 2022-04-15 15:52:03
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class LEVEL
         $file = PATH_APP . $type . "/" . $name . "/" . "app.json";
         if (is_file($file)) {
             $appinfo = json_decode(file_get_contents($file), true);
-            if ($name == "appstore" && $_L['developer']['appstore'] === 0) {
+            if ($name === "appstore" && $_L['developer']['appstore'] === 0) {
                 unset($appinfo['class']['store']);
             }
             $appinfo['menu'] = $appinfo['class'];
@@ -80,7 +80,7 @@ class LEVEL
     public static function applist($type = "all", $base = false, $count = 0)
     {
         global $_L;
-        if ($type == "all" || $type == "sys") {
+        if ($type === "all" || $type === "sys") {
             $sys = traversal_one(PATH_APP . "sys");
             $sys && sort($sys['dir']);
             foreach ($sys['dir'] as $dir) {
@@ -90,7 +90,7 @@ class LEVEL
                 }
             }
         }
-        if ($type == "all" || $type == "open") {
+        if ($type === "all" || $type === "open") {
             $open = traversal_one(PATH_APP . "open");
             $open && sort($open['dir']);
             foreach ($open['dir'] as $dir) {
@@ -100,7 +100,7 @@ class LEVEL
                 }
             }
         }
-        if ($type == "open" && $base) {
+        if ($type === "open" && $base) {
             $config = LCMS::config([
                 "name" => "menu",
                 "type" => "sys",
@@ -131,6 +131,6 @@ class LEVEL
             }
             $applist['open'] = $cache;
         }
-        return $type == "all" ? $applist : $applist[$type];
+        return $type === "all" ? $applist : $applist[$type];
     }
 }

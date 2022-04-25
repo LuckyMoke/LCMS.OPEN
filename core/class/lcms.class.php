@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-11 13:28:55
+ * @LastEditTime: 2022-04-15 15:50:55
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -38,7 +38,7 @@ class LCMS
      */
     public static function X($code = 403, $msg = "拒绝访问", $go = "")
     {
-        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
             ajaxout(0, $msg);
         } else {
             global $_L;
@@ -62,7 +62,7 @@ class LCMS
      */
     public static function Y($code = 200, $msg = "处理完成", $go = "")
     {
-        if ($_SERVER['CONTENT_TYPE'] == "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
             ajaxout(1, $msg);
         } else {
             global $_L;
@@ -85,7 +85,7 @@ class LCMS
     public static function SUPER()
     {
         global $_L;
-        return $_L['LCMSADMIN']['type'] == "lcms" ? true : false;
+        return $_L['LCMSADMIN']['type'] === "lcms" ? true : false;
     }
     /**
      * @description:
@@ -113,7 +113,7 @@ class LCMS
             ]]);
         if (!$para && $cache) {
             return sql2arr($cache['parameter']);
-        } elseif ($para == "clear") {
+        } elseif ($para === "clear") {
             sql_delete(["cache",
                 "name = :name AND lcms = :lcms", [
                     ":name" => $name,
@@ -163,7 +163,7 @@ class LCMS
                 ":cate" => $para['cate'],
                 ":lcms" => $para['lcms'],
             ]]);
-        if ($para['do'] == "save") {
+        if ($para['do'] === "save") {
             if ($config) {
                 sql_update(["config", [
                     "parameter" => arr2sql($config['parameter'], $para['form'], $para['unset']),
@@ -203,7 +203,7 @@ class LCMS
             "id = :id", "", [
                 ":id" => $para['id'],
             ]]) : [];
-        if ($para['do'] == "get") {
+        if ($para['do'] === "get") {
             $data = array_merge($data, sql2arr($data[$para['key']]));
             return $data;
         }
@@ -268,7 +268,7 @@ class LCMS
     {
         $tags = ["php", "template", "ui", "loop", "if", "elseif", "else", "switch", "case", "default"];
         foreach ($tags as $val) {
-            if (strpos($tag, "<" . ($val == 'else' || $val == 'default' || $val == 'php' ? $val : "{$val} ")) !== false) {
+            if (strpos($tag, "<" . ($val === 'else' || $val === 'default' || $val === 'php' ? $val : "{$val} ")) !== false) {
                 return $val;
                 break;
             } elseif (strpos($tag, "</{$val}>") !== false) {
@@ -288,11 +288,11 @@ class LCMS
         $dir     = explode('/', $path);
         $postion = $dir[0];
         $fpath   = substr(stristr($path, '/'), 1);
-        if ($postion == 'own') {
+        if ($postion === 'own') {
             $uipath = $ui ? "{$ui}/" : "";
             $file   = PATH_APP_OWN . "tpl/{$uipath}{$fpath}.html";
             $fpath  = str_replace(PATH_WEB, "", $file);
-        } elseif ($postion == 'ui') {
+        } elseif ($postion === 'ui') {
             $file  = PATH_PUBLIC . "ui/" . L_MODULE . "/{$fpath}.html";
             $fpath = str_replace(PATH_WEB, "", $file);
         } else {
