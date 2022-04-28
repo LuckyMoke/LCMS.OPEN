@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2022-04-20 15:40:04
+ * @LastEditTime: 2022-04-26 13:42:13
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -134,7 +134,6 @@ class find extends adminbase
             header("HTTP/1.1 404 Not Found");
             exit;
         }
-        SESSION::del("LOGINNUMBER");
         if (!PUB::is_email($number) && !is_phone($number)) {
             okinfo("{$_L['url']['own']}?rootid={$RID}&n=login&c=find");
         }
@@ -160,6 +159,7 @@ class find extends adminbase
                     "type" => "login",
                     "info" => "找回密码",
                 ]);
+                SESSION::del("LOGINNUMBER");
                 ajaxout(1, "密码设置成功", "?rootid={$RID}&n=login");
                 break;
             default:
