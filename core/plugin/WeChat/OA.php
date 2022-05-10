@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-15 16:00:11
+ * @LastEditTime: 2022-05-05 13:30:36
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -648,7 +648,7 @@ class OA
         header('Cache-Control: no-store, no-cahe, must-revalidate');
         header('Cache-Control: post-chedk=0, pre-check=0', false);
         header('Pragma: no-cache');
-        header("HTTP/1.1 301 Moved Permanently");
+        header("HTTP/1.1 302 Temporarily Moved");
         header("Location: $url");
         exit;
     }

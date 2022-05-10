@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-04-25 16:11:28
+ * @LastEditTime: 2022-05-06 15:58:32
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -85,11 +85,17 @@ class index extends adminbase
                 ],
                 "btn"   => "登陆",
             ];
-            if ($UCFG['reg']['qrcode'] == '1') {
-                $page['tab'][1] = [
+            if ($UCFG['reg']['qrcode'] > 0) {
+                $page['tab'] = array_merge($page['tab'], [[
                     "title" => "微信登陆",
                     "name"  => "qrcode",
-                ];
+                ]]);
+            }
+            if ($UCFG['reg']['qqlogin'] > 0) {
+                $page['tab'] = array_merge($page['tab'], [[
+                    "title" => "QQ登录",
+                    "name"  => "qqlogin",
+                ]]);
             }
         }
         require LCMS::template("own/index");
@@ -176,8 +182,9 @@ class index extends adminbase
                 ]);
                 ajaxout(0, "此账户已到期");
             } else {
-                $openid = SESSION::get("LOGINOPENID");
-                if ($openid) {
+                if ($LF['band'] > 0) {
+                    $openid = SESSION::get("LOGINOPENID");
+                    $openid || LCMS::X(403, "您未登录");
                     //绑定账号
                     $band = sql_get(["admin_band",
                         "openid = :openid AND aid = :aid",
@@ -273,7 +280,11 @@ class index extends adminbase
             "cid"  => $_COOKIE['LCMSCID'],
             "time" => time() + 180,
         ]));
-        ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}");
+        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+            ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}&name={$LF['name']}");
+        } else {
+            goheader("{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}&name={$LF['name']}");
+        }
     }
     /**
      * @description: 获取用户协议

@@ -27,7 +27,7 @@ CREATE TABLE `[_PRE]admin` (
 CREATE TABLE `[_PRE]admin_band` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `aid` int(11) NOT NULL DEFAULT '0' COMMENT '账号ID',
-  `openid` varchar(32) DEFAULT NULL COMMENT 'OPENID',
+  `openid` varchar(64) DEFAULT NULL COMMENT 'OPENID',
   PRIMARY KEY (`id`),
   KEY `aid` (`aid`),
   KEY `openid` (`openid`)

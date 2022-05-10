@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2021-10-31 17:17:35
+ * @LastEditTime: 2022-05-06 16:13:19
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -28,36 +28,43 @@ class qrcode extends adminbase
             header("HTTP/1.1 404 Not Found");
             exit;
         }
-        if ($UCFG['reg']['qrcode'] != "1") {
+        if ($UCFG['reg'][$LF['name']] < 1) {
             header("HTTP/1.1 404 Not Found");
             exit;
         }
         SESSION::set("LOGINROOTID", $RID);
-        load::plugin("WeChat/OA");
-        $WX = new OA();
         if ($LF['code']) {
             $code = json_decode(ssl_decode($LF['code']), true);
             if ($code && $code['time'] > time()) {
                 $CID = $code['cid'];
                 SESSION::set("LOGINCID", $CID);
             } else {
-                $this->msg([
-                    "icon"  => "warn",
-                    "title" => "二维码已过期",
-                    "desc"  => "请重新获取二维码扫描",
-                ]);
+                LCMS::X(403, "二维码已过期<br/>请重新获取二维码");
             }
         } else {
             $CID = SESSION::get("LOGINCID");
         }
-        if (!$CID) {
-            $this->msg([
-                "icon"  => "warn",
-                "title" => "禁止访问",
-                "desc"  => "Forbidden",
-            ]);
+        $CID || LCMS::X(403, "禁止访问");
+        switch ($LF['name']) {
+            case 'qrcode':
+                load::plugin("WeChat/OA");
+                $WX    = new OA();
+                $WUSER = $WX->userinfo();
+                break;
+            case 'qqlogin':
+                load::plugin("Tencent/QQConnect");
+                $QQ = new QQConnect([
+                    "appid"   => $UCFG['reg']['qqlogin_appid'],
+                    "display" => "pc",
+                ]);
+                $openid = $QQ->openid();
+                $openid || LCMS::X(403, "登录失败");
+                $WUSER = [
+                    "openid" => "QQ{$openid}",
+                ];
+                break;
         }
-        $WUSER = $WX->userinfo();
+        $WUSER['openid'] || LCMS::X(403, "登录失败");
         SESSION::set("LOGINOPENID", $WUSER['openid']);
     }
     /**
@@ -102,11 +109,7 @@ class qrcode extends adminbase
             //todo验证账号是否绑定
             if ($admin['status'] == '1') {
                 if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
-                    $this->msg([
-                        "icon"  => "warn",
-                        "title" => "登陆失败",
-                        "desc"  => "此账号已到期",
-                    ]);
+                    LCMS::X(403, "登陆失败<br/>此账号已到期");
                 } else {
                     $time = datenow();
                     sql_update(["admin", [
@@ -121,30 +124,16 @@ class qrcode extends adminbase
                     $result = HTTP::get("{$_L['url']['own_form']}logincid&c=index&rootsid={$CID}&cookie=" . ssl_encode(json_encode($admin)));
                     $result = json_decode($result, true);
                     if ($result['code'] == "1") {
-                        $this->msg([
-                            "title" => "登陆成功",
-                            "desc"  => "请返回网页端查看",
-                        ]);
+                        LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
                     } else {
-                        $this->msg([
-                            "icon"  => "warn",
-                            "title" => "登陆失败",
-                        ]);
+                        LCMS::X(403, "登陆失败");
                     }
                 }
             } else {
-                $this->msg([
-                    "icon"  => "warn",
-                    "title" => "登陆失败",
-                    "desc"  => "账号已停用",
-                ]);
+                LCMS::X(403, "登陆失败<br/>此账号已停用");
             }
         } else {
-            $this->msg([
-                "icon"  => "warn",
-                "title" => "登陆失败",
-                "desc"  => "请先注册账号绑定",
-            ]);
+            LCMS::X(403, "登陆失败<br/>请先注册账号绑定");
         }
     }
     /**
@@ -168,28 +157,9 @@ class qrcode extends adminbase
                     ":aid"    => $admin['id'],
                 ],
             ]);
-            $this->msg([
-                "title" => "解绑成功",
-            ]);
+            LCMS::Y(200, "解绑成功");
         } else {
-            $this->msg([
-                "icon"  => "warn",
-                "title" => "解绑失败",
-            ]);
+            LCMS::X(403, "解绑失败");
         }
-    }
-    /**
-     * @description: 输出信息页面
-     * @param {*} $page
-     * @return {*}
-     */
-    private function msg($page = [])
-    {
-        global $_L, $LF, $UCFG, $RID, $CID, $WX;
-        $WX->page_msg([
-            "icon"  => $page['icon'],
-            "title" => $page['title'],
-            "desc"  => $page['desc'],
-        ]);
     }
 }

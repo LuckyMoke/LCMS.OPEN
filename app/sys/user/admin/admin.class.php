@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-26 16:42:58
+ * @LastEditTime: 2022-05-06 16:01:28
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -521,16 +521,28 @@ class admin extends adminbase
                             "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                             "disabled" => true,
                         ],
-                        ["layui" => "title", "title" => "登陆设置"],
-                        ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！"],
+                        ["layui" => "title", "title" => "三方登录"],
+                        ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html"],
                         ["layui" => "radio", "title" => "微信扫码",
                             "name"   => "LC[reg][qrcode]",
                             "value"  => $config['reg']['qrcode'] ?? "0",
                             "radio"  => [
                                 ["title" => "关闭", "value" => "0"],
-                                ["title" => "开启", "value" => "1"],
+                                ["title" => "启用", "value" => "1"],
                             ],
                         ],
+                        ["layui" => "radio", "title" => "QQ登录",
+                            "name"   => "LC[reg][qqlogin]",
+                            "value"  => $config['reg']['qqlogin'] ?? "0",
+                            "radio"  => [
+                                ["title" => "关闭", "value" => "0", "tab" => "tab_qqlogin0"],
+                                ["title" => "启用", "value" => "1", "tab" => "tab_qqlogin"],
+                            ],
+                        ],
+                        ["layui" => "input", "title" => "APPID",
+                            "name"   => "LC[reg][qqlogin_appid]",
+                            "value"  => $config['reg']['qqlogin_appid'],
+                            "cname"  => "hidden tab_qqlogin"],
                         ["layui" => "title", "title" => "注册设置"],
                         ["layui" => "radio", "title" => "用户注册",
                             "name"   => "LC[reg][on]",

@@ -43,6 +43,6 @@
                 <div class="login-form">
                     <div class="login-tab login-tab{{count($page['tab'])}}">
                         <loop $page['tab'],$tab,$index>
-                            <a href="javascript:;" name="{{$tab['name']}}" class="{{$index=='0'?'active':''}}">{{$tab['title']}}</a>
+                            <a href="{{$tab['href']?:'javascript:;'}}" name="{{$tab['name']}}" class="{{$index=='0'?'active':''}}">{{$tab['title']}}</a>
                         </loop>
                     </div>
