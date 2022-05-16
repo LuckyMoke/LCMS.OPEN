@@ -37,10 +37,16 @@ switch ($action) {
                 "desc" => PHP_VERSION . " <span style='color:green'><i class='layui-icon layui-icon-ok'></i>版本可用</span>",
             ];
         }
-        if (function_exists('imagecreate')) {
-            $desc = "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>gd]</span>";
+        if (function_exists('curl_init')) {
+            $desc = "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>curl]</span>";
         } else {
-            $desc = "<a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFgd%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>gd]</a>";
+            $desc = "<a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFcurl%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>curl]</a>";
+            $code = 0;
+        }
+        if (function_exists('imagecreate')) {
+            $desc .= "<span style='color:green'>[<i class='layui-icon layui-icon-ok'></i>gd]</span>";
+        } else {
+            $desc .= "<a href='https://www.baidu.com/s?wd=PHP%E5%BC%80%E5%90%AFgd%E6%89%A9%E5%B1%95&ie=UTF-8' target='_blank' style='color:red'>[<i class='layui-icon layui-icon-close'></i>gd]</a>";
             $code = 0;
         }
         if (extension_loaded("zip")) {

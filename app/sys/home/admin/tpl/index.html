@@ -121,6 +121,7 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
+                            <span style="padding-right:2px;color:{{function_exists('curl_init')?'green':'red';}}">[curl/必须]</span>
                             <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">[gd/必须]</span>
                             <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[zip/必须]</span>
                             <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[fileinfo]</span>
