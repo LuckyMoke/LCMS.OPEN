@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-23 16:58:54
+ * @LastEditTime: 2022-06-01 15:45:09
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -615,12 +615,12 @@ function is_https($url = "")
 }
 /**
  * @description: 验证是否为URL
- * @param string $str
+ * @param string $url
  * @return bool
  */
-function is_url($str = "")
+function is_url($url = "")
 {
-    if (filter_var($str, FILTER_VALIDATE_URL)) {
+    if (parse_url($url, PHP_URL_HOST) !== null) {
         return true;
     }
 }
