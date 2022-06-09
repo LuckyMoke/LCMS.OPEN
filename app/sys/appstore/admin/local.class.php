@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-11 11:46:31
+ * @LastEditTime: 2022-06-08 18:16:41
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -64,7 +64,7 @@ class local extends adminbase
     public function dosetdefault()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() && LCMS::X(403, "请在子账号下设置");
+        LCMS::SUPER() && LCMS::X(403, "请在子账号下设置<br/>需要给子账号添加“本地应用”权限");
         switch ($LF['action']) {
             case 'save':
                 LCMS::config([

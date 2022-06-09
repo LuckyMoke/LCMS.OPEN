@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2022-04-09 15:28:26
+ * @LastEditTime: 2022-06-09 14:44:30
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -19,11 +19,13 @@ class index extends adminbase
     {
         global $_L;
         if (!$_L['config']['web']['domain']) {
-            LCMS::X(400, "检测到您是第一次安装使用<br/>请先到 <a href='index.php?t=sys&n=config&c=admin&a=web' style='color:red'>框架设置</a> 填写默认域名");
+            LCMS::X(400, "检测到您是第一次安装使用<br/>请先到 框架设置 填写默认域名", [[
+                "title" => "框架设置",
+                "url"   => "index.php?t=sys&n=config&c=admin&a=web",
+            ]]);
         }
-        $open   = LEVEL::applist("open", true, 12);
-        $info   = server_info();
-        $update = LCMS::SUPER() ? 1 : 0;
+        $open = LEVEL::applist("open", true, 12);
+        $info = server_info();
         if ($_L['LCMSADMIN']['lasttime'] && $_L['LCMSADMIN']['lasttime'] > "0000-00-00 00:00:00") {
             $lasttime = (strtotime($_L['LCMSADMIN']['lasttime']) - time()) / 86400;
         }

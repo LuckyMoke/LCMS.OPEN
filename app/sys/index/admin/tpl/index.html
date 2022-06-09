@@ -24,7 +24,7 @@
             };
         </script>
     </head>
-    <body>
+    <body data-update="{{$update}}">
         <div id="LCMS">
             <header>
                 <ul class="layui-nav main-menu-mobile">
@@ -61,16 +61,21 @@
                                         <i class="layui-icon layui-icon-upload-drag"></i>升级
                                     </if>
                                 </a>
-                                <if $info['name']=="appstore" && $applist>
+                                <if $info['name']=="appstore" && $applist && count($applist) gt 1>
                                     <ol>
                                         <loop $applist,$app>
                                             <li>
                                                 <a href="javascript:;" data-url="{{$app['url']}}">
                                                     <img src="{{$app['icon']}}" />
-                                                    <h3>{{$app['title']}}</h3>
+                                                    <h3>{{$app['title']}} <i>V{{$app['ver']}}</i></h3>
                                                 </a>
                                             </li>
                                         </loop>
+                                        <li>
+                                            <a href="javascript:;" data-url="{{$info['url']}}">
+                                                <h3>更多应用...</h3>
+                                            </a>
+                                        </li>
                                     </ol>
                                 </if>
                             </li>

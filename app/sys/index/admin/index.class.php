@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2022-04-09 13:50:23
+ * @LastEditTime: 2022-06-09 14:03:19
  * @Description: 框架菜单处理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -48,7 +48,9 @@ class index extends adminbase
                 "gitee" => 1,
             ],
         ];
-        if (!LCMS::SUPER()) {
+        if (LCMS::SUPER()) {
+            $update = 1;
+        } else {
             unset($config['sys']['update']);
         }
         foreach ($config['sys'] as $name => $class) {

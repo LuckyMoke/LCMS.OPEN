@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-03-07 14:15:03
+ * @LastEditTime: 2022-06-08 15:21:01
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -120,7 +120,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block{$para['tipsbox']}'>
-                    <select class='lcms-form-select' xm-select-skin='default' xm-select='{$para['id']}' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']}{$para['verifybox']}{$para['disabled']}>
+                    <select class='lcms-form-select' xm-select-skin='normal' xm-select='{$para['id']}' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']}{$para['verifybox']}{$para['disabled']}>
                         {$default}{$option}
                     </select>
                 </div>
@@ -288,7 +288,7 @@ class LAY
                 <div class='layui-input-block'>
                     <div class='layui-upload-list lcms-form-upload-img-list'></div>
                     <div class='layui-btn-group lcms-form-upload-btn'>
-                        <a class='layui-btn layui-btn-normal layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         <a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a>
                         <a class='layui-btn layui-btn-primary layui-btn-sm _other'>外链</a>
                     </div>
@@ -308,7 +308,7 @@ class LAY
                 <div class='layui-input-block'>
                     <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     <div class='layui-btn-group lcms-form-upload-file-btn'>
-                        <a class='layui-btn layui-btn-normal layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                     </div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
                     <div class='clear'></div>
@@ -360,7 +360,7 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}<span style='font-size:12px;color:#ff5722;padding-left:10px;'>标签可拖动排序</span></label>
                 <div class='layui-input-block'>
                     <div class='lcms-form-spec-box'></div>
-                    <a class='layui-btn layui-btn-sm layui-btn-normal lcms-form-spec-btn'>
+                    <a class='layui-btn layui-btn-sm lcms-form-spec-btn'>
                         <i class='layui-icon layui-icon-add-1'></i>
                         添加标签
                     </a>
