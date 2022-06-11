@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-25 16:30:37
+ * @LastEditTime: 2022-06-11 15:48:47
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -253,15 +253,16 @@ class admin extends adminbase
                     ["layui"  => "slider", "title" => "图片压缩率",
                         "name"    => "LC[attquality]",
                         "value"   => $config['attquality'] ?: 70,
-                        "tips"    => "jpg格式图片压缩率",
+                        "tips"    => "jpg格式图片压缩率，100%为不压缩",
                         "min"     => 10,
                         "max"     => 100,
                         "step"    => 10,
                         "settips" => "%"],
+                    ["layui" => "des", "title" => "特别注意：为了后台安全，一些不常见的文件后缀，请在上传完文件后，及时删除白名单。"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",
                         "value"  => $config['mimelist'],
-                        "tips"   => "允许上传白名单里的文件格式",
+                        "tips"   => "上传格式白名单，例如jpg，不需要加.点",
                         "verify" => "required"],
                     ["layui" => "title", "title" => "性能优化"],
                     ["layui" => "radio", "title" => "开发模式",

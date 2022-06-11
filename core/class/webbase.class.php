@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-15 15:54:10
+ * @LastEditTime: 2022-06-10 17:29:53
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,7 +24,7 @@ class webbase extends common
         global $_L;
         $_L['ROOTID'] = $_L['form']['rootid'] ?: "0";
     }
-    public function load_web_url($domain = "", $secure = "")
+    public function load_web_url($domain = "", $scheme = "")
     {
         global $_L;
         if ($_L['config']['web']['domain'] && $_L['config']['web']['domain_must'] && stristr(HTTP_HOST, $_L['config']['web']['domain']) === false) {
@@ -32,13 +32,13 @@ class webbase extends common
         }
         // 当前域名数据
         $domain    = $domain ?: (HTTP_HOST ?: $_L['config']['web']['domain']);
-        $secure    = $secure ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
-        $url_site  = "{$secure}{$domain}/";
+        $scheme    = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $url_site  = "{$scheme}{$domain}/";
         $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&";
         $_L['url'] = [
-            "secure"   => $secure,
+            "scheme"   => $scheme,
             "site"     => $url_site,
-            "now"      => "{$secure}{$domain}" . HTTP_QUERY,
+            "now"      => "{$scheme}{$domain}" . HTTP_QUERY,
             "public"   => "{$url_site}public/",
             "static"   => "{$url_site}public/static/",
             "upload"   => "{$url_site}upload/",
@@ -50,11 +50,11 @@ class webbase extends common
             "own_form" => "{$url_own}n=" . L_NAME . "&c=" . L_CLASS . "&a=",
         ];
         // 系统URL参数
-        $secure   = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
-        $url_site = "{$secure}{$_L['config']['web']['domain']}/";
+        $scheme   = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
+        $url_site = "{$scheme}{$_L['config']['web']['domain']}/";
 
         $_L['url']['sys'] = [
-            "secure" => $secure,
+            "scheme" => $scheme,
             "domain" => $_L['config']['web']['domain'],
             "site"   => $url_site,
             "api"    => $_L['config']['web']['domain_api'],
@@ -111,17 +111,17 @@ class webbase extends common
             TPL::getui($paths);
         }
     }
-    public function domain($domain = "", $secure = "", $autodomain = false)
+    public function domain($domain = "", $scheme = "", $autodomain = false)
     {
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $secure = $domain['scheme'] === "https" ? "https://" : "http://";
+            $scheme = $domain['scheme'] === "https" ? "https://" : "http://";
             $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
         }
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         }
-        $this->load_web_url($domain, $secure);
+        $this->load_web_url($domain, $scheme);
     }
 }

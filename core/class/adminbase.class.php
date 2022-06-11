@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-15 15:49:07
+ * @LastEditTime: 2022-06-10 17:30:09
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,12 +26,12 @@ class adminbase extends common
     protected function load_admin_url()
     {
         global $_L;
-        $secure    = $_L['config']['admin']['https'] ? "https://" : ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://");
-        $url_site  = $secure . HTTP_HOST . "/";
-        $url_now   = $secure . HTTP_HOST . HTTP_QUERY;
+        $scheme    = $_L['config']['admin']['https'] ? "https://" : ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://");
+        $url_site  = $scheme . HTTP_HOST . "/";
+        $url_now   = $scheme . HTTP_HOST . HTTP_QUERY;
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
         $_L['url'] = [
-            "secure"   => $secure,
+            "scheme"   => $scheme,
             "site"     => $url_site,
             "now"      => $url_now,
             "admin"    => $url_admin,
@@ -74,14 +74,14 @@ class adminbase extends common
             $_L['ROOTID'] = LCMS::SUPER() ? "0" : $_L['ROOTID'];
         }
     }
-    protected function load_web_url($domain = "", $secure = "")
+    protected function load_web_url($domain = "", $scheme = "")
     {
         global $_L;
         $domain           = $domain ?: ($_L['config']['web']['domain'] ?: HTTP_HOST);
-        $secure           = $secure ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
-        $url_site         = "{$secure}{$domain}/";
+        $scheme           = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $url_site         = "{$scheme}{$domain}/";
         $_L['url']['web'] = [
-            "secure"   => $secure,
+            "scheme"   => $scheme,
             "site"     => $url_site,
             "api"      => $_L['config']['web']['domain_api'],
             "public"   => "{$url_site}public/",
@@ -132,17 +132,17 @@ class adminbase extends common
             LCMS::X(403, "没有权限，禁止访问");
         }
     }
-    public function domain($domain = "", $secure = "", $autodomain = false)
+    public function domain($domain = "", $scheme = "", $autodomain = false)
     {
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $secure = $domain['scheme'] === "https" ? "https://" : "http://";
+            $scheme = $domain['scheme'] === "https" ? "https://" : "http://";
             $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
         }
         if ($domain && $autodomain) {
             $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
         };
-        $this->load_web_url($domain, $secure);
+        $this->load_web_url($domain, $scheme);
     }
 }
