@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2021-05-31 17:26:43
+ * @LastEditTime: 2022-06-16 14:10:00
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -81,7 +81,7 @@ class TABLE
             if (is_array($toolbar)) {
                 foreach ($toolbar as $key => $val) {
                     $val['url'] = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-                    $laytpl .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
+                    $laytpl .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}'>{$val['title']}</button>";
                 }
                 $laytpl  = "<script type='text/html' id='{$toolbarid}'>{$laytpl}<div class='clear'></div></script>";
                 $toolbar = "#{$toolbarid}";
@@ -147,7 +147,7 @@ class TABLE
             $colsbarid = "COLSBAR" . randstr(6);
             foreach ($colsbar as $key => $val) {
                 $val['url'] = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
+                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}'>{$val['title']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
             return [
@@ -220,7 +220,7 @@ class TABLE
         $toolbar = "";
         foreach ($tree['toolbar'] as $key => $val) {
             $val['url'] = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-            $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
+            $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}'>{$val['title']}</button>";
         }
         $toolbar .= "<button class='layui-btn layui-btn-primary lcms-form-table-tree-openall'>展开或折叠全部</button>";
         foreach ($tree['cols'] as $key => $val) {
@@ -255,7 +255,7 @@ class TABLE
             $colsbarid = "TREECOLSBAR" . randstr(6);
             foreach ($colsbar as $key => $val) {
                 $val['url'] = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}'>{$val['title']}</button>";
+                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}'>{$val['title']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
             return [

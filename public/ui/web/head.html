@@ -20,6 +20,13 @@
         <if !$_L['ui']['nocache']>
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}{{$_L['config']['ver']}}" />
         </if>
+        <if $_L['ui']['css-root']>
+            <?php $cssroot = "<style type=\"text/css\">:root{";?>
+            <loop $_L['ui']['css-root'],$v,$n>
+                <?php $cssroot .= "--{$n}:{$v};";?>
+            </loop>
+            <?php echo $cssroot .= "}</style>";?>
+        </if>
         <if $_L['ui']['css']>
             <loop array_unique($_L['ui']['css']),$css>
                 <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],$css).'?'.TPL::$ver}}" />

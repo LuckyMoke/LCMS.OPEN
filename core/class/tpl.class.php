@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-15 15:53:39
+ * @LastEditTime: 2022-06-15 20:51:09
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -32,13 +32,13 @@ class TPL
     public static function getui($paths = [])
     {
         global $_L;
-        $_L['ui'] = [
+        $_L['ui'] = array_merge([
             "nocache" => 0,
             "css"     => [],
             "js-head" => [],
             "js"      => [],
             "xhr"     => [],
-        ];
+        ], $_L['ui'] ?? []);
         $tpath = PATH_APP_NOW . "web/tpl" . (self::$tplpath ? "/" . self::$tplpath : "");
         if (self::$cache == 2) {
             $_L['ui']['nocache'] = 1;
