@@ -649,7 +649,7 @@ function exec(scrawlObj) {
                         src = '',
                         srcFieldKeys = srcField.split('.'),
                         prefix = editor.options.scrawlUrlPrefix;
-                    
+
                     if(srcFieldKeys.length > 1) {
                         function setSrc(obj, keys, index) {
                             obj = obj[keys[index]];
@@ -663,7 +663,7 @@ function exec(scrawlObj) {
                     } else {
                         src = data[srcField];
                     }
-                    
+
                     imgObj.src = prefix + src;
                     imgObj._src = prefix + src;
                     imgObj.alt = data.original || '';

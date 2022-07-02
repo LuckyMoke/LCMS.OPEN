@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-02-27 14:40:41
+ * @LastEditTime: 2022-07-01 20:27:10
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -100,9 +100,10 @@ class index extends adminbase
     public function doeditor()
     {
         global $_L, $LF, $LC;
+        $jt    = $_FILES['file'];
         $datey = date("Ym");
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/image/{$datey}/";
-        $files = $_L['form']['files'] ?? [];
+        $files = $_L['form']['files'] ?? ($jt ? [$jt] : []);
         foreach ($files as $url) {
             if ($_L['plugin']['oss']['type'] != "local" && stripos($url, $_L['plugin']['oss']['domain']) !== false) {
                 $result[] = [
@@ -175,7 +176,12 @@ class index extends adminbase
                 ];
             }
         }
-        echo json_encode(["list" => $result]);
+        if ($jt) {
+            unset($result[0]['source']);
+            echo json_encode_ex($result[0]);
+        } else {
+            echo json_encode(["list" => $result]);
+        }
     }
     /**
      * @description: 七牛云上传

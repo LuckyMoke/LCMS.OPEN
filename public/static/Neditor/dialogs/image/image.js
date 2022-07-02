@@ -767,7 +767,7 @@
 
             for (i = 0; i < this.imageList.length; i++) {
                 data = this.imageList[i];
-                
+
                 if(imageSrcFieldKeys.length > 1) {
                     function setImageSrc(obj, keys, index) {
                         obj = obj[keys[index]];
@@ -777,12 +777,12 @@
                             imageSrc = obj;
                         }
                     }
-    
+
                     setImageSrc(data, imageSrcFieldKeys, 0);
                 } else {
                     imageSrc = data[imageSrcField];
                 }
-                
+
                 list.push({
                     src: prefix + imageSrc,
                     _src: prefix + imageSrc,

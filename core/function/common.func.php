@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-06-01 15:45:09
+ * @LastEditTime: 2022-06-30 13:59:18
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -710,10 +710,22 @@ function html_editor($content = "", $lazyload = false)
 function oss($url)
 {
     global $_L;
-    if (!is_url($url) && $_L['plugin']['oss']['type'] != "local") {
-        $preg = "../upload/";
-        if (strpos($url, $preg) !== false) {
-            $url = str_replace("../", $_L['plugin']['oss']['domain'], $url);
+    $config = $_L['plugin']['oss'];
+    if (!is_url($url) && $config['type'] != "local") {
+        if (in_string($url, "../upload/")) {
+            $url = str_replace("../", $config['domain'], $url);
+            $url = explode("?", $url)[0];
+            switch ($config['type']) {
+                case 'qiniu':
+                case 'tencent':
+                    $url .= "?imageMogr2/interlace/1";
+                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format/webp" : $url;
+                    break;
+                case 'aliyun':
+                    $url .= "?x-oss-process=image/interlace,1";
+                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format,webp" : $url;
+                    break;
+            }
             return $url;
         }
     }

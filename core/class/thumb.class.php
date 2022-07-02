@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-01-03 11:02:41
+ * @LastEditTime: 2022-06-30 13:49:19
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -35,33 +35,42 @@ class THUMB
                 $url = oss($path);
                 if (is_url($url)) {
                     if ($x != 0 && $y == 0) {
-                        return "{$url}?imageMogr2/auto-orient/thumbnail/{$x}x/interlace/1/blur/1x0/quality/75";
+                        $url .= "?imageMogr2/auto-orient/thumbnail/{$x}x/interlace/1/blur/1x0/quality/75";
                     } elseif ($x == 0 && $y != 0) {
-                        return "{$url}?imageMogr2/auto-orient/thumbnail/x{$y}/interlace/1/blur/1x0/quality/75";
+                        $url .= "?imageMogr2/auto-orient/thumbnail/x{$y}/interlace/1/blur/1x0/quality/75";
+                    } else {
+                        $url .= "?imageMogr2/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/interlace/1/blur/1x0/quality/75";
                     }
-                    return "{$url}?imageMogr2/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/interlace/1/blur/1x0/quality/75";
+                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format/webp" : $url;
+                    return $url;
                 }
                 break;
             case 'tencent':
                 $url = oss($path);
                 if (is_url($url)) {
                     if ($x != 0 && $y == 0) {
-                        return "{$url}?imageMogr2/thumbnail/{$x}x/|imageMogr2/gravity/center/crop/{$x}x0/interlace/1";
+                        $url .= "?imageMogr2/thumbnail/{$x}x/|imageMogr2/gravity/center/crop/{$x}x0/interlace/1";
                     } elseif ($x == 0 && $y != 0) {
-                        return "{$url}?imageMogr2/thumbnail/x{$y}/|imageMogr2/gravity/center/crop/0x{$y}/interlace/1";
+                        $url .= "?imageMogr2/thumbnail/x{$y}/|imageMogr2/gravity/center/crop/0x{$y}/interlace/1";
+                    } else {
+                        $url .= "?imageMogr2/thumbnail/!{$x}x{$y}r/|imageMogr2/gravity/center/crop/{$x}x{$y}/interlace/1";
                     }
-                    return "{$url}?imageMogr2/thumbnail/!{$x}x{$y}r/|imageMogr2/gravity/center/crop/{$x}x{$y}/interlace/1";
+                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format/webp" : $url;
+                    return $url;
                 }
                 break;
             case 'aliyun':
                 $url = oss($path);
                 if (is_url($url)) {
                     if ($x != 0 && $y == 0) {
-                        return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_{$x},limit_0/quality,q_75";
+                        $url .= "?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_{$x},limit_0/quality,q_75";
                     } elseif ($x == 0 && $y != 0) {
-                        return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,h_{$y},limit_0/quality,q_75";
+                        $url .= "?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,h_{$y},limit_0/quality,q_75";
+                    } else {
+                        $url .= "?x-oss-process=image/auto-orient,1/interlace,1/resize,m_fill,w_{$x},h_{$y},limit_0/quality,q_75";
                     }
-                    return "{$url}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_fill,w_{$x},h_{$y},limit_0/quality,q_75";
+                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format,webp" : $url;
+                    return $url;
                 }
                 break;
         }
@@ -88,9 +97,19 @@ class THUMB
     {
         ob_end_clean();
         $img_info = @getimagesize($path);
-        if (stripos($img_info['mime'], "image/jpeg|image/pjpeg|image/gif|image/png|image/x-png|image/webp|image/vnd.wap.wbmp|image/x-up-wpng") != false) {
+        if (!in_string($img_info['mime'], [
+            "image/jpeg",
+            "image/pjpeg",
+            "image/gif",
+            "image/png",
+            "image/x-png",
+            "image/webp",
+            "image/vnd.wap.wbmp",
+            "image/x-up-wpng",
+        ])) {
             header("content-type: {$img_info['mime']}");
             echo file_get_contents($path);
+            exit;
         }
         $img   = self::img_resource($path, $img_info['mime']);
         $scale = $img_info[0] / $img_info[1];

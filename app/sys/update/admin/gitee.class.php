@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2022-03-18 15:43:45
+ * @LastEditTime: 2022-06-24 19:29:50
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -234,7 +234,7 @@ class gitee extends adminbase
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLINFO_HEADER_OUT, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_ENCODING, "gzip");
+        // curl_setopt($ch, CURLOPT_ENCODING, "gzip");
         curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
         switch ($CFG['gitee_server']) {
             case 1:

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-06-11 15:48:47
+ * @LastEditTime: 2022-06-30 14:53:40
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -250,6 +250,14 @@ class admin extends adminbase
                         "value"  => $config['attsize'],
                         "tips"   => "限制上传文件的大小，单位KB",
                         "verify" => "required"],
+                    ["layui" => "radio", "title" => "图片转WEBP",
+                        "name"   => "LC[attwebp]",
+                        "value"  => $config['attwebp'] ?: 0,
+                        "radio"  => [
+                            ["title" => "打开", "value" => 1, "tab" => "attwebp1"],
+                            ["title" => "关闭", "value" => 0, "tab" => "attwebp0"],
+                        ],
+                        "tips"   => "WEBP格式可以在不降低清晰度的情况下，极大的压缩图片大小"],
                     ["layui"  => "slider", "title" => "图片压缩率",
                         "name"    => "LC[attquality]",
                         "value"   => $config['attquality'] ?: 70,
@@ -257,7 +265,8 @@ class admin extends adminbase
                         "min"     => 10,
                         "max"     => 100,
                         "step"    => 10,
-                        "settips" => "%"],
+                        "settips" => "%",
+                        "cname"   => "hidden attwebp0"],
                     ["layui" => "des", "title" => "特别注意：为了后台安全，一些不常见的文件后缀，请在上传完文件后，及时删除白名单。"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",
