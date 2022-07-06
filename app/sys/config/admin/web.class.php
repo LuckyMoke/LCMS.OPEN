@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-04-20 14:42:55
+ * @LastEditTime: 2022-07-06 12:25:28
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -195,7 +195,7 @@ class web extends adminbase
                 ]);
                 $phpext = extension_loaded("fileinfo") ? false : true;
                 $form   = [
-                    ["layui" => "des", "title" => "使用云存储必须开启当前PHP的 fileinfo 扩展！！！"],
+                    ["layui" => "des", "title" => "使用云存储必须开启当前PHP的 fileinfo 扩展！同时注意用户图片、文件上传权限设置！"],
                     ["layui" => "radio", "title" => "存储方式",
                         "name"   => "LC[oss][type]",
                         "value"  => $plugin['oss']['type'] ?: "local",

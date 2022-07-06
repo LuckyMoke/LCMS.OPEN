@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-06-08 15:21:01
+ * @LastEditTime: 2022-07-06 13:58:38
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -104,10 +104,11 @@ class LAY
     public static function select($para)
     {
         global $_L;
-        $para         = self::start($para);
-        $para['many'] = $para['many'] ? "" : "xm-select-radio";
-        $default      = $para['default'] ? "<option value=''>{$para['default']}</option>" : "";
-        $option       = "";
+        $para            = self::start($para);
+        $para['many']    = $para['many'] ? "" : "xm-select-radio";
+        $para['linkage'] = $para['linkage'] === false ? "" : "linkage='1'";
+        $default         = $para['default'] ? "<option value=''>{$para['default']}</option>" : "";
+        $option          = "";
         foreach ($para['option'] as $key => $val) {
             $selected = $val['value'] == $para['value'] ? " selected" : "";
             $disabled = $val['disabled'] ? " disabled='disabled'" : "";
@@ -120,7 +121,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block{$para['tipsbox']}'>
-                    <select class='lcms-form-select' xm-select-skin='normal' xm-select='{$para['id']}' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']}{$para['verifybox']}{$para['disabled']}>
+                    <select class='lcms-form-select' xm-select-skin='normal' xm-select='{$para['id']}' xm-select-search='{$para['url']}' xm-select-max='{$para['max']}' name='{$para['name']}' xm-select-val='{$para['value']}' {$para['many']} {$para['linkage']}{$para['verifybox']}{$para['disabled']}>
                         {$default}{$option}
                     </select>
                 </div>
@@ -290,7 +291,7 @@ class LAY
                     <div class='layui-btn-group lcms-form-upload-btn'>
                         <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         <a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a>
-                        <a class='layui-btn layui-btn-primary layui-btn-sm _other'>外链</a>
+                        <a class='layui-btn layui-btn-primary layui-btn-sm _other'>链接</a>
                     </div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
                 </div>
