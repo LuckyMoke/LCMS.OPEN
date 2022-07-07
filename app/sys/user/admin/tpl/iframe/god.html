@@ -1,13 +1,15 @@
 <template "ui/head" />
 <template "ui/iframe" />
-<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}god&action=save" method="post" target="_self">
-    <ui form($form) />
-</form>
-<p class="lcms-form-des">
-    <b>功能介绍：</b><br />
-    超级管理员可快速切换到任意用户登录，方便帮助用户进行后台的设置。<br />
-    <span style="color:red">默认只显示10个用户，切换更多用户请直接输入帐号显示更多。</span>
-</p>
+<style>
+    .layui-table-tool-self {
+        display: none;
+    }
+
+    .lcms-form-table-toolbar-search {
+        right: 20px !important;
+    }
+</style>
+<ui table($table) />
 <script type="text/javascript">
 var reloadall = function() {
     top.location.href = LCMS.url.admin;

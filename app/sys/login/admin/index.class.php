@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-05-06 15:58:32
+ * @LastEditTime: 2022-07-07 13:06:21
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -98,7 +98,8 @@ class index extends adminbase
                 ]]);
             }
         }
-        require LCMS::template("own/index");
+        $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+        require LCMS::template("own/{$tplpath}/index");
     }
     /**
      * @description: 检测登陆状态

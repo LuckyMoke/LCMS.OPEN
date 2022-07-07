@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2022-04-26 13:42:13
+ * @LastEditTime: 2022-07-07 13:07:35
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -55,7 +55,8 @@ class find extends adminbase
                     ["title" => "找回密码", "name" => "find"],
                 ],
             ];
-            require LCMS::template("own/find");
+            $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+            require LCMS::template("own/{$tplpath}/find");
         } else {
             header("HTTP/1.1 404 Not Found");
             exit;
@@ -169,7 +170,8 @@ class find extends adminbase
                         ["title" => "重设密码", "name" => "reset"],
                     ],
                 ];
-                require LCMS::template("own/reset");
+                $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+                require LCMS::template("own/{$tplpath}/reset");
                 break;
         }
     }

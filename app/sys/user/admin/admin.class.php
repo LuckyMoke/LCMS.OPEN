@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-05-06 16:01:28
+ * @LastEditTime: 2022-07-07 12:23:58
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -708,35 +708,61 @@ class admin extends adminbase
     public function dogod()
     {
         global $_L, $LF, $LC;
-        if (LCMS::SUPER() || $_L['LCMSADMIN']['god']) {
-            switch ($LF['action']) {
-                case 'save':
-                    $admin = sql_get(["admin", "id = {$LC['id']}"]);
-                    if ($_L['LCMSADMIN']['god']) {
-                        $admin['god'] = $_L['LCMSADMIN']['god'];
-                    } else {
-                        $admin['god'] = $_L['LCMSADMIN']['id'];
-                    }
-                    SESSION::set("LCMSADMIN", $admin);
-                    ajaxout(2, "切换成功", "reloadall");
-                    break;
-                default:
-                    $form = [
-                        ["layui"  => "select", "title" => "当前视角",
-                            "name"    => "LC[id]",
-                            "value"   => $_L['LCMSADMIN']['id'],
-                            "verify"  => "required",
-                            "tips"    => "输入帐号名搜索更多",
-                            "default" => "输入帐号名搜索更多",
-                            "url"     => "select&action=admin&all=true",
-                        ],
-                        ["layui" => "btn", "title" => "立即切换"],
-                    ];
-                    require LCMS::template("own/iframe/god");
-                    break;
-            }
-        } else {
+        if (!LCMS::SUPER() && !$_L['LCMSADMIN']['god']) {
             LCMS::X(403, "没有权限访问");
+        }
+        switch ($LF['action']) {
+            case 'list':
+                $where = "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "')";
+                $where .= $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
+                $data = TABLE::set("admin", $where, "id ASC", [
+                    ":name" => "%{$LC['name']}%",
+                ]);
+                TABLE::out($data);
+                break;
+            case 'login':
+                $admin = sql_get(["admin", "id = {$LC['id']}"]);
+                if ($_L['LCMSADMIN']['god']) {
+                    $admin['god'] = $_L['LCMSADMIN']['god'];
+                } else {
+                    $admin['god'] = $_L['LCMSADMIN']['id'];
+                }
+                SESSION::set("LCMSADMIN", $admin);
+                ajaxout(2, "切换成功", "reloadall");
+                break;
+            default:
+                $table = [
+                    "url"    => "god&action=list",
+                    "cols"   => [
+                        ["title" => "ID", "field" => "id",
+                            "width"  => 70,
+                            "align"  => "center"],
+                        ["title" => "帐号", "field" => "name",
+                            "width"  => 180],
+                        ["title"   => "姓名", "field" => "title",
+                            "minWidth" => 100],
+                        ["title" => "电话", "field" => "mobile",
+                            "width"  => 120],
+                        ["title"   => "邮箱", "field" => "eamil",
+                            "minWidth" => 100],
+                        ["title"  => "操作", "field" => "do",
+                            "width"   => 60,
+                            "align"   => "center",
+                            "fixed"   => "right",
+                            "toolbar" => [
+                                ["title" => "登录",
+                                    "event"  => "ajax",
+                                    "url"    => "god&action=login",
+                                    "color"  => "default",
+                                    "tips"   => "确认登录到此用户？"],
+                            ]],
+                    ],
+                    "search" => [
+                        ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
+                    ],
+                ];
+                require LCMS::template("own/iframe/god");
+                break;
         }
     }
     /**
@@ -750,17 +776,14 @@ class admin extends adminbase
         switch ($LF['action']) {
             case 'admin':
                 $where = "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "')";
-                if (!LCMS::SUPER() && $LF['all'] != "true") {
+                if (!LCMS::SUPER()) {
                     $where .= " AND id = '{$_L['LCMSADMIN']['id']}'";
                 }
                 $where .= $LF['keyword'] ? " AND (name LIKE :keyword OR title LIKE :keyword)" : "";
-                $admin = sql_getall([
-                    "admin", $where, "id ASC",
-                    [
-                        ":id"      => $LF['keyword'],
-                        ":keyword" => "%{$LF['keyword']}%",
-                    ], "", "", 10,
-                ]);
+                $admin = sql_getall(["admin", $where, "id ASC", [
+                    ":id"      => $LF['keyword'],
+                    ":keyword" => "%{$LF['keyword']}%",
+                ], "", "", 10]);
                 foreach ($admin as $key => $val) {
                     $list[] = [
                         "value" => $val['id'],

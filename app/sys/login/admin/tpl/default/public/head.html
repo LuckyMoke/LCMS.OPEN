@@ -11,29 +11,14 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta content="telephone=no" name="format-detection" />
         <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?{{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/default/static/style.css?{{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="{{$_L['url']['public']}}ui/web/static/editor.css?{{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {
                 url: JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}'),
-                config: {
-                    oss: '{{$_L["plugin"]["oss"]["type"]}}',
-                    cdn: '{{$_L["plugin"]["oss"]["domain"]}}',
-                    isupload: {
-                        img: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["img"]??1}}'),
-                        file: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["file"]??1}}'),
-                    },
-                    attsize: '{{$_L["config"]["admin"]["attsize"]}}',
-                    attquality: '{{$_L["config"]["admin"]["attquality"]}}',
-                    mimelist: '{{$_L["config"]["admin"]["mimelist"]}}',
-                    ver: '{{$_L["config"]["ver"]}}'
-                },
                 app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
                 ROOTID: parseInt('{{$_L["ROOTID"]}}')
             }, LCMSJSONLOAD = [];
-            if (window.location.href.search('console=true') != -1) {
-                document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js"></scr'+'ipt><scr'+'ipt>eruda.init();</scr'+'ipt>');
-            };
         </script>
     </head>
     <body>

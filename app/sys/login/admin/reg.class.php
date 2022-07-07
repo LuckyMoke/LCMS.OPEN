@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-04-20 13:10:48
+ * @LastEditTime: 2022-07-07 13:06:56
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -58,7 +58,8 @@ class reg extends adminbase
                 ["title" => "用户注册", "name" => "reg"],
             ],
         ];
-        require LCMS::template("own/reg");
+        $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+        require LCMS::template("own/{$tplpath}/reg");
     }
     /**
      * @description: 发送验证码

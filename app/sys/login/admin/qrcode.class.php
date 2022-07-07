@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-05-06 16:13:19
+ * @LastEditTime: 2022-07-07 13:08:08
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -89,7 +89,8 @@ class qrcode extends adminbase
         $page = [
             "title" => "账号列表",
         ];
-        require LCMS::template("own/qrcode");
+        $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+        require LCMS::template("own/{$tplpath}/qrcode");
     }
     /**
      * @description: 登陆操作
