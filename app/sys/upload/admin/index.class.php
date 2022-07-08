@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-01 20:27:10
+ * @LastEditTime: 2022-07-08 17:45:44
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -105,7 +105,7 @@ class index extends adminbase
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/image/{$datey}/";
         $files = $_L['form']['files'] ?? ($jt ? [$jt] : []);
         foreach ($files as $url) {
-            if ($_L['plugin']['oss']['type'] != "local" && stripos($url, $_L['plugin']['oss']['domain']) !== false) {
+            if (!is_array($url) && $_L['plugin']['oss']['type'] != "local" && in_string($url, $_L['plugin']['oss']['domain'])) {
                 $result[] = [
                     "state"  => "SUCCESS",
                     "source" => $url,
