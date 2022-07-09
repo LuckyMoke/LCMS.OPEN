@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-01 20:22:48
+ * @LastEditTime: 2022-07-09 14:36:02
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,9 +10,11 @@ defined('IN_LCMS') or exit('No permission');
 class UPLOAD
 {
     /**
-     * @文件上传:
-     * @param {*}
-     * @return {*}
+     * @description: 文件上传操作
+     * @param string $dir
+     * @param array|string $para
+     * @param string $mime
+     * @return array
      */
     public static function file($dir, $para = "", $mime = "")
     {
@@ -24,7 +26,7 @@ class UPLOAD
                 $result = HTTP::get($para, true);
                 if ($result['code'] == 200 && $result['length'] > 0) {
                     $file = $result['body'];
-                    $MIME = $MIME ?: self::mime($result['type']);
+                    $MIME = $mime ?: self::mime($result['type']);
                     $SIZE = $result['length'];
                     $file = self::img2webp($file);
                 } else {
@@ -40,11 +42,12 @@ class UPLOAD
                 $SIZE = $file['size'];
                 $file = self::img2webp(file_get_contents($file['tmp_name']));
             }
+
             if (round($SIZE / 1024) > $CFG['attsize']) {
                 // 如果文件大小超过上传限制
                 $return = self::out(0, "文件大小超过{$CFG['attsize']}KB");
             } else {
-                if (in_string($MIME, explode("|", $CFG['mimelist']))) {
+                if ($MIME && in_string($MIME, explode("|", $CFG['mimelist']))) {
                     $name = date("dHis") . randstr(6) . ".{$MIME}";
                     if (file_put_contents("{$dir}{$name}", $file)) {
                         $return = self::out(1, "上传成功", path_relative($dir), $name, $SIZE);
@@ -87,30 +90,28 @@ class UPLOAD
     public static function mime($mime = "")
     {
         $allmime = [
-            "image/jpeg"                   => "jpeg",
-            "image/png"                    => "png",
-            "image/bmp"                    => "bmp",
-            "image/gif"                    => "gif",
-            "image/webp"                   => "webp",
-            "image/vnd.wap.wbmp"           => "wbmp",
-            "image/x-up-wpng"              => "wpng",
-            "image/x-icon"                 => "ico",
-            "image/svg+xml"                => "svg",
-            "image/tiff"                   => "tiff",
-            "audio/mpeg"                   => "mp3",
-            "audio/ogg"                    => "ogg",
-            "audio/x-wav"                  => "wav",
-            "audio/x-ms-wma"               => "wma",
-            "audio/x-ms-wmv"               => "wmv",
-            "video/mp4"                    => "mp4",
-            "video/mpeg"                   => "mpeg",
-            "video/quicktime"              => "mov",
-            "flv-application/octet-stream" => "flv",
-            "application/json"             => "json",
-            "application/octet-stream"     => "rar",
-            "application/x-cprplayer"      => "pdf",
+            "image/jpeg"         => "jpeg",
+            "image/png"          => "png",
+            "image/bmp"          => "bmp",
+            "image/gif"          => "gif",
+            "image/webp"         => "webp",
+            "image/vnd.wap.wbmp" => "wbmp",
+            "image/x-up-wpng"    => "wpng",
+            "image/x-icon"       => "ico",
+            "image/svg+xml"      => "svg",
+            "image/tiff"         => "tiff",
+            "audio/mpeg"         => "mp3",
+            "audio/ogg"          => "ogg",
+            "audio/x-wav"        => "wav",
+            "audio/x-ms-wma"     => "wma",
+            "audio/x-ms-wmv"     => "wmv",
+            "video/mp4"          => "mp4",
+            "video/mpeg"         => "mpeg",
+            "video/quicktime"    => "mov",
+            "application/json"   => "json",
+            "application/pdf"    => "pdf",
         ];
-        return $allmime[$mime] ?: "jpeg";
+        return $allmime[$mime] ?: "";
     }
     /**
      * @description: 图片转webp

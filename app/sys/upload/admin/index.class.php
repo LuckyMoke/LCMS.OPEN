@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-08 17:45:44
+ * @LastEditTime: 2022-07-09 14:37:47
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -172,6 +172,7 @@ class index extends adminbase
             } else {
                 $result[] = [
                     "state"  => "FAIL",
+                    "msg"    => $res['msg'],
                     "source" => $url,
                 ];
             }
