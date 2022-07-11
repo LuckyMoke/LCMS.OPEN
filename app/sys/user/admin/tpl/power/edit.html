@@ -1,7 +1,7 @@
 <template "ui/head" />
 <template "ui/iframe" />
 <template "ui/css" />
-<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}iframe&action=admin-level-save" method="post" target="_self">
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
     <input type="hidden" name="LC[id]" value="{{$level['id']}}" />
     <input type="hidden" name="LC[uid]" value="{{$level['uid']?$level['uid']:$_L['LCMSADMIN']['id']}}" />
     <input type="hidden" name="level" value="{{$hide}}" />

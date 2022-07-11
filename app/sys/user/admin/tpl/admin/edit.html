@@ -1,6 +1,6 @@
 <template "ui/head"/>
 <template "ui/iframe"/>
-<form class="layui-form layui-form-pane iframe-admin-edit" action="{{ $_L['url']['own_form'] }}{{ echo substr(L_ACTION, 2) }}&action=admin-save" method="post" target="_self">
+<form class="layui-form layui-form-pane iframe-admin-edit" action="{{$_L['url']['own_form']}}{{$LF['a']}}&action=save" method="post" target="_self">
     <input type="hidden" name="LC[id]" value="{{ $admin['id'] }}"/>
     <input type="hidden" name="LC[oldpass]" value="{{ $admin['pass'] }}"/>
     <input type="hidden" name="LC[addtime]" value="{{ $admin['addtime']?$admin['addtime']:datenow(); }}"/>

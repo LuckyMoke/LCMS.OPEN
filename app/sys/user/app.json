@@ -9,12 +9,22 @@
                 "index": {
                     "title": "用户列表",
                     "menu": 1
-                },
-                "level": {
-                    "title": "用户权限",
+                }
+            }
+        },
+        "power": {
+            "title": "权限管理",
+            "level": {
+                "index": {
+                    "title": "权限列表",
                     "menu": 1
-                },
-                "config": {
+                }
+            }
+        },
+        "config": {
+            "title": "登陆/注册",
+            "level": {
+                "index": {
                     "title": "登陆/注册",
                     "menu": 1
                 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-07 12:23:58
+ * @LastEditTime: 2022-07-11 11:19:43
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,101 +21,8 @@ class admin extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC;
-        $table = [
-            "url"     => "ajax&action=admin-list",
-            "cols"    => [
-                ["checkbox" => "checkbox", "width" => 50],
-                ["title" => "ID", "field" => "id",
-                    "width"  => 80,
-                    "align"  => "center"],
-                ["title"   => "帐号", "field" => "name",
-                    "minWidth" => 90],
-                ["title" => "姓名", "field" => "title",
-                    "width"  => 150],
-                ["title" => "邮箱", "field" => "email",
-                    "width"  => 200],
-                ["title" => "手机号", "field" => "mobile",
-                    "width"  => 120],
-                ["title" => "用户权限", "field" => "type",
-                    "width"  => 200],
-                ["title" => "上级用户", "field" => "lcms",
-                    "width"  => 200],
-                ["title" => "到期时间", "field" => "lasttime",
-                    "width"  => 170,
-                    "align"  => "center"],
-                ["title" => "账号状态", "field" => "status",
-                    "width"  => 90,
-                    "align"  => "center"],
-                ["title"  => "操作", "field" => "do",
-                    "width"   => 95,
-                    "align"   => "center",
-                    "fixed"   => "right",
-                    "toolbar" => [
-                        ["title" => "编辑", "event" => "iframe",
-                            "url"    => "iframe&action=admin-edit",
-                            "color"  => "default"],
-                        ["title" => "删除", "event" => "ajax",
-                            "url"    => "ajax&action=admin-list-del",
-                            "color"  => "danger",
-                            "tips"   => "确认删除？"],
-                    ]],
-            ],
-            "toolbar" => [
-                ["title" => "添加用户", "event" => "iframe",
-                    "url"    => "iframe&action=admin-edit",
-                    "color"  => "default"],
-                ["title" => "批量删除", "event" => "ajax",
-                    "url"    => "ajax&action=admin-list-del",
-                    "color"  => "danger",
-                    "tips"   => "确认删除？"],
-            ],
-            "search"  => [
-                ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
-            ],
-        ];
-        $acount = sql_counter(["admin"]);
-        require LCMS::template("own/admin-list");
-    }
-    public function dolevel()
-    {
-        global $_L, $LF, $LC;
-        $table = [
-            "url"     => "ajax&action=admin-level-list",
-            "cols"    => [
-                ["title" => "ID", "field" => "id",
-                    "width"  => 80,
-                    "align"  => "center"],
-                ["title" => "权限名", "field" => "name",
-                    "width"  => 200,
-                    "edit"   => "text"],
-                ["title" => "添加人", "field" => "uid",
-                    "width"  => 300],
-                ["title"   => "操作", "field" => "do",
-                    "minWidth" => 90,
-                    "fixed"    => "right",
-                    "toolbar"  => [
-                        ["title" => "编辑", "event" => "iframe",
-                            "url"    => "iframe&action=admin-level-edit",
-                            "color"  => "default"],
-                        ["title" => "删除", "event" => "ajax",
-                            "url"    => "ajax&action=admin-level-list-del",
-                            "color"  => "danger",
-                            "tips"   => "确认删除？"],
-                    ]],
-            ],
-            "toolbar" => [
-                ["title" => "添加权限", "event" => "iframe",
-                    "url"    => "iframe&action=admin-level-edit",
-                    "color"  => "default"],
-            ],
-        ];
-        require LCMS::template("own/admin-list");
-    }
-    public function doajax()
-    {
-        global $_L, $LF, $LC;
         switch ($LF['action']) {
-            case 'admin-list':
+            case 'list':
                 $where = $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
                 if (LCMS::SUPER()) {
                     $data = TABLE::set("admin", "id != 0{$where}", "id ASC", [
@@ -143,7 +50,7 @@ class admin extends adminbase
                         "type"   => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
                         "status" => [
                             "type"  => "switch",
-                            "url"   => "ajax&action=admin-list-save",
+                            "url"   => "index&action=list-save",
                             "text"  => "启用|禁用",
                             "value" => $val['status'],
                         ],
@@ -151,7 +58,7 @@ class admin extends adminbase
                 }
                 TABLE::out($data);
                 break;
-            case 'admin-list-save':
+            case 'list-save':
                 if ($LF['id'] == $_L['LCMSADMIN']['id']) {
                     ajaxout(0, "禁止修改");
                     exit;
@@ -162,12 +69,12 @@ class admin extends adminbase
                     ":id" => $LC['id'],
                 ]]);
                 if (sql_error()) {
-                    ajaxout(0, "保存失败");
+                    ajaxout(0, "保存失败" . sql_error());
                 } else {
                     ajaxout(1, "保存成功");
                 }
                 break;
-            case 'admin-list-del':
+            case 'del':
                 if ($LC['id'] == $_L['LCMSADMIN']['id']) {
                     ajaxout(0, "禁止删除");
                     exit;
@@ -189,59 +96,7 @@ class admin extends adminbase
                     ajaxout(0, "删除失败");
                 }
                 break;
-            case 'admin-level-list':
-                if (LCMS::SUPER()) {
-                    $data = TABLE::set("admin_level", "", "id ASC", "", "id, name, uid");
-                } else {
-                    $data = TABLE::set("admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id ASC", "", "id, name, uid");
-                }
-                $adminlist = [];
-                foreach ($data as $index => $val) {
-                    if (!$adminlist[$val['uid']]) {
-                        $adminlist[$val['uid']] = sql_get(["admin", "id = '{$val['uid']}'"]);
-                    }
-                    $admin        = $adminlist[$val['uid']];
-                    $data[$index] = array_merge($val, [
-                        "uid" => $admin['title'] . " - [" . $admin['name'] . "]",
-                    ]);
-                }
-                TABLE::out($data);
-                break;
-            case 'admin-level-list-save':
-                sql_update(["admin_level", [
-                    $LC['name'] => $LC['value'],
-                ], "id = :id", [
-                    ":id" => $LC['id'],
-                ]]);
-                if (sql_error()) {
-                    ajaxout(0, "保存失败");
-                } else {
-                    ajaxout(1, "保存成功");
-                }
-                break;
-            case 'admin-level-list-del':
-                $adminlist = sql_getall(["admin", "type = '{$LC['id']}'"]);
-                if ($adminlist) {
-                    ajaxout(0, "有用户使用此权限");
-                } else {
-                    if (TABLE::del("admin_level")) {
-                        LCMS::log([
-                            "type" => "system",
-                            "info" => "用户管理-删除权限-{$LC['name']}",
-                        ]);
-                        ajaxout(1, "删除成功", "reload");
-                    } else {
-                        ajaxout(0, "删除失败");
-                    }
-                }
-                break;
-        }
-    }
-    public function doiframe()
-    {
-        global $_L, $LF, $LC;
-        switch ($_L['form']['action']) {
-            case 'admin-edit':
+            case 'edit':
                 $admin = LCMS::form([
                     "do"    => "get",
                     "table" => "admin",
@@ -312,26 +167,18 @@ class admin extends adminbase
                         "max"    => LCMS::SUPER() ? "" : ($_L['LCMSADMIN']['lasttime'] ? $_L['LCMSADMIN']['lasttime'] : ""),
                     ],
                 ];
-                require LCMS::template("own/iframe/admin-edit");
+                require LCMS::template("own/admin/edit");
                 break;
-            case 'admin-check-name':
-                $admininfo = sql_get(["admin", "name = :name OR email = :name OR mobile = :name", "id DESC", [
-                    ":name" => $_L['form']['name'],
-                ]]);
-                if ($admininfo) {
-                    ajaxout(0, "账号已存在");
-                };
-                break;
-            case 'admin-save':
+            case 'save':
                 if ($LC['id'] == $_L['LCMSADMIN']['id']) {
-                    unset($_L['form']['LC']['status']);
+                    unset($LC['status']);
                 }
                 if ($LC['oldpass'] != $LC['pass']) {
-                    $_L['form']['LC']['pass'] = md5($LC['pass']);
+                    $LC['pass'] = md5($LC['pass']);
                 }
                 if ($LC['id']) {
                     if (!LCMS::SUPER()) {
-                        unset($_L['form']['LC']['name']);
+                        unset($LC['name']);
                     }
                     $where = " AND id NOT IN({$LC['id']})";
                 }
@@ -360,26 +207,29 @@ class admin extends adminbase
                     };
                 }
                 if (!$LC['lasttime']) {
-                    $_L['form']['LC']['lasttime'] = null;
+                    $LC['lasttime'] = null;
                 }
-                unset($_L['form']['LC']['oldpass']);
-                if ($_L['form']['admin_level']) {
+                unset($LC['oldpass']);
+                if ($LF['admin_level']) {
                     $level = explode("/", $_L['form']['admin_level']);
                     if (!$level[1]) {
                         ajaxout(0, "请设置用户权限");
                     } else {
-                        $_L['form']['LC']['lcms'] = $level[0];
-                        $_L['form']['LC']['type'] = $level[1];
+                        $LC['lcms'] = $level[0];
+                        $LC['type'] = $level[1];
                     }
                 }
                 if ($_L['LCMSADMIN']['lcms'] > "0") {
                     if ($_L['LCMSADMIN']['tuid'] == "0") {
-                        $_L['form']['LC']['tuid'] = $_L['LCMSADMIN']['id'];
+                        $LC['tuid'] = $_L['LCMSADMIN']['id'];
                     } elseif ($_L['LCMSADMIN']['tuid'] > "0") {
-                        $_L['form']['LC']['tuid'] = $_L['LCMSADMIN']['tuid'];
+                        $LC['tuid'] = $_L['LCMSADMIN']['tuid'];
                     }
                 }
-                LCMS::form(["table" => "admin"]);
+                LCMS::form([
+                    "table" => "admin",
+                    "form"  => $LC,
+                ]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败", "", sql_error());
                 } else {
@@ -390,237 +240,73 @@ class admin extends adminbase
                     ajaxout(1, "保存成功", "close");
                 }
                 break;
-            case 'admin-level-edit':
-                $level = $_L['form']['id'] ? LCMS::form([
-                    "do"    => "get",
-                    "table" => "admin_level",
-                    "id"    => $_L['form']['id'],
-                ]) : [];
-                $level && ksort($level['sys']);
-                $level && ksort($level['open']);
-                $appall = LEVEL::applist();
-                foreach ($appall as $type => $val) {
-                    foreach ($val as $name => $info) {
-                        if (!empty($info['class'])) {
-                            $level[$type][$name]['title'] = $info['info']['title'];
-                            foreach ($info['class'] as $class => $val) {
-                                if (!empty($val['level'])) {
-                                    $level[$type][$name]['class'][$class]['title'] = $val['title'];
-                                    foreach ($val['level'] as $key => $val) {
-                                        if ($info['power'][$class][$key] != "no") {
-                                            $level[$type][$name]['class'][$class]['select'][] = array(
-                                                "value" => $key,
-                                                "title" => $val['title'],
-                                            );
-                                        } else {
-                                            $hide[$type][$name][$class][$key] = 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach ($level as $type => $list) {
-                    foreach ($list as $name => $li) {
-                        foreach ($li['class'] as $class => $val) {
-                            if (empty($val['select'])) {
-                                unset($level[$type][$name]['class'][$class]);
-                                if (empty($level[$type][$name]['class'])) {
-                                    unset($level[$type][$name]);
-                                }
-                            }
-                        }
-                    }
-                }
-                $form = [
-                    ["layui"      => "input", "title" => "权限名",
-                        "name"        => "LC[name]",
-                        "value"       => $level['name'],
-                        "placehplder" => "请输入权限名",
-                        "verify"      => "required",
-                    ],
-                    ["layui"   => "select", "title" => "创建人",
-                        "name"     => "LC[uid]",
-                        "value"    => $level['uid'] ? $level['uid'] : $_L['LCMSADMIN']['id'],
-                        "verify"   => "required",
-                        "url"      => "select&action=admin",
-                        "default"  => "请输入账号名搜索更多",
-                        "tips"     => "请输入账号名搜索更多",
-                        "disabled" => LCMS::SUPER() ? "" : true,
-                    ],
-                    ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！"],
-                ];
-                $hide = $hide ? base64_encode(json_encode($hide)) : "";
-                require LCMS::template("own/iframe/admin-level-edit");
-                break;
-            case 'admin-level-save':
-                if ($LF['level']) {
-                    $level = json_decode(base64_decode($LF['level']), true);
-                    if (is_array($level)) {
-                        $_L['form']['LC'] = array_merge_recursive($level, $LC);
-                    }
-                }
-                LCMS::form([
-                    "table" => "admin_level",
-                    "unset" => true,
-                ]);
-                if (sql_error()) {
-                    ajaxout(0, sql_error());
-                } else {
-                    LCMS::log([
-                        "type" => "system",
-                        "info" => "用户管理-" . ($LC['id'] ? "修改" : "添加") . "权限-{$LC['name']}",
-                    ]);
-                    ajaxout(1, "保存成功", "close");
-                }
-                break;
-        }
-    }
-    /**
-     * @用户注册设置:
-     * @param {type}
-     * @return {type}
-     */
-    public function doconfig()
-    {
-        global $_L, $LF, $LC;
-        if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "没有权限，禁止访问");
-        }
-        switch ($_L['form']['action']) {
-            case 'save':
-                $level = explode("/", $LF['admin_level']);
-                if ($level[0] !== "" && $level[1] !== "") {
-                    $_L['form']['LC']['reg']['lcms']  = $level[0];
-                    $_L['form']['LC']['reg']['level'] = $level[1];
-                    LCMS::config([
-                        "do"   => "save",
-                        "type" => "sys",
-                        "cate" => "admin",
-                    ]);
-                    ajaxout(1, "保存成功");
-                } else {
-                    ajaxout(0, "保存失败，请选择默认权限");
-                }
+            case 'check-name':
+                $admininfo = sql_get(["admin", "name = :name OR email = :name OR mobile = :name", "id DESC", [
+                    ":name" => $_L['form']['name'],
+                ]]);
+                $admininfo && ajaxout(0, "账号已存在");
                 break;
             default:
-                $config = LCMS::config([
-                    "type" => "sys",
-                    "cate" => "admin",
-                ]);
-                $form = [
-                    "base" => [
-                        ["layui"   => "input", "title" => "登陆地址",
-                            "name"     => "login_url",
-                            "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
-                            "disabled" => true,
-                        ],
-                        ["layui"   => "input", "title" => "注册地址",
-                            "name"     => "login_url",
-                            "value"    => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
-                            "disabled" => true,
-                        ],
-                        ["layui" => "title", "title" => "三方登录"],
-                        ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html"],
-                        ["layui" => "radio", "title" => "微信扫码",
-                            "name"   => "LC[reg][qrcode]",
-                            "value"  => $config['reg']['qrcode'] ?? "0",
-                            "radio"  => [
-                                ["title" => "关闭", "value" => "0"],
-                                ["title" => "启用", "value" => "1"],
-                            ],
-                        ],
-                        ["layui" => "radio", "title" => "QQ登录",
-                            "name"   => "LC[reg][qqlogin]",
-                            "value"  => $config['reg']['qqlogin'] ?? "0",
-                            "radio"  => [
-                                ["title" => "关闭", "value" => "0", "tab" => "tab_qqlogin0"],
-                                ["title" => "启用", "value" => "1", "tab" => "tab_qqlogin"],
-                            ],
-                        ],
-                        ["layui" => "input", "title" => "APPID",
-                            "name"   => "LC[reg][qqlogin_appid]",
-                            "value"  => $config['reg']['qqlogin_appid'],
-                            "cname"  => "hidden tab_qqlogin"],
-                        ["layui" => "title", "title" => "注册设置"],
-                        ["layui" => "radio", "title" => "用户注册",
-                            "name"   => "LC[reg][on]",
-                            "value"  => $config['reg']['on'] ?? "0",
-                            "radio"  => [
-                                ["title" => "关闭", "value" => "0", "tab" => "tab0"],
-                                ["title" => "邮箱验证", "value" => "email", "tab" => "tab_email"],
-                                ["title" => "手机号验证", "value" => "mobile", "tab" => "tab_mobile"],
-                            ],
-                        ],
-                        ["layui" => "radio", "title" => "找回密码",
-                            "name"   => "LC[reg][findpass]",
-                            "value"  => $config['reg']['findpass'] ?? "0",
-                            "radio"  => [
-                                ["title" => "关闭", "value" => "0"],
-                                ["title" => "开启", "value" => "1"],
-                            ],
-                            "tips"   => "需配置邮箱或短信接口！",
-                        ],
-                        ["layui" => "radio", "title" => "注册审核",
-                            "name"   => "LC[reg][status]",
-                            "value"  => $config['reg']['status'] ?? "0",
-                            "radio"  => [
-                                ["title" => "手动审核", "value" => "0"],
-                                ["title" => "自动审核", "value" => "1"],
-                            ],
-                        ],
-                        ["layui" => "input", "title" => "短信ID",
-                            "name"   => "LC[reg][sms_tplcode]",
-                            "value"  => $config['reg']['sms_tplcode'],
-                            "cname"  => "hidden tab_mobile",
-                            "tips"   => "请先到全局设置中配置短信插件",
-                        ],
-                        ["layui" => "input", "title" => "短信签名",
-                            "name"   => "LC[reg][sms_signname]",
-                            "value"  => $config['reg']['sms_signname'],
-                            "cname"  => "hidden tab_mobile",
-                            "tips"   => "请先到全局设置中配置短信插件",
-                        ],
-                        ["layui" => "selectN", "title" => "默认权限",
-                            "name"   => "admin_level",
-                            "value"  => "{$config['reg']['lcms']}/{$config['reg']['level']}",
-                            "verify" => "required",
-                            "url"    => "select&action=admin-level",
-                        ],
-                        ["layui"   => "checkbox", "title" => "注册字段",
-                            "checkbox" => [
-                                ["title" => "姓名",
-                                    "name"   => "LC[reg][input_title]",
-                                    "value"  => $config['reg']['input_title']],
-                            ],
-                        ],
-                        ["layui" => "title", "title" => "用户协议"],
+                $table = [
+                    "url"     => "index&action=list",
+                    "cols"    => [
+                        ["checkbox" => "checkbox", "width" => 50],
+                        ["title" => "ID", "field" => "id",
+                            "width"  => 80,
+                            "align"  => "center"],
+                        ["title"   => "帐号", "field" => "name",
+                            "minWidth" => 90],
+                        ["title" => "姓名", "field" => "title",
+                            "width"  => 150],
+                        ["title" => "邮箱", "field" => "email",
+                            "width"  => 200],
+                        ["title" => "手机号", "field" => "mobile",
+                            "width"  => 120],
+                        ["title" => "用户权限", "field" => "type",
+                            "width"  => 200],
+                        ["title" => "上级用户", "field" => "lcms",
+                            "width"  => 200],
+                        ["title" => "到期时间", "field" => "lasttime",
+                            "width"  => 170,
+                            "align"  => "center"],
+                        ["title" => "账号状态", "field" => "status",
+                            "width"  => 90,
+                            "align"  => "center"],
+                        ["title"  => "操作", "field" => "do",
+                            "width"   => 95,
+                            "align"   => "center",
+                            "fixed"   => "right",
+                            "toolbar" => [
+                                ["title" => "编辑", "event" => "iframe",
+                                    "url"    => "index&action=edit",
+                                    "color"  => "default"],
+                                ["title" => "删除", "event" => "ajax",
+                                    "url"    => "index&action=del",
+                                    "color"  => "danger",
+                                    "tips"   => "确认删除？"],
+                            ]],
                     ],
-                    "btn"  => [
-                        ["layui" => "btn", "title" => "立即保存"],
+                    "toolbar" => [
+                        ["title" => "添加用户", "event" => "iframe",
+                            "url"    => "index&action=edit",
+                            "color"  => "default"],
+                        ["title" => "批量删除", "event" => "ajax",
+                            "url"    => "index&action=del",
+                            "color"  => "danger",
+                            "tips"   => "确认删除？"],
+                    ],
+                    "search"  => [
+                        ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
                     ],
                 ];
-                $readme = [
-                    "user"    => [
-                        ["layui" => "editor", "title" => "内容",
-                            "name"   => "LC[readme][user]",
-                            "value"  => $config['readme']['user']],
-                    ],
-                    "privacy" => [
-                        ["layui" => "editor", "title" => "内容",
-                            "name"   => "LC[readme][privacy]",
-                            "value"  => $config['readme']['privacy']],
-                    ],
-                ];
-                require LCMS::template("own/admin-config");
+                $acount = sql_counter(["admin"]);
+                require LCMS::template("own/admin/list");
                 break;
         }
     }
     /**
-     * @个人资料:
-     * @param {type}
-     * @return {type}
+     * @description: 个人资料
+     * @return {*}
      */
     public function doprofile()
     {
@@ -673,21 +359,24 @@ class admin extends adminbase
                         "disabled" => $admin['type'] != "lcms" ? "1" : "",
                     ],
                 ];
-                require LCMS::template("own/iframe/admin-edit");
+                require LCMS::template("own/admin/edit");
                 break;
-            case 'admin-save':
+            case 'save':
                 if ($LC['oldpass'] != $LC['pass']) {
-                    $_L['form']['LC']['pass'] = md5($LC['pass']);
+                    $LC['pass'] = md5($LC['pass']);
                 }
                 if ($LC['id'] && !LCMS::SUPER()) {
-                    unset($_L['form']['LC']['name']);
+                    unset($LC['name']);
                 }
-                unset($_L['form']['LC']['oldpass']);
-                unset($_L['form']['LC']['email']);
-                unset($_L['form']['LC']['mobile']);
+                unset($LC['oldpass']);
+                unset($LC['email']);
+                unset($LC['mobile']);
                 $_L['LCMSADMIN']['title'] = $LC['title'];
                 SESSION::set("LCMSADMIN", $_L['LCMSADMIN']);
-                LCMS::form(["table" => "admin"]);
+                LCMS::form([
+                    "table" => "admin",
+                    "form"  => $LC,
+                ]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败", "", sql_error());
                 } else {
@@ -701,9 +390,8 @@ class admin extends adminbase
         }
     }
     /**
-     * @上帝视角:
-     * @param {type}
-     * @return {type}
+     * @description: 上帝视角
+     * @return {*}
      */
     public function dogod()
     {
@@ -761,7 +449,7 @@ class admin extends adminbase
                         ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
                     ],
                 ];
-                require LCMS::template("own/iframe/god");
+                require LCMS::template("own/admin/god");
                 break;
         }
     }
