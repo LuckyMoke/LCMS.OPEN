@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-09 14:36:02
+ * @LastEditTime: 2022-07-13 12:12:32
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -123,7 +123,7 @@ class UPLOAD
         global $_L, $CFG, $MIME, $SIZE;
         if ($CFG['attwebp'] > 0 && in_string($MIME, [
             "jpeg", "jpg", "png",
-        ])) {
+        ]) && function_exists("imagewebp")) {
             $res = imagecreatefromstring($img);
             imagewebp($res);
             imagedestroy($res);

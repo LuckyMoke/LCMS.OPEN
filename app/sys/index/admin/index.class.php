@@ -37,7 +37,6 @@ class index extends adminbase
             "config"   => [
                 "admin"  => 1,
                 "web"    => 1,
-                "update" => 1,
             ],
             "backup"   => [
                 "database" => 1,
