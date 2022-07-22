@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-06-15 20:51:09
+ * @LastEditTime: 2022-07-20 16:18:56
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -143,15 +143,15 @@ class TPL
             $urls = $urls[0] ?: [];
             $urls = array_unique($urls);
             foreach ($urls as $url) {
-                if (stristr($url, "data:") === false) {
-                    $code = str_replace($url, "{$adurl}{$url}", $code);
+                if (!in_string($url, "data:")) {
+                    $code = str_replace("($url)", "({$adurl}{$url})", $code);
                 }
             }
         }
         if ($suffix === 'js') {
             // JS过滤规则
         }
-        $code = str_replace(array("  ", "\t", "\n", "\r"), "", $code);
+        $code = str_replace(["  ", "\t", "\n", "\r"], "", $code);
         return $code;
     }
     /**

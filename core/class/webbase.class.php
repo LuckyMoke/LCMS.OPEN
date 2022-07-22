@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-06-10 17:29:53
+ * @LastEditTime: 2022-07-18 17:26:37
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -66,7 +66,7 @@ class webbase extends common
     public function check_level()
     {
         global $_L;
-        if ($_L['ROOTID'] > "0") {
+        if ($_L['ROOTID'] > 0) {
             $admininfo = sql_get(["admin", "id = '{$_L['ROOTID']}'"]);
             if ($admininfo['status'] == "1") {
                 if ($admininfo['lasttime'] > "0000-00-00 00:00:00" && $admininfo['lasttime'] < datenow()) {
