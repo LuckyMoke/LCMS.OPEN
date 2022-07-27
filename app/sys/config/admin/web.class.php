@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-06 12:25:28
+ * @LastEditTime: 2022-07-23 15:39:23
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -193,44 +193,63 @@ class web extends adminbase
                     "type" => "sys",
                     "cate" => "plugin",
                 ]);
-                $phpext = extension_loaded("fileinfo") ? false : true;
-                $form   = [
+                $phpext  = extension_loaded("fileinfo") ? false : true;
+                $local   = false;
+                $osstype = [
+                    ["title"   => "七牛云存储",
+                        "value"    => "qiniu",
+                        "tab"      => "oss-qiniu",
+                        "disabled" => $phpext],
+                    ["title"   => "腾讯云存储",
+                        "value"    => "tencent",
+                        "tab"      => "oss-tencent",
+                        "disabled" => $phpext],
+                    ["title"   => "阿里云存储",
+                        "value"    => "aliyun",
+                        "tab"      => "oss-aliyun",
+                        "disabled" => $phpext],
+                ];
+                if (!LCMS::SUPER()) {
+                    $aplugin = LCMS::config([
+                        "type" => "sys",
+                        "cate" => "plugin",
+                        "lcms" => true,
+                    ]);
+                    $local = $aplugin['oss']['must'] > 0 ? true : false;
+                }
+                $osstype = $local ? $osstype : array_merge([
+                    ["title"   => "本地存储",
+                        "value"    => "local",
+                        "tab"      => "oss-0",
+                        "disabled" => $local]], $osstype);
+                $form = [
                     ["layui" => "des", "title" => "使用云存储必须开启当前PHP的 fileinfo 扩展！同时注意用户图片、文件上传权限设置！"],
                     ["layui" => "radio", "title" => "存储方式",
                         "name"   => "LC[oss][type]",
                         "value"  => $plugin['oss']['type'] ?: "local",
-                        "radio"  => [
-                            ["title" => "本地存储",
-                                "value"  => "local",
-                                "tab"    => "oss-0"],
-                            ["title"   => "七牛云存储",
-                                "value"    => "qiniu",
-                                "tab"      => "oss-qiniu",
-                                "disabled" => $phpext],
-                            ["title"   => "腾讯云存储",
-                                "value"    => "tencent",
-                                "tab"      => "oss-tencent",
-                                "disabled" => $phpext],
-                            ["title"   => "阿里云存储",
-                                "value"    => "aliyun",
-                                "tab"      => "oss-aliyun",
-                                "disabled" => $phpext],
-                        ]],
+                        "radio"  => $osstype],
                 ];
                 if (LCMS::SUPER()) {
                     $form = array_merge($form, [
-                        ["layui" => "radio", "title" => "全站使用",
+                        ["layui" => "radio", "title" => "本地权限",
+                            "name"   => "LC[oss][must]",
+                            "value"  => $plugin['oss']['must'] ?? 0,
+                            "radio"  => [
+                                ["title" => "子账号可使用本地存储", "value" => 0],
+                                ["title" => "子账号必须配置云存储", "value" => 1],
+                            ]],
+                        ["layui" => "radio", "title" => "云存储权限",
                             "name"   => "LC[oss][super]",
                             "value"  => $plugin['oss']['super'] ?? 0,
                             "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun",
                             "radio"  => [
-                                ["title" => "各帐号独立设置", "value" => 0],
-                                ["title" => "全站使用此设置", "value" => 1],
+                                ["title" => "子帐号独立设置", "value" => 0],
+                                ["title" => "子账号使用此设置", "value" => 1],
                             ]],
                     ]);
                 }
                 $form = array_merge($form, [
-                    ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的所有文件先手动上传到云存储！！注意设置跨域访问CORS权限！！",
+                    ["layui" => "des", "title" => "特别注意：如果本地有上传过的图片，开启云存储后，需要将本地 <code>upload/</code> 目录下的相关文件先手动上传到云存储！",
                         "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun"],
                     ["layui"      => "input", "title" => "CDN域名",
                         "name"        => "LC[oss][domain]",

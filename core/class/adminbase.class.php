@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-06-10 17:30:09
+ * @LastEditTime: 2022-07-23 15:49:03
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -113,11 +113,13 @@ class adminbase extends common
             "cate" => "plugin",
         ]);
         $plugin['oss']['type'] = $plugin['oss']['type'] ?: "local";
-        if ($plugin['oss']['type'] != "local") {
-            if ($plugin['oss']['super'] == "1") {
-                $_L['plugin']['oss'] = $plugin['oss'];
-                return;
-            }
+        if ($plugin['oss']['type'] != "local" && $plugin['oss']['super'] > 0) {
+            $_L['plugin']['oss'] = $plugin['oss'];
+            return;
+        }
+        if (!LCMS::SUPER() && $plugin['oss']['must'] > 0) {
+            $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "qiniu";
+            return;
         }
         $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "local";
     }

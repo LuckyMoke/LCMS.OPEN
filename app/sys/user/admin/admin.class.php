@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-11 11:19:43
+ * @LastEditTime: 2022-07-23 15:31:08
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -157,15 +157,13 @@ class admin extends adminbase
                         "tips"    => "先新建用户权限再选择",
                         "default" => "上级用户|用户权限",
                         "verify"  => "required",
-                        "url"     => "select&action=admin-level",
-                    ],
+                        "url"     => "select&action=admin-level"],
                     ["layui" => "date", "title" => "到期时间",
                         "name"   => "LC[lasttime]",
                         "value"  => $admin['lasttime'],
                         "tips"   => "到期不能登录，为空不限制",
                         "min"    => datenow(),
-                        "max"    => LCMS::SUPER() ? "" : ($_L['LCMSADMIN']['lasttime'] ? $_L['LCMSADMIN']['lasttime'] : ""),
-                    ],
+                        "max"    => LCMS::SUPER() ? "" : ($_L['LCMSADMIN']['lasttime'] ? $_L['LCMSADMIN']['lasttime'] : "")],
                 ];
                 require LCMS::template("own/admin/edit");
                 break;
