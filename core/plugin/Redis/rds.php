@@ -2,16 +2,17 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2020-12-11 16:54:18
- * @Description:Redis操作类
+ * @LastEditTime: 2022-08-03 15:50:02
+ * @Description: Redis操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 class RDS
 {
-    public object $do;
+    public $do;
     /**
-     * [__construct 默认连接 core/config.php 里配置的redis服务]
-     * @param string $config [description]
+     * @description: 链接Redis服务
+     * @param array $config
+     * @return {*}
      */
     public function __construct($config = [])
     {
@@ -24,7 +25,7 @@ class RDS
                 if ($config['pass']) {
                     $this->do->auth($config['pass']);
                 }
-            } catch (\Exception$e) {
+            } catch (Exception $e) {
                 LCMS::X($e->getCode(), iconv('gbk', 'utf-8', $e->getMessage()));
             }
         } else {
@@ -32,10 +33,10 @@ class RDS
         }
     }
     /**
-     * [lock 防止并发操作锁]
-     * @param  [type]  $key    [description]
-     * @param  integer $expire [description]
-     * @return [type]          [description]
+     * @description: 防止并发操作锁
+     * @param string $key
+     * @param int $expire
+     * @return bool
      */
     public function lock($key, $expire = 5)
     {
@@ -50,9 +51,9 @@ class RDS
         return $is_lock ? true : false;
     }
     /**
-     * [unlock 操作完成后解锁]
-     * @param  [type] $key [description]
-     * @return [type]      [description]
+     * @description: 操作完成后解锁
+     * @param string $key
+     * @return {*}
      */
     public function unlock($key)
     {

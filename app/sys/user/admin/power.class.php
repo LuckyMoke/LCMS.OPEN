@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2022-07-11 10:57:17
+ * @LastEditTime: 2022-08-01 18:29:02
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -91,10 +91,10 @@ class power extends adminbase
                                     $level[$type][$name]['class'][$class]['title'] = $val['title'];
                                     foreach ($val['level'] as $key => $val) {
                                         if ($info['power'][$class][$key] != "no") {
-                                            $level[$type][$name]['class'][$class]['select'][] = array(
+                                            $level[$type][$name]['class'][$class]['select'][] = [
                                                 "value" => $key,
                                                 "title" => $val['title'],
-                                            );
+                                            ];
                                         } else {
                                             $hide[$type][$name][$class][$key] = 0;
                                         }
@@ -134,12 +134,12 @@ class power extends adminbase
                     ],
                     ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！"],
                 ];
-                $hide = $hide ? base64_encode(json_encode($hide)) : "";
+                $hide = $hide ? htmlspecialchars(json_encode($hide)) : "";
                 require LCMS::template("own/power/edit");
                 break;
             case 'save':
                 if ($LF['level']) {
-                    $level = json_decode(base64_decode($LF['level']), true);
+                    $level = json_decode($LF['level'], true);
                     if (is_array($level)) {
                         $LC = array_merge_recursive($level, $LC);
                     }

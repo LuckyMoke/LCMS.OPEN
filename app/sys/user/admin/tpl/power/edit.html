@@ -47,7 +47,7 @@
                                         <div class="lcms-admin-level-check lcms-form-checkbox">
                                             <p>{{$val['title']}}</p>
                                             <loop $val['select'],$check>
-                                                <input type="checkbox" name="LC[open][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['open'][$name][$class][$check['value']]=="1"?"checked":""}}>
+                                                <input type="checkbox" name="LC[open][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['open'][$name][$class][$check['value']]==1?"checked":""}}>
                                             </loop>
                                         </div>
                                     </if>

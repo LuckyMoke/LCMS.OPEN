@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-07 11:38:29
+ * @LastEditTime: 2022-08-01 18:34:20
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -64,7 +64,7 @@ class TABLE
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
         ];
-        $html = "<div class='lcms-form-table-box' id='{$table['id']}'>{$search}<table class='lcms-form-table' data='" . base64_encode(json_encode_ex($arr)) . "'></table>{$laytpl}</div>";
+        $html = "<div class='lcms-form-table-box' id='{$table['id']}'>{$search}<table class='lcms-form-table' data='" . htmlspecialchars(json_encode_ex($arr)) . "'></table>{$laytpl}</div>";
         echo $html;
     }
     /**
@@ -241,7 +241,7 @@ class TABLE
             "show" => $tree['show'],
             "cols" => $tree['cols'],
         ];
-        $html = "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . base64_encode(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
+        $html = "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . htmlspecialchars(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
         echo $html;
     }
     /**

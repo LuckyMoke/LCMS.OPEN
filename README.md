@@ -14,10 +14,9 @@
 
 环境要求：Apache/Nginx，PHP7.2-8.1，Mysql5.6以上
 
-PHP扩展：zip扩展（宝塔默认开启）
+PHP扩展：zip、curl、gd（宝塔均默认开启）
 
-硬件要求：CPU 1GHz，内存1G，硬盘空余10G
-
+硬件要求：支持虚拟主机、服务器CPU 1GHz，内存1G，硬盘空余10G
 
 #### 安装教程
 
@@ -42,7 +41,7 @@ PHP扩展：zip扩展（宝塔默认开启）
 
 运城盘石科技官网 [https://www.panshi18.com/](https://www.panshi18.com/)
 
-盘企建站官网 [https://www.panshi18.cn/](https://www.panshi18.cn/)
+盘企建站CMS官网 [https://www.panshi18.cn/](https://www.panshi18.cn/)
 
 盘企®是运城市盘石网络科技有限公司的注册商标
 
