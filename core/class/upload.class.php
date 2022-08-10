@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-01 16:35:51
+ * @LastEditTime: 2022-08-09 17:11:42
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -47,7 +47,7 @@ class UPLOAD
                 // 如果文件大小超过上传限制
                 $return = self::out(0, "文件大小超过{$CFG['attsize']}KB");
             } else {
-                if ($MIME && in_string($MIME, explode("|", $CFG['mimelist']))) {
+                if ($MIME && in_array($MIME, explode("|", $CFG['mimelist']))) {
                     $name = date("dHis") . randstr(6) . ".{$MIME}";
                     if (file_put_contents("{$dir}{$name}", $file)) {
                         $return = self::out(1, "上传成功", path_relative($dir), $name, $SIZE);
@@ -121,7 +121,7 @@ class UPLOAD
     private static function img2webp($img)
     {
         global $_L, $CFG, $MIME, $SIZE;
-        if ($CFG['attwebp'] > 0 && in_string($MIME, [
+        if ($CFG['attwebp'] > 0 && in_array($MIME, [
             "jpeg", "jpg", "png",
         ]) && function_exists("imagewebp")) {
             $res = imagecreatefromstring($img);

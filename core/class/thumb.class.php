@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-06-30 13:49:19
+ * @LastEditTime: 2022-08-09 17:22:16
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -96,8 +96,8 @@ class THUMB
     public static function create($path, $x = 0, $y = 0)
     {
         ob_end_clean();
-        $img_info = @getimagesize($path);
-        if (!in_string($img_info['mime'], [
+        $img_info = getimagesize($path);
+        if (!$img_info || !in_array($img_info['mime'], [
             "image/jpeg",
             "image/pjpeg",
             "image/gif",

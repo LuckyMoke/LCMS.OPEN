@@ -64,7 +64,7 @@
                 <li class="layui-this">常用应用</li>
             </ul>
             <div class="layui-tab-content" style="padding:0;overflow:hidden">
-                <div class="layui-row app-list">
+                <div class="layui-row app-list" data-update="{{LCMS::SUPER()?1:0}}">
                     <loop $open,$app,$name>
                         <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
                             <div class="li" data-name="{{$name}}" data-ver="{{$app['ver']}}">
