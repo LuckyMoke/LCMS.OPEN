@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2022-02-27 15:22:17
+ * @LastEditTime: 2022-08-18 15:15:31
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,7 @@ class database extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可访问");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'backup':
                 $table = sql_query("SHOW TABLE STATUS");

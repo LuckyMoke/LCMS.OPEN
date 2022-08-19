@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2022-02-27 14:36:56
+ * @LastEditTime: 2022-08-18 15:11:30
  * @Description:数据表优化
  * @symbol_custom_string_obkoro1_copyright: Copyright ${now_year} 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,7 @@ class optimize extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'check':
                 switch ($LF['engine']) {

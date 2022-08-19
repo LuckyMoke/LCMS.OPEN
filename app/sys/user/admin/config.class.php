@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2022-07-11 11:02:51
+ * @LastEditTime: 2022-08-18 15:12:35
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -26,7 +26,7 @@ class config extends adminbase
     {
         global $_L, $LF, $LC;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "没有权限，禁止访问");
+            LCMS::X(403, "此功能仅管理员可用");
         }
         switch ($LF['action']) {
             case 'save':

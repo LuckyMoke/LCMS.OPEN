@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-29 14:05:04
+ * @LastEditTime: 2022-08-18 16:06:39
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -95,8 +95,8 @@ class LAY
         $html                = "
         <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block'>
-                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='lcms-form-textarea layui-textarea{$para['disclass']}{$para['tipsbox']}' style='border-top:none;border-right:none;border-bottom:none;border-left:1px solid #e6e6e6'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
+                <div class='layui-input-block lcms-form-textarea'>
+                    <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='layui-textarea{$para['disclass']}{$para['tipsbox']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
                 </div>
             </div>";
         echo $html;
@@ -150,10 +150,11 @@ class LAY
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-tags'>
+                    <input type='hidden' name='{$para['name']}' value='{$para['value']}'/>
                     <div class='lcms-form-tags-box'></div>
-                    <input type='hidden' name='{$para['name']}' data-value='{$para['value']}'/>
                     <textarea class='hide{$para['tipsbox']}' placeholder='{$para['placeholder']}'/></textarea>
                     <div class='hide lcms-form-tags-button'>
+                        <a class='layui-btn layui-btn-primary layui-btn-sm _first{$para['tipsbox']}'><i class='layui-icon layui-icon-add-1'></i>添加标签</a>
                         <a class='layui-btn layui-btn-warm layui-btn-sm _more'>批量添加</a>
                         <a class='layui-btn layui-btn-danger layui-btn-sm _delall'>清空所有</a>
                     </div>
@@ -192,7 +193,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <div class='_slider'></div>
                     </div>
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
             </div>";
         echo $html;

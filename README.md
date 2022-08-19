@@ -41,7 +41,7 @@ PHP扩展：zip、curl、gd（宝塔均默认开启）
 
 运城盘石科技官网 [https://www.panshi18.com/](https://www.panshi18.com/)
 
-盘企建站CMS官网 [https://www.panshi18.cn/](https://www.panshi18.cn/)
+盘企建站CMS官网 [https://ourcms.cn/](https://ourcms.cn/)
 
 盘企®是运城市盘石网络科技有限公司的注册商标
 

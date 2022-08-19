@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-07-07 13:06:21
+ * @LastEditTime: 2022-08-19 11:43:51
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -44,7 +44,7 @@ class index extends adminbase
         ]) ?: [];
         SESSION::set("LOGINROOTID", $RID);
         //判断验证码模式
-        if ($CFG['login_code']['type'] && $CFG['login_code']['type'] != "0" && stripos(HTTP_HOST, $CFG['login_code']['domain']) !== false) {
+        if (!empty($CFG['login_code']['type']) && in_string(HTTP_HOST, $CFG['login_code']['domain'])) {
             switch ($CFG['login_code']['type']) {
                 case 'luosimao':
                     load::plugin("Luosimao/captcha");
@@ -109,51 +109,53 @@ class index extends adminbase
     public function docheck()
     {
         global $_L, $LF, $CFG, $USER, $RID;
-        switch ($CFG['login_code']['type']) {
-            case 'luosimao':
-                if ($LF['luotest_response']) {
-                    load::plugin("Luosimao/captcha");
-                    $YZ = new CAPTCHA($CFG['login_code']['luosimao']);
-                    if (!$YZ->check($LF['luotest_response'])) {
-                        ajaxout(0, "人机验证失败");
-                    }
-                } else {
-                    ajaxout(0, "请进行人机验证");
+        if (empty($CFG['login_code']['type']) || !in_string(HTTP_HOST, $CFG['login_code']['domain'])) {
+            //图形验证码验证
+            if ($LF['code']) {
+                load::sys_class("captcha");
+                if (!CAPTCHA::check($LF['code'])) {
+                    ajaxout(0, "验证码错误");
                 }
-                break;
-            case 'vaptcha':
-                if ($LF['vaptcha_token']) {
-                    load::plugin("Vaptcha/captcha");
-                    $YZ = new CAPTCHA($CFG['login_code']['vaptcha']);
-                    if (!$YZ->check($LF['vaptcha_server'], $LF['vaptcha_token'])) {
-                        ajaxout(0, "人机验证失败");
+            } else {
+                ajaxout(0, "请输入验证码");
+            };
+        } else {
+            switch ($CFG['login_code']['type']) {
+                case 'luosimao':
+                    if ($LF['luotest_response']) {
+                        load::plugin("Luosimao/captcha");
+                        $YZ = new CAPTCHA($CFG['login_code']['luosimao']);
+                        if (!$YZ->check($LF['luotest_response'])) {
+                            ajaxout(0, "人机验证失败");
+                        }
+                    } else {
+                        ajaxout(0, "请进行人机验证");
                     }
-                } else {
-                    ajaxout(0, "请进行人机验证");
-                }
-                break;
-            case 'geetest':
-                if ($LF['GEETEST']) {
-                    load::plugin("Geetest/captcha");
-                    $YZ = new CAPTCHA($CFG['login_code']['geetest']);
-                    if (!$YZ->check($LF['GEETEST'])) {
-                        ajaxout(0, "人机验证失败");
+                    break;
+                case 'vaptcha':
+                    if ($LF['vaptcha_token']) {
+                        load::plugin("Vaptcha/captcha");
+                        $YZ = new CAPTCHA($CFG['login_code']['vaptcha']);
+                        if (!$YZ->check($LF['vaptcha_server'], $LF['vaptcha_token'])) {
+                            ajaxout(0, "人机验证失败");
+                        }
+                    } else {
+                        ajaxout(0, "请进行人机验证");
                     }
-                } else {
-                    ajaxout(0, "请进行人机验证");
-                }
-                break;
-            default:
-                //图形验证码验证
-                if ($LF['code']) {
-                    load::sys_class("captcha");
-                    if (!CAPTCHA::check($LF['code'])) {
-                        ajaxout(0, "验证码错误");
+                    break;
+                case 'geetest':
+                    if ($LF['GEETEST']) {
+                        load::plugin("Geetest/captcha");
+                        $YZ = new CAPTCHA($CFG['login_code']['geetest']);
+                        if (!$YZ->check($LF['GEETEST'])) {
+                            ajaxout(0, "人机验证失败");
+                        }
+                    } else {
+                        ajaxout(0, "请进行人机验证");
                     }
-                } else {
-                    ajaxout(0, "请输入验证码");
-                };
-                break;
+                    break;
+            }
+
         }
         //获取用户数据
         $admin = sql_get(["admin",

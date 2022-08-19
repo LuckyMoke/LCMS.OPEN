@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-23 15:31:08
+ * @LastEditTime: 2022-08-18 15:15:44
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -395,7 +395,7 @@ class admin extends adminbase
     {
         global $_L, $LF, $LC;
         if (!LCMS::SUPER() && !$_L['LCMSADMIN']['god']) {
-            LCMS::X(403, "没有权限访问");
+            LCMS::X(403, "此功能仅超级管理员可用");
         }
         switch ($LF['action']) {
             case 'list':

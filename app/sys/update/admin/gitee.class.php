@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2022-06-24 19:29:50
+ * @LastEditTime: 2022-08-17 12:55:12
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -103,7 +103,7 @@ class gitee extends adminbase
                         "target_commitish" => $result['target_commitish'],
                     ]);
                 } else {
-                    ajaxout(0, "错误/{$result['message']}");
+                    ajaxout(0, "错误/" . ($result['message'] ?: "您的服务器无法访问更新服务器"));
                 }
                 break;
             case 'logs':
@@ -238,13 +238,13 @@ class gitee extends adminbase
         curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
         switch ($CFG['gitee_server']) {
             case 1:
-                $ip = "180.97.125.228";
+                $ip = "212.64.63.215";
                 break;
             case 2:
                 $ip = "154.213.2.253";
                 break;
             case 3:
-                $ip = "212.64.62.183";
+                $ip = "212.64.63.190";
                 break;
         }
         $ip && curl_setopt($ch, CURLOPT_CONNECT_TO, ["gitee.com:443:{$ip}:443"]);

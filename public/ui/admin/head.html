@@ -37,10 +37,13 @@
                 document.write('<scr'+'ipt src="https://cdn.bootcdn.net/ajax/libs/eruda/2.4.1/eruda.min.js"></scr'+'ipt><scr'+'ipt>eruda.init();</scr'+'ipt>');
             };
         </script>
+        <if $_L['developer'] && $_L['developer']['fontfamily']>
+            <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}","Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"}</style>
+        </if>
     </head>
     <body>
         <if $_L['APP']['menu']>
-            <div id="APPIFRAME" style="padding-left:150px">
+            <div id="APPIFRAME" class="layui-anim layui-anim-downbit" style="padding-left:150px">
                 <div id="APPNAV">
                     <div class="mobile">
                         <div class="background"></div>
@@ -48,7 +51,7 @@
                             <i class="layui-icon layui-icon-right"></i>
                         </div>
                     </div>
-                    <div class="menu">
+                    <div class="menu layui-anim layui-anim-upbit">
                         <div class="title">
                             <i class="layui-icon layui-icon-spread-left"></i>
                             {{$_L['APP']['info']['title_sort']?:"子菜单"}}
@@ -65,7 +68,7 @@
                     </div>
                 </div>
                 <else />
-                <div id="APPIFRAME" style="padding-left:0">
+                <div id="APPIFRAME" class="layui-anim layui-anim-downbit" style="padding-left:0">
         </if>
         <template "ui/tab" />
         <div id="LCONTENT">

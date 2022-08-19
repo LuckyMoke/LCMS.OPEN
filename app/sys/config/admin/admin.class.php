@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-06-30 14:53:40
+ * @LastEditTime: 2022-08-18 15:15:37
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,7 @@ class admin extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
                 $LC['domain']     = str_replace(["http://", "https://", "/"], "", $LC['domain']);
@@ -80,7 +80,7 @@ class admin extends adminbase
     public function doweb()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
                 $domain = parse_url($LC['domain']);
@@ -149,7 +149,7 @@ class admin extends adminbase
     public function dosafe()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "仅超级管理员可设置");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
                 if ($LC['dir'] != $_L['config']['admin']['dir']) {
@@ -244,6 +244,15 @@ class admin extends adminbase
                         "name"   => "LC[login_code][geetest][captcha_key]",
                         "value"  => $config['login_code']['geetest']['captcha_key'],
                         "cname"  => "hidden login_code_geetest"],
+                    ["layui" => "title", "title" => "后台水印"],
+                    ["layui" => "radio", "title" => "功能开关",
+                        "name"   => "LC[admin_water]",
+                        "value"  => $config['admin_water'] ?: 0,
+                        "radio"  => [
+                            ["title" => "开启", "value" => 1],
+                            ["title" => "关闭", "value" => 0],
+                        ],
+                        "tips"   => "后台界面显示用户名等水印"],
                     ["layui" => "title", "title" => "上传安全"],
                     ["layui" => "input_sort", "title" => "上传大小",
                         "name"   => "LC[attsize]",
@@ -297,7 +306,7 @@ class admin extends adminbase
     public function dochange()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "您没有权限修改后台目录");
+        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         if ($LF['olddir'] && $LF['newdir'] && is_dir(PATH_WEB . $LF['olddir']) && !is_dir(PATH_WEB . $LF['newdir']) && movedir(PATH_WEB . $LF['olddir'], PATH_WEB . $LF['newdir'])) {
             echo '<script type="text/javascript">top.location.href = "' . $_L['url']['site'] . $LF['newdir'] . '";</script>';
         } else {

@@ -22,3 +22,6 @@ $_L['memcached']['session']  = 1;
 
 // 是否显示应用商店 1 OR 0
 $_L['developer']['appstore'] = 1;
+
+// 后台显示字体，需要电脑上已安装此字体
+$_L['developer']['fontfamily'] = "";
