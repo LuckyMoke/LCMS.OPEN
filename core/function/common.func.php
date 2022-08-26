@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-17 16:39:14
+ * @LastEditTime: 2022-08-26 15:01:10
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -35,19 +35,19 @@ function json_encode_ex($arr = "")
 /**
  * @description: AJAX输出的标准数据
  * @param int $code 返回状态 1,0
- * @param string $msg 返回提示
+ * @param string|array $msg 返回提示
  * @param string $go 跳转链接,可选
  * @param mixed $data 输出的数据,可选
  * @return string
  */
 function ajaxout($code = 1, $msg = "", $go = "", $data = "")
 {
-    $arr = array(
+    $arr = [
         "code" => $code,
         "msg"  => $msg,
         "go"   => $go,
         "data" => $data,
-    );
+    ];
     header("content-type: application/json");
     echo json_encode_ex($arr);
     exit;

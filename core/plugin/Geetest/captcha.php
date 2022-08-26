@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-04-25 14:38:33
- * @LastEditTime: 2022-04-25 15:21:12
+ * @LastEditTime: 2022-08-19 20:20:31
  * @Description: 极验行为验
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,7 @@ class CAPTCHA
      */
     public function get()
     {
-        $html = '<style>.l-captcha{position:relative;height:36px}.l-captcha:before{content:"\4eba\673a\9a8c\8bc1\542f\52a8\4e2d\002e\002e\002e";line-height:36px;text-align:center;color:rgba(0,0,0,.3);display:block;background:#f1f1f1;position:absolute;top:0;left:0;width:100%;z-index:0}</style><div class="l-captcha-input"></div><div class="l-captcha"></div><script type="text/javascript" src="https://static.geetest.com/v4/gt4.js"></script><script>var CAPTCHARESET;initGeetest4({captchaId:"' . $this->cfg['captcha_id'] . '",nativeButton:{width:"100%",height:"100%"}},function(captcha){CAPTCHARESET=function(){captcha.reset();$(".l-captcha-input").html("")};captcha.appendTo(".l-captcha");captcha.onSuccess(function(){var result=captcha.getValidate();for(const key in result){$(".l-captcha-input").append(\'<input name="GEETEST[\' + key + \']"value="\' + result[key] + \'"type="hidden"/>\')}})});</script>';
+        $html = '<style>.l-captcha{position:relative;height:36px}.l-captcha:before{content:"\4eba\673a\9a8c\8bc1\542f\52a8\4e2d\002e\002e\002e";line-height:36px;text-align:center;color:rgba(0,0,0,.3);display:block;background:#f1f1f1;position:absolute;top:0;left:0;width:100%;z-index:0}</style><div class="l-captcha-input"></div><div class="l-captcha"></div><script type="text/javascript">var loadScript=function(src,callback){var script=document.createElement(\'script\');script.onload=function(){callback()};script.src=src;document.body.appendChild(script)};loadScript(\'https://static.geetest.com/v4/gt4.js\',function(){var CAPTCHARESET;initGeetest4({captchaId:"' . $this->cfg['captcha_id'] . '",nativeButton:{width:"100%",height:"100%"}},function(captcha){CAPTCHARESET=function(){captcha.reset();$(".l-captcha-input").html("")};captcha.appendTo(".l-captcha");captcha.onSuccess(function(){var result=captcha.getValidate();for(const key in result){$(".l-captcha-input").append(\'<input name="GEETEST[\' + key + \']"value="\' + result[key] + \'"type="hidden"/>\')}})});})</script>';
         return $html;
     }
     /**

@@ -13,7 +13,7 @@
         display: none;
     }
 </style>
-<p class="lcms-form-des">特别说明：更新失败或出现任何问题，都可以直接到Gitee上下载完整安装包，手动完全覆盖到当前站点，覆盖完文件后，删除 <code>install</code> 目录，然后到“数据中心”，点击“修复框架数据库”即可！</p>
+<p class="lcms-form-des">特别说明：更新失败或出现任何问题，都可以直接到Gitee上下载完整安装包，删除其中<code>install</code>{{$_L['config']['admin']['dir']=="admin"?"":"和<code>admin</code>"}}目录，将其它文件完全覆盖到当前站点，然后到“数据中心”，点击“修复框架数据库”即可！</p>
 <div class="layui-row layui-col-space20 update-gitee" data-power="{{$powertest}}">
     <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
         <div class="update-gitee-version">

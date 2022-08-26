@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-09 17:22:16
+ * @LastEditTime: 2022-08-22 17:21:56
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -97,6 +97,7 @@ class THUMB
     {
         ob_end_clean();
         $img_info = getimagesize($path);
+        $img_data = file_get_contents($path);
         if (!$img_info || !in_array($img_info['mime'], [
             "image/jpeg",
             "image/pjpeg",
@@ -108,10 +109,10 @@ class THUMB
             "image/x-up-wpng",
         ])) {
             header("content-type: {$img_info['mime']}");
-            echo file_get_contents($path);
+            echo $img_data;
             exit;
         }
-        $img   = self::img_resource($path, $img_info['mime']);
+        $img   = imagecreatefromstring($img_data);
         $scale = $img_info[0] / $img_info[1];
         $x     = $x == 0 ? $y * $scale : ($x > 1920 ? 1920 : $x);
         $y     = $y == 0 ? $x / $scale : ($y > 1000 ? 1000 : $y);
@@ -153,40 +154,5 @@ class THUMB
         }
         imagedestroy($thumb);
         imagedestroy($img);
-    }
-    /**
-     * @description:
-     * @param mixed $img
-     * @param string $mime_type
-     * @return mixed
-     */
-    protected static function img_resource($img, $mime_type)
-    {
-        switch ($mime_type) {
-            case 1:
-            case 'image/gif':
-                $res = imagecreatefromgif($img);
-                break;
-            case 2:
-            case 'image/pjpeg':
-            case 'image/jpeg':
-                $res = imagecreatefromjpeg($img);
-                break;
-            case 3:
-            case 'image/x-up-wpng':
-            case 'image/x-png':
-            case 'image/png':
-                $res = imagecreatefrompng($img);
-                break;
-            case 'image/webp':
-                $res = imagecreatefromwebp($img);
-                break;
-            case 'image/vnd.wap.wbmp':
-                $res = imagecreatefromwbmp($img);
-                break;
-            default:
-                return false;
-        }
-        return $res;
     }
 }

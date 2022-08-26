@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-18 15:15:37
+ * @LastEditTime: 2022-08-19 17:48:22
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,9 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
-                $LC['domain']     = str_replace(["http://", "https://", "/"], "", $LC['domain']);
+                if (in_string($LC['domain'], ["http://", "https://"])) {
+                    $LC['domain'] = parse_url($LC['domain'])['host'];
+                }
                 $LC['oauth_code'] = strtoupper(md5(HTTP_HOST));
                 LCMS::config([
                     "do"   => "save",
@@ -213,11 +215,12 @@ class admin extends adminbase
                             ["title" => "Luosimao", "value" => "luosimao", "tab" => "login_code_luosimao"],
                             ["title" => "Vaptcha", "value" => "vaptcha", "tab" => "login_code_vaptcha"],
                             ["title" => "极验行为验", "value" => "geetest", "tab" => "login_code_geetest"],
+                            ["title" => "reCAPTCHA", "value" => "recaptcha", "tab" => "login_code_recaptcha"],
                         ]],
                     ["layui"      => "input", "title" => "使用域名",
                         "name"        => "LC[login_code][domain]",
                         "value"       => $config['login_code']['domain'],
-                        "cname"       => "hidden login_code_luosimao login_code_geetest login_code_vaptcha",
+                        "cname"       => "hidden login_code_luosimao login_code_geetest login_code_vaptcha login_code_recaptcha",
                         "placeholder" => "请填写主域名！",
                         "tips"        => "请填写主域名！"],
                     ["layui" => "input", "title" => "site_key",
@@ -244,6 +247,14 @@ class admin extends adminbase
                         "name"   => "LC[login_code][geetest][captcha_key]",
                         "value"  => $config['login_code']['geetest']['captcha_key'],
                         "cname"  => "hidden login_code_geetest"],
+                    ["layui" => "input", "title" => "网站秘钥",
+                        "name"   => "LC[login_code][recaptcha][site_key]",
+                        "value"  => $config['login_code']['recaptcha']['site_key'],
+                        "cname"  => "hidden login_code_recaptcha"],
+                    ["layui" => "input", "title" => "通信秘钥",
+                        "name"   => "LC[login_code][recaptcha][secret]",
+                        "value"  => $config['login_code']['recaptcha']['secret'],
+                        "cname"  => "hidden login_code_recaptcha"],
                     ["layui" => "title", "title" => "后台水印"],
                     ["layui" => "radio", "title" => "功能开关",
                         "name"   => "LC[admin_water]",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-06-08 18:16:41
+ * @LastEditTime: 2022-08-26 15:17:49
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -51,7 +51,10 @@ class local extends adminbase
             "unset" => "sys|open",
         ]);
         if (sql_error()) {
-            ajaxout(0, "保存失败", "", sql_error());
+            ajaxout(0, [
+                "title" => "保存失败",
+                "msg"   => sql_error(),
+            ]);
         } else {
             ajaxout(1, "保存成功");
         }

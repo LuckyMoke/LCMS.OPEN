@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-02-26 20:02:30
- * @LastEditTime: 2022-02-27 15:38:26
+ * @LastEditTime: 2022-08-26 15:29:16
  * @Description: 系统日志
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -40,7 +40,10 @@ class logs extends adminbase
                     ":lcms" => $_L['ROOTID'],
                 ]]);
                 if (sql_error()) {
-                    ajaxout(0, "清除失败：" . sql_error());
+                    ajaxout(0, [
+                        "title" => "清除失败",
+                        "msg"   => sql_error(),
+                    ]);
                 } else {
                     LCMS::log([
                         "type" => "system",

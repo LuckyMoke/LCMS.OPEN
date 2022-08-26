@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2022-08-18 15:15:31
+ * @LastEditTime: 2022-08-26 15:26:50
  * @Description:数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -123,7 +123,10 @@ class database extends adminbase
                     "type" => "system",
                     "info" => "数据恢复-恢复失败-框架版本不匹配",
                 ]);
-                ajaxout(0, "恢复失败-框架版本不匹配");
+                ajaxout(0, [
+                    "title" => "恢复失败",
+                    "msg"   => "框架版本不匹配",
+                ]);
             }
         }
         LCMS::log([
