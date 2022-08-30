@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-23 15:39:23
+ * @LastEditTime: 2022-08-30 23:10:32
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -224,6 +224,7 @@ class web extends adminbase
                         "disabled" => $local]], $osstype);
                 $form = [
                     ["layui" => "des", "title" => "使用云存储必须开启当前PHP的 fileinfo 扩展！同时注意用户图片、文件上传权限设置！"],
+                    ["layui" => "title", "title" => "存储设置"],
                     ["layui" => "radio", "title" => "存储方式",
                         "name"   => "LC[oss][type]",
                         "value"  => $plugin['oss']['type'] ?: "local",
@@ -310,6 +311,84 @@ class web extends adminbase
                         "name"   => "LC[oss][aliyun][Bucket]",
                         "value"  => $plugin['oss']['aliyun']['Bucket'],
                         "cname"  => "hidden oss-aliyun"],
+                ]);
+                $form = array_merge($form, [
+                    ["layui" => "title", "title" => "图片水印"],
+                    ["layui" => "des", "title" => "小提示：如果哪张图片不需要加水印，可将此图片转换为<code>gif</code>格式再上传！"],
+                    ["layui" => "radio", "title" => "水印功能",
+                        "name"   => "LC[watermark][on]",
+                        "value"  => $plugin['watermark']['on'] ?: 0,
+                        "radio"  => [
+                            ["title" => "开启", "value" => 1],
+                            ["title" => "关闭", "value" => 0],
+                        ]],
+                    ["layui" => "input", "title" => "水印文字",
+                        "name"   => "LC[watermark][text]",
+                        "value"  => $plugin['watermark']['text'] ?: "我是水印",
+                        "verify" => "required"],
+                    ["layui"  => "slider", "title" => "文字大小",
+                        "name"    => "LC[watermark][size]",
+                        "value"   => $plugin['watermark']['size'] ?: 18,
+                        "min"     => 14,
+                        "max"     => 60,
+                        "step"    => 2,
+                        "settips" => "PX",
+                        "verify"  => "required"],
+                    ["layui" => "color", "title" => "水印颜色",
+                        "name"   => "LC[watermark][fill]",
+                        "value"  => $plugin['watermark']['fill'] ?: "#FFFFFF",
+                        "format" => "hex",
+                        "verify" => "required"],
+                    ["layui"  => "slider", "title" => "透明度",
+                        "name"    => "LC[watermark][dissolve]",
+                        "value"   => $plugin['watermark']['dissolve'] ?: 100,
+                        "min"     => 10,
+                        "max"     => 100,
+                        "step"    => 10,
+                        "settips" => "%"],
+                    ["layui"  => "slider", "title" => "文字阴影",
+                        "name"    => "LC[watermark][shadow]",
+                        "value"   => $plugin['watermark']['shadow'] ?: 50,
+                        "min"     => 0,
+                        "max"     => 100,
+                        "step"    => 10,
+                        "settips" => "%"],
+                    ["layui" => "radio", "title" => "水印位置",
+                        "name"   => "LC[watermark][gravity]",
+                        "value"  => $plugin['watermark']['gravity'],
+                        "radio"  => [
+                            ["title" => "左上", "value" => "NorthWest"],
+                            ["title" => "中上", "value" => "North"],
+                            ["title" => "右上", "value" => "NorthEast"],
+                        ]],
+                    ["layui" => "radio", "title" => "水印位置",
+                        "name"   => "LC[watermark][gravity]",
+                        "value"  => $plugin['watermark']['gravity'] ?: "Center",
+                        "radio"  => [
+                            ["title" => "左中", "value" => "West"],
+                            ["title" => "居中", "value" => "Center"],
+                            ["title" => "右中", "value" => "East"],
+                        ]],
+                    ["layui" => "radio", "title" => "水印位置",
+                        "name"   => "LC[watermark][gravity]",
+                        "value"  => $plugin['watermark']['gravity'],
+                        "radio"  => [
+                            ["title" => "左下", "value" => "SouthWest"],
+                            ["title" => "中下", "value" => "South"],
+                            ["title" => "右下", "value" => "SouthEast"],
+                        ]],
+                    ["layui" => "input_sort", "title" => "横向边距",
+                        "name"   => "LC[watermark][dx]",
+                        "value"  => $plugin['watermark']['dx'] ?: 0,
+                        "type"   => "number",
+                        "tips"   => "PX",
+                        "verify" => "required"],
+                    ["layui" => "input_sort", "title" => "纵向边距",
+                        "name"   => "LC[watermark][dy]",
+                        "value"  => $plugin['watermark']['dy'] ?: 0,
+                        "type"   => "number",
+                        "tips"   => "PX",
+                        "verify" => "required"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ]);
                 require LCMS::template("own/web_oss");

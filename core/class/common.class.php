@@ -1,4 +1,11 @@
 <?php
+/*
+ * @Author: 小小酥很酥
+ * @Date: 2021-03-13 16:11:16
+ * @LastEditTime: 2022-08-27 21:01:06
+ * @Description: 全局公共类
+ * Copyright 2022 运城市盘石网络科技有限公司
+ */
 defined('IN_LCMS') or exit('No permission');
 load::sys_func('file');
 load::sys_class('mysql');
@@ -7,7 +14,8 @@ load::sys_class('http');
 class common
 {
     /**
-     * [__construct 初始化]
+     * @description: 初始化
+     * @return {*}
      */
     public function __construct()
     {
@@ -19,8 +27,8 @@ class common
         SESSION::init();
     }
     /**
-     * [load_common_mysql 加载数据库]
-     * @return [type] [description]
+     * @description: 加载数据库
+     * @return {*}
      */
     protected function load_common_mysql()
     {
@@ -34,8 +42,8 @@ class common
         }
     }
     /**
-     * [load_common_form 表单过滤]
-     * @return [type] [description]
+     * @description: 表单过滤
+     * @return {*}
      */
     protected function load_common_form()
     {
@@ -56,8 +64,8 @@ class common
         }
     }
     /**
-     * [load_common_tables 加载数据表]
-     * @return [type] [description]
+     * @description: 加载数据表
+     * @return {*}
      */
     protected function load_common_tables()
     {
@@ -70,8 +78,8 @@ class common
         $_L['table'] = $tables;
     }
     /**
-     * [load_common_config 获取网站基本配置]
-     * @return [type] [description]
+     * @description: 获取网站基本配置
+     * @return {*}
      */
     protected function load_common_config()
     {
@@ -98,10 +106,22 @@ class common
             }
         }
         // 上传文件格式过滤
-        $_L['config']['admin']['mimelist'] = str_ireplace([
-            "|php", "php", "|pht", "pht",
-        ], "", $_L['config']['admin']['mimelist']);
+        $mimelist = strtolower($_L['config']['admin']['mimelist']);
+        $mimelist = explode("|", $mimelist);
+        foreach ([
+            "php", "php3", "php4", "php5", "pht", "exe", "cgi",
+        ] as $mime) {
+            $index = array_search($mime, $mimelist);
+            if ($index !== false) {
+                unset($mimelist[$index]);
+            }
+        }
+        $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
     }
+    /**
+     * @description: 结束销毁
+     * @return {*}
+     */
     public function __destruct()
     {
         global $_L;

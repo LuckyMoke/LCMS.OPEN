@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-26 15:01:10
+ * @LastEditTime: 2022-08-30 22:32:44
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -678,18 +678,18 @@ function in_ua($needle = [])
  * @description: HTML内容解码懒加载
  * @param string $content
  * @param bool $lazyload
+ * @param bool $watermark
  * @return string
  */
 function html_editor($content = "", $lazyload = false)
 {
     if ($content) {
         $content = is_base64($content) ? base64_decode($content) : $content;
-        preg_match_all("/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/i", $content, $match);
+        preg_match_all("/<img.*?src=['\"](.*?)['\"].*?[\/]?>/i", $content, $match);
         if ($match[1]) {
             $imgs = [];
             foreach ($match[1] as $index => $img) {
-                $imgs[] = str_replace($img, oss($img), $match[0][$index]);
-
+                $imgs[] = str_replace($img, oss($img, "editor"), $match[0][$index]);
             }
             $content = str_replace($match[0], $imgs, $content);
         }
@@ -705,28 +705,65 @@ function html_editor($content = "", $lazyload = false)
 /**
  * @description: 获取云存储链接
  * @param string $url
+ * @param bool $watermark
+ * @param int $x
+ * @param int $y
  * @return string
  */
-function oss($url)
+function oss($url = "", $watermark = true)
 {
     global $_L;
-    $config = $_L['plugin']['oss'];
-    if (!is_url($url) && $config['type'] != "local") {
-        if (in_string($url, "../upload/")) {
-            $url = str_replace("../", $config['domain'], $url);
-            $url = explode("?", $url)[0];
-            switch ($config['type']) {
+    $cfgoss = $_L['plugin']['oss'] ?: [];
+    $cfgwat = $_L['plugin']['watermark'] ?: [];
+    $config = $_L['config']['admin'] ?: [];
+    $webp   = $config['attwebp'] > 0 ? true : false;
+    $cfgwat = array_merge($cfgwat, [
+        "on"   => $cfgwat['on'] > 0 && $watermark && !in_string($url, ".gif") ? true : false,
+        "text" => base64_encode($cfgwat['text']),
+    ]);
+    //如果开启云存储
+    if ($url && $cfgoss['type'] != "local") {
+        //删除链接参数
+        $url = explode("?", $url)[0];
+        //本地链接转远程链接
+        if (!is_url($url) && in_string($url, "../upload/")) {
+            $url = str_replace("../", $cfgoss['domain'], $url);
+        }
+        //如果是图片进一步处理
+        if (in_string($url, [
+            ".jpg", ".jpeg", ".png", ".gif", ".webp",
+        ]) && in_string($url, $cfgoss['domain'])) {
+            switch ($cfgoss['type']) {
                 case 'qiniu':
+                    $url .= "?imageMogr2/interlace/1/quality/75";
+                    $url .= $webp ? "/format/webp" : "";
+                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/6buR5L2T/fontsize/" . ($cfgwat['size'] * 20) . "/fill" . "/" . base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/gravity/{$cfgwat['gravity']}/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
+                    break;
                 case 'tencent':
-                    $url .= "?imageMogr2/interlace/1";
-                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format/webp" : $url;
+                    $url .= "?imageMogr2/interlace/1/quality/75";
+                    $url .= $webp ? "/format/webp" : "";
+                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/c2ltaGVp6buR5L2TLnR0Zg/fontsize/{$cfgwat['size']}/fill" . "/" . base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/shadow/{$cfgwat['shadow']}/gravity/" . (strtolower($cfgwat['gravity'])) . "/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
                     break;
                 case 'aliyun':
-                    $url .= "?x-oss-process=image/interlace,1";
-                    $url = $_L['config']['admin']['attwebp'] > 0 ? "{$url}/format,webp" : $url;
+                    switch ($cfgwat['gravity']) {
+                        case 'NorthWest':
+                            $cfgwat['gravity'] = "nw";
+                            break;
+                        case 'NorthEast':
+                            $cfgwat['gravity'] = "ne";
+                            break;
+                        case 'SouthWest':
+                            $cfgwat['gravity'] = "sw";
+                            break;
+                        case 'SouthEast':
+                            $cfgwat['gravity'] = "se";
+                            break;
+                    }
+                    $url .= "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_75";
+                    $url .= $webp ? "/format,webp" : "";
+                    $url .= $cfgwat['on'] ? "/watermark,text_{$cfgwat['text']},type_d3F5LW1pY3JvaGVp,color_" . str_replace("#", "", $cfgwat['fill']) . ",size_{$cfgwat['size']},shadow_{$cfgwat['shadow']},g_" . (strtolower($cfgwat['gravity'])) . ",x_{$cfgwat['dx']},y_{$cfgwat['dy']}" : "";
                     break;
             }
-            return $url;
         }
     }
     return $url;

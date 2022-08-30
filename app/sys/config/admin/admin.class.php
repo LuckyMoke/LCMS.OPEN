@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-19 17:48:22
+ * @LastEditTime: 2022-08-27 20:53:33
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -162,9 +162,6 @@ class admin extends adminbase
                         $change = true;
                     }
                 }
-                $LC['mimelist'] = str_ireplace([
-                    "|php", "php", "|pht", "pht",
-                ], "", $LC['mimelist']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
@@ -290,7 +287,7 @@ class admin extends adminbase
                     ["layui" => "des", "title" => "特别注意：为了后台安全，一些不常见的文件后缀，请在上传完文件后，及时删除白名单。"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",
-                        "value"  => $config['mimelist'],
+                        "value"  => $_L['config']['admin']['mimelist'],
                         "tips"   => "上传格式白名单，例如jpg，不需要加.点",
                         "verify" => "required"],
                     ["layui" => "title", "title" => "性能优化"],

@@ -6,23 +6,23 @@ class cut extends webbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF;
         parent::__construct();
+        $LF = $_L['form'];
     }
     public function doindex()
     {
-        global $_L;
-        if (!$_L['form']['para']) {
+        global $_L, $LF;
+        if (!$LF['para']) {
             header("HTTP/1.1 403 Forbidden");
             LCMS::X(403, "拒绝访问");
             exit;
         }
-        $para = stristr($_L['form']['para'], ".", true);
-        $para = $para ? $para : $_L['form']['para'];
-        $para = explode("|", base64_decode($para));
-        $path = path_absolute($para[0]);
-        if (!is_file($path) || is_dir($path)) {
-            $path = $_L['config']['web']['image_default'] ? path_absolute($_L['config']['web']['image_default']) : header("HTTP/1.1 404 Not Found");
+        list($x, $y, $path) = explode(",", $LF['para']);
+        $path               = path_absolute("../{$path}");
+        $path               = is_file($path) ? $path : $_L['config']['web']['image_default'];
+        if (!is_file($path)) {
+            header("HTTP/1.1 404 Not Found");
             LCMS::X(404, "未找到图片");
             exit;
         }
@@ -30,6 +30,6 @@ class cut extends webbase
         header("pragma: cache");
         header("expires: " . gmdate("D, d M Y H:i:s", time() + 604800) . " GMT");
         header("last-modified: Mon, 26 Jul 1997 05:00:00 GMT");
-        THUMB::create($path, $para[1], $para[2]);
+        THUMB::create($path, $x, $y);
     }
 }
