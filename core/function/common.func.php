@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-30 22:32:44
+ * @LastEditTime: 2022-08-30 23:21:08
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -689,7 +689,7 @@ function html_editor($content = "", $lazyload = false)
         if ($match[1]) {
             $imgs = [];
             foreach ($match[1] as $index => $img) {
-                $imgs[] = str_replace($img, oss($img, "editor"), $match[0][$index]);
+                $imgs[] = str_replace($img, oss($img), $match[0][$index]);
             }
             $content = str_replace($match[0], $imgs, $content);
         }

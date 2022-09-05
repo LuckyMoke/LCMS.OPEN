@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-30 23:00:10
+ * @LastEditTime: 2022-09-01 10:30:24
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -211,7 +211,7 @@ class UPLOAD
                     $y = $h - $cfgwat['dy'];
                     break;
             }
-            self::imagettftextblur($image, $cfgwat['size'], 0, $x, $y, imagecolorallocatealpha($image, 0, 0, 0, (100 - $cfgwat['shadow']) / 100 * 127), $font, $cfgwat['text']);
+            imagettftext($image, $cfgwat['size'], 0, $x + 1, $y + 1, imagecolorallocatealpha($image, 0, 0, 0, (100 - $cfgwat['shadow']) / 100 * 127), $font, $cfgwat['text']);
             list($r, $g, $b) = sscanf($cfgwat['fill'], "#%02x%02x%02x");
             imagettftext($image, $cfgwat['size'], 0, $x, $y, imagecolorallocatealpha($image, $r, $g, $b, (100 - $cfgwat['dissolve']) / 100 * 127), $font, $cfgwat['text']);
         }
@@ -234,58 +234,5 @@ class UPLOAD
             $bbox['height'] = abs($bbox[7] - $bbox[1]) - 1;
         }
         return $bbox;
-    }
-    private static function imagettftextblur(&$image, $size, $angle, $x, $y, $color, $fontfile, $text)
-    {
-        $return_array = [
-            imagesx($image),
-            -1,
-            -1,
-            -1,
-            -1,
-            imagesy($image),
-            imagesx($image),
-            imagesy($image),
-        ];
-        $temporary_image = imagecreatetruecolor(imagesx($image), imagesy($image));
-        imagefill($temporary_image, 0, 0, imagecolorallocate($temporary_image, 0x00, 0x00, 0x00));
-        imagettftext($temporary_image, $size, $angle, $x, $y, imagecolorallocate($temporary_image, 0xFF, 0xFF, 0xFF), $fontfile, $text);
-        for ($blur = 1; $blur <= 10; $blur++) {
-            imagefilter($temporary_image, IMG_FILTER_GAUSSIAN_BLUR);
-        }
-        $color_opacity = imagecolorsforindex($image, $color)['alpha'];
-        $color_opacity = (127 - $color_opacity) / 127;
-        for ($_x = 0; $_x < imagesx($temporary_image); $_x++) {
-            for ($_y = 0; $_y < imagesy($temporary_image); $_y++) {
-                $visibility = (imagecolorat(
-                    $temporary_image,
-                    $_x,
-                    $_y
-                )&0xFF) / 255 * $color_opacity;
-                if ($visibility > 0) {
-                    $return_array[0] = min($return_array[0], $_x);
-                    $return_array[1] = max($return_array[1], $_y);
-                    $return_array[2] = max($return_array[2], $_x);
-                    $return_array[3] = max($return_array[3], $_y);
-                    $return_array[4] = max($return_array[4], $_x);
-                    $return_array[5] = min($return_array[5], $_y);
-                    $return_array[6] = min($return_array[6], $_x);
-                    $return_array[7] = min($return_array[7], $_y);
-                    imagesetpixel(
-                        $image,
-                        $_x,
-                        $_y,
-                        imagecolorallocatealpha(
-                            $image,
-                            ($color >> 16)&0xFF,
-                            ($color >> 8)&0xFF,
-                            $color&0xFF,
-                            (1 - $visibility) * 127
-                        )
-                    );
-                }
-            }
-        }
-        imagedestroy($temporary_image);
     }
 }

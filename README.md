@@ -28,8 +28,10 @@ PHP扩展：zip、curl、gd（宝塔均默认开启）
 
 #### 安装方式
 
- - 方式一： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
- - 方式二： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
+ - 方式一： [官网下载](https://ourcms.cn/list/55-1.html)
+ - 方式二： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
+ - 方式三： [GitHub下载](https://github.com/LuckyMoke/LCMS.OPEN/releases)
+ - 方式四： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
 
 #### QQ讨论群
 

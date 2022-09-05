@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-30 23:02:16
+ * @LastEditTime: 2022-09-01 16:37:38
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -55,7 +55,7 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/thumbnail/x{$y}/gravity/center/crop/0x{$y}";
                         } elseif ($x && $y) {
-                            $url[0] .= "/thumbnail/!{$x}x{$y}r/gravity/center/crop/{$x}x{$y}";
+                            $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}";
                         }
                         $url = $url[1] ? implode("|", $url) : $url[0];
                         break;

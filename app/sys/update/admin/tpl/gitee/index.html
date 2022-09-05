@@ -13,20 +13,16 @@
         display: none;
     }
 </style>
-<p class="lcms-form-des">特别说明：更新失败或出现任何问题，都可以直接到Gitee上下载完整安装包，删除其中<code>install</code>{{$_L['config']['admin']['dir']=="admin"?"":"和<code>admin</code>"}}目录，将其它文件完全覆盖到当前站点，然后到“数据中心”，点击“修复框架数据库”即可！</p>
+<p class="lcms-form-des">特别说明：更新失败、出现任何问题、跨版本太多，都可以到<a href="https://ourcms.cn/" target="_blank">官网</a>、<a href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank">Gitee</a>、<a href="https://github.com/LuckyMoke/LCMS.OPEN" target="_blank">GitHub</a>下载完整安装包，进行一次手动更新后再继续使用在线更新，查看 <a href="https://ourcms.cn/show/news-66.html" target="_blank">如何手动更新程序？</a></p>
 <div class="layui-row layui-col-space20 update-gitee" data-power="{{$powertest}}">
     <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
         <div class="update-gitee-version">
             <p>当前版本：V{{$version}}</p>
             <p>最新版本：<span>
-                    <font color="#f56c6c"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
-                        &nbsp;正在检测更新</font>
+                    <font color="#f56c6c"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>&nbsp;正在检测更新</font>
                 </span></p>
-            <a class="layui-btn layui-btn-primary layui-btn-sm" href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank">
-                Gitee仓库
-            </a>
             <button class="layui-btn layui-btn-normal layui-btn-sm update-gitee-setting">
-                令牌设置
+                更新设置
             </button>
             <button class="layui-btn layui-btn-sm update-gitee-button">
                 立即更新
@@ -106,7 +102,7 @@
     <tr>
         <td>{file}</td>
         <td style="text-align:center">{info}</td>
-        <td style="text-align:center" class="update-gitee-file-status">
+        <td style="text-align:center" class="update-gitee-file-status {class}">
             <font color="#CCCCCC">待更新</font>
         </td>
     </tr>

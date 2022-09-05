@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-11-02 15:07:46
- * @LastEditTime: 2022-08-17 12:55:12
+ * @LastEditTime: 2022-09-05 19:25:51
  * @Description: Gitee升级功能
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -165,10 +165,16 @@ class gitee extends adminbase
                 ajaxout(1, "success");
                 break;
             case 'remove':
-                delfile(PATH_WEB . $LF['file']);
-                if ($CFG['dir'] && $CFG['dir'] != "admin") {
-                    deldir(PATH_WEB . "admin/");
-                    deldir(PATH_WEB . "install/");
+                if ($LF['file']) {
+                    delfile($LF['file']);
+                } elseif ($LF['files']) {
+                    foreach ($LF['files'] as $v) {
+                        delfile($v['file']);
+                    }
+                    if ($CFG['dir'] && $CFG['dir'] != "admin") {
+                        movedir("admin/", "{$CFG['dir']}/");
+                        deldir("install/");
+                    }
                 }
                 ajaxout(1, "成功");
                 break;
@@ -182,7 +188,6 @@ class gitee extends adminbase
     private function getFiles($files)
     {
         $jump = [
-            "admin/",
             "install/",
             "favicon.ico",
             "LICENSE.md",
