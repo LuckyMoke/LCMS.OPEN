@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-27 20:53:33
+ * @LastEditTime: 2022-09-06 10:25:22
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -110,7 +110,7 @@ class admin extends adminbase
                     ["layui" => "radio", "title" => "限制访问？",
                         "name"   => "LC[domain_must]",
                         "value"  => $config['domain_must'] ?: 0,
-                        "tips"   => "限制前端只能通过下方域名访问",
+                        "tips"   => "限制前端只能通过下方域名访问，除非你特别懂，否则请不要限制",
                         "radio"  => [
                             ["title" => "限制域名", "value" => 1],
                             ["title" => "不限制域名", "value" => 0],
