@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-07-20 16:18:56
+ * @LastEditTime: 2022-09-06 21:55:48
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -32,6 +32,7 @@ class TPL
     public static function getui($paths = [])
     {
         global $_L;
+        $paths    = $paths ?: [];
         $_L['ui'] = array_merge([
             "nocache" => 0,
             "css"     => [],
