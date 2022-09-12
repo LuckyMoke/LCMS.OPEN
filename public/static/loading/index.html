@@ -20,8 +20,6 @@
                 <p id="percent" style="display:none;margin:0 0 0 0;">0.00%</p>
             </div>
         </div>
-        <script type="text/javascript">
-            var getQuery=function(name,hash){hash=hash?hash:window.location.hash;var reg=new RegExp("(^|&)"+name+"=([^&]*)(&|$)",'i');var result=hash.substr(1).match(reg);if(result!=null){return decodeURIComponent(result[2])}else{return null}},go=getQuery('go'),time=getQuery('time'),times=time;window.onload=function(){if(time&&time>0){var elmt=document.getElementById('text'),elmp=document.getElementById('percent');elmt.innerHTML='资源加载中';elmp.style.display='block';var timer=setInterval(function(){if(times<=0){clearInterval(timer);if(go){window.location.href=go;setTimeout(function(){window.location.reload()},500)}}else{times=(times*1)-0.1;var per=(100-(times/time*100)).toFixed(2);per=per>100?'100.00':per;document.getElementById('percent').innerHTML=per+'%'}},100)}else{if(go){window.location.href=go;setTimeout(function(){window.location.reload()},500)}}};
-        </script>
+        <script type="text/javascript">var getQuery=function(name,hash){hash=hash?hash:window.location.hash;var reg=new RegExp("(^|&)"+name+"=([^&]*)(&|$)",'i');var result=hash.substr(1).match(reg);if(result!=null){return decodeURIComponent(result[2])}else{return null}},go=getQuery('go'),time=getQuery('time'),times=time;window.onload=function(){if(time&&time>0){var elmt=document.getElementById('text'),elmp=document.getElementById('percent');elmt.innerHTML='资源加载中';elmp.style.display='block';var timer=setInterval(function(){if(times<=0){clearInterval(timer);if(go)window.location.href=go}else{times=(times*1)-0.1;var per=(100-(times/time*100)).toFixed(2);per=per>100?'100.00':per;elmp.innerHTML=per+'%'}},100)}else{if(go)window.location.href=go}};</script>
     </body>
     </html>

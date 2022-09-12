@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-30 23:21:08
+ * @LastEditTime: 2022-09-09 23:50:40
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -275,7 +275,7 @@ function url_auto($url)
  */
 function okinfo($url, $time = 0)
 {
-    goheader("/public/static/loading/index.html?v=20220817#go=" . urlencode($url) . "&time={$time}");
+    goheader("/public/static/loading/index.html?v=20220909#go=" . urlencode($url) . "&time={$time}");
 }
 /**
  * @description: 302跳转

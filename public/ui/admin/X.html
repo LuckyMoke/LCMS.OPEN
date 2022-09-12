@@ -64,9 +64,7 @@
         <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="position:absolute;font-size:30px;top:50%;left:50%;margin:-20px 0 0 -20px"></i>
     </div>
 </div>
-<script type="text/javascript">
-    var html=document.getElementById("lasttime"),second=3,showLoad=function(){var loading=document.getElementById("loading");loading.style.display='block'};if(html!=null){var lasttime=setInterval(function(){second=second-1;if(second<=0){clearInterval(lasttime);window.location.href='{{$go}}'}else{html.innerHTML=second+'s'}},1000)};var X=document.getElementsByClassName('X')[0],TAB=document.getElementById('APPTAB'),Xh=X.offsetHeight,Fh=140,Pt=70;if(TAB){Fh=200,Pt=100};if(document.body.offsetWidth<992&&!parent.document.getElementById('LCMS')){Fh=40,Pt=20};if(!document.getElementById('APPIFRAME')){Fh=0,Pt=0};X.style.height='calc(100vh - '+Fh+'px)';X.style.paddingTop='calc(50vh - '+(Pt+Xh/2)+'px)';X.style.opacity=1;
-</script>
+<script type="text/javascript">var html=document.getElementById("lasttime"),second=3,showLoad=function(){var loading=document.getElementById("loading");loading.style.display='block'};if(html!=null){var lasttime=setInterval(function(){second=second-1;if(second<=0){clearInterval(lasttime);window.location.href='{{$go}}'}else{html.innerHTML=second+'s'}},1000)};var X=document.getElementsByClassName('X')[0],TAB=document.getElementById('APPTAB'),Xh=X.offsetHeight,Fh=140,Pt=70;if(TAB){Fh=200,Pt=100};try{if(document.body.offsetWidth<992&&!parent.document.getElementById('LCMS')){Fh=40,Pt=20}}catch(e){};if(!document.getElementById('APPIFRAME')){Fh=0,Pt=0};X.style.height='calc(100vh - '+Fh+'px)';X.style.paddingTop='calc(50vh - '+(Pt+Xh/2)+'px)';X.style.opacity=1;</script>
 <if $_L['APP']['info']>
     <template "ui/foot" />
     <else />
