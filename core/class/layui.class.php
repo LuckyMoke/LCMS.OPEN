@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-09-04 01:39:49
+ * @LastEditTime: 2022-09-13 11:53:14
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -11,20 +11,20 @@ class LAY
 {
     public static function start($para)
     {
-        $para              = is_array($para) ? $para : array();
-        $para['title']     = $para['title'] ?: "小标题";
-        $para['cname']     = $para['cname'] ? " {$para['cname']}" : "";
-        $para['disabled']  = $para['disabled'] ? " disabled" : "";
-        $para['disclass']  = $para['disabled'] ? " layui-disabled" : "";
-        $para['verifybox'] = $para['verify'] ? " required lay-verify='{$para['verify']}'" : "";
-        $para['tipsbox']   = $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "";
-        return $para;
+        $para = is_array($para) ? $para : [];
+        return array_merge($para, [
+            "title"     => $para['title'] ?: "小标题",
+            "cname"     => $para['cname'] ? " {$para['cname']}" : "",
+            "disabled"  => $para['disabled'] ? " disabled" : "",
+            "disclass"  => $para['disabled'] ? " layui-disabled" : "",
+            "verifybox" => $para['verify'] ? " required lay-verify='{$para['verify']}'" : "",
+            "tipsbox"   => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
+        ]);
     }
     public static function form($list = [])
     {
         foreach ($list as $para) {
             if ($para) {
-                $para = self::start($para);
                 $type = $para['layui'];
                 self::$type($para);
             }
@@ -371,11 +371,14 @@ class LAY
             </div>";
         echo $html;
     }
-    public static function btn($para = "")
+    public static function btn($para = [])
     {
-        $para          = is_array($para) ? $para : array();
-        $para['title'] = $para['title'] ? $para['title'] : "立即保存";
-        $para['fluid'] = $para['fluid'] ? true : false;
+        $para = is_array($para) ? $para : [];
+        $para = array_merge($para, [
+            "title" => $para['title'] ?: "立即保存",
+            "cname" => $para['cname'] ? " {$para['cname']}" : "",
+            "fluid" => $para['fluid'] ? true : false,
+        ]);
         if ($para['fluid']) {
             $html = "
                 <div class='layui-form-item{$para['cname']}'>

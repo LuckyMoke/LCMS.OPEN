@@ -2,17 +2,18 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-09-08 17:27:56
+ * @LastEditTime: 2022-09-16 21:57:43
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class HTTP
 {
-    public static $TIMEOUT  = 30;
-    private static $HEADERS = [];
-    private static $METHOD  = "";
-    private static $INFO    = [];
+    public static $TIMEOUT = 30;
+    public static $INFO    = [];
+    public static $HEADERS = [];
+    private static $HEADER = [];
+    private static $METHOD = "";
     private static $CH;
     /**
      * @description: HTTP GET
@@ -23,9 +24,9 @@ class HTTP
      */
     public static function get($url, $out = false, $headers = [])
     {
-        self::$CH      = curl_init($url);
-        self::$METHOD  = "GET";
-        self::$HEADERS = $headers;
+        self::$CH     = curl_init($url);
+        self::$METHOD = "GET";
+        self::$HEADER = $headers;
         self::setBaseOpt();
         $result = self::getRequest();
         $result = $out ? [
@@ -46,9 +47,9 @@ class HTTP
      */
     public static function post($url, $data = [], $build = false, $headers = [])
     {
-        self::$CH      = curl_init($url);
-        self::$METHOD  = "POST";
-        self::$HEADERS = $headers;
+        self::$CH     = curl_init($url);
+        self::$METHOD = "POST";
+        self::$HEADER = $headers;
         self::setBaseOpt($build ? http_build_query($data) : $data);
         $result = self::getRequest();
         if (in_array(self::$INFO['http_code'], [
@@ -66,9 +67,9 @@ class HTTP
      */
     public static function delete($url, $headers = [])
     {
-        self::$CH      = curl_init($url);
-        self::$METHOD  = "DELETE";
-        self::$HEADERS = $headers;
+        self::$CH     = curl_init($url);
+        self::$METHOD = "DELETE";
+        self::$HEADER = $headers;
         self::setBaseOpt();
         $result = self::getRequest();
         if (in_array(self::$INFO['http_code'], [
@@ -87,9 +88,9 @@ class HTTP
      */
     public static function put($url, $data = false, $headers = [])
     {
-        self::$CH      = curl_init($url);
-        self::$METHOD  = "PUT";
-        self::$HEADERS = $headers;
+        self::$CH     = curl_init($url);
+        self::$METHOD = "PUT";
+        self::$HEADER = $headers;
         self::setBaseOpt($data);
         $result = self::getRequest();
         if (in_array(self::$INFO['http_code'], [
@@ -106,9 +107,9 @@ class HTTP
      */
     public static function head($url)
     {
-        self::$CH      = curl_init($url);
-        self::$METHOD  = "HEAD";
-        self::$HEADERS = [];
+        self::$CH     = curl_init($url);
+        self::$METHOD = "HEAD";
+        self::$HEADER = [];
         self::setBaseOpt();
         self::getRequest();
         return self::$INFO;
@@ -120,15 +121,15 @@ class HTTP
      */
     private static function setBaseOpt($data = "")
     {
-        if (self::$HEADERS) {
-            foreach (self::$HEADERS as $k => $v) {
+        if (self::$HEADER) {
+            foreach (self::$HEADER as $k => $v) {
                 $h[] = "{$k}: {$v}";
                 $v == "gzip" && curl_setopt(self::$CH, CURLOPT_ENCODING, "gzip");
             }
             curl_setopt(self::$CH, CURLOPT_HTTPHEADER, $h);
         }
         curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
-        curl_setopt(self::$CH, CURLOPT_HEADER, false);
+        curl_setopt(self::$CH, CURLOPT_HEADER, true);
         curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
         curl_setopt(self::$CH, CURLOPT_RETURNTRANSFER, true);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYPEER, false);
@@ -157,6 +158,19 @@ class HTTP
         $body       = curl_exec(self::$CH);
         self::$INFO = curl_getinfo(self::$CH);
         curl_close(self::$CH);
-        return $body;
+        $hInfo = substr($body, 0, self::$INFO['header_size']);
+        $hInfo = str_replace("\r\n", "\n", $hInfo);
+        $hInfo = explode("\n", trim($hInfo));
+        unset($hInfo[0]);
+        self::$HEADERS = [
+            "code" => self::$INFO['http_code'],
+        ];
+        foreach ($hInfo as $info) {
+            $infoArr       = explode(':', $info, 2);
+            self::$HEADERS = array_merge(self::$HEADERS, [
+                trim($infoArr[0]) => trim($infoArr[1]),
+            ]);
+        }
+        return substr($body, self::$INFO['header_size'], strlen($body));
     }
 }
