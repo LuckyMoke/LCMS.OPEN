@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-03-15 12:02:59
+ * @LastEditTime: 2022-09-23 10:01:54
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -111,9 +111,9 @@ class PAYS
     public static function order($order = [])
     {
         if ($order['order_no']) {
-            if ($order['status'] == "1") {
+            if ($order['status'] == 1) {
                 $order['paytime'] = datenow();
-            } elseif ($order['status'] == "2") {
+            } elseif ($order['status'] == 2) {
                 $order['repaytime'] = datenow();
             }
             sql_update(["order",

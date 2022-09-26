@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-07-07 13:06:56
+ * @LastEditTime: 2022-09-20 14:25:00
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -50,7 +50,7 @@ class reg extends adminbase
         global $_L, $LF, $UCFG, $PLG, $RID;
         $admin = $_L['LCMSADMIN'];
         if ($admin && $admin['id'] && $admin['name']) {
-            okinfo($_L['url']['admin']);
+            okinfo($LF['go'] ?: $_L['url']['admin']);
         }
         $page = [
             "title" => "注册 - {$_L['config']['admin']['title']}",

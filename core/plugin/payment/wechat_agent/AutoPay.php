@@ -124,19 +124,11 @@ class AutoPay
         require_once "libs/WxPay.To.php";
         $init    = self::init($order);
         $WxPayTo = new WxPayTo($init);
-        $result  = $WxPayTo->couPon();
-        if ($result['result_code'] === "SUCCESS") {
-            return [
-                "code"     => 1,
-                "msg"      => "发送成功",
-                "order_no" => $result["mch_billno"],
-            ];
-        } else {
-            return [
-                "code" => 0,
-                "msg"  => "发送失败：{$result['err_code_des']}",
-                "data" => $result,
-            ];
-        }
+        $result  = $WxPayTo->Pay();
+        return [
+            "code"     => 1,
+            "msg"      => "付款成功",
+            "order_no" => $result["out_batch_no"],
+        ];
     }
 }

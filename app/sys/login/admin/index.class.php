@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-08-22 15:01:14
+ * @LastEditTime: 2022-09-20 14:22:24
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -34,7 +34,7 @@ class index extends adminbase
         }
         //如果已经登陆，跳转到后台首页
         if ($USER && $USER['id'] && $USER['name']) {
-            okinfo($_L['url']['admin']);
+            okinfo($LF['go'] ?: $_L['url']['admin']);
         }
         $UCFG = LCMS::config([
             "name" => "user",

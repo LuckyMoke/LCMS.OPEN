@@ -4,16 +4,6 @@
         "name": "wechat_agent"
     },
     "form": [{
-        "layui": "radio",
-        "title": "发红包方式",
-        "name": "LC[wechat_agent][paytotype]",
-        "value": "paytotype",
-        "cname": "hidden payment_wechat_agent",
-        "radio": [{
-            "title": "企业现金红包-手动领取",
-            "value": "0"
-        }]
-    }, {
         "layui": "title",
         "title": "子商户信息",
         "cname": "hidden payment_wechat_agent"
@@ -63,8 +53,8 @@
         "title": "支付密钥",
         "name": "LC[wechat_agent][key]",
         "value": "key",
-        "placeholder": "请将API密钥与APIV3密钥设置成一样",
-        "tips": "请将API密钥与APIV3密钥设置成一样",
+        "placeholder": "请设置APIV3密钥",
+        "tips": "请设置APIV3密钥",
         "cname": "hidden payment_wechat_agent"
     }, {
         "layui": "title",

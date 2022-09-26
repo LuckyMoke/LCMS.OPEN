@@ -19,6 +19,33 @@ class WxPayApi
         }
     }
     /**
+     * @description: 敏感信息加密
+     * @param array $config
+     * @param string $str
+     * @return string
+     */
+    public static function getEncrypt($config, $string = "")
+    {
+        $encrypted = "";
+        $publicKey = openssl_pkey_get_details(openssl_pkey_get_public($config['apiclient_cert']))['key'];
+        $sLength   = mb_strlen($string);
+        $offet     = 0;
+        $i         = 0;
+        while ($sLength - $offet > 0) {
+            if ($sLength - $offet > 128) {
+                $str = mb_substr($string, $offet, 128);
+            } else {
+                $str = mb_substr($string, $offet, $sLength - $offet);
+            }
+            $cache = "";
+            openssl_public_encrypt($str, $cache, $publicKey, OPENSSL_PKCS1_OAEP_PADDING);
+            $encrypted .= $cache;
+            $i++;
+            $offet = $i * 128;
+        }
+        return base64_encode($encrypted);
+    }
+    /**
      * @description: API请求
      * @param string $method
      * @param string $url
