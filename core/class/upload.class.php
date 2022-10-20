@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-09-01 10:30:24
+ * @LastEditTime: 2022-10-19 14:01:47
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -60,6 +60,39 @@ class UPLOAD
         } else {
             $return = self::out(0, "upload文件夹没有写权限");
         }
+        //云存储处理
+        $osscfg = $_L['plugin']['oss'];
+        if ($return['code'] == 1) {
+            switch ($osscfg['type']) {
+                case 'qiniu':
+                    load::plugin("Qiniu/QiniuOSS");
+                    $Qiniu = new QiniuOSS($osscfg['qiniu']);
+                    $rst   = $Qiniu->upload($return['src']);
+                    if ($rst['code'] == 1) {
+                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                        delfile($return['src']);
+                    }
+                    break;
+                case 'tencent':
+                    load::plugin("Tencent/TencentOSS");
+                    $Tencent = new TencentOSS($osscfg['tencent']);
+                    $rst     = $Tencent->upload($return['src']);
+                    if ($rst['code'] == 1) {
+                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                        delfile($return['src']);
+                    }
+                    break;
+                case 'aliyun':
+                    load::plugin("Aliyun/AliyunOSS");
+                    $Aliyun = new AliyunOSS($osscfg['aliyun']);
+                    $rst    = $Aliyun->upload($return['src']);
+                    if ($rst['code'] == 1) {
+                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                        delfile($return['src']);
+                    }
+                    break;
+            }
+        }
         return $return;
     }
     /**
@@ -78,6 +111,7 @@ class UPLOAD
             "msg"      => $msg,
             "dir"      => $dir,
             "filename" => $filename,
+            "src"      => "{$dir}{$filename}",
             "size"     => $size,
         ];
     }
@@ -89,26 +123,27 @@ class UPLOAD
     public static function mime($mime = "")
     {
         $allmime = [
-            "image/jpeg"         => "jpeg",
-            "image/png"          => "png",
-            "image/bmp"          => "bmp",
-            "image/gif"          => "gif",
-            "image/webp"         => "webp",
-            "image/vnd.wap.wbmp" => "wbmp",
-            "image/x-up-wpng"    => "wpng",
-            "image/x-icon"       => "ico",
-            "image/svg+xml"      => "svg",
-            "image/tiff"         => "tiff",
-            "audio/mpeg"         => "mp3",
-            "audio/ogg"          => "ogg",
-            "audio/x-wav"        => "wav",
-            "audio/x-ms-wma"     => "wma",
-            "audio/x-ms-wmv"     => "wmv",
-            "video/mp4"          => "mp4",
-            "video/mpeg"         => "mpeg",
-            "video/quicktime"    => "mov",
-            "application/json"   => "json",
-            "application/pdf"    => "pdf",
+            "image/jpeg"          => "jpeg",
+            "image/png"           => "png",
+            "image/bmp"           => "bmp",
+            "image/gif"           => "gif",
+            "image/webp"          => "webp",
+            "image/vnd.wap.wbmp"  => "wbmp",
+            "image/x-up-wpng"     => "wpng",
+            "image/x-icon"        => "ico",
+            "image/svg+xml"       => "svg",
+            "image/tiff"          => "tiff",
+            "audio/mpeg"          => "mp3",
+            "audio/ogg"           => "ogg",
+            "audio/x-wav"         => "wav",
+            "audio/x-ms-wma"      => "wma",
+            "audio/x-ms-wmv"      => "wmv",
+            "video/mp4"           => "mp4",
+            "video/mpeg"          => "mpeg",
+            "video/quicktime"     => "mov",
+            "application/json"    => "json",
+            "application/pdf"     => "pdf",
+            "binary/octet-stream" => "jpg",
         ];
         return $allmime[$mime] ?: "";
     }

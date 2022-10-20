@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-09-16 20:00:02
+ * @LastEditTime: 2022-10-19 14:19:59
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -30,15 +30,10 @@ class index extends adminbase
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$LF['type']}/{$datey}/";
         if ($_FILES['file']) {
             $res = UPLOAD::file($dir);
-            if ($res['code'] == "1") {
-                $data = [
-                    "dir"      => $res['dir'],
-                    "filename" => $res['filename'],
-                    "size"     => $res['size'],
-                    "src"      => $res['dir'] . $res['filename'],
-                ];
-                $this->sql($LF['type'], $datey, $data);
-                ajaxout(1, $res['msg'], "", $data);
+            if ($res['code'] == 1) {
+                unset($res['code'], $res['msg']);
+                $this->sql($LF['type'], $datey, $res);
+                ajaxout(1, $res['msg'], "", $res);
             } else {
                 ajaxout(0, $res['msg'], "", "");
             }
@@ -115,60 +110,12 @@ class index extends adminbase
             }
             $res = UPLOAD::file($dir, $url);
             if ($res['code'] == 1) {
-                $path = $res['dir'] . $res['filename'];
-                switch ($_L['plugin']['oss']['type']) {
-                    case 'qiniu':
-                        load::plugin("Qiniu/QiniuOSS");
-                        $Qiniu = new QiniuOSS($_L['plugin']['oss']['qiniu']);
-                        $rst   = $Qiniu->upload($path);
-                        if ($rst['code'] == "1") {
-                            $result[] = [
-                                "state"  => "SUCCESS",
-                                "source" => $url,
-                                "url"    => $_L['plugin']['oss']['domain'] . str_replace("../", "", $path),
-                            ];
-                            delfile($path);
-                        }
-                        break;
-                    case 'tencent':
-                        load::plugin("Tencent/TencentOSS");
-                        $Tencent = new TencentOSS($_L['plugin']['oss']['tencent']);
-                        $rst     = $Tencent->upload($path);
-                        if ($rst['code'] == "1") {
-                            $result[] = [
-                                "state"  => "SUCCESS",
-                                "source" => $url,
-                                "url"    => $_L['plugin']['oss']['domain'] . str_replace("../", "", $path),
-                            ];
-                            delfile($path);
-                        }
-                        break;
-                    case 'aliyun':
-                        load::plugin("Aliyun/AliyunOSS");
-                        $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
-                        $rst    = $Aliyun->upload($path);
-                        if ($rst['code'] == "1") {
-                            $result[] = [
-                                "state"  => "SUCCESS",
-                                "source" => $url,
-                                "url"    => $_L['plugin']['oss']['domain'] . str_replace("../", "", $path),
-                            ];
-                            delfile($path);
-                        }
-                        break;
-                    default:
-                        $result[] = [
-                            "state"  => "SUCCESS",
-                            "source" => $url,
-                            "url"    => $path,
-                        ];
-                        break;
-                }
-                $this->sql("image", $datey, [
-                    "filename" => $res['filename'],
-                    "size"     => $res['size'],
-                    "src"      => $path,
-                ]);
+                $result[] = [
+                    "state"  => "SUCCESS",
+                    "source" => $url,
+                    "url"    => $res['url'] ?: $res['src'],
+                ];
+                $this->sql("image", $datey, $res);
             } else {
                 $result[] = [
                     "state"  => "FAIL",
