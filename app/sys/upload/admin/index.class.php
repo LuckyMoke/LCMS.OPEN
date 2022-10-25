@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-10-19 14:19:59
+ * @LastEditTime: 2022-10-21 17:50:34
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -19,7 +19,7 @@ class index extends adminbase
         $LC = $LF['LC'];
     }
     /**
-     * @description: 上传图片
+     * @description: 上传文件
      * @param {*}
      * @return {*}
      */
@@ -29,7 +29,7 @@ class index extends adminbase
         $datey = date("Ym");
         $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$LF['type']}/{$datey}/";
         if ($_FILES['file']) {
-            $res = UPLOAD::file($dir);
+            $res = UPLOAD::file($dir, "", "", $LF['force'] > 0 ? 1 : 0);
             if ($res['code'] == 1) {
                 unset($res['code'], $res['msg']);
                 $this->sql($LF['type'], $datey, $res);

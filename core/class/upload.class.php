@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-10-19 14:01:47
+ * @LastEditTime: 2022-10-21 17:51:23
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -14,9 +14,10 @@ class UPLOAD
      * @param string $dir
      * @param array|string $para
      * @param string $mime
+     * @param bool $force
      * @return array
      */
-    public static function file($dir, $para = "", $mime = "")
+    public static function file($dir, $para = "", $mime = "", $force = 0)
     {
         global $_L, $CFG, $MIME, $SIZE;
         $CFG = $_L['config']['admin'];
@@ -59,6 +60,10 @@ class UPLOAD
             }
         } else {
             $return = self::out(0, "upload文件夹没有写权限");
+        }
+        //强制本地存储
+        if ($force) {
+            return $return;
         }
         //云存储处理
         $osscfg = $_L['plugin']['oss'];

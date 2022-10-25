@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-06-02 13:21:11
+ * @LastEditTime: 2022-10-21 13:32:42
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -59,6 +59,7 @@ class SESSION
             }
             $SESSION['redis']->do->hSet($SESSION['id'], "LCMSSIDTIME", time() + $SESSION['time']);
         } else {
+            session_save_path() || LCMS::X(403, "服务器未设置SESSION目录");
             session_name("LCMSSID");
             session_id($SESSION['id']);
             session_start();
