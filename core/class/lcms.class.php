@@ -2,13 +2,25 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-04-15 15:50:55
+ * @LastEditTime: 2022-11-28 13:14:21
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class LCMS
 {
+    /**
+     * @description: 获取访问域名
+     * @return {*}
+     */
+    public static function HOST()
+    {
+        require_once PATH_CORE_PLUGIN . "Punycode/Punycode.php";
+        $Punycode = new PQCMS\Punycode();
+        $host     = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
+        $host     = $Punycode->decode($host);
+        return $host ?: "";
+    }
     /**
      * @description: 获取客户端真实IP
      * @param {*}

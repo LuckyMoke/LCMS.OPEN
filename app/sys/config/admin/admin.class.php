@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-09-06 10:25:22
+ * @LastEditTime: 2022-11-13 17:13:20
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -274,7 +274,7 @@ class admin extends adminbase
                             ["title" => "打开", "value" => 1, "tab" => "attwebp1"],
                             ["title" => "关闭", "value" => 0, "tab" => "attwebp0"],
                         ],
-                        "tips"   => "WEBP格式可以在不降低清晰度的情况下，极大的压缩图片大小"],
+                        "tips"   => "不知道这是什么不要开，如果开启后无法上传图片，请关掉"],
                     ["layui"  => "slider", "title" => "图片压缩率",
                         "name"    => "LC[attquality]",
                         "value"   => $config['attquality'] ?: 70,

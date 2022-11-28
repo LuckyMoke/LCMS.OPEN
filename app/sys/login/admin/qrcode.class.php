@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-07-07 13:08:08
+ * @LastEditTime: 2022-11-14 13:31:12
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -49,7 +49,7 @@ class qrcode extends adminbase
             case 'qrcode':
                 load::plugin("WeChat/OA");
                 $WX    = new OA();
-                $WUSER = $WX->userinfo();
+                $WUSER = $WX->openid();
                 break;
             case 'qqlogin':
                 load::plugin("Tencent/QQConnect");
