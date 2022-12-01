@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-09-01 16:37:38
+ * @LastEditTime: 2022-11-30 21:08:29
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -128,7 +128,7 @@ class THUMB
         $thumb = imagecreatetruecolor($x, $y);
         imagealphablending($thumb, true);
         imagesavealpha($thumb, true);
-        imagefilledrectangle($thumb, 0, 0, $x, $y, imagecolorallocate($thumb, 255, 255, 255));
+        imagefill($thumb, 0, 0, imagecolorallocatealpha($thumb, 0, 0, 0, 127));
         if ($img_info[0] / $x > $img_info[1] / $y) {
             $w = $img_info[1] * ($x / $y);
             $h = $img_info[1];

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>天地图</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style type="text/css">body,html{width:100%;height:100%;margin:0;padding:0;overflow:hidden}#Map{width:100%;height:100%;border:#ccc solid 1px;box-sizing:border-box}</style>
+    </head>
+    <body onload="init()">
+        <div id="Map"></div>
+        <script type="text/javascript" src="https://api.tianditu.gov.cn/api?v=4.0&tk=4ddd28776d991ece3301b9312e9d3c50"></script>
+        <script type="text/javascript">var map,marker,getParam=function(name){return location.href.match(new RegExp("[?#&]"+name+"=([^?#&]+)","i"))?RegExp.$1:""},center=getParam("center").split(","),zoom=getParam("zoom"),markers=getParam("markers").split(",");var init=function(){map=new T.Map("Map");map.centerAndZoom(new T.LngLat(center[0],center[1]),zoom);marker=new T.Marker(new T.LngLat(markers[0],markers[1]));map.addOverLay(marker)}</script>
+    </body>
+    </html>
