@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2022-04-15 15:40:28
+ * @LastEditTime: 2022-12-16 14:00:33
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -29,24 +29,29 @@ class repair extends adminbase
             $upkey = [];
             if ($val['type'] === "create") {
                 foreach ($val['data'] as $key => $data) {
-                    $sqls[] = $this->setKey($key, $data, true);
+                    if ($key != "LCMSDATAINDEX") {
+                        $sqls[] = $this->setKey($key, $data, true);
+                    }
                 }
                 foreach ($val['data'] as $key => $data) {
-                    if ($data['index']) {
+                    if ($key == "LCMSDATAINDEX" || $data['index']) {
                         $sqls[] = $this->setIndex($key, $data, true);
                     }
                 }
+                $sqls = array_filter($sqls);
                 if (!$sqls) {
                     continue;
                 }
                 $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
             } else {
                 foreach ($val['data'] as $key => $data) {
-                    $sqls[]  = $this->setKey($key, $data);
-                    $upkey[] = $this->setVal($key, $data);
+                    if ($key != "LCMSDATAINDEX") {
+                        $sqls[]  = $this->setKey($key, $data);
+                        $upkey[] = $this->setVal($key, $data);
+                    }
                 }
                 foreach ($val['data'] as $key => $data) {
-                    if ($data['index']) {
+                    if ($key == "LCMSDATAINDEX" || $data['index']) {
                         $sqls[] = $this->setIndex($key, $data);
                     }
                 }
@@ -54,6 +59,10 @@ class repair extends adminbase
                     if ($val) {
                         $mysql[] = "UPDATE `{$PRE}{$name}` {$val};";
                     }
+                }
+                $sqls = array_filter($sqls);
+                if (!$sqls) {
+                    continue;
                 }
                 $mysql[] = "ALTER TABLE `{$PRE}{$name}` " . implode(",\n", $sqls) . ";";
             }
@@ -112,22 +121,40 @@ class repair extends adminbase
             if ($old[$name]) {
                 foreach ($data as $key => $val) {
                     if ($old[$name][$key]) {
-                        $diff = array_diff($val, $old[$name][$key]);
-                        if ($diff) {
-                            if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
-                                $diff['indexdrop'] = true;
+                        if ($key == "LCMSDATAINDEX") {
+                            foreach ($val as $k => $v) {
+                                $oname = $old[$name][$key][$k]['name'] ?: [];
+                                $diff  = array_diff($v['name'], $oname);
+                                if ($diff) {
+                                    if ($old[$name][$key][$k]['name']) {
+                                        $val[$k]['indexdrop'] = true;
+                                    }
+                                } else {
+                                    unset($val[$k]);
+                                }
+                                $result[$name]['data'][$key] = $val;
                             }
-                            $diff = array_merge([
-                                "type"    => $val['type'],
-                                "index"   => "",
-                                "default" => $val['default'],
-                            ], $diff);
-                            $result[$name]['data'][$key] = $diff;
-                        };
+                        } else {
+                            $diff = array_diff($val, $old[$name][$key]);
+                            if ($diff) {
+                                if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
+                                    $diff['indexdrop'] = true;
+                                }
+                                $diff = array_merge([
+                                    "type"    => $val['type'],
+                                    "index"   => "",
+                                    "default" => $val['default'],
+                                ], $diff);
+                                $result[$name]['data'][$key] = $diff;
+                            };
+                        }
                     } else {
-                        $result[$name]['data'][$key] = array_merge($val, [
-                            "add" => true,
-                        ]);
+                        if ($key != "LCMSDATAINDEX") {
+                            $val = array_merge($val, [
+                                "add" => true,
+                            ]);
+                        }
+                        $result[$name]['data'][$key] = $val;
                     }
                 }
                 if ($result[$name]['data']) {
@@ -150,7 +177,7 @@ class repair extends adminbase
     private function getKey($new)
     {
         global $_L, $LF, $LC, $PRE;
-        foreach (DB::$mysql->get_tables() as $name) {
+        foreach ($_L['table'] as $name) {
             $name = str_replace($PRE, "", $name);
             if ($new[$name]) {
                 $tables[] = $name;
@@ -159,11 +186,20 @@ class repair extends adminbase
         foreach ($tables as $name) {
             $indexs = $this->getIndex($name);
             foreach (sql_query("SHOW FULL COLUMNS FROM {$PRE}{$name}") as $key) {
+                if ($indexs[$key['Field']]) {
+                    $index = $indexs[$key['Field']]['type'];
+                    unset($indexs[$key['Field']]);
+                } else {
+                    $index = null;
+                }
                 $result[$name][$key['Field']] = [
                     "type"    => $key['Type'],
-                    "index"   => $indexs[$key['Field']],
+                    "index"   => $index,
                     "default" => $key['Extra'] === "auto_increment" ? "AUTO_INCREMENT" : ($key['Default'] != "" ? $key['Default'] : "NULL"),
                 ];
+            }
+            if ($indexs) {
+                $result[$name]['LCMSDATAINDEX'] = $indexs;
             }
         }
         return $result ?: [];
@@ -176,15 +212,23 @@ class repair extends adminbase
     private function getIndex($table)
     {
         global $_L, $LF, $LC, $PRE;
-        foreach (sql_query("SHOW INDEX FROM {$PRE}{$table}") as $val) {
-            if (isset($val['Key_name']) && $val['Key_name'] === "PRIMARY") {
-                $key = "PRIMARY";
-            } elseif (isset($val['Non_unique']) && $val['Non_unique'] == "1") {
-                $key = $val['Index_type'];
+        $indexs = sql_query("SHOW INDEX FROM {$PRE}{$table}");
+        $indexs = $indexs['Table'] ? [$indexs] : $indexs;
+        foreach ($indexs as $val) {
+            $kname = $val['Column_name'];
+            $name  = $val['Column_name'];
+            if ($val['Key_name'] == "PRIMARY") {
+                $type = "PRIMARY";
+            } elseif ($val['Non_unique'] == 1) {
+                $kname = $val['Key_name'] ?: $val['Column_name'];
+                $type  = $val['Index_type'];
             } else {
-                $key = "UNIQUE";
+                $type = "UNIQUE";
             }
-            $index[isset($val['Column_name']) ? $val['Column_name'] : ""] = $key;
+            if ($kname) {
+                $index[$kname]['type']   = $type;
+                $index[$kname]['name'][] = $name;
+            }
         }
         return $index ?: [];
     }
@@ -242,31 +286,39 @@ class repair extends adminbase
     private function setIndex($key, $data, $create = false)
     {
         global $_L, $LF, $LC, $PRE;
-        switch ($data['index']) {
-            case 'PRIMARY':
-                $sql = " PRIMARY";
-                $end = true;
-                break;
-            case 'UNIQUE':
-                $sql = " UNIQUE";
-                $end = true;
-                break;
-            case 'BTREE':
-                $end = true;
-                break;
-            case 'FULLTEXT':
-                $sql = " FULLTEXT";
-                $end = false;
-                break;
-            case 'SPATIAL':
-                $sql = " SPATIAL";
-                $end = false;
-                break;
+        if ($data['index']) {
+            switch ($data['index']) {
+                case 'PRIMARY':
+                    $sql = " PRIMARY";
+                    $end = true;
+                    break;
+                case 'UNIQUE':
+                    $sql = " UNIQUE";
+                    $end = true;
+                    break;
+                case 'BTREE':
+                    $end = true;
+                    break;
+                case 'FULLTEXT':
+                    $sql = " FULLTEXT";
+                    $end = false;
+                    break;
+                case 'SPATIAL':
+                    $sql = " SPATIAL";
+                    $end = false;
+                    break;
+            }
+            $sql = $create ? "{$sql} KEY" : ($data['indexdrop'] ? "DROP INDEX `{$key}`, " : "") . "ADD{$sql} INDEX";
+            $sql .= $data['index'] != "PRIMARY" ? " `{$key}` " : " ";
+            $sql .= "(`{$key}`)";
+            $sql .= $end ? " USING BTREE" : "";
+        } elseif ($data) {
+            foreach ($data as $k => $v) {
+                $name  = implode("`, `", $v['name']);
+                $sql[] = $create ? " KEY `{$k}` (`{$name}`)" : ($v['indexdrop'] ? "DROP INDEX `{$k}`, " : "") . "ADD INDEX `{$k}` (`{$name}`) USING BTREE";
+            }
+            $sql = implode(",\n", $sql);
         }
-        $sql = $create ? "{$sql} KEY" : ($data['indexdrop'] ? "DROP INDEX `{$key}`, " : "") . "ADD{$sql} INDEX";
-        $sql .= $data['index'] != "PRIMARY" ? " `{$key}`" : " ";
-        $sql .= "(`{$key}`)";
-        $sql .= $end ? " USING BTREE" : "";
         return $sql;
     }
 }
