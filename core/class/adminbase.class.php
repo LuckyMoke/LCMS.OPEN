@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-23 15:49:03
+ * @LastEditTime: 2022-12-30 15:48:04
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -51,17 +51,18 @@ class adminbase extends common
         global $_L;
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
         $loginrootid     = SESSION::get("LCMSLOGINROOTID") ?: $_L['form']['rootid'] ?: "0";
+        $loginurl        = okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=", 0, "top", true);
         if (stristr(HTTP_QUERY, "n=login") === false && !$_L['LCMSADMIN']) {
-            okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
+            LCMS::X(403, "已退出登录，请重新登录", $loginurl);
         } elseif ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $loginurl);
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "系统权限已修改，请重新登陆", "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=" . urlencode($_L['url']['now']));
+                LCMS::X(403, "系统权限已修改，请重新登陆", $loginurl);
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-12-21 17:37:54
+ * @LastEditTime: 2022-12-30 15:46:27
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -271,11 +271,17 @@ function url_auto($url)
  * @description: JS页面跳转
  * @param string $url
  * @param int $time
+ * @param string $win
+ * @param bool $return
  * @return {*}
  */
-function okinfo($url, $time = 0)
+function okinfo($url, $time = 0, $win = "window", $return = false)
 {
-    goheader("/public/static/loading/index.html?v=20220909#go=" . urlencode($url) . "&time={$time}");
+    $url = "/public/static/loading/index.html?v=20221230#go=" . urlencode($url) . "&time={$time}&win={$win}";
+    if ($return) {
+        return $url;
+    }
+    goheader($url);
 }
 /**
  * @description: 302跳转
