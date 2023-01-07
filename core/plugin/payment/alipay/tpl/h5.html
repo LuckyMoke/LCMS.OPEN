@@ -1,154 +1,112 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <title>订单支付</title>
-        <meta name="renderer" content="webkit"/>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <script type="text/javascript">var formatDecimal=function(num,decimal){num=num.toString();let index=num.indexOf('.');if(index!==-1){num=num.substring(0,decimal+index+1)}else{num=num.substring(0)}return parseFloat(num).toFixed(decimal)};var int_w=375,win_w=window.screen.width,meta=document.createElement('meta');document.querySelector('meta[name="viewport"]').remove();document.getElementsByTagName('head')[0].cssText='width:'+int_w+'px;overflow-x:hidden';meta.name='viewport';meta.content='width='+(win_w>=int_w?int_w:win_w)+', initial-scale='+formatDecimal(win_w/int_w,2)+', user-scalable=no';document.getElementsByTagName('head')[0].appendChild(meta);</script>
-        <link href="data:image/ico;base64,aWNv" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{$_L['url']['static']}}amazeui/amazeui.min.css?{{$_L['config']['ver']}}"/>
-        <style type="text/css">
-            body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}.pay-btn{margin:0 0 20px 0}#openInBrowser{display:none}#openInBrowser ._bg{position:fixed;width:100%;height:100%;background:rgba(0,0,0,.8);top:0;left:0}#openInBrowser ._img{position:fixed;width:90%;top:0;left:0;text-align:right}#openInBrowser ._text{position:fixed;width:90%;top:300px;left:5%;text-align:center;color:#fff}#openInBrowser ._text span{color:#dd514c;font-size:18px;padding:0 1px}.fenqi{position:relative;box-sizing:border-box;overflow:hidden;padding:10px;background:#FFFFFF;border:1px #ccc dashed;border-top:none}.fenqi h3{margin-bottom:10px}.fenqi ul{margin:0 -1% 0 -1%}.fenqi a{width:90%;padding:5px 0}.pay-button,.pay-button:hover,.pay-button:focus,.pay-button:active{background:#fff;border:1px #ccc dashed;border-top:none;color:#409eff;padding:15px 0;margin:0;font-size:18px;font-weight:bold;box-shadow:none}
-        </style>
-    </head>
-    <body>
-        <div class="mescroll">
-            <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
-                <div class="_title">
-                    <img src="{{$_L['url']['site']}}core/plugin/payment/{{self::$payname}}/icon.png"/>
-                </div>
-                <div class="_body">
-                    <h1>
-                        ￥
-                        <span>{{$order['pay']}}</span>
-                    </h1>
-                    <p style="color:#f56c6c;text-align:center;font-size:14px;padding:10px;background:#fef0f0">
-                        支付完成后，请不要立即关闭页面，等待自动确认订单状态！
-                    </p>
-                    <div class="_info">
-                        <div>
-                            <p class="am-fl">商品名</p>
-                            <p class="am-fr">{{$order['body']}}</p>
-                            <div class="am-cf"></div>
-                        </div>
-                        <div>
-                            <p class="am-fl">订单金额</p>
-                            <p class="am-fr">￥{{$order['pay']}}</p>
-                            <div class="am-cf"></div>
-                        </div>
-                        <div>
-                            <p class="am-fl">商户单号</p>
-                            <p class="am-fr">{{$order['order_no_own']}}</p>
-                            <div class="am-cf"></div>
-                        </div>
-                        <div>
-                            <p class="am-fl">交易单号</p>
-                            <p class="am-fr">{{$order['order_no']}}</p>
-                            <div class="am-cf"></div>
-                        </div>
-                        <div>
-                            <p class="am-fl">下单时间</p>
-                            <p class="am-fr">{{$order['addtime']}}</p>
-                            <div class="am-cf"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <if $huabei>
-                <div class="fenqi">
-                    <h3>选择花呗{{$huabei>12?"":"免息"}}分期<span style="font-size:12px;color:#C0C4CC;font-weight:normal;padding-left:10px;">能否分期以支付宝显示为准</span></h3>
-                    <ul class="am-avg-sm-{{$huabei==3?'2':($huabei==6?'3':'4')}} am-text-center">
-                        <li>
-                            <a class="am-btn am-btn-{{$fenqi==''?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}">不分期</a>
-                        </li>
-                        <li>
-                            <a class="am-btn am-btn-{{$fenqi=='3'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=3">3期</a>
-                        </li>
-                        <if $huabei gte 6>
-                            <li>
-                                <a class="am-btn am-btn-{{$fenqi=='6'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=6">6期</a>
-                            </li>
-                        </if>
-                        <if $huabei gte 12>
-                            <li>
-                                <a class="am-btn am-btn-{{$fenqi=='12'?'secondary':'default'}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=12">12期</a>
-                            </li>
-                        </if>
-                    </ul>
-                </div>
-            </if>
-            <div class="pay-btn">
-                <form method='POST' action="{{$result['url']}}">
-                    <loop $result['data'],$val,$key>
-                        <input type="hidden" name="{{$key}}" value='{{$val}}' />
-                    </loop>
-                    <if $openInBrowser>
-                        <a class="am-btn am-btn-primary am-btn-block pay-button" href="javascript:;">立即支付</a>
-                        <else />
-                        <button class="am-btn am-btn-primary am-btn-block pay-button" type='submit'>立即支付</button>
-                    </if>
-                </form>
-                <if $huabei gt 12>
-                    <div style="padding:0 10px 20px 10px">
-                        <table class="am-table am-table-bordered am-table-compact am-text-center" style="font-size:12px;margin-top:15px;">
-                            <tbody>
-                                <tr>
-                                    <th width="80px">期数</th>
-                                    <th>每期手续费</th>
-                                    <th>总手续费</th>
-                                </tr>
-                                <tr>
-                                    <php>
-                                    $fei=$order['pay']*0.023;
-                                </php>
-                                    <td>3期</td>
-                                    <td>￥{{number_format($fei/3,2)}}</td>
-                                    <td>￥{{number_format($fei,2)}}</td>
-                                </tr>
-                                <tr>
-                                    <php>
-                                    $fei=$order['pay']*0.045;
-                                </php>
-                                    <td>6期</td>
-                                    <td>￥{{number_format($fei/6,2)}}</td>
-                                    <td>￥{{number_format($fei,2)}}</td>
-                                </tr>
-                                <tr>
-                                    <php>
-                                    $fei=$order['pay']*0.075;
-                                </php>
-                                    <td>12期</td>
-                                    <td>￥{{number_format($fei/12,2)}}</td>
-                                    <td>￥{{number_format($fei,2)}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <p style="font-size:12px;margin:-10px 0 0 0;color:#C0C4CC;">实际手续费以支付宝显示为准</p>
-                    </div>
+<html>
+<head>
+    <title>订单支付</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <link href="data:image/ico;base64,aWNv" rel="shortcut icon" type="image/x-icon" />
+    <style type="text/css">
+        *{margin:0;padding:0}body,html{background-color:#f5f7f9;min-height:100%;width:100%;font-size:14px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}body{padding-bottom:50px}.pay-banner{position:relative;margin:0 auto;max-width:800px;min-height:200px;padding-top:30px;border-radius:0 0 10px 10px;color:#fff;text-align:center;background:#409eff}.pay-banner *{width:360px;max-width:90%;margin:0 auto}.pay-banner h1{font-size:28px}.pay-banner p{margin-top:10px;font-size:14px;color:rgb(255 255 255 / 70%)}.pay-out{position:relative;background:rgb(0 0 0 / 20%);width:380px;max-width:96%;height:20px;margin:-110px auto 0 auto;border-radius:20px;box-shadow:inset 0 0 2px 2px rgb(0 0 0 / 10%);z-index:1}.pay-info{position:relative;box-sizing:border-box;width:360px;max-width:90%;padding:20px;margin:-10px auto 0 auto;border-radius:0 0 10px 10px;background:#fff;z-index:2}.pay-money{text-align:center;font-size:44px;font-weight:700;color:#409eff}.pay-money span{font-size:24px}.pay-money p{font-size:14px;font-weight:400;color:#a8abb2}.pay-line{width:100%;height:0;margin:20px 0;border-top:1px #dcdfe6 dashed}.pay-list{line-height:20px}.pay-list dl{display:flex;justify-content:space-between;padding:5px 0}.pay-list dt{width:80px;color:#a8abb2}.pay-list dd{width:calc(100% - 80px);text-align:right;color:#303133}.pay-qrcode img{display:block;width:60%;margin:0 auto;border:1px #a8abb2 dashed}.pay-qrcode p{color:#a8abb2;text-align:center;font-size:14px;margin-top:10px}.pay-info-title{font-size:16px;color:#606266;margin-bottom:10px}.pay-info-title span{font-size:12px;color:#a8abb2;font-weight:400;padding-left:10px}.pay-btn-group{display:flex;justify-content:space-between}.pay-btn,.pay-btn:active,.pay-btn:focus{display:inline-block;padding:5px 10px;color:#606266;border:1px #dcdfe6 solid;background:#fff;cursor:pointer;border-radius:5px;text-decoration:none}.pay-btn.active,.pay-btn:hover{color:#fff;border:1px #409eff solid;background:#409eff}.pay-table{width:100%;font-size:12px;text-align:center;border:1px #ebeef5 solid;border-top:none;border-right:none}.pay-table td,.pay-table th{padding:5px 0;border-top:1px #ebeef5 solid;border-right:1px #ebeef5 solid}.pay-button,.pay-button:active,.pay-button:focus{display:block;box-sizing:border-box;width:360px;max-width:90%;padding:8px 10px;margin:20px auto 0 auto;color:#fff;border:1px #409eff solid;background:#409eff;font-size:16px;text-align:center;cursor:pointer;border-radius:5px}.pay-button:hover{border:1px #79bbff solid;background:#79bbff}.pay-openllq{position:relative;display:none;z-index:999999}.pay-openllq-bg{position:fixed;width:100%;height:100%;background:rgba(0,0,0,.8);top:0;left:0}.pay-openllq-img{position:fixed;width:90%;top:0;left:0;text-align:right}.pay-openllq-text{position:fixed;width:90%;top:300px;left:5%;text-align:center;color:#fff}.pay-openllq-text span{color:#dd514c;font-size:18px;padding:0 1px}
+    </style>
+</head>
+<body data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
+    <div class="pay-banner">
+        <h1>待支付...</h1>
+        <p>支付完成后，请不要立即关闭页面</p>
+    </div>
+    <div class="pay-out"></div>
+    <div class="pay-info">
+        <div class="pay-money">
+            <span>￥</span>{{$order['pay']}}
+            <p>付款金额</p>
+        </div>
+        <div class="pay-line"></div>
+        <div class="pay-list">
+            <dl>
+                <dt>商品名</dt>
+                <dd>{{$order['body']}}</dd>
+            </dl>
+            <dl>
+                <dt>商户单号</dt>
+                <dd>{{$order['order_no_own']}}</dd>
+            </dl>
+            <dl>
+                <dt>交易单号</dt>
+                <dd>{{$order['order_no']}}</dd>
+            </dl>
+            <dl>
+                <dt>下单时间</dt>
+                <dd>{{$order['addtime']}}</dd>
+            </dl>
+        </div>
+        <if $huabei>
+            <div class="pay-line"></div>
+            <h3 class="pay-info-title">花呗{{$huabei>12?"":"免息"}}分期<span>最终能否分期以支付宝显示为准</span></h3>
+            <div class="pay-btn-group">
+                <a class="pay-btn {{$fenqi==''?'active':''}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}">不分期</a>
+                <a class="pay-btn {{$fenqi=='3'?'active':''}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=3">3期</a>
+                <if $huabei gte 6>
+                    <a class="pay-btn {{$fenqi=='6'?'active':''}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=6">6期</a>
+                </if>
+                <if $huabei gte 12>
+                    <a class="pay-btn {{$fenqi=='12'?'active':''}}" href="{{url_clear($_L['url']['now'], 'fenqi')}}&fenqi=12">12期</a>
                 </if>
             </div>
-            <if $openInBrowser>
-                <div id="openInBrowser">
-                    <div class="_bg"></div>
-                    <div class="_img">
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN0AAAEdCAYAAACIW2IaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzhDRTFGODM4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzhDRTFGODI4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6N0M0RjJGNDQ0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6N0M0RjJGNDU0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7BNHupAAAM2klEQVR42uzd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" />
-                    </div>
-                    <div class="_text">
-                        请选择用浏览器打开
-                        <br />
-                        并在浏览器中完成支付
-                    </div>
-                </div>
+            <if $huabei gt 12>
+                <div class="pay-line"></div>
+                <h3 class="pay-info-title">分期利息<span>实际手续费以支付宝显示为准</span></h3>
+                <table class="pay-table" cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr>
+                            <th width="80px">期数</th>
+                            <th>每期手续费</th>
+                            <th>总手续费</th>
+                        </tr>
+                        <tr>
+                            <php>$fei=$order['pay']*0.023;</php>
+                            <td>3期</td>
+                            <td>￥{{number_format($fei/3,2)}}</td>
+                            <td>￥{{number_format($fei,2)}}</td>
+                        </tr>
+                        <tr>
+                            <php>$fei=$order['pay']*0.045;</php>
+                            <td>6期</td>
+                            <td>￥{{number_format($fei/6,2)}}</td>
+                            <td>￥{{number_format($fei,2)}}</td>
+                        </tr>
+                        <tr>
+                            <php>$fei=$order['pay']*0.075;</php>
+                            <td>12期</td>
+                            <td>￥{{number_format($fei/12,2)}}</td>
+                            <td>￥{{number_format($fei,2)}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </if>
+        </if>
+    </div>
+    <form method='POST' action="{{$result['url']}}">
+        <loop $result['data'],$val,$key>
+            <input type="hidden" name="{{$key}}" value='{{$val}}' />
+        </loop>
+        <button class="pay-button" type="submit">立即支付</button>
+    </form>
+    <if $openInBrowser>
+        <div class="pay-openllq">
+            <div class="pay-openllq-bg"></div>
+            <div class="pay-openllq-img">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN0AAAEdCAYAAACIW2IaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzhDRTFGODM4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzhDRTFGODI4MUQ5MTFFOUFCNUU4QTkxNTQ2QTY5MDgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6N0M0RjJGNDQ0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6N0M0RjJGNDU0MUM4MTFFNzhFNDJCQzUzMDNDMTUwOTMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7BNHupAAAM2klEQVR42uzd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" />
+            </div>
+            <div class="pay-openllq-text">
+                请选择使用浏览器打开<br />并在浏览器中完成支付
+            </div>
         </div>
-        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}amazeui/amazeui.min.js"></script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}layer/mlayer.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript" src="{{$_L['url']['public']}}ui/web/static/ljs.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">
-            var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);if($('.pay-btn a').length>0){$('.pay-btn a').on('click',function(){$('#openInBrowser').fadeIn()});$('#openInBrowser').on('click',function(){$('#openInBrowser').fadeOut()})};
-        </script>
-    </body>
-    </html>
+    </if>
+    <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
+    <script type="text/javascript">
+        $('form').submit(function(){if($('.pay-openllq').length>0){$(".pay-openllq").fadeIn();return false}else{var data=$("body").data(),times=0,timer=setInterval(function(){times=times+1;if(times>200){clearInterval(timer);var next=confirm("支付超时，点击确定按钮重新支付！");next&&location.reload()}else{$.get(data.check,function(res){if(res.code==1){clearInterval(timer);setTimeout(()=>{if(data.goback=="goback"){window.history.go(-1)}else{window.location.href=data.goback}},2000)}},"json")}},2000)}});$(".pay-openllq").on("click",function(){$(".pay-openllq").fadeOut()});
+    </script>
+</body>
+</html>

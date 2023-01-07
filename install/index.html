@@ -1,165 +1,163 @@
 <!DOCTYPE HTML>
-    <html>
-    <head>
-        <title>开始安装</title>
-        <meta name="renderer" content="webkit" />
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-        <meta content="yes" name="apple-mobile-web-app-capable" />
-        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-        <meta content="telephone=no" name="format-detection" />
-        <link rel="stylesheet" href="../public/static/layui/css/layui.css" />
-        <link rel="stylesheet" href="static/style.css" />
-    </head>
-    <body>
-        <div class="layui-container">
-            <div class="layui-row">
-                <div class="layui-col-xs12">
-                    <div class="setup setup1">
-                        <h1 class="title">阅读使用协议
-                            <p style="text-align:center;font-size:14px;">本框架需PHP7.2及以上版本</p>
-                        </h1>
-                        <div class="_content"> </div>
-                        <div class="btn center">
-                            <button class="layui-btn go-dirs">同意使用协议</button>
-                            <div class="clear"> </div>
-                        </div>
-                    </div>
-                    <div class="setup setup2 hide">
-                        <h1 class="title">系统环境检测
-                            <p style="text-align:center;font-size:14px;">必须满足所有条件才可进行下一步</p>
-                        </h1>
-                        <h3>环境信息</h3>
-                        <table class="layui-table">
-                            <thead>
-                                <tr>
-                                    <th>项目</th>
-                                    <th>信息</th>
-                                </tr>
-                            </thead>
-                            <tbody class="_server"> </tbody>
-                        </table>
-                        <h3>文件权限</h3>
-                        <table class="layui-table">
-                            <thead>
-                                <tr>
-                                    <th width="150px">目录名称</th>
-                                    <th>目录权限</th>
-                                </tr>
-                            </thead>
-                            <tbody class="_dirs">
-                                <tr> </tr>
-                            </tbody>
-                        </table>
-                        <div class="btn">
-                            <button class="layui-btn lf go-readme">上一步</button>
-                            <button class="layui-btn fr go-mysql">下一步</button>
-                            <div class="clear"> </div>
-                        </div>
-                    </div>
-                    <div class="setup setup3 hide">
-                        <h1 class="title">数据库信息
-                            <p style="text-align:center;font-size:14px;">服务器上生成的数据库的连接信息</p>
-                        </h1>
-                        <form class="layui-form layui-form-pane">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">连接地址</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[host]" placeholder="请输入数据库连接地址" class="layui-input" lay-verify="required" value="127.0.0.1" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">端口号</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[port]" placeholder="请输入数据库端口号" class="layui-input" lay-verify="required" value="3306" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">用户名</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[user]" placeholder="请输入数据库用户名" class="layui-input" lay-verify="required" value="" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">密码</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[pass]" placeholder="请输入数据库密码" class="layui-input" lay-verify="required" value="" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">库名</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[name]" placeholder="请输入数据库库名" class="layui-input" lay-verify="required" value="" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">表前缀</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="db[pre]" placeholder="请输入数据库表前缀" class="layui-input" lay-verify="required" value="lcms_" />
-                                </div>
-                            </div>
-                            <div class="btn">
-                                <a class="layui-btn lf go-dirs">上一步</a>
-                                <button class="layui-btn fr go-admin" lay-submit lay-filter="formdb">下一步</button>
-                                <div class="clear"> </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="setup setup4 hide">
-                        <h1 class="title">超级管理员
-                            <p style="text-align:center;font-size:14px;">设置当前框架的超级管理员账号，请牢记账号密码</p>
-                        </h1>
-                        <form class="layui-form layui-form-pane">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">账号</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="admin[name]" placeholder="请输入超级管理员账号" class="layui-input" lay-verify="required" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">密码</label>
-                                <div class="layui-input-block">
-                                    <input type="password" name="admin[pass]" placeholder="请输入超级管理员密码" class="layui-input" lay-verify="required" />
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">重复密码</label>
-                                <div class="layui-input-block">
-                                    <input type="password" name="admin[repass]" placeholder="请再次输入超级管理员密码" class="layui-input" lay-verify="required" />
-                                </div>
-                            </div>
-                            <div class="btn">
-                                <a class="layui-btn lf go-mysql">上一步</a>
-                                <button class="layui-btn fr go-save" lay-submit lay-filter="formadmin">完成安装</button>
-                                <div class="clear"> </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="setup setup5 hide">
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <div class="center">
-                            <i class="layui-icon layui-icon-ok-circle" style="font-size:100px;color:#709e00;"> </i>
-                            <h2>安装成功</h2>
-                            <br />
-                            <p>恭喜您，安装成功！访问后台开始你的探索吧！</p>
-                        </div>
-                        <div class="btn center">
-                            <a class="layui-btn" href="../admin/">访问后台</a>
-                            <div class="clear"> </div>
-                        </div>
-                    </div>
-                    <div class="copyright">版权所有 运城市盘石网络科技有限公司</div>
-                    <br />
-                    <br />
-                </div>
+<html>
+<head>
+    <title>安装盘企PHP开发框架</title>
+    <meta name="renderer" content="webkit" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <link rel="stylesheet" href="../public/static/layui/css/layui.css?20230105" />
+    <link rel="stylesheet" href="../public/ui/admin/static/style.css?20230105" />
+    <link rel="stylesheet" href="static/style.css?20230105" />
+    <script type="text/javascript" src="../public/static/jquery.min.js?20230105"></script>
+    <script type="text/javascript">
+        var LCMS = {
+            url: {
+                public: window.location.href + '../public/',
+                static: window.location.href + '../public/static/'
+            },
+            config: {
+                ver: '20230104'
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="layui-container">
+        <div class="step-box">
+            <div class="step-tab step-active">步骤一<p>许可协议</p>
+            </div>
+            <div class="step-tab">步骤二<p>环境检测</p>
+            </div>
+            <div class="step-tab">步骤三<p>数据库配置</p>
+            </div>
+            <div class="step-tab">步骤四<p>超级管理员</p>
+            </div>
+            <div class="step-tab">步骤五<p>安装完成</p>
             </div>
         </div>
-        <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?69cf8c283219d35faa024db2f9c91e59";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s)})();function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&alert("您的浏览器太古董了，请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者极速模式");</script>
-        <script type="text/javascript" src="../public/static/layui/layui.js"></script>
-        <script type="text/javascript" src="static/fun.js"></script>
-    </body>
-    </html>
+        <div class="step-body">
+            <div class="step-alert"></div>
+            <div class="step-nr"></div>
+            <div class="step-btn">我已阅读</div>
+        </div>
+        <div class="step-body">
+            <div class="step-alert">环境必须满足所有要求才可进行下一步，推荐使用宝塔面板快速配置服务器环境。</div>
+            <div class="step-nr">
+                <h3>环境信息</h3>
+                <table class="layui-table">
+                    <thead>
+                        <tr>
+                            <th>项目</th>
+                            <th>信息</th>
+                        </tr>
+                    </thead>
+                    <tbody class="server-info"></tbody>
+                </table>
+                <h3>文件权限</h3>
+                <table class="layui-table">
+                    <thead>
+                        <tr>
+                            <th width="150px">目录名称</th>
+                            <th>目录权限</th>
+                        </tr>
+                    </thead>
+                    <tbody class="power-dirs">
+                        <tr></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="step-btn">下一步</div>
+        </div>
+        <div class="step-body">
+            <div class="step-alert">请准确填写服务器上生成的数据库的连接信息。数据库要求 Mysql5.6 及以上版本。</div>
+            <div class="step-nr">
+                <form class="layui-form layui-form-pane" lay-filter="mysql-info">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">连接地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[host]" placeholder="请输入数据库连接地址" class="layui-input" lay-verify="required" value="127.0.0.1" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">端口号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[port]" placeholder="请输入数据库端口号" class="layui-input" lay-verify="required" value="3306" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[user]" placeholder="请输入数据库用户名" class="layui-input" lay-verify="required" value="" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[pass]" placeholder="请输入数据库密码" class="layui-input" lay-verify="required" value="" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">库名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[name]" placeholder="请输入数据库库名" class="layui-input" lay-verify="required" value="" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">表前缀</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="db[pre]" placeholder="请输入数据库表前缀" class="layui-input" lay-verify="required" value="lcms_" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="step-btn">下一步</div>
+        </div>
+        <div class="step-body">
+            <div class="step-alert">请一定要牢记超级管理员账号密码</div>
+            <div class="step-nr">
+                <form class="layui-form layui-form-pane" lay-filter="admin-set">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">账号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="admin[name]" placeholder="请输入超级管理员账号" class="layui-input" lay-verify="required" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="admin[pass]" placeholder="请输入超级管理员密码" class="layui-input" lay-verify="required" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">重复密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="admin[repass]" placeholder="请再次输入超级管理员密码" class="layui-input" lay-verify="required" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="step-btn">下一步</div>
+        </div>
+        <div class="step-body">
+            <div class="step-nr">
+                <br /><br /><br /><br />
+                <div style="text-align:center">
+                    <i class="layui-icon layui-icon-ok-circle" style="font-size:100px;color:#67C23A;"> </i>
+                    <h2>安装成功</h2>
+                    <br />
+                    <p>恭喜您，安装成功！访问后台开始你的探索吧！</p>
+                </div>
+                <br /><br /><br />
+            </div>
+            <a class="step-btn" href="../admin/">访问后台</a>
+        </div>
+        <div class="copyright">
+            ©2023 运城市盘石网络科技有限公司 版权所有
+        </div>
+    </div>
+    <script type="text/javascript" src="../public/static/layui/layui.js?20230105"></script>
+    <script type="text/javascript" src="../public/ui/admin/static/ljs.js?20230105"></script>
+    <script type="text/javascript" src="static/fun.js?20230105"></script>
+</body>
+</html>

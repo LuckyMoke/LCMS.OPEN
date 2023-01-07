@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-12-30 15:48:04
+ * @LastEditTime: 2022-12-31 13:05:11
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -53,7 +53,7 @@ class adminbase extends common
         $loginrootid     = SESSION::get("LCMSLOGINROOTID") ?: $_L['form']['rootid'] ?: "0";
         $loginurl        = okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=", 0, "top", true);
         if (stristr(HTTP_QUERY, "n=login") === false && !$_L['LCMSADMIN']) {
-            LCMS::X(403, "已退出登录，请重新登录", $loginurl);
+            LCMS::X(403, "请重新登录", $loginurl);
         } elseif ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {

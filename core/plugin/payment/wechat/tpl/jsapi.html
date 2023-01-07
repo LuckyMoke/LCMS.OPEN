@@ -1,71 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>订单支付</title>
-        <meta name="renderer" content="webkit"/>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-        <script type="text/javascript">var formatDecimal=function(num,decimal){num=num.toString();let index=num.indexOf('.');if(index!==-1){num=num.substring(0,decimal+index+1)}else{num=num.substring(0)}return parseFloat(num).toFixed(decimal)};var int_w=375,win_w=window.screen.width,meta=document.createElement('meta');document.querySelector('meta[name="viewport"]').remove();document.getElementsByTagName('head')[0].cssText='width:'+int_w+'px;overflow-x:hidden';meta.name='viewport';meta.content='width='+(win_w>=int_w?int_w:win_w)+', initial-scale='+formatDecimal(win_w/int_w,2)+', user-scalable=no';document.getElementsByTagName('head')[0].appendChild(meta);</script>
-        <link href="data:image/ico;base64,aWNv" rel="shortcut icon" type="image/x-icon"/>
-        <link rel="stylesheet" href="{{$_L['url']['static']}}amazeui/amazeui.min.css?{{$_L['config']['ver']}}"/>
-        <style type="text/css">
-        body,html{background-color:#f4f4f4;height:100%;width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}img{max-width:100%}.pay-box ._title{height:100px;line-height:100px;text-align:center;background-color:#fff;border:1px #ccc dashed;border-bottom:none}.pay-box ._title img{width:200px}.pay-box ._body{padding:20px;background-color:#fff;border:1px #ccc dashed}.pay-box ._body h1{text-align:center;font-size:40px}.pay-box ._info{line-height:2;font-size:14px;margin-top:20px}.pay-box ._info p{margin:0}.pay-box ._info p.am-fr{color:#a0a0a0}.pay-btn{margin:0 0 20px 0}.pay-button,.pay-button:hover,.pay-button:focus,.pay-button:active{background:#fff;border:1px #ccc dashed;border-top:none;color:#409eff;padding:15px 0;margin:0;font-size:18px;font-weight:bold;box-shadow:none}
-        </style>
-    </head>
-    <body>
-        <div class="mescroll">
-            <div class="pay-box" data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
-                <div class="_title">
-                    <img src="{{$_L['url']['site']}}core/plugin/payment/{{self::$payname}}/icon.png"/>
-                </div>
-                <div class="_body">
-                    <h1>
-                        ￥
-                        <span>{{$order['pay']}}</span>
-                    </h1>
-                    <p style="color:#f56c6c;text-align:center;font-size:14px;padding:10px;background:#fef0f0">
-                        支付完成后，请不要立即关闭页面，等待自动确认订单状态！
-                    </p>
-                    <div class="_info">
-                        <div>
-                            <p class="am-fl">商品名</p>
-                            <p class="am-fr">{{$order['body']}}</p>
-                            <div class="am-cf"> </div>
-                        </div>
-                        <div>
-                            <p class="am-fl">订单金额</p>
-                            <p class="am-fr">￥{{$order['pay']}}</p>
-                            <div class="am-cf"> </div>
-                        </div>
-                        <div>
-                            <p class="am-fl">商户单号</p>
-                            <p class="am-fr">{{$order['order_no_own']}}</p>
-                            <div class="am-cf"> </div>
-                        </div>
-                        <div>
-                            <p class="am-fl">交易单号</p>
-                            <p class="am-fr">{{$order['order_no']}}</p>
-                            <div class="am-cf"> </div>
-                        </div>
-                        <div>
-                            <p class="am-fl">下单时间</p>
-                            <p class="am-fr">{{$order['addtime']}}</p>
-                            <div class="am-cf"> </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="pay-btn">
-                <button class="am-btn am-btn-success am-btn-block pay-button" onclick="JSAPIPay()">立即支付</button>
-            </div>
+<head>
+    <title>订单支付</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <link href="data:image/ico;base64,aWNv" rel="shortcut icon" type="image/x-icon" />
+    <style type="text/css">
+        *{margin:0;padding:0}body,html{background-color:#f5f7f9;min-height:100%;width:100%;font-size:14px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}body{padding-bottom:50px}.pay-banner{position:relative;margin:0 auto;max-width:800px;min-height:200px;padding-top:30px;border-radius:0 0 10px 10px;color:#fff;text-align:center;background:#409eff}.pay-banner *{width:360px;max-width:90%;margin:0 auto}.pay-banner h1{font-size:28px}.pay-banner p{margin-top:10px;font-size:14px;color:rgb(255 255 255 / 70%)}.pay-out{position:relative;background:rgb(0 0 0 / 20%);width:380px;max-width:96%;height:20px;margin:-110px auto 0 auto;border-radius:20px;box-shadow:inset 0 0 2px 2px rgb(0 0 0 / 10%);z-index:1}.pay-info{position:relative;box-sizing:border-box;width:360px;max-width:90%;padding:20px;margin:-10px auto 0 auto;border-radius:0 0 10px 10px;background:#fff;z-index:2}.pay-money{text-align:center;font-size:44px;font-weight:700;color:#409eff}.pay-money span{font-size:24px}.pay-money p{font-size:14px;font-weight:400;color:#a8abb2}.pay-line{width:100%;height:0;margin:20px 0;border-top:1px #dcdfe6 dashed}.pay-list{line-height:20px}.pay-list dl{display:flex;justify-content:space-between;padding:5px 0}.pay-list dt{width:80px;color:#a8abb2}.pay-list dd{width:calc(100% - 80px);text-align:right;color:#303133}.pay-qrcode img{display:block;width:60%;margin:0 auto;border:1px #a8abb2 dashed}.pay-qrcode p{color:#a8abb2;text-align:center;font-size:14px;margin-top:10px}.pay-info-title{font-size:16px;color:#606266;margin-bottom:10px}.pay-info-title span{font-size:12px;color:#a8abb2;font-weight:400;padding-left:10px}.pay-btn-group{display:flex;justify-content:space-between}.pay-btn,.pay-btn:active,.pay-btn:focus{display:inline-block;padding:5px 10px;color:#606266;border:1px #dcdfe6 solid;background:#fff;cursor:pointer;border-radius:5px;text-decoration:none}.pay-btn.active,.pay-btn:hover{color:#fff;border:1px #409eff solid;background:#409eff}.pay-table{width:100%;font-size:12px;text-align:center;border:1px #ebeef5 solid;border-top:none;border-right:none}.pay-table td,.pay-table th{padding:5px 0;border-top:1px #ebeef5 solid;border-right:1px #ebeef5 solid}.pay-button,.pay-button:active,.pay-button:focus{display:block;box-sizing:border-box;width:360px;max-width:90%;padding:8px 10px;margin:20px auto 0 auto;color:#fff;border:1px #409eff solid;background:#409eff;font-size:16px;text-align:center;cursor:pointer;border-radius:5px}.pay-button:hover{border:1px #79bbff solid;background:#79bbff}.pay-openllq{position:relative;display:none;z-index:999999}.pay-openllq-bg{position:fixed;width:100%;height:100%;background:rgba(0,0,0,.8);top:0;left:0}.pay-openllq-img{position:fixed;width:90%;top:0;left:0;text-align:right}.pay-openllq-text{position:fixed;width:90%;top:300px;left:5%;text-align:center;color:#fff}.pay-openllq-text span{color:#dd514c;font-size:18px;padding:0 1px}
+    </style>
+</head>
+<body data-check="{{$_L['url']['own']}}n=system&c=pay&a=check&order_no={{$order['order_no']}}" data-goback="{{$order['return_url']}}">
+    <div class="pay-banner">
+        <h1>待支付...</h1>
+        <p>支付完成后，请不要立即关闭页面</p>
+    </div>
+    <div class="pay-out"></div>
+    <div class="pay-info">
+        <div class="pay-money">
+            <span>￥</span>{{$order['pay']}}
+            <p>付款金额</p>
         </div>
-        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}layer/mlayer.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}../ui/web/static/ljs.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">
-            wx.config({debug:false,appId:'{{$signpackage["appId"]}}',timestamp:'{{$signpackage["timestamp"]}}',nonceStr:'{{$signpackage["nonceStr"]}}',signature:'{{$signpackage["signature"]}}',jsApiList:['hideAllNonBaseMenuItem']});wx.ready(function(){wx.hideAllNonBaseMenuItem()});var jsApiCall=function(){WeixinJSBridge.invoke('getBrandWCPayRequest',JSON.parse('{{$result}}'),function(res){if(res.err_msg!="get_brand_wcpay_request:ok"){LJS._tips('支付失败',0)}})};var JSAPIPay=function(){if(typeof WeixinJSBridge=="undefined"){if(document.addEventListener){document.addEventListener('WeixinJSBridgeReady',jsApiCall,false)}else if(document.attachEvent){document.attachEvent('WeixinJSBridgeReady',jsApiCall);document.attachEvent('onWeixinJSBridgeReady',jsApiCall)}}else{jsApiCall()}};var checkurl=$('.pay-box').attr('data-check');var goback=$('.pay-box').attr('data-goback');var second=0;var paycheck=setInterval(function(){second=second+1;if(second>200){clearInterval(paycheck);mlayer.alert({title:'提示',content:'支付超时，点击刷新按钮重新支付！',btn:'刷新',yes:function(index){location.reload()}})}else{$.get(checkurl,function(res){if(res.code=='1'){clearInterval(paycheck);LJS._tips(res.msg);LJS._lazydo(function(){if(goback=='goback'){window.history.go(-1)}else{window.location.href=goback}})}},'json')}},2000);
-        </script>
-    </body>
+        <div class="pay-line"></div>
+        <div class="pay-list">
+            <dl>
+                <dt>商品名</dt>
+                <dd>{{$order['body']}}</dd>
+            </dl>
+            <dl>
+                <dt>商户单号</dt>
+                <dd>{{$order['order_no_own']}}</dd>
+            </dl>
+            <dl>
+                <dt>交易单号</dt>
+                <dd>{{$order['order_no']}}</dd>
+            </dl>
+            <dl>
+                <dt>下单时间</dt>
+                <dd>{{$order['addtime']}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="pay-button" onclick="JSAPIPay()">立即支付</div>
+    <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script type="text/javascript">
+        wx.config({debug:false,appId:'{{$signpackage["appId"]}}',timestamp:'{{$signpackage["timestamp"]}}',nonceStr:'{{$signpackage["nonceStr"]}}',signature:'{{$signpackage["signature"]}}',jsApiList:['hideAllNonBaseMenuItem']});wx.ready(function(){wx.hideAllNonBaseMenuItem()});var jsApiCall=function(){WeixinJSBridge.invoke('getBrandWCPayRequest',JSON.parse('{{$result}}'),function(res){if(res.err_msg!="get_brand_wcpay_request:ok"){alert("支付失败")}})};;var JSAPIPay=function(){if(typeof WeixinJSBridge=="undefined"){if(document.addEventListener){document.addEventListener("WeixinJSBridgeReady",jsApiCall,false)}else if(document.attachEvent){document.attachEvent("WeixinJSBridgeReady",jsApiCall);document.attachEvent("onWeixinJSBridgeReady",jsApiCall)}}else{jsApiCall()}var data=$("body").data(),times=0,timer=setInterval(function(){times=times+1;if(times>200){clearInterval(timer);var next=confirm("支付超时，点击确定按钮重新支付！");next&&location.reload()}else{$.get(data.check,function(res){if(res.code==1){clearInterval(timer);setTimeout(()=>{if(data.goback=="goback"){window.history.go(-1)}else{window.location.href=data.goback}},2000)}},"json")}},2000)};
+    </script>
+</body>
 </html>

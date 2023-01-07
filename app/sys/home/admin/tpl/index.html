@@ -53,6 +53,11 @@
             系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，请尽快 <a href="?t=sys&n=config&c=admin&a=safe">修改后台目录</a>，以提高安全性！
         </p>
     </if>
+    <if is_dir(PATH_WEB . "install")>
+        <p class="lcms-form-des">
+            系统提示：检测到您未删除安装目录，请尽快删除<code>/install</code>目录，以提高安全性！
+        </p>
+    </if>
     <if $lasttime && $lasttime lt 15>
         <p class="lcms-form-des">
             <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i> 友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
@@ -118,11 +123,12 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
-                            <span style="padding-right:2px;color:{{function_exists('curl_init')?'green':'red';}}">[curl/必须]</span>
-                            <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">[gd/必须]</span>
-                            <span style="padding-right:2px;color:{{extension_loaded('zip')?'green':'red';}}">[zip/必须]</span>
+                            <span style="padding-right:2px;color:{{function_exists('curl_init')?'green':'red';}}">[cURL/必须]</span>
+                            <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">[GD/必须]</span>
+                            <span style="padding-right:2px;color:{{class_exists('ZipArchive')?'green':'red';}}">[ZipArchive/必须]</span>
+                            <span style="padding-right:2px;color:{{function_exists('gzinflate')?'green':'red';}}">[gzinflate/必须]</span>
                             <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[fileinfo]</span>
-                            <span style="padding-right:2px;color:{{class_exists('Redis')?'green':'red';}}">[redis]</span>
+                            <span style="padding-right:2px;color:{{class_exists('Redis')?'green':'red';}}">[Redis]</span>
                         </td>
                     </tr>
                     <tr>
