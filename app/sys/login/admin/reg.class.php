@@ -163,7 +163,7 @@ class reg extends adminbase
                 "type" => "login",
                 "info" => "用户注册-注册成功",
             ]);
-            ajaxout(1, "注册成功，请登陆", "?rootid={$RID}&n=login");
+            ajaxout(1, "注册成功，请登陆", "{$_L['url']['own']}rootid={$RID}&n=login");
         }
     }
 }

@@ -1,6 +1,6 @@
 <template "own/default/public/head" />
 <div class="login-body">
-    <form action="?n=login&c=reg&a=check&">
+    <form action="{{$_L['url']['own']}}n=login&c=reg&a=check&">
         <div class="login-input">
             <input type="text" name="name" placeholder="账号" required="required" />
         </div>
@@ -39,19 +39,19 @@
     </form>
 </div>
 <div class="login-link">
-    <a href="?rootid={{$RID}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
+    <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
     <if $UCFG['reg']['findpass'] gt 0>
         <div class="login-link-line"></div>
-        <a href="?rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
+        <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
     </if>
 </div>
 <script type="text/html" class="tplcode">
     <div style="padding:0 20px 0 20px;">
         <div class="login-input">
             <input type="text" class="login-send-code" placeholder="验证码" autocomplete="off" maxlength="4" />
-            <img src="{{$_L['url']['app']}}index.php?n=system&c=pin" title="点击刷新" onclick="this.src=LCMS.url.app+'index.php?n=system&c=pin&'+Math.random()" />
+            <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
         </div>
-        <a class="login-btn login-send" data-url="?n=login&c=reg&a=sendcode">发送验证码</a>
+        <a class="login-btn login-send" data-url="{{$_L['url']['own']}}n=login&c=reg&a=sendcode">发送验证码</a>
     </div>
 </script>
 <template "own/default/public/foot" />

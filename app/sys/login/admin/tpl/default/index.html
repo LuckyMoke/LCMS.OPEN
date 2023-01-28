@@ -1,6 +1,6 @@
 <template "own/default/public/head" />
 <div class="login-body">
-    <form action="?n=login&a=check&">
+    <form action="{{$_L['url']['own']}}n=login&a=check&">
         <if $LF['action']=="band">
             <input type="hidden" name="band" value="1" />
         </if>
@@ -16,7 +16,7 @@
             <else />
             <div class="login-input login-code">
                 <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="4" required="required" />
-                <img src="{{$_L['url']['app']}}index.php?n=system&c=pin" title="点击刷新" onclick="this.src=LCMS.url.app+'index.php?n=system&c=pin&'+Math.random()" />
+                <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
             </div>
         </if>
         <div class="login-readme">
@@ -34,7 +34,7 @@
     <div class="login-body hide">
         <div class="login-qr-tips">
             <if in_array($UCFG['reg']['on'],["mobile","email"])>
-                请先 <a href="?rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>微信扫码绑定</span>
+                请先 <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>微信扫码绑定</span>
                 <else />
                 请使用微信扫码
             </if>
@@ -52,7 +52,7 @@
     <div class="login-body hide">
         <div class="login-qr-tips">
             <if in_array($UCFG['reg']['on'],["mobile","email"])>
-                请先 <a href="?rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>QQ绑定</span><br />
+                请先 <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>QQ绑定</span><br />
             </if>
             请使用手机QQ扫码，或直接点击QQ登录
         </div>
@@ -71,13 +71,13 @@
 <if $LF['action']!="band">
     <div class="login-link">
         <if in_array($UCFG['reg']['on'],["mobile","email"])>
-            <a href="?rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
+            <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
             <if $UCFG['reg']['findpass'] gt 0>
                 <div class="login-link-line"></div>
             </if>
         </if>
         <if $UCFG['reg']['findpass'] gt 0>
-            <a href="?rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
+            <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
         </if>
     </div>
 </if>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-07-18 17:26:37
+ * @LastEditTime: 2023-01-07 18:07:51
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -34,7 +34,8 @@ class webbase extends common
         $domain    = $domain ?: (HTTP_HOST ?: $_L['config']['web']['domain']);
         $scheme    = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
         $url_site  = "{$scheme}{$domain}/";
-        $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&";
+        $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
+        $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}";
         $_L['url'] = [
             "scheme"   => $scheme,
             "site"     => $url_site,
@@ -44,6 +45,7 @@ class webbase extends common
             "upload"   => "{$url_site}upload/",
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
+            "captcha"  => "{$url_site}app/index.php?{$rootsid}n=system&c=pin",
             "qrcode"   => "{$url_site}app/index.php?n=system&c=qr&text=",
             "own"      => "{$url_own}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
@@ -59,7 +61,7 @@ class webbase extends common
             "site"   => $url_site,
             "api"    => $_L['config']['web']['domain_api'],
             "app"    => "{$url_site}app/",
-            "own"    => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&",
+            "own"    => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}",
         ];
         $this->load_plugin_info();
     }

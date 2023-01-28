@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-12-31 13:05:11
+ * @LastEditTime: 2023-01-07 18:06:02
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -30,6 +30,7 @@ class adminbase extends common
         $url_site  = $scheme . HTTP_HOST . "/";
         $url_now   = $scheme . HTTP_HOST . HTTP_QUERY;
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
+        $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url'] = [
             "scheme"   => $scheme,
             "site"     => $url_site,
@@ -40,10 +41,11 @@ class adminbase extends common
             "upload"   => "{$url_site}upload/",
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
+            "captcha"  => "{$url_site}app/index.php?{$rootsid}n=system&c=pin",
             "qrcode"   => "{$url_site}app/index.php?n=system&c=qr&text=",
-            "own"      => "{$url_admin}index.php?",
+            "own"      => "{$url_admin}index.php?{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
-            "own_form" => "{$url_admin}index.php?t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",
+            "own_form" => "{$url_admin}index.php?{$rootsid}t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",
         ];
     }
     protected function check_login()
@@ -81,6 +83,7 @@ class adminbase extends common
         $domain           = $domain ?: ($_L['config']['web']['domain'] ?: HTTP_HOST);
         $scheme           = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
         $url_site         = "{$scheme}{$domain}/";
+        $rootsid          = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url']['web'] = [
             "scheme"   => $scheme,
             "site"     => $url_site,
@@ -90,7 +93,7 @@ class adminbase extends common
             "upload"   => "{$url_site}upload/",
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
-            "own"      => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&",
+            "own"      => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
         ];
     }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2022-09-20 14:22:24
+ * @LastEditTime: 2023-01-15 16:17:47
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -342,12 +342,12 @@ class index extends adminbase
     public function dologinout()
     {
         global $_L, $LF, $CFG, $USER, $RID;
-        LCMS::log([
+        $_L['LCMSADMIN'] && LCMS::log([
             "user" => $_L['LCMSADMIN']['name'],
             "type" => "login",
             "info" => "退出登陆",
         ]);
-        $RID = $_L['LCMSADMIN']['lcms'];
+        $RID = $_L['LCMSADMIN']['lcms'] ?: 0;
         SESSION::del("LCMSADMIN");
         okinfo("{$_L['url']['own']}rootid={$RID}&n=login&go=" . urlencode($LF['go']));
     }

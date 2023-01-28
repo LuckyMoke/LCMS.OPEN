@@ -92,7 +92,7 @@
                 </div>
                 <ul class="layui-nav user">
                     <li class="layui-nav-item">
-                        <a class="user-name" href="javascript:;" title="{{$_L['LCMSADMIN']['title']}}">
+                        <a class="user-name" href="javascript:;" title="{{$_L['LCMSADMIN']['title']}}" data-name="{{$_L['LCMSADMIN']['name']}}">
                             <i class="layui-icon layui-icon-username"></i>
                             <span>{{$_L['LCMSADMIN']['title']}}</span>
                         </a>
@@ -113,7 +113,7 @@
                         </dl>
                     </li>
                     <li class="layui-nav-item quit">
-                        <a href="javascript:;" onclick="this.href=LCMS.url.admin+'index.php?n=login&a=loginout&go='" target="_parent" title="退出登录">
+                        <a href="{{$_L['url']['admin']}}index.php?n=login&a=loginout&go=" title="退出登录">
                             <i class="layui-icon layui-icon-logout"></i>
                         </a>
                     </li>

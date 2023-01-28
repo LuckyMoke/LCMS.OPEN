@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2022-07-07 13:07:35
+ * @LastEditTime: 2023-01-07 18:15:30
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -119,7 +119,7 @@ class find extends adminbase
         SESSION::del("LOGINSENDCODE");
         //读取号码
         $code = ssl_encode(SESSION::get("LOGINNUMBER"));
-        ajaxout(1, "验证成功", "?rootid={$RID}&n=login&c=find&a=reset&code={$code}");
+        ajaxout(1, "验证成功", "{$_L['url']['own']}rootid={$RID}&n=login&c=find&a=reset&code={$code}");
     }
     /**
      * @description: 密码重置页面
@@ -136,7 +136,7 @@ class find extends adminbase
             exit;
         }
         if (!PUB::is_email($number) && !is_phone($number)) {
-            okinfo("{$_L['url']['own']}?rootid={$RID}&n=login&c=find");
+            okinfo("{$_L['url']['own']}rootid={$RID}&n=login&c=find");
         }
         $admin = sql_get(["admin",
             "email = :number OR mobile = :number",
@@ -161,7 +161,7 @@ class find extends adminbase
                     "info" => "找回密码",
                 ]);
                 SESSION::del("LOGINNUMBER");
-                ajaxout(1, "密码设置成功", "?rootid={$RID}&n=login");
+                ajaxout(1, "密码设置成功", "{$_L['url']['own']}rootid={$RID}&n=login");
                 break;
             default:
                 $page = [

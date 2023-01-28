@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-09-06 21:55:48
+ * @LastEditTime: 2023-01-15 19:16:30
  * @Description: 前端模板静态文件处理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -150,9 +150,18 @@ class TPL
             }
         }
         if ($suffix === 'js') {
-            // JS过滤规则
+            preg_match_all("/(?!\\\|\"|'|:)(.|^)\/\/(.*)[\r\n]/i", $code, $notes);
+            $notes = $notes[0] ?: [];
+            $notes = array_unique($notes);
+            foreach ($notes as $note) {
+                $code = mb_strlen($note) < 1000 ? str_replace($note, "{$note}[LCMSJSENCODEENTER]", $code) : $code;
+            }
         }
-        $code = str_replace(["  ", "\t", "\n", "\r"], "", $code);
+        $code = str_replace([
+            "  ", "\t", "\n", "\r", "[LCMSJSENCODEENTER]",
+        ], [
+            "", "", "", "", "\n",
+        ], $code);
         return $code;
     }
     /**

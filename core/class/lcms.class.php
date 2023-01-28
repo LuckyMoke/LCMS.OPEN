@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-11-28 13:14:21
+ * @LastEditTime: 2023-01-15 17:05:24
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -99,13 +99,6 @@ class LCMS
         global $_L;
         return $_L['LCMSADMIN']['type'] === "lcms" ? true : false;
     }
-    /**
-     * @description:
-     * @param {string} $name
-     * @param {string|array} $para
-     * @param {bool} $lcms
-     * @return {*}
-     */
     /**
      * @description: 系统缓存读写操作
      * @param string $name
@@ -272,9 +265,9 @@ class LCMS
         $para['type'] && sql_insert(["log", $para]);
     }
     /**
-     * @模板标签处理
-     * @param {*}
-     * @return {*}
+     * @description: 模板标签处理
+     * @param string $tag
+     * @return string
      */
     private static function tpltags($tag)
     {
@@ -290,9 +283,10 @@ class LCMS
         }
     }
     /**
-     * @模板处理
-     * @param {*}
-     * @return {*}
+     * @description: 模板缓存
+     * @param string $path
+     * @param string $ui
+     * @return string
      */
     public static function template($path, $ui = "")
     {
