@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-02-27 14:48:35
+ * @LastEditTime: 2023-02-13 12:21:32
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -47,17 +47,17 @@ class EMAIL
                 load::plugin("PHPMailer/Exception");
                 load::plugin("PHPMailer/PHPMailer");
                 load::plugin("PHPMailer/SMTP");
-                $email = new PHPMailer(true);
-                $email->setLanguage("zh_cn", PATH_CORE_PLUGIN . "PHPMailer/language/");
-                $email->SMTPDebug = 0;
-                $email->isSMTP();
-                $email->Host       = $cfg['Smtp'];
-                $email->SMTPAuth   = true;
-                $email->Username   = $cfg['From'];
-                $email->Password   = $cfg['Pass'];
-                $email->SMTPSecure = $cfg['SSL'] ? "ssl" : "tls";
-                $email->Port       = $cfg['Port'];
-                $email->Timeout    = 30;
+                $EMAIL = new PHPMailer(true);
+                $EMAIL->setLanguage("zh_cn", PATH_CORE_PLUGIN . "PHPMailer/language/");
+                $EMAIL->SMTPDebug = 0;
+                $EMAIL->isSMTP();
+                $EMAIL->Host       = $cfg['Smtp'];
+                $EMAIL->SMTPAuth   = true;
+                $EMAIL->Username   = $cfg['From'];
+                $EMAIL->Password   = $cfg['Pass'];
+                $EMAIL->SMTPSecure = $cfg['SSL'] ? "ssl" : "tls";
+                $EMAIL->Port       = $cfg['Port'];
+                $EMAIL->Timeout    = 30;
                 $EM                = [];
                 if (is_array($Param['TO'])) {
                     foreach ($Param['TO'] as $val) {
@@ -69,24 +69,24 @@ class EMAIL
                     $EM[] = $Param['TO'];
                 }
                 if ($EM) {
-                    $email->setFrom($cfg['From'], $cfg['Alias']);
+                    $EMAIL->setFrom($cfg['From'], $cfg['Alias']);
                     foreach ($EM as $val) {
-                        $email->addAddress($val);
+                        $EMAIL->addAddress($val);
                     }
                     if ($cfg['Reply']) {
-                        $email->AddReplyTo($cfg['Reply']);
+                        $EMAIL->AddReplyTo($cfg['Reply']);
                     }
                     if ($Param['Att']) {
                         foreach ($Param['Att'] as $val) {
-                            $email->addAttachment($val['path'], $val['title']);
+                            $EMAIL->addAttachment($val['path'], $val['title']);
                         }
                     }
-                    $email->isHTML(true);
-                    $email->Subject = $Param['Title'];
-                    $email->Body    = $Param['Body'];
+                    $EMAIL->isHTML(true);
+                    $EMAIL->Subject = $Param['Title'];
+                    $EMAIL->Body    = $Param['Body'];
                     try {
 
-                        $email->send();
+                        $EMAIL->send();
                         $result = [
                             "code" => 1,
                             "msg"  => "发送成功",
@@ -94,7 +94,7 @@ class EMAIL
                     } catch (Exception $e) {
                         $result = [
                             "code" => 0,
-                            "msg"  => $email->ErrorInfo,
+                            "msg"  => $EMAIL->ErrorInfo,
                         ];
                     }
                 } else {

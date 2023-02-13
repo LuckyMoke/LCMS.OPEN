@@ -228,11 +228,14 @@ class LAY
             }
             $para['url'] = " data-url='{$para['url']}'";
         }
+        if ($para['timeout']) {
+            $para['timeout'] = " data-timeout='{$para['timeout']}'";
+        }
         $html = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-switch{$para['tipsbox']}'>
-                    <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' lay-text='{$para['text']}'{$para['url']}{$para['disabled']}{$para['checked']}>
+                    <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' lay-text='{$para['text']}'{$para['url']}{$para['timeout']}{$para['disabled']}{$para['checked']}>
                 </div>
             </div>";
         echo $html;

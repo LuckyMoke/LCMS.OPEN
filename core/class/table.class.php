@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-15 14:53:02
+ * @LastEditTime: 2023-02-09 17:48:14
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -82,7 +82,7 @@ class TABLE
                 foreach ($toolbar as $key => $val) {
                     $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
                     $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-                    $laytpl .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
+                    $laytpl .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
                 }
                 $laytpl  = "<script type='text/html' id='{$toolbarid}'>{$laytpl}<div class='clear'></div></script>";
                 $toolbar = "#{$toolbarid}";
@@ -149,7 +149,7 @@ class TABLE
             foreach ($colsbar as $key => $val) {
                 $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
-                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
+                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
             return [
@@ -223,7 +223,7 @@ class TABLE
         foreach ($tree['toolbar'] as $key => $val) {
             $val['url']   = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
             $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
-            $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
+            $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
         }
         $toolbar .= "<button class='layui-btn layui-btn-primary lcms-form-table-tree-openall'>展开/折叠</button>";
         foreach ($tree['cols'] as $key => $val) {
@@ -259,7 +259,7 @@ class TABLE
             foreach ($colsbar as $key => $val) {
                 $val['url']   = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
-                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
+                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
             return [
@@ -297,7 +297,7 @@ class TABLE
                             }
                             $val['text']       = $val['text'] ?: "启用|关闭";
                             $checked           = $val['value'] > 0 ? "checked" : "";
-                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' lay-skin='switch' lay-text='{$val['text']}' {$checked}>";
+                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-text='{$val['text']}' {$checked}>";
                             break;
                         case 'image':
                             $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";
