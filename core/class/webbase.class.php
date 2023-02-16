@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-01-07 18:07:51
+ * @LastEditTime: 2023-02-15 22:19:11
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -27,7 +27,7 @@ class webbase extends common
     public function load_web_url($domain = "", $scheme = "")
     {
         global $_L;
-        if ($_L['config']['web']['domain'] && $_L['config']['web']['domain_must'] && stristr(HTTP_HOST, $_L['config']['web']['domain']) === false) {
+        if ($_L['config']['web']['domain'] && $_L['config']['web']['domain_must'] && !in_string(HTTP_HOST, $_L['config']['web']['domain'])) {
             LCMS::X(403, "请通过正确域名访问");
         }
         // 当前域名数据

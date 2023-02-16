@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-05-16 11:44:08
+ * @LastEditTime: 2023-02-15 21:44:43
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,6 +17,9 @@ function path_absolute($path)
     $path = PATH_WEB . str_replace([
         "../", "./", "..\\", ".\\", PATH_WEB,
     ], "", $path);
+    $path = in_string($path, [
+        "../", "./", "..\\", ".\\",
+    ]) ? path_absolute($path) : $path;
     $path = str_replace("\/", "\\", $path);
     return is_dir($path) ? path_standard($path) : $path;
 }
@@ -26,11 +29,19 @@ function path_absolute($path)
  * @param string $relative 相对路径前缀
  * @return string
  */
-function path_relative($path, $relative = "../")
+function path_relative($path, $relative = "")
 {
-    return $relative . str_replace([
+    $path = str_replace([
         "../", "./", "..\\", ".\\", PATH_WEB,
     ], "", $path);
+    if (in_string($path, [
+        "../", "./", "..\\", ".\\",
+    ])) {
+        $path = path_relative($path);
+    } else {
+        return $relative . $path;
+    }
+    return $path;
 }
 /**
  * @description: 目录结尾加/
@@ -57,7 +68,7 @@ function makedir($dir)
     if (is_dir($dir)) {
         return true;
     } else {
-        $dir    = path_relative($dir, "");
+        $dir    = path_relative($dir);
         $dirUrl = PATH_WEB;
         $result = true;
         foreach (explode('/', $dir) as $val) {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-01-07 18:06:02
+ * @LastEditTime: 2023-02-15 22:17:10
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -53,18 +53,17 @@ class adminbase extends common
         global $_L;
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
         $loginrootid     = SESSION::get("LCMSLOGINROOTID") ?: $_L['form']['rootid'] ?: "0";
-        $loginurl        = okinfo("{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login&go=", 0, "top", true);
-        if (stristr(HTTP_QUERY, "n=login") === false && !$_L['LCMSADMIN']) {
-            LCMS::X(403, "请重新登录", $loginurl);
-        } elseif ($_L['LCMSADMIN']) {
+        $loginurl        = "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login";
+        $okinfourl       = okinfo($loginurl, 0, "top", true);
+        if ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $loginurl);
+                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $okinfourl);
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "系统权限已修改，请重新登陆", $loginurl);
+                LCMS::X(403, "系统权限已修改，请重新登陆", $okinfourl);
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);
@@ -75,6 +74,13 @@ class adminbase extends common
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == "0" ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
             $_L['ROOTID'] = LCMS::SUPER() ? "0" : $_L['ROOTID'];
+        } else {
+            if (PHP_SELF == HTTP_QUERY . "index.php") {
+                okinfo($loginurl);
+            }
+            if (!in_string(HTTP_QUERY, "n=login")) {
+                LCMS::X(403, "请重新登录", $okinfourl);
+            }
         }
     }
     protected function load_web_url($domain = "", $scheme = "")

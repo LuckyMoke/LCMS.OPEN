@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-10-21 17:51:23
+ * @LastEditTime: 2023-02-16 11:09:44
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -37,7 +37,15 @@ class UPLOAD
                 // 如果文件地址是本地上传
                 $file = $para ?: $_FILES['file'];
                 if ($file['error'] != 0) {
-                    return self::out(0, "上传失败 CODE:{$file['error']}");
+                    switch ($file['error']) {
+                        case 1:
+                            $file['error'] = "上传文件大小超过php.ini限制";
+                            break;
+                        default:
+                            $file['error'] = "错误代码/{$file['error']}";
+                            break;
+                    }
+                    return self::out(0, "上传失败:{$file['error']}");
                 }
                 $MIME = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
                 $SIZE = $file['size'];
@@ -50,7 +58,7 @@ class UPLOAD
                 if ($MIME && in_array($MIME, explode("|", $CFG['mimelist']))) {
                     $name = date("dHis") . randstr(6) . ".{$MIME}";
                     if (file_put_contents("{$dir}{$name}", $file)) {
-                        $return = self::out(1, "上传成功", path_relative($dir), $name, $SIZE);
+                        $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, $SIZE);
                     } else {
                         $return = self::out(0, "上传失败");
                     }
