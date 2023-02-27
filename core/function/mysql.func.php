@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-12-16 14:13:05
+ * @LastEditTime: 2023-02-22 16:38:40
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -52,10 +52,7 @@ function sql_getall($sql = [])
     $query  = "SELECT {$fields} FROM {$table}{$where}{$order}{$limit}";
     $mysql  = DB::$mysql->get_all($query, $bind['paras']);
     if ($sql[4] && $mysql) {
-        foreach ($mysql as $key => $val) {
-            $result[$val[$sql[4]]] = $val;
-        }
-        return $result;
+        return array_column($mysql, null, $sql[4]);
     }
     $result = $mysql;
     return $result ?: [];

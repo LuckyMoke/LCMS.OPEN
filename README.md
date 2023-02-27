@@ -1,4 +1,4 @@
-# 盘企CMS+开源建站系统+多城市分站+PHP开发框架
+# 盘企CMS+企业建站系统+多城市分站+SaaS站群系统+PHP开发框架
 
 #### 介绍
 
@@ -14,7 +14,7 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.2-8.1，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.2-8.2，Mysql5.6以上
 
 PHP扩展：zip、curl、gd（宝塔均默认开启）
 
@@ -41,7 +41,7 @@ PHP扩展：zip、curl、gd（宝塔均默认开启）
 
 [应用开发文档](https://www.kancloud.cn/luckymoke/lcms)
 
-[模板开发文档](https://www.yuque.com/luckymoke/panqicms)
+[模板开发文档](https://doc.ourcms.cn/)
 
 #### 注
 
