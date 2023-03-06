@@ -1,58 +1,32 @@
 <template "ui/head" />
-<style type="text/css">
-    .layui-table td,
-    .layui-table th {
-        padding: 5px 15px;
+<ui table($table) />
+<script type="text/javascript">
+    var showResult = function (tables) {
+        let html = "";
+        for (let i = 0; i < tables.length; i++) {
+            switch (tables[i].Msg_type) {
+                case 'warning':
+                    $msgtype = "<span style='color:#E6A23C'>警告：" + tables[i].Msg_text + "</span>";
+                    break;
+                case 'error':
+                    $msgtype = "<span style='color:#F56C6C'>错误：" + tables[i].Msg_text + "</span>";
+                    break;
+                default:
+                    $msgtype = "<span style='color:#67C23A'>" + tables[i].Msg_type + "：" + tables[i].Msg_text + "</span>";
+                    break;
+            }
+            html += "<p>" + tables[i].Table + " -> " + $msgtype + "</p>";
+        }
+        layer.open({
+            title: "操作记录",
+            type: 1,
+            area: "auto",
+            maxHeight: 500,
+            content: "<div class='optimizeLog' style='font-family:Monaco,Menlo,Consolas;margin:10px 20px;line-height:24px;font-size:14px;min-width:300px'>" + html + "</div>",
+            end: function () {
+                window.location.reload();
+            }
+        });
     }
-</style>
-<p class="lcms-form-des">数据表优化可以去除数据文件中的碎片, 使记录排列紧密, 提高读写速度。为了数据安全，优化前请先备份数据库。</p>
-<button type="button" class="layui-btn optimize" data-table='{{json_encode_ex($table)}}'>优化数据库</button>
-<span class="optimize-span" style="color:#f56c6c;padding-left:10px"></span>
-<div style="position:absolute;right:20px;margin-top:-30px;font-size:16px;">共计：{{count($table)}}个表</div>
-<div style="overflow-x:auto;">
-    <table class="layui-table" style="min-width:1400px;" lay-even>
-        <colgroup>
-            <col />
-            <col width="100" />
-            <col width="180" />
-            <col width="150" />
-            <col width="150" />
-            <col width="150" />
-            <col width="100" />
-            <col width="150" />
-            <col width="90" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th>表名</th>
-                <th style="text-align:center">表类型</th>
-                <th style="text-align:center">排序规则</th>
-                <th style="text-align:center">记录数</th>
-                <th style="text-align:center">数据大小</th>
-                <th style="text-align:center">索引大小</th>
-                <th style="text-align:center">数据碎片</th>
-                <th>注释</th>
-                <th style="text-align:center">操作</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-<script class="optimize-tpl" type="text/html">
-    <tr>
-        <td>{Name}</td>
-        <td align="center">{Engine}</td>
-        <td align="center">{Collation}</td>
-        <td align="center">{Rows}</td>
-        <td align="center">{Data_length}</td>
-        <td align="center">{Index_length}</td>
-        <td align="center">{Data_free}</td>
-        <td>{Comment}</td>
-        <td align="center">
-            <div class="layui-btn-group">
-                <button type="button" class="layui-btn layui-btn-xs layui-btn-danger optimize-truncate" data-name='{Name}'>清空数据</button>
-            </div>
-        </td>
-    </tr>
 </script>
 <template "ui/foot" />

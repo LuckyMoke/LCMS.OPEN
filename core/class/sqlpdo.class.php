@@ -171,7 +171,7 @@ class SQLPDO
             $this->errorCode = $e->getCode();
             return;
         }
-        if (strtoupper(substr($sql, 0, 6)) === "SELECT" || strtoupper(substr($sql, 0, 4)) === "SHOW") {
+        if (preg_match('/^(SELECT|SHOW|ANALYZE|OPTIMIZE|CHECK|REPAIR|TRUNCATE).*/i', $sql)) {
             $rows = $this->affected_rows();
             if ($rows > 1) {
                 return $this->psm->fetchAll($result_type);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2022-12-16 14:00:33
+ * @LastEditTime: 2023-03-04 16:57:41
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class repair extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC, $PRE;
-        $title = $LF['apptitle'] ?: "修复";
+        $title = $LF['apptitle'] ?: "同步";
         $new   = $this->getNewSql($LF['appname']);
         $diff  = $this->getDiff($new, $this->getKey($new));
         foreach ($diff as $name => $val) {
@@ -83,7 +83,7 @@ class repair extends adminbase
             ]);
             ajaxout(1, "{$title}成功");
         } else {
-            ajaxout(0, "数据表不需要{$title}");
+            ajaxout(0, "数据结构不需要{$title}");
         }
     }
     /**

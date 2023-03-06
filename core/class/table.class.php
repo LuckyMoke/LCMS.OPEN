@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-02-09 17:48:14
+ * @LastEditTime: 2023-03-03 12:07:36
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -131,7 +131,7 @@ class TABLE
                         break;
                 }
             }
-            return '<form class="lcms-form-table-toolbar-search layui-form"><div class="__form"><i class="__close hide layui-icon layui-icon-close-fill"></i><h3 class="hide">搜索</h3>' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-search"></i></button><button class="layui-btn layui-btn-primary LCMSTABLESEARCHRESET" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-refresh"></i></button></div><div class="__icon LCMSTABLESEARCHICON"><i class="layui-icon layui-icon-search"></i></div></form>';
+            return '<form class="lcms-form-table-toolbar-search layui-form"><div class="__form">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-search"></i></button><button class="layui-btn layui-btn-primary LCMSTABLESEARCHRESET" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-refresh"></i></button></div><div class="__icon LCMSTABLESEARCHICON"><i class="layui-icon layui-icon-search"></i></div></form>';
         }
     }
     /**

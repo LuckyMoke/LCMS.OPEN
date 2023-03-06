@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-05-05 13:30:36
+ * @LastEditTime: 2023-03-05 14:22:56
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -14,19 +14,18 @@ class OA
         global $_L, $LF, $SID;
         $LF = $_L['form'];
         if (!$config) {
-            $config    = LCMS::config(["name" => "wechat"]);
-            $this->CFG = [
-                "appid"     => $config['appid'],
-                "appsecret" => $config['appsecret'],
-                "thirdapi"  => $config['mode'] === "other" ? $config['access_api'] : "",
-            ];
-        } else {
-            $this->CFG = [
-                "appid"     => $config['appid'],
-                "appsecret" => $config['appsecret'],
-                "thirdapi"  => $config['thirdapi'],
-            ];
+            $config = LCMS::config([
+                "name" => "wechat",
+            ]);
+            $config['thirdapi'] = $config['mode'] === "other" ? $config['access_api'] : "";
         };
+        $this->CFG = [
+            "oaname"    => $config['oaname'],
+            "logo"      => oss($config['logo']),
+            "appid"     => $config['appid'],
+            "appsecret" => $config['appsecret'],
+            "thirdapi"  => $config['thirdapi'],
+        ];
         $SID = $this->SID = "WX" . strtoupper(substr(md5($this->CFG['appid'] . "RID{$_L['ROOTID']}"), 8, 16));
         $this->cache();
     }
@@ -156,6 +155,12 @@ class OA
                     // 使用code获取用户数据
                     $openid = $this->getOpenidFromMp($LF['code']);
                     if ($openid['openid']) {
+                        $openid['is_snapshotuser'] && exit(str_replace([
+                            "[oaname]", "[logo]",
+                        ], [
+                            $this->CFG['oaname'],
+                            $this->CFG['logo'],
+                        ], file_get_contents(PATH_CORE . "plugin/WeChat/oauth.html")));
                         $this->user([
                             "do"     => "save",
                             "openid" => $openid['openid'],
@@ -674,27 +679,6 @@ class OA
             $xml .= "</xml>";
             return $xml;
         }
-    }
-    /**
-     * @description: 打开信息页面
-     * @param array $page
-     * @return {*}
-     */
-    public function page_msg($page = [])
-    {
-        global $_L, $LF, $SID;
-        if ($this->CFG['thirdapi'] && stripos($this->CFG['thirdapi'], "/app/index.php?rootid=") !== false) {
-            $url = $this->CFG['thirdapi'] . "msg&c=page&body=";
-        } else {
-            $url = "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=page&a=msg&body=";
-        }
-        okinfo($url . urlencode(base64_encode(json_encode([
-            "icon"  => $page['icon'] ?: "success",
-            "title" => $page['title'],
-            "desc"  => $page['desc'],
-            "info"  => $page['info'],
-        ]))));
-        exit;
     }
     /**
      * @description: 打开投诉页面

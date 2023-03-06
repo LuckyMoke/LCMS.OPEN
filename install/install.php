@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-01-05 14:12:27
- * @LastEditTime: 2023-01-07 17:11:50
+ * @LastEditTime: 2023-03-06 11:27:32
  * @Description: 安装处理文件
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -138,6 +138,7 @@ switch ($_GET['action']) {
             $mydb->error() && ajaxout(0, $mydb->error());
         }
         $cfg = file_get_contents("data/config.php");
+        $cfg || ajaxout(0, "配置文件读取失败");
         foreach ($db as $key => $val) {
             $cfg = str_replace("[db_{$key}]", $val, $cfg);
         }

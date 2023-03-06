@@ -15,7 +15,8 @@ class qr extends webbase
         if ($_L['form']['text']) {
             phpqrcode::png($_L['form']['text'], false, "L", 10, 1);
         } else {
-            LCMS::X(403, "缺少必要参数，禁止访问");
+            header("HTTP/1.1 404 Not Found");
+            exit;
         }
     }
 };

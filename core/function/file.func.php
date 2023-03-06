@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-02-15 21:44:43
+ * @LastEditTime: 2023-02-28 12:06:00
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -401,7 +401,7 @@ function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
             $filename = $jkdir . $file;
             if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
                 if ($jump != null) {
-                    if (preg_match_all("/^({$jump})/", str_replace($jkdir, '', $filename), $out)) {
+                    if (preg_match_all("/{$jump}/", str_replace($jkdir, '', $filename), $out)) {
                         continue;
                     }
                 }
@@ -437,7 +437,7 @@ function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamear
             $filename = $jkdir . $file;
             if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
                 if ($jump != null) {
-                    if (preg_match_all("/^({$jump})/", str_replace(PATH_WEB, '', $filename), $out)) {
+                    if (preg_match_all("/{$jump}/", str_replace(PATH_WEB, '', $filename), $out)) {
                         continue;
                     }
                 }
