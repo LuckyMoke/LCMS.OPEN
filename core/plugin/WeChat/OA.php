@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-05 14:22:56
+ * @LastEditTime: 2023-03-13 17:09:08
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -11,7 +11,7 @@ class OA
     public $CFG, $SID;
     public function __construct($config = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $LF = $_L['form'];
         if (!$config) {
             $config = LCMS::config([
@@ -26,7 +26,8 @@ class OA
             "appsecret" => $config['appsecret'],
             "thirdapi"  => $config['thirdapi'],
         ];
-        $SID = $this->SID = "WX" . strtoupper(substr(md5($this->CFG['appid'] . "RID{$_L['ROOTID']}"), 8, 16));
+        $this->SID = $SID = "WX" . strtoupper(substr(md5($this->CFG['appid'] . "RID{$_L['ROOTID']}"), 8, 16));
+        $TRDAPI    = $config['thirdapi'];
         $this->cache();
     }
     /**
@@ -36,9 +37,9 @@ class OA
      */
     public function cache($type = "get")
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         if ($this->CFG['appid'] && $this->CFG['appsecret']) {
-            $cname = md5($this->CFG['appid'] . $this->CFG['appsecret']);
+            $cname = $this->CFG['appid'] . $this->CFG['appsecret'];
         } else {
             return false;
         }
@@ -57,6 +58,20 @@ class OA
                 break;
         }
     }
+    public function session($type = "get", $key, $value = "")
+    {
+        global $_L, $LF, $SID, $TRDAPI;
+        switch ($type) {
+            case 'get':
+                $value = SESSION::get($SID . $key);
+                $value = $value ?: [];
+                return $value;
+                break;
+            case 'set':
+                SESSION::set($SID . $key, $value);
+                break;
+        }
+    }
     /**
      * @description: 获取全局access_token
      * @param {*}
@@ -64,41 +79,38 @@ class OA
      */
     public function access_token()
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->cache();
-        if (!$this->CFG['access_token']['token'] || $this->CFG['access_token']['expires'] < time()) {
-            if ($this->CFG['thirdapi']) {
-                // 如果启用第三方接口
-                $token = json_decode(HTTP::get($this->CFG['thirdapi'] . "accesstoken"), true);
-                if ($token['code'] == "1" && $token['data']['access_token'] && $token['data']['expires_in']) {
-                    $this->CFG['access_token'] = [
-                        "token"   => $token['data']['access_token'],
-                        "expires" => $token['data']['expires_in'],
-                    ];
+        if (!$this->CFG['access_token'] || $this->CFG['access_token']['expires_in'] < time()) {
+            if ($TRDAPI) {
+                //如果启用第三方接口
+                $token = json_decode(HTTP::get("{$TRDAPI}accesstoken"), true);
+                if ($token['code'] == 1) {
+                    $this->CFG['access_token'] = $token['data'];
                     $this->cache("save");
                 } else {
                     return $token;
                 }
             } else {
-                // 系统自处理
+                //系统自处理
                 $query = http_build_query([
                     "appid"      => $this->CFG['appid'],
                     "secret"     => $this->CFG['appsecret'],
                     "grant_type" => "client_credential",
                 ]);
                 $token = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-                if (!$token['access_token']) {
-                    return $token;
-                } else {
+                if ($token['access_token']) {
                     $this->CFG['access_token'] = [
-                        "token"   => $token['access_token'],
-                        "expires" => time() + 3600,
+                        "access_token" => $token['access_token'],
+                        "expires_in"   => time() + 3600,
                     ];
                     $this->cache("save");
+                } else {
+                    return $token;
                 }
             }
         }
-        return $this->CFG['access_token']['token'];
+        return $this->CFG['access_token'] ?: [];
     }
     /**
      * @description: 使用code获取用户数据
@@ -107,14 +119,38 @@ class OA
      */
     public function getOpenidFromMp($code)
     {
-        global $_L, $LF, $SID;
-        $query = http_build_query([
-            "appid"      => $this->CFG['appid'],
-            "secret"     => $this->CFG['appsecret'],
-            "code"       => $code,
-            "grant_type" => "authorization_code",
-        ]);
-        $result = json_decode(HTTP::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
+        global $_L, $LF, $SID, $TRDAPI;
+        if (in_string($code, "OPENID|")) {
+            $code = str_replace("OPENID|", "", $code);
+            $code = json_decode(ssl_decode($code), true);
+            if ($code['time'] > time()) {
+                if ($TRDAPI) {
+                    $result = HTTP::get("{$TRDAPI}userinfo&openid={$code['openid']}");
+                    $result = json_decode($result, true);
+                    if ($result['code'] == 1) {
+                        $result = $result['data'];
+                    }
+                } else {
+                    $result = $this->user([
+                        "do"     => "get",
+                        "openid" => $code['openid'],
+                    ]);
+                }
+            } else {
+                $result = [
+                    "errcode" => 403,
+                    "errmsg"  => "code error",
+                ];
+            }
+        } else {
+            $query = http_build_query([
+                "appid"      => $this->CFG['appid'],
+                "secret"     => $this->CFG['appsecret'],
+                "code"       => $code,
+                "grant_type" => "authorization_code",
+            ]);
+            $result = json_decode(HTTP::get("https://api.weixin.qq.com/sns/oauth2/access_token?{$query}"), true);
+        }
         return $result ?: [];
     }
     /**
@@ -124,56 +160,64 @@ class OA
      */
     public function openid($type = false)
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->cache();
         $scope  = $type ? "snsapi_userinfo" : "snsapi_base";
-        $openid = SESSION::get($SID . $scope);
-        if ($openid['openid'] && $scope === "snsapi_base") {
-            return $openid;
-        } elseif ($openid['openid'] && $scope === "snsapi_userinfo" && $openid['expires_time'] > time()) {
-            return $openid;
-        } else {
-            $goback = urlencode($_L['url']['now']);
-            if ($this->CFG['thirdapi']) {
-                // 如果启用第三方接口，跳转到第三方接口
-                okinfo($this->CFG['thirdapi'] . "oauth&scope={$scope}&rid={$_L['ROOTID']}&sid={$SID}&goback={$goback}");
-            } else {
-                //使用系统API域名进行授权
-                if (stripos($_L['config']['web']['domain_api'], HTTP_HOST) === false) {
-                    okinfo("{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=index&a=oauth&scope={$scope}&rid={$_L['ROOTID']}&sid={$SID}&goback={$goback}");
-                }
-                // 用户授权登陆，获取code
-                if (!isset($LF['code'])) {
-                    $query = http_build_query([
-                        "appid"         => $this->CFG['appid'],
-                        "redirect_uri"  => $_L['url']['now'],
-                        "response_type" => "code",
-                        "scope"         => $scope,
-                    ]);
-                    $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
-                } else {
-                    // 使用code获取用户数据
-                    $openid = $this->getOpenidFromMp($LF['code']);
-                    if ($openid['openid']) {
-                        $openid['is_snapshotuser'] && exit(str_replace([
-                            "[oaname]", "[logo]",
-                        ], [
-                            $this->CFG['oaname'],
-                            $this->CFG['logo'],
-                        ], file_get_contents(PATH_CORE . "plugin/WeChat/oauth.html")));
-                        $this->user([
-                            "do"     => "save",
-                            "openid" => $openid['openid'],
-                            "data"   => [
-                                "openid" => $openid['openid'],
-                            ],
-                        ]);
-                        $openid['expires_time'] = time() + 3600;
-                        SESSION::set($SID . $scope, $openid);
-                        okinfo(url_clear($_L['url']['now'], "code|state"));
+        $openid = $this->session("get", $scope);
+        $goback = urlencode($_L['url']['now']);
+        if ($openid['openid']) {
+            //如果缓存存在
+            switch ($scope) {
+                case 'snsapi_userinfo':
+                    return $openid;
+                    break;
+                case 'snsapi_base':
+                    if ($openid['expires_in'] > time()) {
+                        return $openid;
                     }
-                }
+                    break;
             }
+        }
+        if ($LF['code'] && $LF['state'] == "LCMSWEIXINOAUTH") {
+            //获取用户信息
+            $openid = $this->getOpenidFromMp($LF['code']);
+            if ($openid['openid']) {
+                //如果是虚假数据
+                $openid['is_snapshotuser'] && exit(str_replace([
+                    "[oaname]", "[logo]",
+                ], [
+                    $this->CFG['oaname'],
+                    $this->CFG['logo'],
+                ], file_get_contents(PATH_CORE . "plugin/WeChat/oauth.html")));
+                //如果不是虚假数据
+                $this->user([
+                    "do"     => "save",
+                    "openid" => $openid['openid'],
+                    "data"   => [
+                        "openid" => $openid['openid'],
+                    ],
+                ]);
+                $openid['expires_in'] = time() + 3600;
+                $this->session("set", $scope, $openid);
+                okinfo(url_clear($_L['url']['now'], "code|state"));
+            }
+            return $openid ?: [];
+        } elseif ($TRDAPI) {
+            //如果第三方接口
+            okinfo("{$TRDAPI}oauth&scope={$scope}&goback={$goback}");
+        } elseif (!in_string($_L['config']['web']['domain_api'], HTTP_HOST)) {
+            //如果不是API域名
+            okinfo("{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
+        } else {
+            //发起授权
+            $query = http_build_query([
+                "appid"         => $this->CFG['appid'],
+                "redirect_uri"  => $_L['url']['now'],
+                "response_type" => "code",
+                "scope"         => $scope,
+                "state"         => "LCMSWEIXINOAUTH",
+            ]);
+            $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
         }
     }
     /**
@@ -183,18 +227,17 @@ class OA
      */
     public function userinfo($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         switch ($para['type']) {
             case 'subscribe':
                 $this->access_token();
-                $token  = $this->CFG['access_token']['token'];
                 $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/user/info?" . http_build_query([
-                    "access_token" => $token,
+                    "access_token" => $this->CFG['access_token']['access_token'],
                     "openid"       => $para['openid'],
                     "lang"         => "zh_CN",
                 ]));
                 $userinfo = json_decode($result, true);
-                if ($userinfo && !$userinfo['errcode']) {
+                if ($userinfo && $userinfo['openid']) {
                     $userinfo = $this->user([
                         "do"     => "save",
                         "openid" => $userinfo['openid'],
@@ -203,22 +246,26 @@ class OA
                 }
                 break;
             default:
-                $userinfo = SESSION::get("{$SID}userinfo");
-                if (!$userinfo['openid'] || $userinfo['errcode']) {
+                $userinfo = $this->session("get", "userinfo");
+                if (!$userinfo['openid']) {
                     $openid = $this->openid(true);
-                    $result = HTTP::get("https://api.weixin.qq.com/sns/userinfo?" . http_build_query([
-                        "access_token" => $openid['access_token'],
-                        "openid"       => $openid['openid'],
-                        "lang"         => "zh_CN",
-                    ]));
-                    $userinfo = json_decode($result, true);
-                    if ($userinfo && !$userinfo['errcode']) {
+                    if ($openid['access_token']) {
+                        $result = HTTP::get("https://api.weixin.qq.com/sns/userinfo?" . http_build_query([
+                            "access_token" => $openid['access_token'],
+                            "openid"       => $openid['openid'],
+                            "lang"         => "zh_CN",
+                        ]));
+                        $userinfo = json_decode($result, true);
+                    } else {
+                        $userinfo = $openid;
+                    }
+                    if ($userinfo && $userinfo['openid']) {
                         $userinfo = $this->user([
                             "do"     => "save",
                             "openid" => $userinfo['openid'],
                             "data"   => $userinfo,
                         ]);
-                        SESSION::set("{$SID}userinfo", $userinfo);
+                        $this->session("set", "userinfo", $userinfo);
                     }
                 }
                 break;
@@ -232,7 +279,7 @@ class OA
      */
     public function user($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $userinfo = sql_get(["open_wechat_user",
             "openid = :openid AND lcms = :lcms", "", [
                 ":openid" => $para['openid'],
@@ -278,11 +325,13 @@ class OA
             $userinfo = array_merge($userinfo, $form);
         }
         if ($para['openid']) {
-            return $userinfo ?: sql_get(["open_wechat_user",
+            $userinfo = $userinfo ?: sql_get(["open_wechat_user",
                 "openid = :openid AND lcms = :lcms", "", [
                     ":openid" => $para['openid'],
                     ":lcms"   => $_L['ROOTID'],
                 ]]);
+            unset($userinfo['id'], $userinfo['lcms']);
+            return $userinfo ?: [];
         }
     }
     /**
@@ -292,17 +341,14 @@ class OA
      */
     public function jsapi_ticket()
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->cache();
-        if (!$this->CFG['jsapi_ticket']['ticket'] || $this->CFG['jsapi_ticket']['expires'] < time()) {
-            if ($this->CFG['thirdapi']) {
-                // 如果启用第三方接口
-                $token = json_decode(HTTP::get($this->CFG['thirdapi'] . "jsapiticket"), true);
-                if ($token['code'] == "1" && $token['data']['ticket'] && $token['data']['expires_in']) {
-                    $this->CFG['jsapi_ticket'] = [
-                        "ticket"  => $token['data']['ticket'],
-                        "expires" => $token['data']['expires_in'],
-                    ];
+        if (!$this->CFG['jsapi_ticket'] || $this->CFG['jsapi_ticket']['expires_in'] < time()) {
+            if ($TRDAPI) {
+                //第三方接口
+                $token = json_decode(HTTP::get("{$TRDAPI}jsapiticket"), true);
+                if ($token['code'] == 1) {
+                    $this->CFG['jsapi_ticket'] = $token['data'];
                     $this->cache("save");
                 } else {
                     return $token;
@@ -310,22 +356,22 @@ class OA
             } else {
                 $this->access_token();
                 $query = http_build_query([
-                    "access_token" => $this->CFG['access_token']['token'],
+                    "access_token" => $this->CFG['access_token']['access_token'],
                     "type"         => "jsapi",
                 ]);
                 $ticket = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?{$query}"), true);
-                if (!$ticket['ticket']) {
-                    return $ticket;
-                } else {
+                if ($ticket['ticket']) {
                     $this->CFG['jsapi_ticket'] = [
-                        "ticket"  => $ticket['ticket'],
-                        "expires" => time() + 7000,
+                        "ticket"     => $ticket['ticket'],
+                        "expires_in" => time() + 7000,
                     ];
                     $this->cache("save");
+                } else {
+                    return $ticket;
                 }
             }
         }
-        return $this->CFG['jsapi_ticket']['ticket'];
+        return $this->CFG['jsapi_ticket'] ?: [];
     }
     /**
      * @description: 获取前台JSSDK签名
@@ -334,12 +380,17 @@ class OA
      */
     public function signpackage($url = "")
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->jsapi_ticket();
-        $url         = $url ?: $_L['url']['now'];
-        $nonceStr    = randstr(16);
-        $timestamp   = time();
-        $query       = implode("&", ["jsapi_ticket=" . $this->CFG['jsapi_ticket']['ticket'], "noncestr={$nonceStr}", "timestamp={$timestamp}", "url={$url}"]);
+        $url       = $url ?: $_L['url']['now'];
+        $nonceStr  = randstr(16);
+        $timestamp = time();
+        $query     = implode("&", [
+            "jsapi_ticket=" . $this->CFG['jsapi_ticket']['ticket'],
+            "noncestr={$nonceStr}",
+            "timestamp={$timestamp}",
+            "url={$url}",
+        ]);
         $signPackage = [
             "appId"     => $this->CFG['appid'],
             "nonceStr"  => $nonceStr,
@@ -358,9 +409,9 @@ class OA
      */
     public function send_tpl($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$this->CFG['access_token']['token']}", json_encode_ex($para));
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result ?: [];
     }
@@ -372,9 +423,9 @@ class OA
      */
     public function send_custom($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$this->CFG['access_token']['token']}", json_encode_ex($para));
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result ?: [];
     }
@@ -385,13 +436,13 @@ class OA
      */
     public function add_tpl($tpl)
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$this->CFG['access_token']['token']}", json_encode_ex([
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
             "template_id_short" => $tpl,
         ]));
         $result = json_decode($result, true);
-        return $result;
+        return $result ?: [];
     }
     /**
      * @description: 删除模板消息
@@ -400,9 +451,9 @@ class OA
      */
     public function del_tpl($tplid)
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$this->CFG['access_token']['token']}", json_encode_ex([
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
             "template_id" => $tplid,
         ]));
         $result = json_decode($result, true);
@@ -415,12 +466,12 @@ class OA
      */
     public function menu($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
         if (is_array($para)) {
-            $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->CFG['access_token']['token']}", json_encode_ex($para));
+            $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         } elseif ($para === "get") {
-            $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$this->CFG['access_token']['token']}");
+            $result = HTTP::get("https://api.weixin.qq.com/cgi-bin/menu/get?access_token={$this->CFG['access_token']['access_token']}");
         }
         $result = json_decode($result, true);
         return $result ?: [];
@@ -432,7 +483,7 @@ class OA
      */
     public function material($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
         $file     = path_absolute($para['file']);
         $fileinfo = pathinfo($file);
@@ -450,19 +501,23 @@ class OA
             $media = new \CURLFile($file, $mime[$fileinfo['extension']], $fileinfo['basename']);
             if ($para['temp']) {
                 //临时素材
-                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$this->CFG['access_token']['token']}&type={$para['type']}", [
+                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$this->CFG['access_token']['access_token']}&type={$para['type']}", [
                     "media" => $media,
                 ]);
             } else {
                 //永久素材
-                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$this->CFG['access_token']['token']}&type={$para['type']}", [
+                $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$this->CFG['access_token']['access_token']}&type={$para['type']}", [
                     "media" => $media,
                 ]);
             }
-            return json_decode($result, true);
+            $result = json_decode($result, true);
         } else {
-            return ["errcode" => 403, "errmsg" => "不支持的文件格式"];
+            $result = [
+                "errcode" => 403,
+                "errmsg"  => "不支持的文件格式",
+            ];
         }
+        return $result ?: [];
     }
     /**
      * @description: 关键词操作
@@ -471,30 +526,25 @@ class OA
      */
     public function reply($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         switch ($para['do']) {
             case 'del':
                 if ($para['name']) {
-                    $words = sql_get([
-                        "open_wechat_reply_words",
+                    $words = sql_get(["open_wechat_reply_words",
                         "name = :name AND app = :app AND lcms = :lcms",
                         "", [
                             ":name" => $para['name'],
                             ":app"  => L_NAME,
                             ":lcms" => $_L['ROOTID'],
-                        ],
-                    ]);
+                        ]]);
                     foreach ([
                         "reply", "reply_words", "reply_contents",
                     ] as $table) {
                         $name = $table === "reply" ? "id" : "rid";
-                        sql_delete([
-                            "open_wechat_{$table}",
-                            "{$name} = :rid",
-                            [
+                        sql_delete(["open_wechat_{$table}",
+                            "{$name} = :rid", [
                                 ":rid" => $words['rid'],
-                            ],
-                        ]);
+                            ]]);
                     }
                     return true;
                 } else {
@@ -505,14 +555,11 @@ class OA
                 foreach ([
                     "reply", "reply_words", "reply_contents",
                 ] as $table) {
-                    sql_delete([
-                        "open_wechat_{$table}",
-                        "app = :app AND lcms = :lcms",
-                        [
+                    sql_delete(["open_wechat_{$table}",
+                        "app = :app AND lcms = :lcms", [
                             ":app"  => L_NAME,
                             ":lcms" => $_L['ROOTID'],
-                        ],
-                    ]);
+                        ]]);
                 }
                 return true;
                 break;
@@ -525,8 +572,7 @@ class OA
                             ":name" => $para['name'],
                             ":app"  => L_NAME,
                             ":lcms" => $_L['ROOTID'],
-                        ],
-                    ]);
+                        ]]);
                     if ($words) {
                         sql_update(["open_wechat_reply_contents", [
                             "parameter" => arr2sql([
@@ -540,38 +586,29 @@ class OA
                         ]]);
                         return $words['rid'];
                     } else {
-                        $insert_id = sql_insert([
-                            "open_wechat_reply",
-                            [
-                                "type"     => "2",
-                                "app"      => L_NAME,
-                                "order_no" => "999999",
-                                "lcms"     => $_L['ROOTID'],
-                            ],
-                        ]);
-                        if ($insert_id) {
-                            sql_insert([
-                                "open_wechat_reply_words",
-                                [
-                                    "rid"  => $insert_id,
-                                    "name" => $para['name'],
-                                    "app"  => L_NAME,
-                                    "type" => "1",
-                                    "lcms" => $_L['ROOTID'],
-                                ],
-                            ]);
+                        $rid = sql_insert(["open_wechat_reply", [
+                            "type"     => "2",
+                            "app"      => L_NAME,
+                            "order_no" => "999999",
+                            "lcms"     => $_L['ROOTID'],
+                        ]]);
+                        if ($rid) {
+                            sql_insert(["open_wechat_reply_words", [
+                                "rid"  => $rid,
+                                "name" => $para['name'],
+                                "app"  => L_NAME,
+                                "type" => "1",
+                                "lcms" => $_L['ROOTID'],
+                            ]]);
                             if ($para['type']) {
-                                sql_insert([
-                                    "open_wechat_reply_contents",
-                                    [
-                                        "rid"       => $insert_id,
-                                        "type"      => $para['type'],
-                                        "order_no"  => "999999",
-                                        "parameter" => arr2sql($para[$para['type']]),
-                                    ],
-                                ]);
+                                sql_insert(["open_wechat_reply_contents", [
+                                    "rid"       => $rid,
+                                    "type"      => $para['type'],
+                                    "order_no"  => "999999",
+                                    "parameter" => arr2sql($para[$para['type']]),
+                                ]]);
                             }
-                            return $insert_id;
+                            return $rid;
                         } else {
                             return false;
                         }
@@ -589,9 +626,9 @@ class OA
      */
     public function get_all_openid($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $url    = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={$this->CFG['access_token']['token']}";
+        $url    = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={$this->CFG['access_token']['access_token']}";
         $url    = $para['next_openid'] ? $url . "&next_openid=" . $para['next_openid'] : $url;
         $result = json_decode(HTTP::get($url), true);
         if ($result['total'] && ($result['total'] == $result['count'] || (($para['page'] - 1) * 10000 + $result['count']) == $result['total'])) {
@@ -606,9 +643,9 @@ class OA
      */
     public function get_custom_online()
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist?access_token={$this->CFG['access_token']['token']}"), true);
+        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist?access_token={$this->CFG['access_token']['access_token']}"), true);
         return $result['kf_online_list'] ?: [];
     }
     /**
@@ -618,9 +655,9 @@ class OA
      */
     public function get_material_count()
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
-        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$this->CFG['access_token']['token']}"), true);
+        $result = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$this->CFG['access_token']['access_token']}"), true);
         return $result ?: [];
     }
     /**
@@ -630,14 +667,14 @@ class OA
      */
     public function get_material_list($para = [])
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         $this->access_token();
         $query = json_encode([
             "type"   => $para['type'] ? $para['type'] : "image",
             "offset" => $para['offset'] ? $para['offset'] : "0",
             "count"  => $para['count'] ? $para['count'] : "20",
         ]);
-        $result = json_decode(HTTP::post("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$this->CFG['access_token']['token']}", $query), true);
+        $result = json_decode(HTTP::post("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$this->CFG['access_token']['access_token']}", $query), true);
         return $result ?: [];
     }
     /**
@@ -647,7 +684,7 @@ class OA
      */
     public function header_nocache($url)
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         header('Expires: 0');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         header('Cache-Control: no-store, no-cahe, must-revalidate');
@@ -664,7 +701,7 @@ class OA
      */
     public function arr2xml($arr)
     {
-        global $_L, $LF, $SID;
+        global $_L, $LF, $SID, $TRDAPI;
         if (!is_array($arr) || count($arr) == 0) {
             return false;
         } else {
@@ -687,9 +724,9 @@ class OA
      */
     public function page_tousu($callback = "")
     {
-        global $_L, $LF, $SID;
-        if ($this->CFG['thirdapi'] && stripos($this->CFG['thirdapi'], "/app/index.php?rootid=") !== false) {
-            $url = $this->CFG['thirdapi'] . "tousu&c=page&callback=";
+        global $_L, $LF, $SID, $TRDAPI;
+        if ($TRDAPI && in_string($TRDAPI, "/app/index.php?rootid=")) {
+            $url = "{$TRDAPI}tousu&c=page&callback=";
         } else {
             $url = "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=page&a=tousu&callback=";
         }

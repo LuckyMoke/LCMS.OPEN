@@ -2,36 +2,36 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-01-21 17:15:31
+ * @LastEditTime: 2023-03-13 16:35:25
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 class MP
 {
-    public $cfg;
+    public $CFG;
     public function __construct($config)
     {
-        $this->cfg = [
+        $this->CFG = [
             "appid"     => $config['appid'],
             "appsecret" => $config['appsecret'],
         ];
         $this->cache();
     }
     /**
-     * [cache 数据缓存读取与保存]
-     * @param  string $type [description]
-     * @return [type]       [description]
+     * @description: 数据缓存读取与保存
+     * @param string $type
+     * @return {*}
      */
     public function cache($type = "get")
     {
-        if ($this->cfg['appid'] && $this->cfg['appsecret']) {
-            $cname = md5($this->cfg['appid'] . $this->cfg['appsecret']);
+        if ($this->CFG['appid'] && $this->CFG['appsecret']) {
+            $cname = md5($this->CFG['appid'] . $this->CFG['appsecret']);
         } else {
             return false;
         }
         switch ($type) {
             case 'save':
-                LCMS::cache($cname, $this->cfg);
+                LCMS::cache($cname, $this->CFG);
                 break;
             case 'clear':
                 LCMS::cache($cname, "clear");
@@ -39,80 +39,83 @@ class MP
             default:
                 $arr = LCMS::cache($cname);
                 if (is_array($arr)) {
-                    $this->cfg = array_merge($arr, $this->cfg);
+                    $this->CFG = array_merge($arr, $this->CFG);
                 }
                 break;
         }
     }
     /**
-     * [openid 通过登陆code获取用户OPENID]
-     * @param  [type] $js_code [description]
-     * @return [type]          [description]
+     * @description: 获取全局access_token
+     * @return {*}
+     */
+    public function access_token()
+    {
+        if (!$this->CFG['access_token'] || $this->CFG['access_token']['expires_in'] < time()) {
+            $query = http_build_query(array(
+                "appid"      => $this->CFG['appid'],
+                "secret"     => $this->CFG['appsecret'],
+                "grant_type" => "client_credential",
+            ));
+            $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
+            if ($token['access_token']) {
+                $this->CFG['access_token'] = [
+                    "access_token" => $token['access_token'],
+                    "expires_in"   => time() + 3600,
+                ];
+                $this->cache("save");
+            } else {
+                return $token;
+            }
+        }
+        return $this->CFG['access_token'] ?: [];
+    }
+    /**
+     * @description: 通过登陆code获取用户OPENID
+     * @param string $js_code
+     * @return {*}
      */
     public function openid($js_code)
     {
         $query = http_build_query([
-            "appId"      => $this->cfg['appid'],
-            "secret"     => $this->cfg['appsecret'],
+            "appId"      => $this->CFG['appid'],
+            "secret"     => $this->CFG['appsecret'],
             "js_code"    => $js_code,
             "grant_type" => "authorization_code",
         ]);
         $result = json_decode(http::get("https://api.weixin.qq.com/sns/jscode2session?{$query}"), true);
-        return $result;
+        return $result ?: [];
     }
     /**
-     * [access_token 生成access_token缓存]
-     * @return [type] [description]
+     * @description: 获取小程序码
+     * @param string $page 页面链接 pages/index/index
+     * @param string $scene 页面参数 a=1
+     * @return {*}
      */
-    public function access_token()
-    {
-        if (!$this->cfg['access_token']['token'] || $this->cfg['access_token']['expires'] < time()) {
-            $query = http_build_query(array(
-                "appid"      => $this->cfg['appid'],
-                "secret"     => $this->cfg['appsecret'],
-                "grant_type" => "client_credential",
-            ));
-            $token = json_decode(http::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-            if (!$token['access_token']) {
-                return $token;
-            } else {
-                $this->cfg['access_token'] = [
-                    "token"   => $token['access_token'],
-                    "expires" => time() + 3600,
-                ];
-                $this->cache("save");
-            }
-        }
-    }
-    /**
-     * [qrcode 获取小程序码]
-     * @param  [type] $path    [description]
-     * @param  string $scene   [description]
-     * @return [type]          [description]
-     */
-    public function qrcode($path, $scene = "")
+    public function get_qrcode($page, $scene = "")
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->cfg['access_token']['token']}", json_encode_ex([
+        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
             "scene" => $scene,
-            "path"  => $path,
+            "page"  => $page,
         ]));
-        if ($result && is_array(json_decode($result, true))) {
-            $result = json_decode($result, true);
-        }
-        return $result;
+        $result = json_decode($result, true);
+        return $result ?: [];
     }
     /**
-     * [send_tpl 发送小程序模板消息]
-     * @param  [type] $para [description]
-     * @return [type]       [description]
+     * @description: 获取小程序链接
+     * @param string $path
+     * @param string $query
+     * @return {*}
      */
-    public function send_tpl($para = [])
+    public function get_urllink($path, $query = "")
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
+        $result = http::post("https://api.weixin.qq.com/wxa/generate_urllink?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
+            "path"  => $path,
+            "query" => $query,
+        ]));
         $result = json_decode($result, true);
-        return $result;
+        return $result ?: [];
     }
     /**
      * [send_unitpl 发送统一服务消息]
@@ -122,9 +125,9 @@ class MP
     public function send_unitpl($para = [])
     {
         $this->access_token();
-        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->cfg['access_token']['token']}", json_encode_ex($para));
+        $result = http::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         $result = json_decode($result, true);
-        return $result;
+        return $result ?: [];
     }
     /**
      * [encode_data 解密敏感数据]

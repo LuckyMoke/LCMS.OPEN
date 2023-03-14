@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-09-16 21:57:43
+ * @LastEditTime: 2023-03-09 23:56:35
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -138,7 +138,6 @@ class HTTP
         switch (self::$METHOD) {
             case 'GET':
                 curl_setopt(self::$CH, CURLOPT_FOLLOWLOCATION, true);
-                curl_setopt(self::$CH, CURLINFO_HEADER_OUT, $data);
                 break;
             case 'POST':
                 curl_setopt(self::$CH, CURLOPT_POST, true);

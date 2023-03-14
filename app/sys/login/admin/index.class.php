@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-01-15 16:17:47
+ * @LastEditTime: 2023-03-13 13:24:00
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -301,14 +301,14 @@ class index extends adminbase
     public function dogetqrcode()
     {
         global $_L, $LF, $CFG, $USER, $RID;
-        $code = ssl_encode(json_encode([
+        $token = ssl_encode(json_encode([
             "cid"  => $_COOKIE['LCMSCID'],
             "time" => time() + 180,
         ]));
         if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
-            ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}&name={$LF['name']}");
+            ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&token={$token}&name={$LF['name']}");
         } else {
-            goheader("{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&code={$code}&name={$LF['name']}");
+            goheader("{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&token={$token}&name={$LF['name']}");
         }
     }
     /**

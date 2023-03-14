@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-11-14 13:31:12
+ * @LastEditTime: 2023-03-13 13:22:40
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -33,10 +33,10 @@ class qrcode extends adminbase
             exit;
         }
         SESSION::set("LOGINROOTID", $RID);
-        if ($LF['code']) {
-            $code = json_decode(ssl_decode($LF['code']), true);
-            if ($code && $code['time'] > time()) {
-                $CID = $code['cid'];
+        if ($LF['token']) {
+            $token = json_decode(ssl_decode($LF['token']), true);
+            if ($token && $token['time'] > time()) {
+                $CID = $token['cid'];
                 SESSION::set("LOGINCID", $CID);
             } else {
                 LCMS::X(403, "二维码已过期<br/>请重新获取二维码");
@@ -124,7 +124,7 @@ class qrcode extends adminbase
                     unset($admin['pass']);
                     $result = HTTP::get("{$_L['url']['own_form']}logincid&c=index&rootsid={$CID}&cookie=" . ssl_encode(json_encode($admin)));
                     $result = json_decode($result, true);
-                    if ($result['code'] == "1") {
+                    if ($result['code'] == 1) {
                         LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
                     } else {
                         LCMS::X(403, "登陆失败");
