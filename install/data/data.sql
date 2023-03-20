@@ -8,6 +8,8 @@ CREATE TABLE `[_PRE]admin` (
   `email` varchar(64) DEFAULT NULL,
   `mobile` varchar(11) DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL COMMENT '级别',
+  `headimg` varchar(255) DEFAULT NULL COMMENT '头像',
+  `points` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '积分',
   `balance` decimal(12,2) DEFAULT '0.00' COMMENT '余额',
   `addtime` datetime DEFAULT NULL COMMENT '添加时间',
   `lasttime` datetime DEFAULT NULL COMMENT '到期时间',

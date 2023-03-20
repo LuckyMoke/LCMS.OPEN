@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-09-13 11:53:14
+ * @LastEditTime: 2023-03-16 11:53:41
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -293,7 +293,7 @@ class LAY
                 <div class='layui-input-block'>
                     <div class='layui-upload-list lcms-form-upload-img-list'></div>
                     <div class='layui-btn-group lcms-form-upload-btn'>
-                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         <a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a>
                         <a class='layui-btn layui-btn-primary layui-btn-sm _other'>粘贴</a>
                     </div>

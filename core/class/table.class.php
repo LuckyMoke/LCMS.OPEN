@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-03 12:07:36
+ * @LastEditTime: 2023-03-20 11:25:29
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -34,7 +34,7 @@ class TABLE
         return $data;
     }
     /**
-     * [html 生成数据表格html]
+     * [html 生成数据表格html]lay-search
      * @param  string $table [description]
      * @return [type]        [description]
      */
@@ -55,16 +55,27 @@ class TABLE
                 $totalRow = true;
             }
         }
-        $arr = [
+        $data = [
             "url"            => is_url($table['url']) ? $table['url'] : $_L['url']['own_form'] . $table['url'],
-            "defaultToolbar" => ['filter', 'print', 'exports'],
+            "defaultToolbar" => [[
+                "title"    => "刷新",
+                "layEvent" => "LCMSTABLE_REFRESH",
+                "icon"     => "layui-icon-refresh",
+            ], "filter", "print", "exports"],
             "toolbar"        => $toolbar,
             "totalRow"       => $totalRow ? true : false,
             "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
         ];
-        $html = "<div class='lcms-form-table-box' id='{$table['id']}'>{$search}<table class='lcms-form-table' data='" . htmlspecialchars(json_encode_ex($arr)) . "'></table>{$laytpl}</div>";
+        if ($search) {
+            $data['defaultToolbar'] = array_merge([[
+                "title"    => "搜索",
+                "layEvent" => "LCMSTABLE_SEARCHOPEN",
+                "icon"     => "layui-icon-search",
+            ]], $data['defaultToolbar']);
+        }
+        $html = "<div class='lcms-table-box' id='{$table['id']}'><table class='lcms-table' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$search}{$laytpl}</div>";
         echo $html;
     }
     /**
@@ -121,17 +132,21 @@ class TABLE
                                 $options .= "<option value='{$option['value']}'" . ($val['value'] == $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
                             }
                         }
-                        $html .= '<div class="layui-input-inline"><select name="LC[' . $val['name'] . ']" lay-verify="" lay-search><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
+                        $html .= '<div class="layui-input-inline"><select name="LC[' . $val['name'] . ']" lay-verify><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
                         break;
+                    case 'year':
+                    case 'month':
                     case 'date':
-                        $html .= '<div class="layui-input-inline lcms-form-table-toolbar-date"><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '"/></div>';
+                    case 'time':
+                    case 'datetime':
+                        $html .= '<div class="layui-input-inline lcms-table-toolbar-date"><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/></div>';
                         break;
                     default:
                         $html .= '<div class="layui-input-inline"><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input"></div>';
                         break;
                 }
             }
-            return '<form class="lcms-form-table-toolbar-search layui-form"><div class="__form">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-search"></i></button><button class="layui-btn layui-btn-primary LCMSTABLESEARCHRESET" lay-submit lay-filter="LCMSTABLESEARCH"><i class="layui-icon layui-icon-refresh"></i></button></div><div class="__icon LCMSTABLESEARCHICON"><i class="layui-icon layui-icon-search"></i></div></form>';
+            return '<script type="text/html" class="lcms-table-toolbar-search-tpl"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
         }
     }
     /**
@@ -221,11 +236,11 @@ class TABLE
         $laytpl  = "";
         $toolbar = "";
         foreach ($tree['toolbar'] as $key => $val) {
-            $val['url']   = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
+            $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
             $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
             $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
         }
-        $toolbar .= "<button class='layui-btn layui-btn-primary lcms-form-table-tree-openall'>展开/折叠</button>";
+        $toolbar .= "<button class='layui-btn layui-btn-primary lcms-table-tree-openall'>展开/折叠</button>";
         foreach ($tree['cols'] as $key => $val) {
             if ($val['toolbar']) {
                 $colsbar = self::tree_colsbar($val['toolbar']);
@@ -241,7 +256,7 @@ class TABLE
             "show" => $tree['show'],
             "cols" => $tree['cols'],
         ];
-        $html = "<div class='lcms-form-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-form-table-tree' data='" . htmlspecialchars(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
+        $html = "<div class='lcms-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-table-tree' data='" . htmlspecialchars(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
         echo $html;
     }
     /**
@@ -257,7 +272,7 @@ class TABLE
             $laytpl    = "";
             $colsbarid = "TREECOLSBAR" . randstr(6);
             foreach ($colsbar as $key => $val) {
-                $val['url']   = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
+                $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
                 $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
             }
@@ -297,7 +312,7 @@ class TABLE
                             }
                             $val['text']       = $val['text'] ?: "启用|关闭";
                             $checked           = $val['value'] > 0 ? "checked" : "";
-                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-text='{$val['text']}' {$checked}>";
+                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' lay-text='{$val['text']}' {$checked}>";
                             break;
                         case 'image':
                             $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";

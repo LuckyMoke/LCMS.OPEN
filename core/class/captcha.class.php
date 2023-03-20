@@ -35,7 +35,7 @@ class CAPTCHA
         $im_y = 40;
         $im   = imagecreatetruecolor($im_x, $im_y);
         imagefill($im, 16, 13, ImageColorAllocate($im, 226, 245, 255));
-        $font = PATH_PUBLIC . 'static/fonts/Chinese.ttf';
+        $font = PATH_PUBLIC . 'static/fonts/English.ttf';
 
         for ($i = 0; $i < strlen($text); $i++) {
             imagettftext($im, 28, mt_rand(1, 10), 25 + $i * 28, mt_rand(30, 40), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($text, $i, 1));

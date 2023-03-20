@@ -12,6 +12,6 @@ class pin extends webbase
     public function doindex()
     {
         global $_L;
-        captcha::set();
+        CAPTCHA::set();
     }
 };

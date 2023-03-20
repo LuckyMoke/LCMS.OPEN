@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-18 15:15:44
+ * @LastEditTime: 2023-03-16 12:19:54
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -46,9 +46,15 @@ class admin extends adminbase
                     $admin        = $adminlist[$val['lcms']];
                     $level        = $levellist[$val['type']];
                     $data[$index] = array_merge($val, [
-                        "lcms"   => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
-                        "type"   => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
-                        "status" => [
+                        "headimg" => [
+                            "type"   => "image",
+                            "width"  => 20,
+                            "height" => 20,
+                            "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
+                        ],
+                        "lcms"    => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
+                        "type"    => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
+                        "status"  => [
                             "type"  => "switch",
                             "url"   => "index&action=list-save",
                             "text"  => "启用|禁用",
@@ -103,51 +109,50 @@ class admin extends adminbase
                     "id"    => $_L['form']['id'],
                 ]);
                 $form['base'] = [
+                    ["layui"    => "upload", "title" => "头像",
+                        "name"      => "LC[headimg]",
+                        "value"     => $admin['headimg'],
+                        "maxwidth"  => 200,
+                        "maxheight" => 200,
+                        "tips"      => "请上传200*200尺寸以内正方形图片"],
                     ["layui"      => "input", "title" => "账号",
                         "name"        => "LC[name]",
                         "value"       => $admin['name'],
                         "placeholder" => "帐号用来登录，不能重复",
                         "verify"      => "required|name",
-                        "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? "1" : "",
-                    ],
+                        "disabled"    => $admin['name'] && $admin['type'] != "lcms" ? true : false],
                     ["layui"      => "input", "title" => "姓名",
                         "name"        => "LC[title]",
                         "value"       => $admin['title'],
                         "placeholder" => "姓名只做显示",
-                        "verify"      => "required",
-                    ],
+                        "verify"      => "required"],
                     ["layui"      => "input", "title" => "密码",
                         "name"        => "LC[pass]",
                         "value"       => $admin['pass'],
                         "placeholder" => "请输入用户密码",
                         "verify"      => "required",
-                        "type"        => "password",
-                    ],
+                        "type"        => "password"],
                     ["layui"      => "input", "title" => "重复密码",
                         "name"        => "repass",
                         "value"       => $admin['pass'],
                         "placeholder" => "请再次输入用户密码",
                         "verify"      => "required|pass",
-                        "type"        => "password",
-                    ],
+                        "type"        => "password"],
                     ["layui" => "input", "title" => "邮箱",
                         "name"   => "LC[email]",
                         "value"  => $admin['email'],
-                        "type"   => "email",
-                    ],
+                        "type"   => "email"],
                     ["layui" => "input", "title" => "手机号",
                         "name"   => "LC[mobile]",
                         "value"  => $admin['mobile'],
-                        "type"   => "phone",
-                    ],
+                        "type"   => "phone"],
                     ["layui" => "radio", "title" => "账号状态",
                         "name"   => "LC[status]",
                         "value"  => $admin['status'] != null ? $admin['status'] : 0,
                         "radio"  => [
                             ["title" => "启用", "value" => 1],
                             ["title" => "禁用", "value" => 0],
-                        ],
-                    ],
+                        ]],
                 ];
                 $form['level'] = [
                     ["layui" => "title", "title" => "权限设置"],
@@ -252,6 +257,9 @@ class admin extends adminbase
                         ["title" => "ID", "field" => "id",
                             "width"  => 80,
                             "align"  => "center"],
+                        ["title" => "头像", "field" => "headimg",
+                            "width"  => 50,
+                            "align"  => "center"],
                         ["title"   => "帐号", "field" => "name",
                             "minWidth" => 90],
                         ["title" => "姓名", "field" => "title",
@@ -317,6 +325,12 @@ class admin extends adminbase
                     "id"    => $_L['LCMSADMIN']['id'],
                 ]);
                 $form['base'] = [
+                    ["layui"    => "upload", "title" => "头像",
+                        "name"      => "LC[headimg]",
+                        "value"     => $admin['headimg'],
+                        "maxwidth"  => 200,
+                        "maxheight" => 200,
+                        "tips"      => "请上传200*200尺寸以内正方形图片"],
                     ["layui"      => "input", "title" => "账号",
                         "name"        => "LC[name]",
                         "value"       => $admin['name'],
@@ -404,6 +418,16 @@ class admin extends adminbase
                 $data = TABLE::set("admin", $where, "id ASC", [
                     ":name" => "%{$LC['name']}%",
                 ]);
+                foreach ($data as $index => $val) {
+                    $data[$index] = array_merge($val, [
+                        "headimg" => [
+                            "type"   => "image",
+                            "width"  => 20,
+                            "height" => 20,
+                            "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
+                        ],
+                    ]);
+                }
                 TABLE::out($data);
                 break;
             case 'login':
@@ -422,6 +446,9 @@ class admin extends adminbase
                     "cols"   => [
                         ["title" => "ID", "field" => "id",
                             "width"  => 70,
+                            "align"  => "center"],
+                        ["title" => "头像", "field" => "headimg",
+                            "width"  => 50,
                             "align"  => "center"],
                         ["title" => "帐号", "field" => "name",
                             "width"  => 180],

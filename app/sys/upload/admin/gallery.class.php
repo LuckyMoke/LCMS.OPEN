@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2021-08-27 20:44:17
+ * @LastEditTime: 2023-03-16 12:16:49
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -83,14 +83,15 @@ class gallery extends adminbase
     public function dodirlist()
     {
         global $_L;
-        $where = "type = 'image' AND lcms = '{$_L['ROOTID']}'";
+        $where = "type = 'image' AND lcms = :lcms";
         if ($_L['ROOTID'] != $_L['LCMSADMIN']['id']) {
-            $where .= " AND uid = '{$_L['LCMSADMIN']['id']}'";
+            $where .= " AND uid = :uid";
         }
-        $dir = sql_getall([
-            "upload",
-            "{$where} GROUP BY datey", "datey DESC",
-        ]);
+        $dir = sql_getall(["upload",
+            "{$where} GROUP BY datey", "datey DESC", [
+                ":lcms" => $_L['ROOTID'],
+                ":uid"  => $_L['LCMSADMIN']['id'],
+            ]]);
         foreach ($dir as $val) {
             $list['dir'][] = $val['datey'];
         }
@@ -106,18 +107,16 @@ class gallery extends adminbase
     {
         global $_L;
         $datey = $_L['form']['dir'];
-        $where = "type = 'image' AND lcms = '{$_L['ROOTID']}'";
+        $where = "type = 'image' AND lcms = :lcms";
         if ($_L['ROOTID'] != $_L['LCMSADMIN']['id']) {
-            $where .= " AND uid = '{$_L['LCMSADMIN']['id']}'";
+            $where .= " AND uid = :uid";
         }
-        $image = sql_getall([
-            "upload",
-            "{$where} AND datey = :datey",
-            "id DESC",
-            [
+        $image = sql_getall(["upload",
+            "{$where} AND datey = :datey", "id DESC", [
+                ":lcms"  => $_L['ROOTID'],
+                ":uid"   => $_L['LCMSADMIN']['id'],
                 ":datey" => $datey,
-            ],
-        ]);
+            ]]);
         foreach ($image as $val) {
             $size = getimagesize(path_absolute($val['src']));
             switch ($_L['plugin']['oss']['type']) {

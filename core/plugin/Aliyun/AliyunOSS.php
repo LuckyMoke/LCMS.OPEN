@@ -2,6 +2,7 @@
 class AliyunOSS
 {
     public $cfg = [];
+    public $api = "";
     public function __construct($config)
     {
         $this->cfg = $config;

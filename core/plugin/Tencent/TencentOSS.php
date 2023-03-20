@@ -2,6 +2,7 @@
 class TencentOSS
 {
     public $cfg = [];
+    public $api = "";
     public function __construct($config)
     {
         $this->cfg = $config;

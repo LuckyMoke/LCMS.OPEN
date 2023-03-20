@@ -98,11 +98,11 @@
                         </a>
                         <dl class="layui-nav-child">
                             <dd>
-                                <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=profile&action=admin-edit', '个人资料', 1, ['550px', '480px'])">个人资料</div>
+                                <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=profile&action=admin-edit', '个人资料', 1)">个人资料</div>
                             </dd>
                             <if LCMS::SUPER()||$_L['LCMSADMIN']['god']>
                                 <dd>
-                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=god', '上帝视角 - 超级管理员可快速切换登录任意用户后台', 1, ['1000px', '550px'])">上帝视角</div>
+                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=god', '上帝视角 - 超级管理员可快速切换登录任意用户后台', 1)">上帝视角</div>
                                 </dd>
                             </if>
                             <if LCMS::SUPER()>

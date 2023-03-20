@@ -3,6 +3,7 @@ require "libs/Tencent.Api.php";
 class TencentSMS
 {
     public $cfg = [];
+    public $Api;
     /**
      * @description: 初始化配置
      * @param array $config
