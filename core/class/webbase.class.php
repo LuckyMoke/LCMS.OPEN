@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-16 18:46:51
+ * @LastEditTime: 2023-03-23 19:33:56
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,7 +22,14 @@ class webbase extends common
     public function load_web_config()
     {
         global $_L;
-        $_L['ROOTID'] = $_L['form']['rootid'] ?: "0";
+        $_L['ROOTID'] = $_L['form']['rootid'] ?: 0;
+        $webcfg       = array_filter(LCMS::config([
+            "name" => "config",
+            "type" => "sys",
+            "cate" => "web",
+            "lcms" => $_L['ROOTID'],
+        ]));
+        $_L['config']['web'] = $webcfg ? array_merge($_L['config']['web'], $webcfg) : $_L['config']['web'];
     }
     public function load_web_url($domain = "", $scheme = "")
     {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-08-30 23:10:32
+ * @LastEditTime: 2023-03-21 18:03:11
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -77,7 +77,7 @@ class web extends adminbase
                         "name"   => "LC[email][smtp][Smtp]",
                         "value"  => $PLG['smtp']['Smtp'],
                         "cname"  => "hidden email-smtp"],
-                    ["layui" => "input", "title" => "SMTP密码",
+                    ["layui" => "input", "title" => "密码/授权码",
                         "name"   => "LC[email][smtp][Pass]",
                         "value"  => $PLG['smtp']['Pass'],
                         "type"   => "password",

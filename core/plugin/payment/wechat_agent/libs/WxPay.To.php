@@ -1,6 +1,7 @@
 <?php
 class WxPayTo
 {
+    public $api, $cfg, $order;
     /**
      * @description: 接口初始化
      * @param array $init

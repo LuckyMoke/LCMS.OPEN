@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2022-11-13 17:13:20
+ * @LastEditTime: 2023-03-23 19:35:59
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -82,20 +82,20 @@ class admin extends adminbase
     public function doweb()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
                 $domain = parse_url($LC['domain']);
                 if ($domain['host']) {
-                    $LC['https']  = $domain['scheme'] === "https" ? "1" : "0";
+                    $LC['https']  = $domain['scheme'] === "https" ? 1 : 0;
                     $LC['domain'] = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+                } else {
+                    $LC['https'] = "";
                 }
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "web",
                     "form" => $LC,
-                    "lcms" => true,
                 ]);
                 ajaxout(1, "保存成功");
                 break;
@@ -103,10 +103,9 @@ class admin extends adminbase
                 $config = LCMS::config([
                     "type" => "sys",
                     "cate" => "web",
-                    "lcms" => true,
                 ]);
                 $scheme = $config['https'] == "1" ? "https://" : "http://";
-                $form   = array(
+                $form   = [
                     ["layui" => "radio", "title" => "限制访问？",
                         "name"   => "LC[domain_must]",
                         "value"  => $config['domain_must'] ?: 0,
@@ -114,36 +113,36 @@ class admin extends adminbase
                         "radio"  => [
                             ["title" => "限制域名", "value" => 1],
                             ["title" => "不限制域名", "value" => 0],
-                        ],
-                    ],
+                        ]],
                     ["layui"      => "input", "title" => "默认前端域名",
                         "name"        => "LC[domain]",
                         "value"       => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
                         "placeholder" => "http://www.domain.com/",
                         "tips"        => "特别注意结尾的 / 斜杠",
-                        "verify"      => "required",
-                    ],
+                        "verify"      => "required"],
                     ["layui"      => "input", "title" => "默认API域名",
                         "name"        => "LC[domain_api]",
                         "value"       => $config['domain_api'],
                         "placeholder" => "http://www.domain.com/",
                         "tips"        => "特别注意结尾的 / 斜杠",
-                        "verify"      => "required",
-                    ],
+                        "verify"      => "required"],
                     ["layui" => "input", "title" => "默认前端Title",
                         "name"   => "LC[title]",
-                        "value"  => $config['title'],
-                    ],
+                        "value"  => $config['title']],
                     ["layui" => "upload", "title" => "默认前端图片",
                         "name"   => "LC[image_default]",
-                        "value"  => $config['image_default'],
-                    ],
+                        "value"  => $config['image_default']],
                     ["layui" => "textarea", "title" => "平台统计代码",
                         "name"   => "LC[tongji]",
-                        "value"  => $config['tongji'],
-                    ],
+                        "value"  => $config['tongji']],
                     ["layui" => "btn", "title" => "立即保存"],
-                );
+                ];
+                if (!LCMS::SUPER()) {
+                    $form = array_map(function ($val) {
+                        unset($val['verify']);
+                        return $val;
+                    }, $form);
+                }
                 require LCMS::template("own/admin_web");
                 break;
         }

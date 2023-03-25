@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-02-15 22:17:10
+ * @LastEditTime: 2023-03-23 19:30:56
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -72,8 +72,8 @@ class adminbase extends common
             if ($_L['LCMSADMIN']['tuid']) {
                 $_L['LCMSADMIN']['lcms'] = sql_get(["admin", "id = '{$_L['LCMSADMIN']['tuid']}'"])['lcms'];
             }
-            $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == "0" ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
-            $_L['ROOTID'] = LCMS::SUPER() ? "0" : $_L['ROOTID'];
+            $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
+            $_L['ROOTID'] = LCMS::SUPER() ? 0 : $_L['ROOTID'];
         } else {
             if (PHP_SELF == HTTP_QUERY . "index.php") {
                 okinfo($loginurl);
@@ -82,12 +82,19 @@ class adminbase extends common
                 LCMS::X(403, "请重新登录", $okinfourl);
             }
         }
+        $webcfg = array_filter(LCMS::config([
+            "name" => "config",
+            "type" => "sys",
+            "cate" => "web",
+            "lcms" => $_L['ROOTID'],
+        ]));
+        $_L['config']['web'] = $webcfg ? array_merge($_L['config']['web'], $webcfg) : $_L['config']['web'];
     }
     protected function load_web_url($domain = "", $scheme = "")
     {
         global $_L;
         $domain           = $domain ?: ($_L['config']['web']['domain'] ?: HTTP_HOST);
-        $scheme           = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $scheme           = $scheme ?: ($_L['config']['web']['https'] == 1 ? "https://" : "http://");
         $url_site         = "{$scheme}{$domain}/";
         $rootsid          = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url']['web'] = [
