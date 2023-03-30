@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-09 23:56:35
+ * @LastEditTime: 2023-03-28 13:28:11
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -130,7 +130,7 @@ class HTTP
         }
         curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
         curl_setopt(self::$CH, CURLOPT_HEADER, true);
-        curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
+        curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36");
         curl_setopt(self::$CH, CURLOPT_RETURNTRANSFER, true);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYHOST, false);

@@ -2,7 +2,7 @@
     <html>
     <head>
         <title>{{$_L['config']['admin']['title']}}</title>
-        <meta name="generator" content="盘企®PHP开发框架" />
+        <meta name="generator" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY=" />
         <meta name="renderer" content="webkit" />
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -12,9 +12,9 @@
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
         <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?{{$_L['config']['ver']}}" />
-        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?{{$_L['config']['ver']}}" />
-        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?{{$_L['config']['ver']}}"></script>
+        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
+        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript">
             var LCMS = {
                 url: JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}'),
@@ -32,7 +32,8 @@
                     ver: '{{$_L["config"]["ver"]}}'
                 },
                 app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
-                ROOTID: parseInt('{{$_L["ROOTID"]}}')
+                ROOTID: parseInt('{{$_L["ROOTID"]}}'),
+                onload : []
             }, LCMSJSONLOAD = [];
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="https://lib.baomitu.com/eruda/2.11.3/eruda.min.js"></scr'+'ipt><scr'+'ipt>eruda.init();</scr'+'ipt>');

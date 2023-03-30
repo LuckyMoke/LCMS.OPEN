@@ -12,9 +12,9 @@
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
         <link href="{{$_L['url']['site']}}favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?{{$_L['config']['ver']}}" />
-        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?{{$_L['config']['ver']}}" />
-        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?{{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?lcmsver={{$_L['config']['ver']}}" />
         <script type="text/javascript">
             var LCMS = {
                 url: JSON.parse('{{json_encode($_L["url"])}}'),
@@ -98,16 +98,29 @@
                         </a>
                         <dl class="layui-nav-child">
                             <dd>
-                                <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=profile&action=admin-edit', '个人资料', 1)">个人资料</div>
+                                <div style="cursor:pointer;" onclick="LCMS.util.iframe({
+                                    title: '个人资料',
+                                    url: LCMS.url.admin+'?n=user&c=admin&a=profile&action=admin-edit',
+                                    shade: true,
+                                })">个人资料</div>
                             </dd>
                             <if LCMS::SUPER()||$_L['LCMSADMIN']['god']>
                                 <dd>
-                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=user&c=admin&a=god', '上帝视角 - 超级管理员可快速切换登录任意用户后台', 1)">上帝视角</div>
+                                    <div style="cursor:pointer;" onclick="LCMS.util.iframe({
+                                        title: '上帝视角 - 超级管理员可快速切换登录任意用户后台',
+                                        url: LCMS.url.admin+'?n=user&c=admin&a=god',
+                                        shade: true,
+                                    })">上帝视角</div>
                                 </dd>
                             </if>
                             <if LCMS::SUPER()>
                                 <dd>
-                                    <div style="cursor:pointer;" onclick="LJS._iframe(LCMS.url.admin+'?n=config&c=admin&a=clear&action=admin-edit', '清除缓存', 1, ['400px', '220px'])">清除缓存</div>
+                                    <div style="cursor:pointer;" onclick="LCMS.util.iframe({
+                                        title: '清除缓存',
+                                        url: LCMS.url.admin+'?n=config&c=admin&a=clear&action=admin-edit',
+                                        shade: true,
+                                        area: ['400px', '220px']
+                                    })">清除缓存</div>
                                 </dd>
                             </if>
                         </dl>
@@ -132,10 +145,10 @@
             </li>
         </script>
         <script type="text/javascript">function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&alert("请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。");</script>
-        <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.js?{{$_L['config']['ver']}}"></script>
-        <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?{{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.js?lcmsver={{$_L['config']['ver']}}"></script>
+        <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript">
-            $(window).load(function(){LJS._loadend()})
+            $(window).load(function(){LCMS.util.loading("close")})
         </script>
     </body>
     </html>

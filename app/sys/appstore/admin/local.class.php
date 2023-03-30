@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-26 15:17:49
+ * @LastEditTime: 2023-03-28 19:54:14
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -100,13 +100,14 @@ class local extends adminbase
                         "name"   => "LC[on]",
                         "value"  => $config['default']['on'] ?: 0,
                         "radio"  => [
-                            ["title" => "关闭", "value" => 0],
-                            ["title" => "打开第一个应用", "value" => 1],
-                            ["title" => "打开指定应用", "value" => 2],
+                            ["title" => "关闭", "value" => 0, "tab" => "tab0"],
+                            ["title" => "打开第一个应用", "value" => 1, "tab" => "tab1"],
+                            ["title" => "打开指定应用", "value" => 2, "tab" => "tab2"],
                         ]],
                     ["layui" => "select", "title" => "指定应用",
                         "name"   => "LC[name]",
                         "value"  => $config['default']['name'],
+                        "cname"  => "hidden tab2",
                         "option" => $applist],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];

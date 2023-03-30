@@ -4,29 +4,45 @@
 <script type="text/javascript">
     var backupEach = function (tables, index) {
         if (tables.length - 1 >= index) {
-            LJS._tips({
+            LCMS.util.notify({
                 title: "正在备份（" + (index + 1) + "/" + tables.length + "）",
-                msg: tables[index]
+                content: tables[index]
             });
-            LJS._post(LCMS.url.own_form + "index&action=backup-table", {
-                name: tables[index]
-            }, function (res) {
-                if (res.code == 1) {
-                    LJS._lazydo(function () {
-                        backupEach(tables, index + 1);
-                    }, 500);
-                }
-            }, "json", true, 0);
+            LCMS.util.ajax({
+                type: "POST",
+                url: LCMS.url.own_form + "index&action=backup-table",
+                data: {
+                    name: tables[index]
+                },
+                layer: true,
+                timeout: 0,
+                success: function (res) {
+                    if (res.code == 1) {
+                        setTimeout(function () {
+                            backupEach(tables, index + 1);
+                        }, 500);
+                    }
+                },
+            });
         } else {
-            LJS._post(LCMS.url.own_form + "index&action=backup-ok", {}, function (res) {
-                if (res.code == 1) {
-                    LJS._tips(res.msg);
-                    LJS._lazydo(function () {
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    LJS._tips(res.msg, 0);
-                }
+            LCMS.util.ajax({
+                type: "POST",
+                url: LCMS.url.own_form + "index&action=backup-ok",
+                success: function (res) {
+                    if (res.code == 1) {
+                        LCMS.util.notify({
+                            content: res.msg
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        LCMS.util.notify({
+                            type: "error",
+                            content: res.msg
+                        });
+                    }
+                },
             });
         }
     }, backupDatabase = function (tables) {

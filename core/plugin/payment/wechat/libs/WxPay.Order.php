@@ -195,14 +195,17 @@ class WxPayOrder
             return $user['openid'];
         } else {
             if ($this->cfg['thirdapi']) {
-                if ($_L['form']['openid']) {
-                    SESSION::set($sname, [
-                        "openid" => $_L['form']['openid'],
-                    ]);
-                    return $_L['form']['openid'];
-                } else {
-                    okinfo($this->cfg['thirdapi'] . "oauth&scope=snsapi_base&goback=" . urlencode($_L['url']['now']));
+                if (in_string($_L['form']['code'], "OPENID|")) {
+                    $code = str_replace("OPENID|", "", $_L['form']['code']);
+                    $code = json_decode(ssl_decode($code), true);
+                    if ($code['time'] > time()) {
+                        SESSION::set($sname, [
+                            "openid" => $code['openid'],
+                        ]);
+                        return $code['openid'];
+                    }
                 }
+                okinfo($this->cfg['thirdapi'] . "oauth&scope=snsapi_base&goback=" . urlencode($_L['url']['now']));
             } else {
                 if (!isset($_L['form']['code'])) {
                     $query = http_build_query([
