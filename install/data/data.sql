@@ -77,7 +77,7 @@ CREATE TABLE `[_PRE]log` (
   `user` varchar(32) DEFAULT NULL,
   `type` varchar(16) DEFAULT NULL,
   `ip` varchar(64) DEFAULT NULL,
-  `info` varchar(255) DEFAULT NULL,
+  `info` longtext,
   `url` varchar(255) DEFAULT NULL,
   `parameter` longtext,
   `addtime` datetime DEFAULT NULL,

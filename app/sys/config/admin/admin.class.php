@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-23 19:35:59
+ * @LastEditTime: 2023-04-02 22:27:29
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -332,7 +332,7 @@ class admin extends adminbase
                     deldir(PATH_CACHE . "static");
                 }
                 if ($LF['cfg']) {
-                    sql_delete(["cache"]);
+                    sql_query("TRUNCATE {$_L['table']['cache']}");
                 }
                 ajaxout(1, "清除成功", "close");
                 break;

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-01-15 17:05:24
+ * @LastEditTime: 2023-04-02 22:02:17
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -116,31 +116,33 @@ class LCMS
                 ":name" => $name,
                 ":lcms" => $lcms,
             ]]);
-        if (!$para && $cache) {
-            return sql2arr($cache['parameter']);
-        } elseif ($para === "clear") {
-            sql_delete(["cache",
-                "name = :name AND lcms = :lcms", [
-                    ":name" => $name,
-                    ":lcms" => $lcms,
-                ]]);
-        } elseif (is_array($para)) {
-            if ($cache) {
-                sql_update(["cache", [
-                    "parameter"  => arr2sql($para),
-                    "updatetime" => datenow(),
-                ], "name = :name AND lcms = :lcms", [
-                    ":name" => $name,
-                    ":lcms" => $lcms,
-                ]]);
-            } else {
-                sql_insert(["cache", [
-                    "name"       => $name,
-                    "parameter"  => arr2sql($para),
-                    "updatetime" => datenow(),
-                    "lcms"       => $lcms,
-                ]]);
+        if ($para) {
+            if ($para === "clear") {
+                sql_delete(["cache",
+                    "name = :name AND lcms = :lcms", [
+                        ":name" => $name,
+                        ":lcms" => $lcms,
+                    ]]);
+            } elseif (is_array($para)) {
+                if ($cache) {
+                    sql_update(["cache", [
+                        "parameter"  => arr2sql($para),
+                        "updatetime" => datenow(),
+                    ], "name = :name AND lcms = :lcms", [
+                        ":name" => $name,
+                        ":lcms" => $lcms,
+                    ]]);
+                } else {
+                    sql_insert(["cache", [
+                        "name"       => $name,
+                        "parameter"  => arr2sql($para),
+                        "updatetime" => datenow(),
+                        "lcms"       => $lcms,
+                    ]]);
+                }
             }
+        } else {
+            return $cache ? sql2arr($cache['parameter']) : [];
         }
     }
     /**

@@ -34,7 +34,7 @@
                 app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
                 ROOTID: parseInt('{{$_L["ROOTID"]}}'),
                 onload : []
-            }, LCMSJSONLOAD = [];
+            };
             if (window.location.href.search('console=true') != -1) {
                 document.write('<scr'+'ipt src="https://lib.baomitu.com/eruda/2.11.3/eruda.min.js"></scr'+'ipt><scr'+'ipt>eruda.init();</scr'+'ipt>');
             };

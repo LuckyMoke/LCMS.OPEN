@@ -18,7 +18,7 @@
         <meta content="telephone=no" name="format-detection" />
         <link rel="icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" rel="shortcut icon" type="image/x-icon" />
         <if !$_L['ui']['nocache']>
-            <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename()).'.css?'}}lcmsver={{$_L['config']['ver']}}" />
+            <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename())}}.css?tplver={{TPL::$ver}}&lcmsver={{$_L['config']['ver']}}" />
         </if>
         <if $_L['ui']['css-root']>
             <?php $cssroot = "<style type=\"text/css\">:root{";?>
@@ -29,12 +29,12 @@
         </if>
         <if $_L['ui']['css']>
             <loop array_unique($_L['ui']['css']),$css>
-                <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],$css).'?tplver='.TPL::$ver}}" />
+                <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],$css)}}?tplver={{TPL::$ver}}" />
             </loop>
         </if>
         <if $_L['ui']['js-head']>
             <loop array_unique($_L['ui']['js-head']),$js>
-                <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?tplver='.TPL::$ver}}"></script>
+                <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js)}}?tplver={{TPL::$ver}}"></script>
             </loop>
         </if>
         <if $_L['ui']['htmlhead']>

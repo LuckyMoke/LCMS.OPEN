@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-16 13:35:08
+ * @LastEditTime: 2023-04-03 02:20:33
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -115,10 +115,11 @@ class LEVEL
                         $icon = "{$_L['url']['app']}open/{$name}/icon.gif?ver={$app['info']['ver']}";
                     }
                     $cache[$name] = [
-                        "title" => $app['info']['title'],
-                        "ver"   => $app['info']['ver'],
-                        "icon"  => $icon,
-                        "url"   => $app['url']['all'],
+                        "title"       => $app['info']['title'],
+                        "ver"         => $app['info']['ver'],
+                        "description" => $app['info']['description'],
+                        "icon"        => $icon,
+                        "url"         => $app['url']['all'],
                     ];
                     $index++;
                 }

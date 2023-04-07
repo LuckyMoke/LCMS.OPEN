@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-13 16:35:25
+ * @LastEditTime: 2023-04-01 18:53:45
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -107,12 +107,13 @@ class MP
      * @param string $query
      * @return {*}
      */
-    public function get_urllink($path, $query = "")
+    public function get_urllink($path, $query = "", $env = "release")
     {
         $this->access_token();
         $result = http::post("https://api.weixin.qq.com/wxa/generate_urllink?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
-            "path"  => $path,
-            "query" => $query,
+            "path"        => $path,
+            "query"       => $query,
+            "env_version" => $env,
         ]));
         $result = json_decode($result, true);
         return $result ?: [];

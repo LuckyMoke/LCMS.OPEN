@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-28 19:54:14
+ * @LastEditTime: 2023-04-07 00:52:04
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -130,6 +130,10 @@ class local extends adminbase
             $this->updatesql(str_replace("[TABLE_PRE]", $_L['mysql']['pre'], file_get_contents($dir . "uninstall.sql")));
         }
         deldir($dir);
+        LCMS::log([
+            "type" => "system",
+            "info" => "卸载应用-{$app}",
+        ]);
         ajaxout(1, '卸载成功');
     }
     /**

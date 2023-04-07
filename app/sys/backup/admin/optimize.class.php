@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2023-03-04 18:17:29
+ * @LastEditTime: 2023-04-07 00:49:03
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -58,6 +58,11 @@ class optimize extends adminbase
                         ]);
                     }
                 }
+                $names = implode("、", array_column($LC, "Name"));
+                LCMS::log([
+                    "type" => "system",
+                    "info" => "数据优化-{$LF['action']}-{$names}",
+                ]);
                 ajaxout(2, "数据表操作完成", "showResult", $result ?: []);
                 break;
             default:

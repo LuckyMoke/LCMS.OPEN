@@ -1,9 +1,9 @@
 <if !$_L['ui']['nocache']>
-    <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'],TPL::cachename()).'.js?'}}lcmsver={{$_L['config']['ver']}}"></script>
+    <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'],TPL::cachename())}}.js?tplver={{TPL::$ver}}&lcmsver={{$_L['config']['ver']}}"></script>
 </if>
 <if $_L['ui']['js']>
     <loop array_unique($_L['ui']['js']),$js>
-        <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js).'?tplver='.TPL::$ver}}"></script>
+        <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js)}}?tplver={{TPL::$ver}}"></script>
     </loop>
 </if>
 <if $_L['ui']['xhr']>
