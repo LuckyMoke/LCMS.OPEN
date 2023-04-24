@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-04-24 15:34:08
+ * @LastEditTime: 2023-04-24 16:11:27
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -182,10 +182,12 @@ class repair extends adminbase
             if ($new[$name]) {
                 foreach ($data as $key => $val) {
                     if ($key != "LCMSDATAINDEX" && !$new[$name][$key]) {
-                        if ($val['index']) {
-                            $result[$name]['data'][$key]['indexdrop'] = true;
+                        if (substr($key, 0, 4) != "own_") {
+                            if ($val['index']) {
+                                $result[$name]['data'][$key]['indexdrop'] = true;
+                            }
+                            $result[$name]['data'][$key]['columndrop'] = true;
                         }
-                        $result[$name]['data'][$key]['columndrop'] = true;
                     }
                 }
                 foreach ($data['LCMSDATAINDEX'] as $key => $val) {
