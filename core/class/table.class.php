@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-20 15:17:51
+ * @LastEditTime: 2023-04-24 15:43:22
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -132,17 +132,20 @@ class TABLE
                                 $options .= "<option value='{$option['value']}'" . ($val['value'] == $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
                             }
                         }
-                        $html .= '<div class="layui-input-inline"><select name="LC[' . $val['name'] . ']" lay-verify><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
+                        $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix layui-input-split">
+                        <i class="layui-icon layui-icon-more-vertical"></i></div><select name="LC[' . $val['name'] . ']" lay-verify><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
                         break;
                     case 'year':
                     case 'month':
                     case 'date':
                     case 'time':
                     case 'datetime':
-                        $html .= '<div class="layui-input-inline lcms-table-toolbar-date"><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/></div>';
+                        $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date"><div class="layui-input-prefix layui-input-split">
+                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/></div>';
                         break;
                     default:
-                        $html .= '<div class="layui-input-inline"><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input"></div>';
+                        $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix layui-input-split">
+                        <i class="layui-icon layui-icon-search"></i></div><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input" lay-affix="clear"></div>';
                         break;
                 }
             }

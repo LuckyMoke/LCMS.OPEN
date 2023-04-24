@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-16 12:19:54
+ * @LastEditTime: 2023-04-24 12:18:45
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -145,7 +145,7 @@ class admin extends adminbase
                     ["layui" => "input", "title" => "手机号",
                         "name"   => "LC[mobile]",
                         "value"  => $admin['mobile'],
-                        "type"   => "phone"],
+                        "type"   => "number"],
                     ["layui" => "radio", "title" => "账号状态",
                         "name"   => "LC[status]",
                         "value"  => $admin['status'] != null ? $admin['status'] : 0,
@@ -367,7 +367,7 @@ class admin extends adminbase
                     ["layui"   => "input", "title" => "手机号",
                         "name"     => "mobile",
                         "value"    => $admin['mobile'],
-                        "type"     => "phone",
+                        "type"     => "number",
                         "disabled" => $admin['type'] != "lcms" ? "1" : "",
                     ],
                 ];

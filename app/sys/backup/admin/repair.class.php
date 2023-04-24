@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-03-04 16:57:41
+ * @LastEditTime: 2023-04-24 15:34:08
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -27,44 +27,55 @@ class repair extends adminbase
         foreach ($diff as $name => $val) {
             $sqls  = [];
             $upkey = [];
-            if ($val['type'] === "create") {
-                foreach ($val['data'] as $key => $data) {
-                    if ($key != "LCMSDATAINDEX") {
-                        $sqls[] = $this->setKey($key, $data, true);
+            switch ($val['type']) {
+                case 'create':
+                    foreach ($val['data'] as $key => $data) {
+                        if ($key != "LCMSDATAINDEX") {
+                            $sqls[] = $this->setKey($key, $data, true);
+                        }
                     }
-                }
-                foreach ($val['data'] as $key => $data) {
-                    if ($key == "LCMSDATAINDEX" || $data['index']) {
-                        $sqls[] = $this->setIndex($key, $data, true);
+                    foreach ($val['data'] as $key => $data) {
+                        if ($key == "LCMSDATAINDEX" || $data['index']) {
+                            $sqls[] = $this->setIndex($key, $data, true);
+                        }
                     }
-                }
-                $sqls = array_filter($sqls);
-                if (!$sqls) {
-                    continue;
-                }
-                $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
-            } else {
-                foreach ($val['data'] as $key => $data) {
-                    if ($key != "LCMSDATAINDEX") {
-                        $sqls[]  = $this->setKey($key, $data);
-                        $upkey[] = $this->setVal($key, $data);
+                    $sqls = array_filter($sqls);
+                    if (!$sqls) {
+                        continue;
                     }
-                }
-                foreach ($val['data'] as $key => $data) {
-                    if ($key == "LCMSDATAINDEX" || $data['index']) {
-                        $sqls[] = $this->setIndex($key, $data);
+                    $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
+                    break;
+                default:
+                    foreach ($val['data'] as $key => $data) {
+                        if ($data['indexdrop']) {
+                            $sqls[] = "DROP INDEX `{$key}`";
+                            if ($data['continue']) {
+                                continue;
+                            }
+                        }
+                        if ($data['columndrop']) {
+                            $sqls[] = "DROP COLUMN `{$key}`";
+                        } else {
+                            if ($key != "LCMSDATAINDEX") {
+                                $sqls[]  = $this->setKey($key, $data);
+                                $upkey[] = $this->setVal($key, $data);
+                            }
+                            if ($key == "LCMSDATAINDEX" || $data['index']) {
+                                $sqls[] = $this->setIndex($key, $data);
+                            }
+                        }
                     }
-                }
-                foreach ($upkey as $val) {
-                    if ($val) {
-                        $mysql[] = "UPDATE `{$PRE}{$name}` {$val};";
+                    foreach ($upkey as $val) {
+                        if ($val) {
+                            $mysql[] = "UPDATE `{$PRE}{$name}` {$val};";
+                        }
                     }
-                }
-                $sqls = array_filter($sqls);
-                if (!$sqls) {
-                    continue;
-                }
-                $mysql[] = "ALTER TABLE `{$PRE}{$name}` " . implode(",\n", $sqls) . ";";
+                    $sqls = array_filter($sqls);
+                    if (!$sqls) {
+                        continue;
+                    }
+                    $mysql[] = "ALTER TABLE `{$PRE}{$name}` \n" . implode(",\n", $sqls) . ";";
+                    break;
             }
         }
         $mysql = $mysql ? implode("\n\n", $mysql) : [];
@@ -165,6 +176,24 @@ class repair extends adminbase
                     "type" => "create",
                     "data" => $data,
                 ];
+            }
+        }
+        foreach ($old as $name => $data) {
+            if ($new[$name]) {
+                foreach ($data as $key => $val) {
+                    if ($key != "LCMSDATAINDEX" && !$new[$name][$key]) {
+                        if ($val['index']) {
+                            $result[$name]['data'][$key]['indexdrop'] = true;
+                        }
+                        $result[$name]['data'][$key]['columndrop'] = true;
+                    }
+                }
+                foreach ($data['LCMSDATAINDEX'] as $key => $val) {
+                    if (!$new[$name]['LCMSDATAINDEX'][$key]) {
+                        $result[$name]['data'][$key]['indexdrop'] = true;
+                        $result[$name]['data'][$key]['continue']  = true;
+                    }
+                }
             }
         }
         return $result ?: [];

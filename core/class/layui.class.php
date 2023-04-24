@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-22 14:36:16
+ * @LastEditTime: 2023-04-24 12:23:32
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -60,11 +60,12 @@ class LAY
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['type']        = $para['type'] ? $para['type'] : "text";
+        $para['affix']       = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['affix']}{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
                 </div>
             </div>";
         echo $html;
@@ -75,12 +76,13 @@ class LAY
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['type']        = $para['type'] ? $para['type'] : "text";
+        $para['affix']       = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['affix']}{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
@@ -266,9 +268,9 @@ class LAY
         $checkbox = "";
         foreach ($para['checkbox'] as $key => $val) {
             if ($val['name']) {
-                $checkbox .= "<input type='checkbox' name='{$val['name']}' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($val['value'] == '1' ? ' checked' : '') . " />";
+                $checkbox .= "<input type='checkbox' name='{$val['name']}' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($val['value'] == '1' ? ' checked' : '') . " lay-skin='tag' />";
             } else {
-                $checkbox .= "<input type='checkbox' name='{$para['name']}[{$val['value']}]' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($para['value'][$val['value']] ? ' checked' : '') . " />";
+                $checkbox .= "<input type='checkbox' name='{$para['name']}[{$val['value']}]' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($para['value'][$val['value']] ? ' checked' : '') . " lay-skin='tag' />";
             }
         }
         $html = "
