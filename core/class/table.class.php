@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-24 15:43:22
+ * @LastEditTime: 2023-04-24 20:34:27
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -11,32 +11,36 @@ class TABLE
 {
     public static $count;
     /**
-     * [set 新版获取表格数据]
-     * @param  [type] $table [description]
-     * @param  string $where [description]
-     * @param  string $order [description]
-     * @param  [type] $para  [description]
-     * @param  [type] $field [description]
-     * @return [type]        [description]
+     * @description: 获取表格数据
+     * @param string $table
+     * @param string $where
+     * @param string $order
+     * @param array $para
+     * @param string $field
+     * @return array
      */
     public static function set($table, $where = "", $order = "", $para = [], $field = null)
     {
         global $_L;
-        $page     = $_L['form']['page'];
-        $limit    = $_L['form']['limit'];
-        $count    = sql_counter([$table, $where, $para]);
-        $page_max = ceil($count / $limit);
-        if ($page <= $page_max) {
-            $min  = ($page - 1) * $limit;
-            $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
+        $page  = $_L['form']['page'] ?: 1;
+        $limit = $_L['form']['limit'];
+        $count = sql_counter([$table, $where, $para]);
+        if ($limit > 0) {
+            $page_max = ceil($count / $limit);
+            if ($page <= $page_max) {
+                $min  = ($page - 1) * $limit;
+                $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
+            }
+        } else {
+            $data = sql_getall([$table, $where, $order, $para, "", $field]);
         }
         self::$count = $count;
         return $data;
     }
     /**
-     * [html 生成数据表格html]lay-search
-     * @param  string $table [description]
-     * @return [type]        [description]
+     * @description: 生成数据表格
+     * @param array $table
+     * @return string
      */
     public static function html($table = [])
     {
@@ -79,9 +83,9 @@ class TABLE
         echo $html;
     }
     /**
-     * [toolbar 获取顶部bar]
-     * @param  string $toolbar [description]
-     * @return [type]          [description]
+     * @description: 获取顶部bar
+     * @param string $toolbar
+     * @return array
      */
     public static function toolbar($toolbar = "")
     {
@@ -108,9 +112,9 @@ class TABLE
         ];
     }
     /**
-     * [search 获取search]
-     * @param  [type] $arr [description]
-     * @return [type]      [description]
+     * @description: 获取search
+     * @param array $arr
+     * @return string
      */
     public static function search($arr)
     {
@@ -153,10 +157,9 @@ class TABLE
         }
     }
     /**
-     * [colsbar 获取每行bar]
-     * @param  [type] $colsbar [description]
-     * @param  string $id      [description]
-     * @return [type]          [description]
+     * @description: 获取每行bar
+     * @param array|string $colsbar
+     * @return array
      */
     public static function colsbar($colsbar)
     {
@@ -182,35 +185,9 @@ class TABLE
         }
     }
     /**
-     * [data 获取表格数据]
-     * @param  [type] $table [description]
-     * @param  string $where [description]
-     * @param  string $order [description]
-     * @param  [type] $para  [description]
-     * @param  [type] $field [description]
-     * @return [type]        [description]
-     */
-    public static function data($table, $where = "", $order = "", $para = [], $field = null)
-    {
-        global $_L;
-        $page     = $_L['form']['page'];
-        $limit    = $_L['form']['limit'];
-        $count    = sql_counter([$table, $where, $para]);
-        $page_max = ceil($count / $limit);
-        if ($page <= $page_max) {
-            $min  = ($page - 1) * $limit;
-            $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
-        }
-        self::$count = $count;
-        $result      = [
-            "data" => $data,
-        ];
-        return $result;
-    }
-    /**
-     * [del 删除表格数据]
-     * @param  [type] $table [description]
-     * @return [type]        [description]
+     * @description: 删除表格数据
+     * @param string $table
+     * @return bool
      */
     public static function del($table)
     {
@@ -229,9 +206,49 @@ class TABLE
         return sql_error() ? false : true;
     }
     /**
-     * [tree 获取树状表格]
-     * @param  string $tree [description]
-     * @return [type]       [description]
+     * @description: 新树形表格
+     * @param array $tree
+     * @return string
+     */
+    // public static function tree($tree = [])
+    // {
+    //     global $_L;
+    //     if (is_array($tree['toolbar'])) {
+    //         $tree['toolbar'] = array_merge($tree['toolbar'], [[
+    //             "title" => "展开/折叠",
+    //             "event" => "treeTableOpenClose",
+    //             "color" => "primary",
+    //         ]]);
+    //     }
+    //     $toolbar = self::toolbar($tree['toolbar']);
+    //     $laytpl  = $toolbar['laytpl'];
+    //     $toolbar = $toolbar['toolbar'];
+    //     foreach ($tree['cols'] as $key => $val) {
+    //         if ($val['toolbar']) {
+    //             $colsbar = self::colsbar($val['toolbar']);
+    //             $laytpl .= $colsbar['laytpl'];
+    //             $tree['cols'][$key]['toolbar'] = $colsbar['colsbarid'];
+    //         }
+    //     }
+    //     $data = [
+    //         "url"            => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
+    //         "defaultToolbar" => [[
+    //             "title"    => "刷新",
+    //             "layEvent" => "LCMSTABLE_REFRESH",
+    //             "icon"     => "layui-icon-refresh",
+    //         ], "filter", "print", "exports"],
+    //         "toolbar"        => $toolbar,
+    //         "cols"           => $tree['cols'],
+    //         "pid"            => $tree['pid'] ?: "pid",
+    //         "show"           => $tree['show'] ?: "title",
+    //     ];
+    //     $html = "<div class='lcms-table-box' id='{$tree['id']}'><table class='lcms-table lcms-table-tree' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$laytpl}</div>";
+    //     echo $html;
+    // }
+    /**
+     * @description: 树形表格
+     * @param array $tree
+     * @return string
      */
     public static function tree($tree = [])
     {
@@ -268,6 +285,11 @@ class TABLE
      * @param  string $colsbarid [description]
      * @return [type]            [description]
      */
+    /**
+     * @description: 树形表格获取每行bar
+     * @param array|string $colsbar
+     * @return array
+     */
     public static function tree_colsbar($colsbar)
     {
         global $_L;
@@ -292,9 +314,9 @@ class TABLE
         }
     }
     /**
-     * [out 输出表格数据]
-     * @param  [type] $arr [description]
-     * @return [type]      [description]
+     * @description: 输出表格数据
+     * @param array $arr
+     * @return array
      */
     public static function out($arr)
     {
@@ -332,6 +354,6 @@ class TABLE
             "code"  => 0,
             "msg"   => self::$count > 0 ? "success" : "无数据",
         ]);
-        die;
+        exit;
     }
 }
