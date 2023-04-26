@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-24 20:34:27
+ * @LastEditTime: 2023-04-26 13:45:26
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -145,7 +145,7 @@ class TABLE
                     case 'time':
                     case 'datetime':
                         $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date"><div class="layui-input-prefix layui-input-split">
-                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/></div>';
+                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix layui-input-split"><i class="layui-icon layui-icon-down"></i></div></div>';
                         break;
                     default:
                         $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix layui-input-split">
@@ -337,12 +337,19 @@ class TABLE
                             }
                             $val['text']       = $val['text'] ?: "启用|关闭";
                             $checked           = $val['value'] > 0 ? "checked" : "";
-                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' lay-text='{$val['text']}' {$checked}>";
+                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' title='{$val['text']}' {$checked}>";
                             break;
                         case 'image':
                             $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";
                             $val['src']        = in_string($val['src'], "../upload/") ? oss($val['src']) : $val['src'];
                             $arr[$index][$key] = $val['src'] ? "<img src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='max-width:none;{$val['style']}'/>" : "";
+                            break;
+                        case 'link':
+                            if (!in_string($val['url'], "javascript:") && !is_url($val['url'])) {
+                                $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
+                            }
+                            $val['target']     = $val['target'] ? " target={$val['target']}" : "";
+                            $arr[$index][$key] = "<a href=\"{$val['url']}\"{$val['target']}><i class='layui-icon layui-icon-unlink'></i> {$val['title']}</a>";
                             break;
                     }
                 }

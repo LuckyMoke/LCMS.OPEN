@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-02 22:27:29
+ * @LastEditTime: 2023-04-25 13:43:50
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -340,9 +340,10 @@ class admin extends adminbase
                 $form = [
                     ["layui"   => "checkbox", "title" => "缓存类型",
                         "checkbox" => [
-                            ["title" => "页面缓存", "name" => "tpl", "value" => "1"],
-                            ["title" => "CSS/JS缓存", "name" => "static", "value" => "0"],
-                            ["title" => "临时配置", "name" => "cfg", "value" => "0"],
+                            ["title" => "模板缓存", "name" => "tpl", "value" => 1],
+                            ["title" => "配置缓存", "name" => "cfg", "value" => 0],
+                            ["title" => "浏览器缓存", "name" => "browser", "value" => 0],
+                            ["title" => "CSS/JS缓存", "name" => "static", "value" => 0],
                         ],
                     ],
                     ["layui" => "btn", "title" => "立即清除"],

@@ -1,6 +1,12 @@
 <template "ui/head" />
 <template "ui/iframe" />
-<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}clear&action=save" method="post" target="_self">
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}clear&action=save" method="POST" target="_self" data-onsubmit="clearCache">
     <ui form($form) />
 </form>
+<script>
+    var clearCache = function (form, callback) {
+        form.browser > 0 && layui.data("LCMS_cache", null);
+        callback(true, form);
+    }
+</script>
 <template "ui/foot" />

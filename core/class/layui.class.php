@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-24 12:23:32
+ * @LastEditTime: 2023-04-26 13:43:17
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -237,7 +237,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-switch{$para['tipsbox']}'>
-                    <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' lay-text='{$para['text']}'{$para['url']}{$para['timeout']}{$para['disabled']}{$para['checked']}>
+                    <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' title='{$para['text']}'{$para['url']}{$para['timeout']}{$para['disabled']}{$para['checked']}>
                 </div>
             </div>";
         echo $html;
@@ -264,13 +264,14 @@ class LAY
     }
     public static function checkbox($para)
     {
-        $para     = self::start($para);
-        $checkbox = "";
+        $para         = self::start($para);
+        $para['skin'] = $para['skin'] ?: "primary";
+        $checkbox     = "";
         foreach ($para['checkbox'] as $key => $val) {
             if ($val['name']) {
-                $checkbox .= "<input type='checkbox' name='{$val['name']}' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($val['value'] == '1' ? ' checked' : '') . " lay-skin='tag' />";
+                $checkbox .= "<input type='checkbox' name='{$val['name']}' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($val['value'] == '1' ? ' checked' : '') . " lay-skin='{$para['skin']}' />";
             } else {
-                $checkbox .= "<input type='checkbox' name='{$para['name']}[{$val['value']}]' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($para['value'][$val['value']] ? ' checked' : '') . " lay-skin='tag' />";
+                $checkbox .= "<input type='checkbox' name='{$para['name']}[{$val['value']}]' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($para['value'][$val['value']] ? ' checked' : '') . " lay-skin='{$para['skin']}' />";
             }
         }
         $html = "
