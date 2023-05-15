@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-25 13:43:50
+ * @LastEditTime: 2023-04-28 14:27:55
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -342,7 +342,7 @@ class admin extends adminbase
                         "checkbox" => [
                             ["title" => "模板缓存", "name" => "tpl", "value" => 1],
                             ["title" => "配置缓存", "name" => "cfg", "value" => 0],
-                            ["title" => "浏览器缓存", "name" => "browser", "value" => 0],
+                            ["title" => "本地缓存", "name" => "browser", "value" => 0],
                             ["title" => "CSS/JS缓存", "name" => "static", "value" => 0],
                         ],
                     ],

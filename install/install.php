@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-01-05 14:12:27
- * @LastEditTime: 2023-03-06 11:27:32
+ * @LastEditTime: 2023-05-04 15:52:04
  * @Description: 安装处理文件
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -143,7 +143,11 @@ switch ($_GET['action']) {
             $cfg = str_replace("[db_{$key}]", $val, $cfg);
         }
         file_put_contents(PATH_CORE . "config.php", $cfg);
-        ajaxout(1, "success");
+        if (file_get_contents(PATH_CORE . "config.php")) {
+            ajaxout(1, "success");
+        } else {
+            ajaxout(0, "无法生成配置文件，请检查目录权限，或着关闭防篡改之类的插件！");
+        }
         break;
     case 'admin':
         require_once PATH_CORE . "config.php";

@@ -39,7 +39,7 @@ PHP扩展：zip、curl、gd（宝塔均默认开启）
 
 #### 开发文档
 
-[应用开发文档](https://www.kancloud.cn/luckymoke/lcms)
+[应用开发文档](https://doc.ourcms.cn/)
 
 [模板开发文档](https://doc.ourcms.cn/)
 

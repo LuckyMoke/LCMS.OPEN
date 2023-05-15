@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-26 13:43:17
+ * @LastEditTime: 2023-05-08 17:29:03
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -210,7 +210,7 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-date' data-value='{$para['value']}' data-type='{$para['type']}' data-range='{$para['range']}' data-min='{$para['min']}' data-max='{$para['max']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
+                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' readonly autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>

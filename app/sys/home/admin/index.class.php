@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2022-06-11 16:38:44
+ * @LastEditTime: 2023-04-28 12:31:17
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -29,6 +29,9 @@ class index extends adminbase
         $info = server_info();
         if ($_L['LCMSADMIN']['lasttime'] && $_L['LCMSADMIN']['lasttime'] > "0000-00-00 00:00:00") {
             $lasttime = (strtotime($_L['LCMSADMIN']['lasttime']) - time()) / 86400;
+        }
+        if (LCMS::SUPER() && $_L['developer']['appstore'] !== 0) {
+            $update = 1;
         }
         require LCMS::template("own/index");
     }

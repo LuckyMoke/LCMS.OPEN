@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-21 18:03:11
+ * @LastEditTime: 2023-05-13 12:36:29
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -256,6 +256,7 @@ class web extends adminbase
                         "name"        => "LC[oss][domain]",
                         "value"       => $plugin['oss']['domain'],
                         "placeholder" => "https://www.domain.com/",
+                        "tips"        => "请填写完整域名地址 https://www.domain.com/",
                         "cname"       => "hidden oss-qiniu oss-tencent oss-aliyun"],
                     ["layui" => "input", "title" => "AccessKey",
                         "name"   => "LC[oss][qiniu][AccessKey]",

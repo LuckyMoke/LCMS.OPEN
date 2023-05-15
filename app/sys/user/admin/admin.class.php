@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-24 12:18:45
+ * @LastEditTime: 2023-05-11 15:26:56
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -160,7 +160,7 @@ class admin extends adminbase
                         "name"    => "admin_level",
                         "value"   => "{$admin['lcms']}/{$admin['type']}",
                         "tips"    => "先新建用户权限再选择",
-                        "default" => "上级用户|用户权限",
+                        "default" => "请选择|请选择",
                         "verify"  => "required",
                         "url"     => "select&action=admin-level"],
                     ["layui" => "date", "title" => "到期时间",
@@ -289,7 +289,7 @@ class admin extends adminbase
                                 ["title" => "删除", "event" => "ajax",
                                     "url"    => "index&action=del",
                                     "color"  => "danger",
-                                    "tips"   => "确认删除？"],
+                                    "tips"   => "删除用户会导致此用户内的所有数据丢失，不使用建议禁用即可，真的要删除？"],
                             ]],
                     ],
                     "toolbar" => [

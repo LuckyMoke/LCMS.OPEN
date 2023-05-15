@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-26 13:45:26
+ * @LastEditTime: 2023-05-08 17:43:09
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,8 +22,8 @@ class TABLE
     public static function set($table, $where = "", $order = "", $para = [], $field = null)
     {
         global $_L;
-        $page  = $_L['form']['page'] ?: 1;
-        $limit = $_L['form']['limit'];
+        $page  = $_L['form']['page'] ? intval($_L['form']['page']) : 1;
+        $limit = intval($_L['form']['limit']);
         $count = sql_counter([$table, $where, $para]);
         if ($limit > 0) {
             $page_max = ceil($count / $limit);
@@ -79,7 +79,7 @@ class TABLE
                 "icon"     => "layui-icon-search",
             ]], $data['defaultToolbar']);
         }
-        $html = "<div class='lcms-table-box' id='{$table['id']}'><table class='lcms-table' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$search}{$laytpl}</div>";
+        $html = "<div class='lcms-table-box' id='{$table['id']}'><table class='lcms-table' data-exts='table' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$search}{$laytpl}</div>";
         echo $html;
     }
     /**
@@ -145,7 +145,7 @@ class TABLE
                     case 'time':
                     case 'datetime':
                         $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date"><div class="layui-input-prefix layui-input-split">
-                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix layui-input-split"><i class="layui-icon layui-icon-down"></i></div></div>';
+                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" readonly autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix layui-input-split"><i class="layui-icon layui-icon-down"></i></div></div>';
                         break;
                     default:
                         $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix layui-input-split">
@@ -210,108 +210,40 @@ class TABLE
      * @param array $tree
      * @return string
      */
-    // public static function tree($tree = [])
-    // {
-    //     global $_L;
-    //     if (is_array($tree['toolbar'])) {
-    //         $tree['toolbar'] = array_merge($tree['toolbar'], [[
-    //             "title" => "展开/折叠",
-    //             "event" => "treeTableOpenClose",
-    //             "color" => "primary",
-    //         ]]);
-    //     }
-    //     $toolbar = self::toolbar($tree['toolbar']);
-    //     $laytpl  = $toolbar['laytpl'];
-    //     $toolbar = $toolbar['toolbar'];
-    //     foreach ($tree['cols'] as $key => $val) {
-    //         if ($val['toolbar']) {
-    //             $colsbar = self::colsbar($val['toolbar']);
-    //             $laytpl .= $colsbar['laytpl'];
-    //             $tree['cols'][$key]['toolbar'] = $colsbar['colsbarid'];
-    //         }
-    //     }
-    //     $data = [
-    //         "url"            => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
-    //         "defaultToolbar" => [[
-    //             "title"    => "刷新",
-    //             "layEvent" => "LCMSTABLE_REFRESH",
-    //             "icon"     => "layui-icon-refresh",
-    //         ], "filter", "print", "exports"],
-    //         "toolbar"        => $toolbar,
-    //         "cols"           => $tree['cols'],
-    //         "pid"            => $tree['pid'] ?: "pid",
-    //         "show"           => $tree['show'] ?: "title",
-    //     ];
-    //     $html = "<div class='lcms-table-box' id='{$tree['id']}'><table class='lcms-table lcms-table-tree' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$laytpl}</div>";
-    //     echo $html;
-    // }
-    /**
-     * @description: 树形表格
-     * @param array $tree
-     * @return string
-     */
     public static function tree($tree = [])
     {
         global $_L;
-        $laytpl  = "";
-        $toolbar = "";
-        foreach ($tree['toolbar'] as $key => $val) {
-            $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-            $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
-            $toolbar .= "<button class='layui-btn layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
+        if (is_array($tree['toolbar'])) {
+            $tree['toolbar'] = array_merge($tree['toolbar'], [[
+                "title" => "展开/折叠",
+                "event" => "treeTableOpenClose",
+                "color" => "primary",
+            ]]);
         }
-        $toolbar .= "<button class='layui-btn layui-btn-primary lcms-table-tree-openall'>展开/折叠</button>";
+        $toolbar = self::toolbar($tree['toolbar']);
+        $laytpl  = $toolbar['laytpl'];
+        $toolbar = $toolbar['toolbar'];
         foreach ($tree['cols'] as $key => $val) {
             if ($val['toolbar']) {
-                $colsbar = self::tree_colsbar($val['toolbar']);
+                $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
-                $tree['cols'][$key]['templet'] = $colsbar['colsbarid'];
-                unset($tree['cols'][$key]['toolbar']);
+                $tree['cols'][$key]['toolbar'] = $colsbar['colsbarid'];
             }
         }
-        $tree = [
-            "url"  => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
-            "id"   => $tree['id'] ? $tree['id'] : "",
-            "top"  => $tree['top'],
-            "show" => $tree['show'],
-            "cols" => $tree['cols'],
+        $data = [
+            "url"            => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
+            "defaultToolbar" => [[
+                "title"    => "刷新",
+                "layEvent" => "LCMSTABLE_REFRESH_TREE",
+                "icon"     => "layui-icon-refresh",
+            ], "filter", "print", "exports"],
+            "toolbar"        => $toolbar,
+            "cols"           => $tree['cols'],
+            "pid"            => $tree['pid'] ?: "pid",
+            "show"           => $tree['show'] ?: "title",
         ];
-        $html = "<div class='lcms-table-tree-box'>{$toolbar}<table class='layui-hidden lcms-table-tree' data='" . htmlspecialchars(json_encode_ex($tree)) . "'></table>{$laytpl}</div>";
+        $html = "<div class='lcms-table-box' id='{$tree['id']}'><table class='lcms-table lcms-table-tree' data-exts='treeTable' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$laytpl}</div>";
         echo $html;
-    }
-    /**
-     * [tree_colsbar description]
-     * @param  [type] $colsbar   [description]
-     * @param  string $colsbarid [description]
-     * @return [type]            [description]
-     */
-    /**
-     * @description: 树形表格获取每行bar
-     * @param array|string $colsbar
-     * @return array
-     */
-    public static function tree_colsbar($colsbar)
-    {
-        global $_L;
-        if (is_array($colsbar)) {
-            $laytpl    = "";
-            $colsbarid = "TREECOLSBAR" . randstr(6);
-            foreach ($colsbar as $key => $val) {
-                $val['url']  = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
-                $val['icon'] = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
-                $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}'>{$val['icon']}</button>";
-            }
-            $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
-            return [
-                "laytpl"    => $laytpl,
-                "colsbarid" => "#{$colsbarid}",
-            ];
-        } else {
-            return [
-                "laytpl"    => "",
-                "colsbarid" => $colsbar,
-            ];
-        }
     }
     /**
      * @description: 输出表格数据
