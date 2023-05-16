@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-02-22 16:38:40
+ * @LastEditTime: 2023-05-16 10:41:51
  * @Description: mysql数据库操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -185,12 +185,12 @@ function sql_delete($sql = [])
 function sql_counter($sql = [])
 {
     sql_filter($sql[1]);
-    $table  = sql_tablename($sql[0]);
-    $bind   = sql_bindParas($sql[1], $sql[2]);
-    $where  = $sql[1] ? " WHERE {$bind['sql']}" : "";
-    $query  = "SELECT " . ($sql[3] ?: "COUNT(*)") . " FROM {$table}{$where}";
-    $result = DB::$mysql->counter($query, $bind['paras']);
-    return $result ?: 0;
+    $table = sql_tablename($sql[0]);
+    $bind  = sql_bindParas($sql[1], $sql[2]);
+    $where = $sql[1] ? " WHERE {$bind['sql']}" : "";
+    $query = "SELECT " . ($sql[3] ?: "COUNT(*)") . " FROM {$table}{$where}";
+    $count = DB::$mysql->counter($query, $bind['paras']);
+    return $count ? intval($count) : 0;
 }
 /**
  * @description: 自己写SQL语句
