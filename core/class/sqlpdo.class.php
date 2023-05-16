@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-05-16 10:53:13
+ * @LastEditTime: 2023-05-16 14:23:28
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,8 +24,6 @@ class SQLPDO
     {
         try {
             $this->pdo = new PDO($sqlinfo, $user, $pass);
-            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            $this->pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
         } catch (Exception $e) {
             LCMS::X(500, "数据库-" . iconv('gbk', 'utf-8', $e->getMessage()));
         }

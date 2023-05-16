@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-04-02 22:02:17
+ * @LastEditTime: 2023-05-16 14:02:27
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -168,7 +168,7 @@ class LCMS
                 ":name" => $para['name'],
                 ":type" => $para['type'],
                 ":cate" => $para['cate'],
-                ":lcms" => $para['lcms'],
+                ":lcms" => $para['lcms'] ?: 0,
             ]]);
         if ($para['do'] === "save") {
             if ($config) {
@@ -183,7 +183,7 @@ class LCMS
                     "type"      => $para['type'],
                     "cate"      => $para['cate'],
                     "parameter" => arr2sql($para['form']),
-                    "lcms"      => $para['lcms'],
+                    "lcms"      => $para['lcms'] ?: 0,
                 ]]);
             }
         } else {
