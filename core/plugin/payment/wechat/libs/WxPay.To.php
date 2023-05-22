@@ -26,11 +26,11 @@ class WxPayTo
             "out_batch_no"         => $this->order['order_no'],
             "batch_name"           => $this->order['batch_name'],
             "batch_remark"         => $this->order['batch_remark'],
-            "total_amount"         => $this->order['pay'] * 100,
+            "total_amount"         => intval($this->order['pay'] * 100),
             "total_num"            => 1,
             "transfer_detail_list" => [[
                 "out_detail_no"   => $this->order['order_no'],
-                "transfer_amount" => $this->order['pay'] * 100,
+                "transfer_amount" => intval($this->order['pay'] * 100),
                 "transfer_remark" => $this->order['batch_remark'],
                 "openid"          => $this->order['openid'],
             ]],

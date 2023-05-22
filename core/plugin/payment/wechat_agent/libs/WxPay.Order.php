@@ -31,7 +31,7 @@ class WxPayOrder
             "out_trade_no" => $this->order['order_no'],
             "notify_url"   => $this->cfg['notify_url'],
             "amount"       => [
-                "total"    => $this->order['pay'] * 100,
+                "total"    => intval($this->order['pay'] * 100),
                 "currency" => "CNY",
             ],
             "payer"        => [
@@ -69,7 +69,7 @@ class WxPayOrder
             "out_trade_no" => $this->order['order_no'],
             "notify_url"   => $this->cfg['notify_url'],
             "amount"       => [
-                "total"    => $this->order['pay'] * 100,
+                "total"    => intval($this->order['pay'] * 100),
                 "currency" => "CNY",
             ],
             "scene_info"   => [
@@ -101,7 +101,7 @@ class WxPayOrder
             "out_trade_no" => $this->order['order_no'],
             "notify_url"   => $this->cfg['notify_url'],
             "amount"       => [
-                "total"    => $this->order['pay'] * 100,
+                "total"    => intval($this->order['pay'] * 100),
                 "currency" => "CNY",
             ],
         ]));
@@ -123,8 +123,8 @@ class WxPayOrder
             "out_trade_no"  => $this->order['order_no'],
             "out_refund_no" => $this->order['order_no'] . "R",
             "amount"        => [
-                "refund"   => $this->order['pay'] * 100,
-                "total"    => $this->order['pay'] * 100,
+                "refund"   => intval($this->order['pay'] * 100),
+                "total"    => intval($this->order['pay'] * 100),
                 "currency" => "CNY",
             ],
         ]));

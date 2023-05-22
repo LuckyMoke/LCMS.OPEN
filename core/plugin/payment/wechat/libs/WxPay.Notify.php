@@ -26,7 +26,7 @@ class WxPayNotify
                     if ($config->get['key']) {
                         $response = sodium_crypto_aead_aes256gcm_decrypt(base64_decode($ret['resource']['ciphertext']), $ret['resource']['associated_data'], $ret['resource']['nonce'], $config->get['key']);
                         $response = json_decode($response, true);
-                        if ($response && $response['trade_state'] === "SUCCESS" && ($order['pay'] * 100) == $response['amount']['total'] && $response['out_trade_no'] === $order['order_no']) {
+                        if ($response && $response['trade_state'] === "SUCCESS" && intval($order['pay'] * 100) == $response['amount']['total'] && $response['out_trade_no'] === $order['order_no']) {
                             return [
                                 "order"    => $order,
                                 "response" => $response,
