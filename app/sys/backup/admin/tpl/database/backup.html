@@ -1,0 +1,17 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<style type="text/css">.layui-progress-big{width:calc(100% + 1px)}.layui-progress-big,.layui-progress-big .layui-progress-bar{height:36px;line-height:36px;border-radius:0}.layui-form-pane .layui-form-item[pane]{margin-bottom:5px!important}.layui-progress-big .layui-progress-text{filter:contrast(.5)}button{margin-top:10px}</style>
+<div class="layui-form layui-form-pane">
+    <loop $modules,$module,$title>
+        <div class="layui-form-item" pane>
+            <label class="layui-form-label">{{$title}}</label>
+            <div class="layui-input-block">
+                <div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="{{$title}}">
+                    <div class="layui-progress-bar layui-bg-black" lay-percent="0%"></div>
+                </div>
+            </div>
+        </div>
+    </loop>
+</div>
+<script>var start=0,index=0,module=[];$(".layui-progress").each(function(i){module[i]=$(this).attr("lay-filter")});var exportData=function(page){LCMS.util.ajax({type:"POST",url:LCMS.url.own_form+"export",data:{module:module[index],page:page?page:1},success:function(res){if(res.code==1){layui.element.progress(module[index],Math.round((page/res.data.total)*100*100)/100+"%");if(res.data.next>0){setTimeout(function(){exportData(res.data.next)},500)}else if(index<module.length-1){index++;$("html, body").animate({scrollTop:(index-3)*80},0);setTimeout(function(){exportData(1)},500)}else if(index>=module.length-1){start=0;LCMS.util.ajax({type:"GET",url:LCMS.url.own_form+"index&action=backup-ok",timeout:60*1000,success:function(res){if(res.code==1){LCMS.util.notify({content:res.msg});setTimeout(()=>{parent.layer.alert(res.msg,{title:"提示",area:"120px",closeBtn:false},function(index){parent.location.reload()})},1000)}else{LCMS.util.notify({type:"error",content:res.msg})}}})}}else{start=0;LCMS.util.notify({type:"error",content:res.msg})}}})};LCMS.onload.push(function(){layer.alert("确认开始备份数据？",{title:"提示",area:"120px",closeBtn:false},function(index){layer.close(index);exportData(1)})});</script>
+<template "ui/foot" />

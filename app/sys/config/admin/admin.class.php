@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-04-28 14:27:55
+ * @LastEditTime: 2023-05-27 17:55:58
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,6 +25,7 @@ class admin extends adminbase
             case 'save':
                 if (in_string($LC['domain'], ["http://", "https://"])) {
                     $LC['domain'] = parse_url($LC['domain'])['host'];
+                    $LC['domain'] = realhost($LC['domain']);
                 }
                 $LC['oauth_code'] = strtoupper(md5(HTTP_HOST));
                 LCMS::config([
@@ -56,7 +57,7 @@ class admin extends adminbase
                             ["title" => "https://", "value" => "1"],
                             ["title" => "http://", "value" => "0"],
                         ],
-                        "tips"   => "如果使用了cdn半程加密，会用到",
+                        "tips"   => "只有使用了cdn半程加密的时候才会用到，否则只有服务器配置了SSL才能开启https",
                     ],
                     ["layui"      => "input", "title" => "强制域名",
                         "name"        => "LC[domain]",
@@ -87,9 +88,12 @@ class admin extends adminbase
                 $domain = parse_url($LC['domain']);
                 if ($domain['host']) {
                     $LC['https']  = $domain['scheme'] === "https" ? 1 : 0;
-                    $LC['domain'] = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+                    $LC['domain'] = realhost($domain['host']) . ($domain['port'] ? ":{$domain['port']}" : "");
                 } else {
                     $LC['https'] = "";
+                }
+                if ($LC['domain_api']) {
+                    $LC['domain_api'] = realhost($LC['domain_api']);
                 }
                 LCMS::config([
                     "do"   => "save",

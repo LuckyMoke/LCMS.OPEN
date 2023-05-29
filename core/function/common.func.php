@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-03-29 11:05:19
+ * @LastEditTime: 2023-05-29 16:31:24
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -134,39 +134,25 @@ function datenow()
  */
 function datetime($date, $type = "")
 {
-    $date     = is_numeric($date) ? date("Y-m-d H:i:s", $date) : $date;
-    $datetime = explode(" ", $date);
-    $_date    = explode("-", $datetime[0]);
-    $_time    = explode(":", $datetime[1]);
+    $date = in_string($date, ["-", ":"]) ? strtotime($date) : $date;
     switch ($type) {
         case 'date':
-            return $datetime[0];
+            $type = "Y-m-d";
             break;
         case 'time':
-            return $datetime[1];
+            $type = "H:i:s";
             break;
         case 'y':
-            return $_date[0];
-            break;
-        case 'm':
-            return $_date[1];
-            break;
-        case 'd':
-            return $_date[2];
+            $type = "Y";
             break;
         case 'h':
-            return $_time[0];
-            break;
-        case 'i':
-            return $_time[1];
-            break;
-        case 's':
-            return $_time[2];
+            $type = "H";
             break;
         default:
-            return $date;
+            $type = "Y-m-d H:i:s";
             break;
     }
+    return date($type, $date);
 }
 /**
  * @description: 正常时间转unix时间戳
@@ -467,6 +453,25 @@ function strstar($str, $start, $end = 0)
     }
     $newStr .= $bottom;
     return $newStr;
+}
+/**
+ * @description: 获取转义后的域名
+ * @param string $host
+ * @return string
+ */
+function realhost($host = "")
+{
+    $cache = $host;
+    if (in_string($host, "://")) {
+        $domain = parse_url($host);
+        $cache  = $domain['host'];
+    }
+    if ($cache) {
+        require_once PATH_CORE_PLUGIN . "Punycode/Punycode.php";
+        $Punycode = new PQCMS\Punycode();
+        $cache    = $Punycode->encode($cache);
+    }
+    return $domain ? str_replace($domain['host'], $cache, $host) : $cache;
 }
 /**
  * @description: AES字符串加密

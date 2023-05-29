@@ -16,6 +16,7 @@ define("PATH_APP_OWN", PATH_APP . L_TYPE . "/" . L_NAME . "/" . L_MODULE . "/");
 define("PHP_FILE", basename(__FILE__));
 define("PHP_SELF", htmlentities($_SERVER['PHP_SELF']) == "" ? $_SERVER['SCRIPT_NAME'] : htmlentities($_SERVER['PHP_SELF']));
 define("SYS_TIME", time());
+define("HTTP_HOST", isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']);
 define("HTTP_PORT", $_SERVER['SERVER_PORT']);
 define("HTTP_TOP", $_SERVER['HTTP_REFERER']);
 define("HTTP_QUERY", $_SERVER['REQUEST_URI']);
@@ -27,6 +28,5 @@ if ((!L_NAME || !L_CLASS || !L_ACTION) && !preg_match('/^[A-Za-z0-9_]+$/', L_TYP
     LCMS::X(403, "拒绝访问");
 }
 require_once PATH_CORE_CLASS . "load.class.php";
-define("HTTP_HOST", LCMS::HOST());
 define("CLIENT_IP", LCMS::IP());
 LOAD::init();

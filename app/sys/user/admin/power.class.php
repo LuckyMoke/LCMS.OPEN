@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2022-08-01 18:29:02
+ * @LastEditTime: 2023-05-26 11:24:15
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -79,8 +79,8 @@ class power extends adminbase
                     "table" => "admin_level",
                     "id"    => $LF['id'],
                 ]) : [];
-                $level && ksort($level['sys']);
-                $level && ksort($level['open']);
+                $level['sys'] && ksort($level['sys']);
+                $level['open'] && ksort($level['open']);
                 $appall = LEVEL::applist();
                 foreach ($appall as $type => $val) {
                     foreach ($val as $name => $info) {

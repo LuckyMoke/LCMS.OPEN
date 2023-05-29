@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-03-04 15:54:10
+ * @LastEditTime: 2023-05-25 12:59:13
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -13,15 +13,16 @@ class database extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PATH;
         parent::__construct();
         $LF = $_L['form'];
         $LC = $LF['LC'];
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
+        $PATH = PATH_WEB . "backup/";
     }
     public function doindex()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PATH;
         switch ($LF['action']) {
             case 'list':
                 $bklist = $this->getBackList();
@@ -35,31 +36,47 @@ class database extends adminbase
                 TABLE::out($data);
                 break;
             case 'backup':
-                makedir("/backup/data/");
-                delfile("/backup/backup.sql");
-                ajaxout(2, [
-                    "title" => "开始备份",
-                    "msg"   => "正在获取数据表信息",
-                ], "backupDatabase", array_values($_L['table']));
-                break;
-            case 'backup-table':
-                set_time_limit(300);
-                $this->exportTable($LF['name']);
-                ajaxout(1, "success");
+                makedir("{$PATH}data/");
+                delfile("{$PATH}backup.sql");
+                $modules = $_L['table'];
+                require LCMS::template("own/database/backup");
                 break;
             case 'backup-ok':
+                ini_set("memory_limit", -1);
+                ignore_user_abort(true);
                 set_time_limit(300);
-                $this->exportMysql();
+                $cache = "{$PATH}backup.sql";
+                if (is_file($cache)) {
+                    $bpath   = "{$PATH}data/";
+                    $version = file_get_contents(PATH_CORE . "version");
+                    $bname   = "DATA#V{$version}#T" . date("Y-m-d&H.i.s") . "#" . randstr(6);
+                    if (zipfile([
+                        [$cache, "backup.sql"],
+                    ], "{$bpath}{$bname}.LCMS")) {
+                        delfile($cache);
+                        LCMS::log([
+                            "type" => "system",
+                            "info" => "数据备份-备份成功-{$bname}.LCMS",
+                        ]);
+                        ajaxout(1, "备份成功");
+                    }
+                }
+                LCMS::log([
+                    "type" => "system",
+                    "info" => "数据备份-备份失败",
+                ]);
+                ajaxout(0, "备份失败");
                 break;
             case 'restore':
                 ini_set("memory_limit", -1);
+                ignore_user_abort(true);
                 set_time_limit(300);
-                $path  = PATH_WEB . "backup/";
-                $file  = "{$path}data/{$LC['name']}";
-                $cache = "{$path}backup.sql";
+                $file  = "{$PATH}data/{$LC['name']}";
+                $cache = "{$PATH}backup.sql";
                 if (is_file($file)) {
-                    if ($LC['ver'] == $_L['config']['ver']) {
-                        unzipfile($file, $path);
+                    $version = file_get_contents(PATH_CORE . "version");
+                    if ($LC['ver'] == $version) {
+                        unzipfile($file, $PATH);
                         if (is_file($cache)) {
                             $sqldata = file_get_contents($cache);
                             $sqldata = explode(";\n\n", trim($sqldata));
@@ -127,10 +144,10 @@ class database extends adminbase
                             ]],
                     ],
                     "toolbar" => [
-                        ["title" => "立即备份", "event" => "ajax",
+                        ["title" => "立即备份", "event" => "iframe",
                             "url"    => "index&action=backup",
                             "color"  => "default",
-                            "tips"   => "确认备份数据库？"],
+                            "area"   => "400px,500px"],
                         ["title" => "同步数据结构", "event" => "ajax",
                             "url"    => "&c=repair",
                             "color"  => "warm",
@@ -141,6 +158,59 @@ class database extends adminbase
                 break;
         }
     }
+    public function doexport()
+    {
+        global $_L, $LF, $LC, $PATH;
+        $cache = "{$PATH}backup.sql";
+        $table = $LF['module'];
+        if ($LF['page'] == 1) {
+            $create = sql_query("SHOW CREATE TABLE {$_L['table'][$table]}");
+            if ($create['Create Table']) {
+                file_put_contents($cache, "DROP TABLE IF EXISTS `{$_L['table'][$table]}`;\n\n{$create['Create Table']};\n\n", FILE_APPEND);
+            }
+        }
+        switch ($table) {
+            case 'cache':
+                $total = 1;
+                break;
+            default:
+                $count   = 1000;
+                $counted = $LF['page'] * $count;
+                $total   = sql_counter([$table]);
+                if ($total > 0) {
+                    if ($counted < $total) {
+                        $next = ($LF['page'] * 1) + 1;
+                    }
+                    $total = ceil($total / $count);
+                    $rows  = sql_getall([$table, null, null, null, null, null, [$counted - $count, $count]]);
+                    $vals  = [];
+                    foreach ($rows as $index => $row) {
+                        $tmp = [];
+                        foreach ($row as $key => $val) {
+                            if ($val === null) {
+                                $tmp[] = "[LCMSBACKUPNULL]";
+                            } else {
+                                $tmp[] = $val;
+                            }
+                        }
+                        $tmp    = array_map('addslashes', $tmp);
+                        $tmp    = str_replace(["\r\n", "\n"], "\\n", $tmp);
+                        $tmp    = implode("', '", $tmp);
+                        $vals[] = "('{$tmp}')";
+                    }
+                    $keys = implode("`, `", array_keys($rows[0]));
+                    $vals = implode(", ", $vals);
+                    $sql  = "INSERT INTO {$_L['table'][$table]} (`{$keys}`) VALUES {$vals};\n\n";
+                    $sql  = str_replace("'[LCMSBACKUPNULL]'", "NULL", $sql);
+                    file_put_contents($cache, $sql, FILE_APPEND);
+                }
+                break;
+        }
+        ajaxout(1, "success", "", [
+            "total" => $total ?: 1,
+            "next"  => $next ?? 0,
+        ]);
+    }
     /**
      * @获取数据库备份文件信息:
      * @param {*}
@@ -148,8 +218,8 @@ class database extends adminbase
      */
     private function getBackList()
     {
-        global $_L, $LF, $LC;
-        $bkpath = PATH_WEB . "backup/data";
+        global $_L, $LF, $LC, $PATH;
+        $bkpath = "{$PATH}data/";
         $bklist = LCMS::cache("lcms_backuplist", [], true);
         $dtime  = filemtime($bkpath);
         if ($bklist && $bklist['time'] == $dtime) {
@@ -178,73 +248,5 @@ class database extends adminbase
             ], true);
         }
         return $bklist ?: [];
-    }
-    /**
-     * @description: 导出数据表
-     * @param string $name
-     * @return {*}
-     */
-    private function exportTable($name)
-    {
-        global $_L, $LF, $LC;
-        $start  = 0;
-        $cache  = PATH_WEB . "backup/backup.sql";
-        $create = sql_query("SHOW CREATE TABLE {$name}");
-        if ($create['Create Table']) {
-            file_put_contents($cache, "DROP TABLE IF EXISTS `{$name}`;\n\n{$create['Create Table']};\n\n", FILE_APPEND);
-        }
-        $tablename = str_replace($_L['mysql']['pre'], "", $name);
-        $numrows   = sql_counter([$tablename]);
-        if ($tablename != "cache" && $tablename != "log") {
-            while ($start < $numrows) {
-                $rows = sql_getall([$tablename, "", "", "", "", "", [$start, 500]]);
-                if (!empty($rows)) {
-                    $vals = "";
-                    foreach ($rows as $row) {
-                        $tmp = [];
-                        foreach ($row as $k => $v) {
-                            $tmp[] = $v === null ? "[BACKUPNULL]" : $v;
-                        }
-                        $tmp = array_map('addslashes', $tmp);
-                        $tmp = str_replace(["\r\n", "\n"], "\\n", $tmp);
-                        $vals .= "('" . implode("','", $tmp) . "'),";
-                    }
-                    $vals = rtrim($vals, ",");
-                    $vals = str_replace("'[BACKUPNULL]'", "NULL", $vals);
-                    file_put_contents($cache, "INSERT INTO `{$name}` VALUES {$vals};\n\n", FILE_APPEND);
-                }
-                $start = $start + 500;
-            }
-        }
-    }
-    /**
-     * @description: 备份数据库
-     * @param {*}
-     * @return {*}
-     */
-    private function exportMysql()
-    {
-        global $_L, $LF, $LC;
-        $path  = PATH_WEB . "backup/";
-        $cache = "{$path}backup.sql";
-        if (is_file($cache)) {
-            $bpath = "{$path}data/";
-            $bname = "DATA#V{$_L['config']['ver']}#T" . date("Y-m-d&H.i.s") . "#" . randstr(6);
-            if (zipfile([
-                [$cache, "backup.sql"],
-            ], "{$bpath}{$bname}.LCMS")) {
-                delfile($cache);
-                LCMS::log([
-                    "type" => "system",
-                    "info" => "数据备份-备份成功-{$bname}.LCMS",
-                ]);
-                ajaxout(1, "备份成功");
-            }
-        }
-        LCMS::log([
-            "type" => "system",
-            "info" => "数据备份-备份失败",
-        ]);
-        ajaxout(0, "备份失败");
     }
 }

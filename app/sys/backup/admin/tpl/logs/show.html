@@ -1,6 +1,15 @@
-<template "ui/head"/>
-<template "ui/iframe"/>
+<template "ui/head" />
+<template "ui/iframe" />
 <form class="layui-form layui-form-pane">
-    <ui form($form)/>
+    <ui form($form) />
 </form>
-<template "ui/foot"/>
+<script type="text/javascript">
+    LCMS.onload.push(function () {
+        layui.code({
+            elem: '.layui-code',
+            skin: "dark",
+            ln: false
+        });
+    })
+</script>
+<template "ui/foot" />

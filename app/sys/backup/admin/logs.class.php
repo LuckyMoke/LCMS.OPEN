@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-02-26 20:02:30
- * @LastEditTime: 2022-08-26 15:29:16
+ * @LastEditTime: 2023-05-25 18:36:31
  * @Description: 系统日志
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -80,18 +80,14 @@ class logs extends adminbase
         switch ($LF['type']) {
             case 'message':
                 $form = [
-                    ["layui"   => "input", "title" => "IP地址",
-                        "value"    => $show['ip'],
-                        "disabled" => true],
-                    ["layui"   => "input", "title" => "操作说明",
-                        "value"    => $show['info'],
-                        "disabled" => true],
-                    ["layui"   => "input", "title" => "操作时间",
-                        "value"    => $show['addtime'],
-                        "disabled" => true],
-                    ["layui"   => "textarea", "title" => "发送数据",
-                        "value"    => json_encode_ex($show['postdata']),
-                        "disabled" => true],
+                    ["layui" => "html", "title" => "IP地址",
+                        "value"  => $show['ip']],
+                    ["layui" => "html", "title" => "操作说明",
+                        "value"  => $show['info']],
+                    ["layui" => "html", "title" => "操作时间",
+                        "value"  => $show['addtime']],
+                    ["layui" => "html", "title" => "发送数据",
+                        "value"  => '<pre class="layui-code" style="margin:0">' . json_encode_ex($show['postdata']) . '</pre>'],
                 ];
                 require LCMS::template("own/logs/show");
                 break;
@@ -163,7 +159,8 @@ class logs extends adminbase
                     "toolbar" => [
                         ["title" => "详情",
                             "event"  => "iframe",
-                            "url"    => "show&type=message"],
+                            "url"    => "show&type=message",
+                            "area"   => "500px,500px"],
                     ]],
             ],
             "toolbar" => [
