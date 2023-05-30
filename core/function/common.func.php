@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-05-29 16:31:24
+ * @LastEditTime: 2023-05-30 17:54:51
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -148,7 +148,8 @@ function datetime($date, $type = "")
         case 'h':
             $type = "H";
             break;
-        default:
+        case 'datetime':
+        case '':
             $type = "Y-m-d H:i:s";
             break;
     }
