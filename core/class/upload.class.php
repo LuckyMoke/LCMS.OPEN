@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-02-16 11:09:44
+ * @LastEditTime: 2023-06-02 14:33:31
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -170,6 +170,7 @@ class UPLOAD
         global $_L, $CFG, $MIME, $SIZE;
         ob_start();
         $cfgwat = $_L['plugin']['watermark'] ?: [];
+        $cmime  = $MIME;
         if ($CFG['attwebp'] > 0 && in_array($MIME, [
             "jpeg", "jpg", "png",
         ]) && function_exists("imagewebp")) {
@@ -204,7 +205,7 @@ class UPLOAD
                 $img = ob_get_contents();
 
             }
-        } elseif ($MIME == "webp") {
+        } elseif ($MIME == "webp" && $cmime != "webp") {
             $thumb = imagecreatefromstring($img);
             imagewebp($thumb);
             imagedestroy($thumb);

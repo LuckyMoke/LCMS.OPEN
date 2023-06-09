@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-05-16 14:07:25
+ * @LastEditTime: 2023-06-08 11:39:25
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,7 +26,14 @@ class adminbase extends common
     protected function load_admin_url()
     {
         global $_L;
-        $scheme    = $_L['config']['admin']['https'] ? "https://" : ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://");
+        switch ($_L['config']['admin']['https']) {
+            case 1:
+                $scheme = "https://";
+                break;
+            default:
+                $scheme = $_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://";
+                break;
+        }
         $url_site  = $scheme . HTTP_HOST . "/";
         $url_now   = $scheme . HTTP_HOST . HTTP_QUERY;
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";

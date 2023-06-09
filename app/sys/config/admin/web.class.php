@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-05-13 12:36:29
+ * @LastEditTime: 2023-06-05 18:17:15
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -229,6 +229,14 @@ class web extends adminbase
                         "name"   => "LC[oss][type]",
                         "value"  => $plugin['oss']['type'] ?: "local",
                         "radio"  => $osstype],
+                    ["layui" => "radio", "title" => "图片裁剪",
+                        "name"   => "LC[thumb][type]",
+                        "value"  => $plugin['thumb']['type'] ?: 0,
+                        "cname"  => "hidden oss-0 oss-qiniu",
+                        "radio"  => [
+                            ["title" => "铺满图片", "value" => 0],
+                            ["title" => "背景留白", "value" => 1],
+                        ]],
                 ];
                 if (LCMS::SUPER()) {
                     $form = array_merge($form, [

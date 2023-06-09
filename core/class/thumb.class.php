@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-31 15:12:38
+ * @LastEditTime: 2023-06-05 18:21:50
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,7 +25,8 @@ class THUMB
         $x = $x ? ($x == "auto" ? 0 : $x) : 0;
         $y = $y ? ($y == "auto" ? 0 : $y) : 0;
         //云存储配置
-        $cfgoss = $_L['plugin']['oss'] ?: [];
+        $cfgoss   = $_L['plugin']['oss'] ?: [];
+        $cfgthumb = $_L['plugin']['thumb'] ?: [];
         //如果是完整链接，返回原图
         if (is_url($path) && (!$cfgoss['domain'] || !in_string($path, $cfgoss['domain']))) {
             return $path;
@@ -46,7 +47,11 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/auto-orient/thumbnail/x{$y}/blur/1x0";
                         } elseif ($x && $y) {
-                            $url[0] .= "/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/blur/1x0";
+                            if ($cfgthumb['type'] > 0) {
+                                $url[0] .= "/auto-orient/thumbnail/{$x}x{$y}/gravity/Center/blur/1x0/background/I0ZGRkZGRg==/extent/!{$x}x{$y}";
+                            } else {
+                                $url[0] .= "/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/blur/1x0";
+                            }
                         }
                         $url = $url[1] ? implode("|", $url) : $url[0];
                         break;
@@ -98,9 +103,10 @@ class THUMB
     public static function create($path, $x = 0, $y = 0)
     {
         global $_L;
-        ob_clean();
+        $cfgthumb = $_L['plugin']['thumb'] ?: [];
         $img_info = getimagesize($path);
         $img_data = file_get_contents($path);
+        ob_clean();
         if (!$img_info || !in_array($img_info['mime'], [
             "image/jpeg",
             "image/pjpeg",
@@ -110,34 +116,43 @@ class THUMB
             "image/webp",
             "image/vnd.wap.wbmp",
             "image/x-up-wpng",
-        ])) {
+        ]) || ($x == 0 && $y == 0)) {
             header("content-type: {$img_info['mime']}");
             echo $img_data;
             exit;
         }
         $img   = imagecreatefromstring($img_data);
         $scale = $img_info[0] / $img_info[1];
-        if ($x == 0 && $y == 0) {
-            $x = $img_info[0];
-            $y = $img_info[1];
-        } else {
-            $x = $x == 0 ? $y * $scale : ($x > 1920 ? 1920 : $x);
-            $y = $y == 0 ? $x / $scale : ($y > 1000 ? 1000 : $y);
-        }
+        $x     = $x == 0 ? $y * $scale : ($x > 1920 ? 1920 : $x);
+        $y     = $y == 0 ? $x / $scale : ($y > 1000 ? 1000 : $y);
         $thumb = imagecreatetruecolor($x, $y);
         imagealphablending($thumb, true);
         imagesavealpha($thumb, true);
-        imagefill($thumb, 0, 0, imagecolorallocatealpha($thumb, 0, 0, 0, 127));
-        if ($img_info[0] / $x > $img_info[1] / $y) {
-            $w = $img_info[1] * ($x / $y);
-            $h = $img_info[1];
+        if (in_string($img_info['mime'], ["jpeg", "bmp"])) {
+            $bgcolor = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
         } else {
-            $w = $img_info[0];
-            $h = $img_info[0] / ($x / $y);
+            $bgcolor = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
         }
-        $scr_x = ($img_info[0] - $w) / 2;
-        $scr_y = ($img_info[1] - $h) / 2;
-        imagecopyresampled($thumb, $img, 0, 0, $scr_x, $scr_y, $x, $y, $w, $h);
+        imagefill($thumb, 0, 0, $bgcolor);
+        $dstx = $dsty = $srcx = $srcy = 0;
+        if ($img_info[0] / $img_info[1] > $x / $y) {
+            if ($cfgthumb['type'] > 0) {
+                $dsty = (int) ($y - $img_info[1] * $x / $img_info[0]) / 2;
+                $y    = $y - 2 * $dsty;
+            } else {
+                $srcx        = (int) ($img_info[0] - $x * $img_info[1] / $y) / 2;
+                $img_info[0] = $img_info[0] - 2 * $srcx;
+            }
+        } else {
+            if ($cfgthumb['type'] > 0) {
+                $dstx = (int) ($x - $img_info[0] * $y / $img_info[1]) / 2;
+                $x    = $x - 2 * $dstx;
+            } else {
+                $srcy        = (int) ($img_info[1] - $y * $img_info[0] / $x) / 2;
+                $img_info[1] = $img_info[1] - 2 * $srcy;
+            }
+        }
+        imagecopyresampled($thumb, $img, $dstx, $dsty, $srcx, $srcy, $x, $y, $img_info[0], $img_info[1]);
         header("content-type: {$img_info['mime']}");
         switch ($img_info['mime']) {
             case 'image/gif':
