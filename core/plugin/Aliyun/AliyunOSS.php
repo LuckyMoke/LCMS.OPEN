@@ -49,37 +49,49 @@ class AliyunOSS
         $file    = str_replace(PATH_WEB, "", $file);
         $path    = "/" . $this->cfg['Bucket'] . "/{$file}";
         $headers = [
-            "PUT"          => "/{$file} HTTP/1.1",
+            "PUT"          => "/{$file}",
             "Content-Md5"  => base64_encode(md5($body, true)),
             "Content-Type" => mime_content_type($file),
             "Date"         => gmdate('D, d M Y H:i:s T'),
             "Host"         => $this->api,
         ];
-        $headers['Authorization'] = "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("PUT", $path, $headers);
-        if (!$this->request("PUT", "https://" . $this->api . "/{$file}", $body, $headers)) {
-            return [
-                "code" => 1,
-                "msg"  => "success",
-            ];
-        }
+        $url    = "https://" . $this->api . "/{$file}";
+        $result = HTTP::put($url, $body, array_merge($headers, [
+            "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("PUT", $path, $headers),
+        ]));
+        return [
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => $result ? "SUCCESS" : "上传失败",
+        ];
     }
     /**
-     * @description: 删除文件
-     * @param string $file
-     * @return {*}
+     * @description: 删除指定文件
+     * @param array|string $files
+     * @return array
      */
-    public function delete($file)
+    public function delete($files)
     {
-        $path    = "/" . $this->cfg['Bucket'] . "/{$file}";
+        $files = is_array($files) ? $files : [$files];
+        foreach ($files as $index => $file) {
+            $files[$index] = "<Object><Key>{$file}</Key></Object>";
+        }
+        $files   = implode("", $files);
+        $body    = "<Delete><Quiet>true</Quiet>{$files}</Delete>";
         $headers = [
-            "DELETE"       => "/{$file} HTTP/1.1",
-            "Content-Md5"  => "",
-            "Content-Type" => "application/octet-stream",
-            "Date"         => gmdate('D, d M Y H:i:s T'),
+            "POST"         => "/?delete",
             "Host"         => $this->api,
+            "Date"         => gmdate('D, d M Y H:i:s T'),
+            "Content-Type" => "application/xml",
+            "Content-MD5"  => base64_encode(md5($body, true)),
         ];
-        $headers['Authorization'] = "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("DELETE", $path, $headers);
-        $this->request("DELETE", "https://" . $this->api . "/{$file}", "", $headers);
+        $url = "https://" . $this->api . "/?delete";
+        HTTP::post($url, $body, false, array_merge($headers, [
+            "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("POST", "/" . $this->cfg['Bucket'] . "/?delete", $headers),
+        ]));
+        return [
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => "SUCCESS",
+        ];
     }
     /**
      * @description: 签名
@@ -108,27 +120,5 @@ class AliyunOSS
         $sign = "{$method}\n{$head}{$path}";
         return base64_encode(hash_hmac('sha1', $sign, $this->cfg['AccessKeySecret'], true));
 
-    }
-    private function request($method = "POST", $url, $data = "", $headers = [])
-    {
-        $ch = curl_init($url);
-        if ($headers) {
-            $header[] = "{$method} {$headers[$method]}";
-            unset($headers[$method]);
-            foreach ($headers as $key => $val) {
-                $header[] = "{$key}: {$val}";
-            }
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        }
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        $r = curl_exec($ch);
-        curl_close($ch);
-        return $r;
     }
 }

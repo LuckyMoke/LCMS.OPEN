@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-05-30 17:54:51
+ * @LastEditTime: 2023-06-12 16:37:30
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -204,6 +204,44 @@ function randstr($length = 4, $type = "all")
         $result .= $str[$num[$i]];
     }
     return $result;
+}
+/**
+ * @description: 将字节转换为带单位的字符串
+ * @param int $size
+ * @param string $unit
+ * @return string
+ */
+function getunit($size, $unit = null)
+{
+    if (!$unit) {
+        if ($size >= 1073741824) {
+            $unit = "GB";
+        } elseif ($size >= 1048576) {
+            $unit = "MB";
+        } elseif ($size >= 1024) {
+            $unit = "KB";
+        } else {
+            $unit = "B";
+        }
+    }
+    switch ($unit) {
+        case 'GB':
+            $size = $size / 1073741824;
+            $size = sprintf("%.2f", $size);
+            break;
+        case 'MB':
+            $size = $size / 1048576;
+            $size = sprintf("%.2f", $size);
+            break;
+        case 'B':
+            $size = sprintf("%.2f", $size);
+            break;
+        default:
+            $size = $size / 1024;
+            $size = sprintf("%.2f", $size);
+            break;
+    }
+    return $size . $unit;
 }
 /**
  * @description: 获取两数之间的随机数，含小数
@@ -793,6 +831,12 @@ function server_info()
     $serverinfo['sys']   = $_SERVER["SERVER_SOFTWARE"];
     $serverinfo['php']   = PHP_VERSION;
     $serverinfo['mysql'] = "Mysql " . DB::$mysql->version();
+    if (function_exists("opcache_get_status")) {
+        $opcache = opcache_get_status();
+        if ($opcache['memory_usage']) {
+            $serverinfo['opcache'] = "内存用量/" . sprintf("%.2f", $opcache['memory_usage']['used_memory'] / 1048576) . "M 缓存命中率/" . sprintf("%.2f", $opcache['opcache_statistics']['opcache_hit_rate']) . "%";
+        }
+    }
     return $serverinfo;
 }
 /**

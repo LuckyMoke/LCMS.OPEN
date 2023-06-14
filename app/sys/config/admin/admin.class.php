@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-08 11:38:47
+ * @LastEditTime: 2023-06-09 18:24:07
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -307,6 +307,7 @@ class admin extends adminbase
             case 'save':
                 if ($LF['tpl']) {
                     deldir(PATH_CACHE . "tpl");
+                    function_exists("opcache_get_status") && opcache_reset();
                 }
                 if ($LF['static']) {
                     deldir(PATH_CACHE . "static");

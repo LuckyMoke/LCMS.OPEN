@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-02 14:33:31
+ * @LastEditTime: 2023-06-14 16:03:20
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -79,31 +79,23 @@ class UPLOAD
             switch ($osscfg['type']) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
-                    $Qiniu = new QiniuOSS($osscfg['qiniu']);
-                    $rst   = $Qiniu->upload($return['src']);
-                    if ($rst['code'] == 1) {
-                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
-                        delfile($return['src']);
-                    }
+                    $OSS = new QiniuOSS($osscfg['qiniu']);
+                    $rst = $OSS->upload($return['src']);
                     break;
                 case 'tencent':
                     load::plugin("Tencent/TencentOSS");
-                    $Tencent = new TencentOSS($osscfg['tencent']);
-                    $rst     = $Tencent->upload($return['src']);
-                    if ($rst['code'] == 1) {
-                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
-                        delfile($return['src']);
-                    }
+                    $OSS = new TencentOSS($osscfg['tencent']);
+                    $rst = $OSS->upload($return['src']);
                     break;
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
-                    $Aliyun = new AliyunOSS($osscfg['aliyun']);
-                    $rst    = $Aliyun->upload($return['src']);
-                    if ($rst['code'] == 1) {
-                        $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
-                        delfile($return['src']);
-                    }
+                    $OSS = new AliyunOSS($osscfg['aliyun']);
+                    $rst = $OSS->upload($return['src']);
                     break;
+            }
+            if ($rst['code'] == 1) {
+                $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                delfile($return['src']);
             }
         }
         return $return;
@@ -125,6 +117,7 @@ class UPLOAD
             "dir"      => $dir,
             "filename" => $filename,
             "src"      => "{$dir}{$filename}",
+            "datasrc"  => "{$dir}{$filename}",
             "size"     => $size,
         ];
     }

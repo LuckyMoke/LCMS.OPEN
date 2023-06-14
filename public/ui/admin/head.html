@@ -31,6 +31,7 @@
                     mimelist: '{{$_L["config"]["admin"]["mimelist"]}}',
                     ver: '{{$_L["config"]["ver"]}}'
                 },
+                plugin: {editor:{}, upload:{}},
                 app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
                 ROOTID: parseInt('{{$_L["ROOTID"]}}'),
                 onload : []

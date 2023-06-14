@@ -8,8 +8,7 @@ class QiniuOSS
     }
     /**
      * @description: 获取上传凭证
-     * @param {*}
-     * @return {*}
+     * @return string
      */
     public function token()
     {
@@ -17,13 +16,13 @@ class QiniuOSS
             "scope"    => $this->cfg['bucket'],
             "deadline" => time() + 3600,
         ];
-        $encodedData = $this->base64_safe(json_encode($args));
+        $encodedData = $this->base64Safe(json_encode($args));
         return $this->sign($encodedData) . ':' . $encodedData;
     }
     /**
      * @description: 文件上传
-     * @param {*} $file
-     * @return {*}
+     * @param string $file
+     * @return array
      */
     public function upload($file)
     {
@@ -35,79 +34,79 @@ class QiniuOSS
             ];
         }
         $token  = $this->token();
+        $time   = md5(microtime());
         $body   = file_get_contents($file);
-        $fields = [
-            'token' => $token,
-            'key'   => $name,
-            'crc32' => $this->crc32_data($body),
-        ];
-        $data         = [];
-        $mimeBoundary = md5(microtime());
-        foreach ($fields as $key => $val) {
-            array_push($data, '--' . $mimeBoundary);
-            array_push($data, "Content-Disposition: form-data; name=\"$key\"");
-            array_push($data, '');
-            array_push($data, $val);
-        }
-        array_push($data, '--' . $mimeBoundary);
-        array_push($data, "Content-Disposition: form-data; name=\"file\"; filename=\"$name\"");
-        array_push($data, "Content-Type: " . mime_content_type($file));
-        array_push($data, '');
-        array_push($data, $body);
-        array_push($data, '--' . $mimeBoundary . '--');
-        array_push($data, '');
-        $body = implode("\r\n", $data);
-
-        $contentType             = 'multipart/form-data; boundary=' . $mimeBoundary;
-        $headers['Content-Type'] = $contentType;
-
-        return $this->sendRequest("POST", "https://" . $this->upHost(), $body, [
-            "Content-Type" => "multipart/form-data; boundary={$mimeBoundary}",
+        $data   = [];
+        $data[] = "\"key\"\n\n{$name}";
+        $data[] = "\"token\"\n\n{$token}";
+        $data[] = "\"crc32\"\n\n" . $this->dataCrc32($body);
+        $data[] = "\"file\"; filename=\"{$name}\"\nContent-Type: " . mime_content_type($file) . "\nContent-Transfer-Encoding: binary\n\n{$body}\n--{$time}--";
+        $sepa   = "--{$time}\nContent-Disposition: form-data; name=";
+        $data   = $sepa . implode("\n{$sepa}", $data);
+        $result = HTTP::post("https://" . $this->getHost(), $data, false, [
+            "Content-Type" => "multipart/form-data; boundary={$time}",
         ]);
+        $result = json_decode($result, true);
+        return [
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => $result ? "SUCCESS" : $result['error'],
+        ];
     }
     /**
      * @description: 删除指定文件
-     * @param {*} $file
-     * @return {*}
+     * @param array|string $files
+     * @return array
      */
-    public function delete($file)
+    public function delete($files)
     {
-        $path = $this->base64_safe($this->cfg['bucket'] . ":{$file}");
-        return $this->post("https://rs.qiniu.com/delete/{$path}");
+        $files = is_array($files) ? $files : [$files];
+        foreach ($files as $index => $file) {
+            $files[$index] = $this->base64Safe($this->cfg['bucket'] . ":{$file}");
+        }
+        return $this->httpPost("https://rs.qiniuapi.com/batch", "op=/delete/" . implode("&op=/delete/", $files));
     }
     /**
      * @description: 签名
-     * @param {*} $data
-     * @return {*}
+     * @param string $data
+     * @return string
      */
     private function sign($data)
     {
-        return $this->cfg['AccessKey'] . ':' . $this->base64_safe(hash_hmac('sha1', $data, $this->cfg['secretKey'], true));
+        return $this->cfg['AccessKey'] . ':' . $this->base64Safe(hash_hmac('sha1', $data, $this->cfg['secretKey'], true));
     }
-    private function post($url, $body = null)
+    /**
+     * @description: HTTP POST请求
+     * @param string $url
+     * @param string $body
+     * @return array
+     */
+    private function httpPost($url, $body = null)
     {
-        $headers = $this->authorization($url, $body);
-        return $this->sendRequest("POST", $url, $body, $headers);
-    }
-    private function authorization($urlString, $body = null, $contentType = null)
-    {
-        $url  = parse_url($urlString);
-        $data = '';
-        if (array_key_exists('path', $url)) {
-            $data = $url['path'];
-        }
-        if (array_key_exists('query', $url)) {
-            $data .= '?' . $url['query'];
-        }
-        $data .= "\n";
-        if ($body !== null && $contentType === 'application/x-www-form-urlencoded') {
-            $data .= $body;
-        }
+        $urls = parse_url($url);
+        $data = "POST ";
+        $data .= $urls['path'] ?: "";
+        $data .= $urls['query'] ? "?{$urls['query']}" : "";
+        $data .= "\nHost: {$urls['host']}";
+        $data .= "\nContent-Type: application/x-www-form-urlencoded\n\n";
+        $data .= $body ?: "";
+        $headers = [
+            'Host'          => $urls['host'],
+            'Content-Type'  => "application/x-www-form-urlencoded",
+            'Authorization' => "Qiniu " . $this->sign($data),
+        ];
+        $result = HTTP::post($url, $body, false, $headers);
+        $result = json_decode($result, true);
         return [
-            'Authorization' => 'QBox ' . $this->sign($data),
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => $result ? "SUCCESS" : $result['error'],
         ];
     }
-    private function base64_safe($str)
+    /**
+     * @description: base64安全
+     * @param string $str
+     * @return string
+     */
+    private function base64Safe($str)
     {
         return str_replace([
             '+', '/',
@@ -115,13 +114,22 @@ class QiniuOSS
             '-', '_',
         ], base64_encode($str));
     }
-    private function crc32_data($data)
+    /**
+     * @description: 字符串转crc32
+     * @param string $data
+     * @return string
+     */
+    private function dataCrc32($data)
     {
         $hash  = hash('crc32b', $data);
         $array = unpack('N', pack('H*', $hash));
         return sprintf('%u', $array[1]);
     }
-    private function upHost()
+    /**
+     * @description: 获取上传域名
+     * @return string
+     */
+    private function getHost()
     {
         switch ($this->cfg['uphost']) {
             case 'hd':
@@ -133,49 +141,6 @@ class QiniuOSS
             case 'hn':
                 return 'up-z2.qiniup.com';
                 break;
-        }
-    }
-    private function sendRequest($method = "POST", $url, $body = null, $headers = [])
-    {
-        $t1 = microtime(true);
-        $ch = curl_init();
-        if (!empty($headers)) {
-            foreach ($headers as $key => $val) {
-                $headers[$key] = "$key: $val";
-            }
-            $headers = array_values($headers);
-        }
-        $options = [
-            CURLOPT_USERAGENT      => "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_HEADER         => false,
-            CURLOPT_NOBODY         => false,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTPHEADER     => $headers,
-            CURLOPT_CUSTOMREQUEST  => $method,
-            CURLOPT_URL            => $url,
-        ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Expect:']);
-        if (!empty($body)) {
-            $options[CURLOPT_POSTFIELDS] = $body;
-        }
-        curl_setopt_array($ch, $options);
-        $ret  = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($code == 200) {
-            return [
-                "code" => 1,
-                "msg"  => "SUCCESS",
-            ];
-        } else {
-            $ret = json_decode($ret, true);
-            return [
-                "code" => 0,
-                "msg"  => $ret['error'],
-            ];
         }
     }
 }

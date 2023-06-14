@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-05-08 17:29:03
+ * @LastEditTime: 2023-06-13 12:35:44
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -230,7 +230,7 @@ class LAY
             }
             $para['url'] = " data-url='{$para['url']}'";
         }
-        if ($para['timeout']) {
+        if (isset($para['timeout'])) {
             $para['timeout'] = " data-timeout='{$para['timeout']}'";
         }
         $html = "

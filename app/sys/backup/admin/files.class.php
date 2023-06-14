@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-09-28 14:32:25
- * @LastEditTime: 2022-04-15 15:40:21
+ * @LastEditTime: 2023-06-14 15:56:08
  * @Description: 文件管理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -44,8 +44,9 @@ class files extends adminbase
                 break;
             default:
                 $table = [
-                    "url"    => "index&action=list",
-                    "cols"   => [
+                    "url"     => "index&action=list",
+                    "cols"    => [
+                        ["type" => "checkbox", "width" => 50],
                         ["title" => "ID", "field" => "id",
                             "width"  => 80,
                             "align"  => "center"],
@@ -71,10 +72,16 @@ class files extends adminbase
                                 ["title" => "删除", "event" => "ajax",
                                     "url"    => "{$_L['url']['own_form']}delimg&n=upload&c=index",
                                     "color"  => "danger",
-                                    "tips"   => "确认删除？"],
+                                    "tips"   => "确认删除？无法恢复！"],
                             ]],
                     ],
-                    "search" => [
+                    "toolbar" => [
+                        ["title" => "批量删除", "event" => "ajax",
+                            "url"    => "{$_L['url']['own_form']}delimg&n=upload&c=index",
+                            "color"  => "danger",
+                            "tips"   => "确认删除？无法恢复！"],
+                    ],
+                    "search"  => [
                         ["title" => "文件类型", "name" => "type",
                             "type"   => "select",
                             "option" => [

@@ -20,7 +20,8 @@
                 url: JSON.parse('{{json_encode($_L["url"])}}'),
                 config: {
                     ver: "{{$_L['config']['ver']}}"
-                }
+                },
+                plugin: {editor:{}, upload:{}}
             };
         </script>
         <if $_L['developer'] && $_L['developer']['fontfamily']>

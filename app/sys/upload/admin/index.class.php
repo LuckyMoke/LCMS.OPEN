@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-10-21 17:50:34
+ * @LastEditTime: 2023-06-14 16:01:23
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -47,43 +47,54 @@ class index extends adminbase
     public function dodelimg()
     {
         global $_L, $LF, $LC;
-        $file = $LC['src'] ?: $LF['dir'];
-        $file = str_replace(["../", "./"], "", $file);
-        $preg = "upload/{$_L['ROOTID']}/";
-        if (stripos($file, $preg) !== false) {
+        if ($LC && $LC['src']) {
+            $files = [$LC['src']];
+        } elseif ($LC && $LC[0] && $LC[0]['src']) {
+            $ids   = implode(",", array_column($LC, "id"));
+            $files = array_column($LC, "src");
+        } else {
+            $files = [$LF['dir']];
+        }
+        foreach ($files as $index => $file) {
+            if (in_string($file, "upload/{$_L['ROOTID']}/")) {
+                $files[$index] = str_replace(["../", "./"], "", $file);
+            } else {
+                unset($files[$index]);
+            }
+        }
+        $files = array_values($files);
+        if ($files) {
             switch ($_L['plugin']['oss']['type']) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
-                    $Qiniu = new QiniuOSS($_L['plugin']['oss']['qiniu']);
-                    $Qiniu->delete($file);
-                    $this->sql("delete", "../{$file}");
+                    $OSS = new QiniuOSS($_L['plugin']['oss']['qiniu']);
                     break;
                 case 'tencent':
                     load::plugin("Tencent/TencentOSS");
-                    $Tencent = new TencentOSS($_L['plugin']['oss']['tencent']);
-                    $Tencent->delete($file);
-                    $this->sql("delete", "../{$file}");
+                    $OSS = new TencentOSS($_L['plugin']['oss']['tencent']);
                     break;
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
-                    $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
-                    $Aliyun->delete($file);
-                    $this->sql("delete", "../{$file}");
-                    break;
-                default:
-                    $this->sql("delete", "../{$file}");
-                    if (sql_error()) {
-                        ajaxout(0, "删除失败");
-                    } else {
-                        delfile("../{$file}");
-                    }
+                    $OSS = new AliyunOSS($_L['plugin']['oss']['aliyun']);
                     break;
             }
         }
-        $this->sql("deletebyid", $LC['id']);
+        if ($OSS) {
+            $OSS->delete($files);
+        } else {
+            foreach ($files as $file) {
+                delfile("../{$file}");
+            }
+        }
+        if ($ids) {
+            $this->sql("deletebyid", $ids);
+        } else {
+            $this->sql("delete", $files[0]);
+        }
+        sql_error() && ajaxout(0, "删除失败");
         LCMS::log([
             "type" => "system",
-            "info" => "删除文件-{$file}",
+            "info" => "删除文件-" . implode(",", $files),
         ]);
         ajaxout(1, "删除成功", "reload");
     }
@@ -148,17 +159,7 @@ class index extends adminbase
                 ]);
                 break;
             case 'success':
-                $this->sql($LF['type'], $LF['datey'], [
-                    "filename" => $LF['name'],
-                    "size"     => $LF['size'],
-                    "src"      => "../" . $LF['file'],
-                ]);
-                ajaxout(1, "上传成功", "", [
-                    "dir"      => "../" . $LF['dir'],
-                    "filename" => $LF['name'],
-                    "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
-                    "datasrc"  => "../" . $LF['file'],
-                ]);
+                $this->ossSuccess();
                 break;
         }
     }
@@ -180,17 +181,7 @@ class index extends adminbase
                 ajaxout(1, "success", "", $token);
                 break;
             case 'success':
-                $this->sql($LF['type'], $LF['datey'], [
-                    "filename" => $LF['name'],
-                    "size"     => $LF['size'],
-                    "src"      => "../" . $LF['file'],
-                ]);
-                ajaxout(1, "上传成功", "", [
-                    "dir"      => "../" . $LF['dir'],
-                    "filename" => $LF['name'],
-                    "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
-                    "datasrc"  => "../" . $LF['file'],
-                ]);
+                $this->ossSuccess();
                 break;
         }
     }
@@ -210,19 +201,28 @@ class index extends adminbase
                 ajaxout(1, "success", "", $token);
                 break;
             case 'success':
-                $this->sql($LF['type'], $LF['datey'], [
-                    "filename" => $LF['name'],
-                    "size"     => $LF['size'],
-                    "src"      => "../" . $LF['file'],
-                ]);
-                ajaxout(1, "上传成功", "", [
-                    "dir"      => "../" . $LF['dir'],
-                    "filename" => $LF['name'],
-                    "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
-                    "datasrc"  => "../" . $LF['file'],
-                ]);
+                $this->ossSuccess();
                 break;
         }
+    }
+    /**
+     * @description: 云存储成功后操作
+     * @return {*}
+     */
+    private function ossSuccess()
+    {
+        global $_L, $LF, $LC;
+        $this->sql($LF['type'], $LF['datey'], [
+            "filename" => $LF['name'],
+            "size"     => $LF['size'],
+            "src"      => "../" . $LF['file'],
+        ]);
+        ajaxout(1, "上传成功", "", [
+            "dir"      => "../" . $LF['dir'],
+            "filename" => $LF['name'],
+            "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
+            "datasrc"  => "../" . $LF['file'],
+        ]);
     }
     /**
      * @description: 数据库操作
@@ -241,9 +241,9 @@ class index extends adminbase
                     "upload",
                     "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
                     [
-                        ":type"  => $data[3],
-                        ":datey" => $data[4],
-                        ":name"  => $data[5],
+                        ":type"  => $data[2],
+                        ":datey" => $data[3],
+                        ":name"  => $data[4],
                         ":lcms"  => $_L['ROOTID'],
                     ],
                 ]);
@@ -251,9 +251,8 @@ class index extends adminbase
             case 'deletebyid':
                 $datey && sql_delete([
                     "upload",
-                    "id = :id AND lcms = :lcms",
+                    "id IN ({$datey}) AND lcms = :lcms",
                     [
-                        ":id"   => $datey,
                         ":lcms" => $_L['ROOTID'],
                     ],
                 ]);

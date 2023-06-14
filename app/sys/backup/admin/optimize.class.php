@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2023-04-07 00:49:03
+ * @LastEditTime: 2023-06-12 16:23:52
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -31,8 +31,8 @@ class optimize extends adminbase
                         "Engine"       => $table['Engine'],
                         "Collation"    => $table['Collation'],
                         "Rows"         => $table['Rows'],
-                        "Data_length"  => sprintf("%.2f", $table['Data_length'] / 1024) . "KB",
-                        "Index_length" => sprintf("%.2f", $table['Index_length'] / 1024) . "KB",
+                        "Data_length"  => getunit($table['Data_length']),
+                        "Index_length" => getunit($table['Index_length']),
                         "Data_free"    => $table['Data_free'],
                         "Comment"      => $table['Comment'],
                     ];

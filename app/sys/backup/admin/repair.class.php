@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-04-24 16:11:27
+ * @LastEditTime: 2023-06-13 16:48:41
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -30,11 +30,9 @@ class repair extends adminbase
             switch ($val['type']) {
                 case 'create':
                     foreach ($val['data'] as $key => $data) {
-                        if ($key != "LCMSDATAINDEX") {
+                        if ($this->isKey($key)) {
                             $sqls[] = $this->setKey($key, $data, true);
                         }
-                    }
-                    foreach ($val['data'] as $key => $data) {
                         if ($key == "LCMSDATAINDEX" || $data['index']) {
                             $sqls[] = $this->setIndex($key, $data, true);
                         }
@@ -43,7 +41,8 @@ class repair extends adminbase
                     if (!$sqls) {
                         continue;
                     }
-                    $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;";
+                    $engine  = $val['data']['LCMSDATAOTHER']['engine'] ?: "MyISAM";
+                    $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
                     break;
                 default:
                     foreach ($val['data'] as $key => $data) {
@@ -56,12 +55,15 @@ class repair extends adminbase
                         if ($data['columndrop']) {
                             $sqls[] = "DROP COLUMN `{$key}`";
                         } else {
-                            if ($key != "LCMSDATAINDEX") {
+                            if ($this->isKey($key)) {
                                 $sqls[]  = $this->setKey($key, $data);
                                 $upkey[] = $this->setVal($key, $data);
                             }
                             if ($key == "LCMSDATAINDEX" || $data['index']) {
                                 $sqls[] = $this->setIndex($key, $data);
+                            }
+                            if ($key == "LCMSDATAOTHER") {
+                                $sqls[] = $this->setOther($data);
                             }
                         }
                     }
@@ -108,13 +110,15 @@ class repair extends adminbase
         if ($app) {
             $file = "open/{$app}/app";
         } else {
-            $file = "sys/backup/include/data/base";
+            $file = "sys/backup/include/data/main";
         }
         $file = PATH_APP . "{$file}.sql";
         if (is_file($file)) {
             $file = file_get_contents($file);
-            $file = ssl_decode($file, "SQL");
-            $file = gzinflate($file);
+            if (substr($file, 0, 1) != "{") {
+                $file = ssl_decode($file, "SQL");
+                $file = gzinflate($file);
+            }
             return json_decode($file, true);
         }
         ajaxout(0, "未找到对应数据结构文件");
@@ -132,35 +136,46 @@ class repair extends adminbase
             if ($old[$name]) {
                 foreach ($data as $key => $val) {
                     if ($old[$name][$key]) {
-                        if ($key == "LCMSDATAINDEX") {
-                            foreach ($val as $k => $v) {
-                                $oname = $old[$name][$key][$k]['name'] ?: [];
-                                $diff  = array_diff($v['name'], $oname);
-                                if ($diff) {
-                                    if ($old[$name][$key][$k]['name']) {
-                                        $val[$k]['indexdrop'] = true;
+                        switch ($key) {
+                            case 'LCMSDATAINDEX':
+                                foreach ($val as $k => $v) {
+                                    $oname = $old[$name][$key][$k]['name'] ?: [];
+                                    $diff  = array_diff($v['name'], $oname);
+                                    if ($diff) {
+                                        if ($old[$name][$key][$k]['name']) {
+                                            $val[$k]['indexdrop'] = true;
+                                        }
+                                    } else {
+                                        unset($val[$k]);
                                     }
-                                } else {
-                                    unset($val[$k]);
                                 }
-                                $result[$name]['data'][$key] = $val;
-                            }
-                        } else {
-                            $diff = array_diff($val, $old[$name][$key]);
-                            if ($diff) {
-                                if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
-                                    $diff['indexdrop'] = true;
+                                if ($val) {
+                                    $result[$name]['data'][$key] = $val;
                                 }
-                                $diff = array_merge([
-                                    "type"    => $val['type'],
-                                    "index"   => "",
-                                    "default" => $val['default'],
-                                ], $diff);
-                                $result[$name]['data'][$key] = $diff;
-                            };
+                                break;
+                            case 'LCMSDATAOTHER':
+                                $diff = array_diff($val, $old[$name][$key]);
+                                if ($diff) {
+                                    $result[$name]['data'][$key] = $diff;
+                                }
+                                break;
+                            default:
+                                $diff = array_diff($val, $old[$name][$key]);
+                                if ($diff) {
+                                    if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
+                                        $diff['indexdrop'] = true;
+                                    }
+                                    $diff = array_merge([
+                                        "type"    => $val['type'],
+                                        "index"   => "",
+                                        "default" => $val['default'],
+                                    ], $diff);
+                                    $result[$name]['data'][$key] = $diff;
+                                };
+                                break;
                         }
                     } else {
-                        if ($key != "LCMSDATAINDEX") {
+                        if ($this->isKey($key)) {
                             $val = array_merge($val, [
                                 "add" => true,
                             ]);
@@ -181,7 +196,7 @@ class repair extends adminbase
         foreach ($old as $name => $data) {
             if ($new[$name]) {
                 foreach ($data as $key => $val) {
-                    if ($key != "LCMSDATAINDEX" && !$new[$name][$key]) {
+                    if ($this->isKey($key) && !$new[$name][$key]) {
                         if (substr($key, 0, 4) != "own_") {
                             if ($val['index']) {
                                 $result[$name]['data'][$key]['indexdrop'] = true;
@@ -232,6 +247,9 @@ class repair extends adminbase
             if ($indexs) {
                 $result[$name]['LCMSDATAINDEX'] = $indexs;
             }
+            $result[$name]['LCMSDATAOTHER'] = [
+                "engine" => $this->getEngine($name),
+            ];
         }
         return $result ?: [];
     }
@@ -262,6 +280,33 @@ class repair extends adminbase
             }
         }
         return $index ?: [];
+    }
+    /**
+     * @description: 获取引擎
+     * @param string $table
+     * @return string
+     */
+    private function getEngine($table)
+    {
+        global $_L, $LF, $LC;
+        $engine = "MyISAM";
+        $create = sql_query("SHOW CREATE TABLE {$_L['mysql']['pre']}{$table}");
+        if (in_string($create['Create Table'], "ENGINE=InnoDB")) {
+            $engine = "InnoDB";
+        }
+        return $engine;
+    }
+    /**
+     * @description: 判断是否表字段
+     * @param string $key
+     * @return bool
+     */
+    private function isKey($key)
+    {
+        if (!in_string($key, ["LCMSDATAINDEX", "LCMSDATAOTHER"])) {
+            return true;
+        }
+        return false;
     }
     /**
      * @description: 创建字段语句
@@ -351,5 +396,18 @@ class repair extends adminbase
             $sql = implode(",\n", $sql);
         }
         return $sql;
+    }
+    private function setOther($data)
+    {
+        global $_L, $LF, $LC, $PRE;
+        $sql = [];
+        foreach ($data as $k => $v) {
+            switch ($k) {
+                case 'engine':
+                    $sql[] = "ENGINE = {$v}";
+                    break;
+            }
+        }
+        return implode(",\n", $sql);
     }
 }

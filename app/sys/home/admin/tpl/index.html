@@ -64,21 +64,20 @@
                         <td>{{$info['sys']}}</td>
                     </tr>
                     <tr>
-                        <td>PHP版本</td>
+                        <td>运行环境</td>
                         <td>
-                            <if $info['php'] gte "7.2.0">
-                                {{$info['php']}}
-                                <if $info['php'] lt "8.0.0">
-                                    / 推荐 PHP8.0 及其以上版本
+                            PHP/<if $info['php'] gte "7.2.0">{{$info['php']}}
+                                <if $info['php'] lt "8.0.0">(推荐PHP8.0及以上)
                                 </if>
                                 <else />
-                                <span style="color:red;">{{$info['php']}} PHP版本太低，需>=7.2</span>
+                                <span style="color:red;">{{$info['php']}} (PHP版本需>=7.2.0)</span>
                             </if>
+                            数据库/{{$info['mysql']}}
                         </td>
                     </tr>
                     <tr>
-                        <td>数据库版本</td>
-                        <td>{{$info['mysql']}}</td>
+                        <td>Opcache</td>
+                        <td>{{$info['opcache']??"未开启opcache扩展，开启有助于降低CPU使用率，但会增加内存使用量"}}</td>
                     </tr>
                     <tr>
                         <td>PHP扩展</td>
@@ -93,7 +92,7 @@
                     </tr>
                     <tr>
                         <td>开源组件</td>
-                        <td>Layui、Amazeui、Neditor、Eruda、FontAwesome、得意黑、Gantari</td>
+                        <td>Layui、Amazeui、Neditor、Eruda、FontAwesome、霞鹜尚智黑、Gantari</td>
                     </tr>
                 </tbody>
             </table>

@@ -57,38 +57,47 @@ class TencentOSS
             ];
         }
         $body    = file_get_contents($file);
-        $url     = $this->api;
         $headers = [
-            "PUT"          => "/{$name} HTTP/1.1",
-            "Host"         => $url,
+            "PUT"          => "/{$name}",
+            "Host"         => $this->api,
             "Content-Type" => mime_content_type($file),
         ];
-        $headers['Authorization'] = $this->sign("put", $name, [], $headers);
-
-        $url = "https://" . $url . "/{$name}";
-        if (!$this->request("PUT", $url, $body, $headers)) {
-            return [
-                "code" => 1,
-                "msg"  => "success",
-            ];
-        }
+        $url    = "https://" . $this->api . "/{$name}";
+        $result = HTTP::put($url, $body, array_merge($headers, [
+            "Authorization" => $this->sign("put", $name, [], $headers)
+        ]));
+        return [
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => $result ? "SUCCESS" : "上传失败",
+        ];
     }
     /**
-     * @description: 删除文件
-     * @param {*} $file
-     * @return {*}
+     * @description: 删除指定文件
+     * @param array|string $files
+     * @return array
      */
-    public function delete($file)
+    public function delete($files)
     {
-        $url     = $this->api;
+        $files = is_array($files) ? $files : [$files];
+        foreach ($files as $index => $file) {
+            $files[$index] = "<Object><Key>{$file}</Key></Object>";
+        }
+        $files   = implode("", $files);
+        $body    = "<Delete><Quiet>true</Quiet>{$files}</Delete>";
         $headers = [
-            "DELETE" => "/{$file} HTTP/1.1",
-            "Host"   => $url,
+            "POST"         => "/?delete",
+            "Host"         => $this->api,
+            "Content-Type" => "application/xml",
+            "Content-MD5"  => base64_encode(md5($body, true)),
         ];
-        $headers['Authorization'] = $this->sign("delete", $file, [], $headers);
-
-        $url = "https://" . $url . "/{$file}";
-        $this->request("DELETE", $url, "", $headers);
+        $url = "https://" . $this->api . "/?delete";
+        HTTP::post($url, $body, false, array_merge($headers, [
+            "Authorization" => $this->sign("post", "", [], $headers)
+        ]));
+        return [
+            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "msg"  => "SUCCESS",
+        ];
     }
     public function sign($method, $path, $params, $headers)
     {
@@ -193,26 +202,5 @@ class TencentOSS
             $sign         = base64_encode($this->_hex2bin($sign));
             return $sign;
         }
-    }
-    private function request($method = 'POST', $url, $data = "", $headers = [])
-    {
-        $ch = curl_init($url);
-        if ($headers) {
-            $header[] = "X-HTTP-Method-Override: {$method}";
-            foreach ($headers as $key => $val) {
-                $header[] = "{$key}: {$val}";
-            }
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        }
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        $r = curl_exec($ch);
-        curl_close($ch);
-        return $r;
     }
 }
