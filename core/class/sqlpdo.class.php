@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-05-16 14:23:28
+ * @LastEditTime: 2023-06-21 10:37:43
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -41,20 +41,20 @@ class SQLPDO
     /**
      * @description: 数据库操作准备
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return {*}
      */
-    public function prepare($sql, $params = [])
+    public function prepare($sql, $bind = [])
     {
         $this->psm = $this->pdo->prepare($sql);
         if ($this->psm) {
             try {
-                foreach ($params as $key => $val) {
+                foreach ($bind as $key => $val) {
                     if ($val === "" || $val === null) {
-                        $params[$key] = null;
+                        $bind[$key] = null;
                     }
                 }
-                $this->psm->execute($params);
+                $this->psm->execute($bind);
                 return $this->psm;
             } catch (Exception $e) {
                 LCMS::X($this->errno(), $this->error());
@@ -66,34 +66,34 @@ class SQLPDO
     /**
      * @description: 从结果集中获取下一行
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @param string $result_type
      * @return array|null
      */
-    public function fetch($sql, $params = [], $result_type = "")
+    public function fetch($sql, $bind = [], $result_type = "")
     {
-        return $this->prepare($sql, $params)->fetch($result_type);
+        return $this->prepare($sql, $bind)->fetch($result_type);
     }
     /**
      * @description: 返回一个包含结果集中所有行的数组
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @param string $result_type
      * @return array|null
      */
-    public function fetch_all($sql, $params = [], $result_type = "")
+    public function fetch_all($sql, $bind = [], $result_type = "")
     {
-        return $this->prepare($sql, $params)->fetchAll($result_type);
+        return $this->prepare($sql, $bind)->fetchAll($result_type);
     }
     /**
      * @description: 从结果集中的下一行返回单独的一列
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return {*}
      */
-    public function fetch_column($sql, $params = [])
+    public function fetch_column($sql, $bind = [])
     {
-        return $this->prepare($sql, $params)->fetchColumn();
+        return $this->prepare($sql, $bind)->fetchColumn();
     }
     /**
      * @description: 获取数据库所有表名
@@ -107,54 +107,54 @@ class SQLPDO
     /**
      * @description: 查询一条数据
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @param string $result_type
      * @return array|null
      */
-    public function get_one($sql, $params = [], $result_type = PDO::FETCH_ASSOC)
+    public function get_one($sql, $bind = [], $result_type = PDO::FETCH_ASSOC)
     {
-        return $this->fetch($sql, $params, $result_type);
+        return $this->fetch($sql, $bind, $result_type);
     }
     /**
      * @description: 查询多条数据
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @param string $result_type
      * @return array|null
      */
-    public function get_all($sql, $params = [], $result_type = PDO::FETCH_ASSOC)
+    public function get_all($sql, $bind = [], $result_type = PDO::FETCH_ASSOC)
     {
-        return $this->fetch_all($sql, $params, $result_type);
+        return $this->fetch_all($sql, $bind, $result_type);
     }
     /**
      * @description: 更新数据
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return {*}
      */
-    public function update($sql, $params = [])
+    public function update($sql, $bind = [])
     {
-        return $this->prepare($sql, $params)->rowCount();
+        return $this->prepare($sql, $bind)->rowCount();
     }
     /**
      * @description: 插入数据
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return {*}
      */
-    public function insert($sql, $params = [])
+    public function insert($sql, $bind = [])
     {
-        return $this->prepare($sql, $params)->rowCount();
+        return $this->prepare($sql, $bind)->rowCount();
     }
     /**
      * @description:
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return {*}
      */
-    public function delete($sql, $params = [])
+    public function delete($sql, $bind = [])
     {
-        return $this->prepare($sql, $params)->rowCount();
+        return $this->prepare($sql, $bind)->rowCount();
     }
     /**
      * @description: 自由查询sql语句
@@ -183,12 +183,12 @@ class SQLPDO
     /**
      * @description: 查询数据库条数
      * @param string $sql
-     * @param array $params
+     * @param array $bind
      * @return int
      */
-    public function counter($sql, $params = [])
+    public function counter($sql, $bind = [])
     {
-        return $this->fetch_column($sql, $params);
+        return $this->fetch_column($sql, $bind);
     }
     /**
      * @description: 获取最后一个插入数据的ID

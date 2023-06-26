@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-12 16:37:30
+ * @LastEditTime: 2023-06-20 19:41:33
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -830,7 +830,6 @@ function server_info()
     $serverinfo['os']    = php_uname('s');
     $serverinfo['sys']   = $_SERVER["SERVER_SOFTWARE"];
     $serverinfo['php']   = PHP_VERSION;
-    $serverinfo['mysql'] = "Mysql " . DB::$mysql->version();
     if (function_exists("opcache_get_status")) {
         $opcache = opcache_get_status();
         if ($opcache['memory_usage']) {

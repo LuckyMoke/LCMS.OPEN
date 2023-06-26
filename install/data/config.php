@@ -1,5 +1,5 @@
 <?php
-/* 数据库配置 */
+/* 主数据库配置 */
 $_L['mysql']['host']    = "[db_host]";
 $_L['mysql']['port']    = [db_port];
 $_L['mysql']['user']    = "[db_user]";
@@ -7,6 +7,14 @@ $_L['mysql']['pass']    = "[db_pass]";
 $_L['mysql']['name']    = "[db_name]";
 $_L['mysql']['pre']     = "[db_pre]";
 $_L['mysql']['charset'] = "utf8mb4";
+
+/* 从数据库配置 on=1 开启 on=0 关闭*/
+$_L["mysql"]['slave']["on"]   = 0;
+$_L["mysql"]['slave']["host"] = "";
+$_L["mysql"]['slave']["port"] = 3306;
+$_L["mysql"]['slave']["user"] = "";
+$_L["mysql"]['slave']["pass"] = "";
+$_L["mysql"]['slave']["name"] = "";
 
 /* Redis配置 */
 $_L['redis']['host'] = "127.0.0.1";

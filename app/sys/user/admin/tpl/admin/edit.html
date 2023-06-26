@@ -1,13 +1,32 @@
-<template "ui/head"/>
-<template "ui/iframe"/>
-<form class="layui-form layui-form-pane iframe-admin-edit" action="{{$_L['url']['own_form']}}{{$LF['a']}}&action=save" method="post" target="_self">
-    <input type="hidden" name="LC[id]" value="{{ $admin['id'] }}"/>
-    <input type="hidden" name="LC[oldpass]" value="{{ $admin['pass'] }}"/>
-    <input type="hidden" name="LC[addtime]" value="{{ $admin['addtime']?$admin['addtime']:datenow(); }}"/>
-    <ui form($form['base'])/>
-    <if $admin['id'] != $_L['LCMSADMIN']['id']>
-        <ui form($form['level'])/>
+<template "ui/head" />
+<template "ui/iframe" />
+<form class="layui-form layui-form-pane iframe-admin-edit" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self" data-onsubmit="onSubmit">
+    <input type="hidden" name="token" value="{{$LF['token']}}" />
+    <input type="hidden" name="type" value="{{$LF['a']}}" />
+    <input type="hidden" name="LC[addtime]" value="{{$admin['addtime']?:datenow()}}" />
+    <ui form($form['base']) />
+    <if $admin['id']!=$_L['LCMSADMIN']['id']>
+        <ui form($form['level']) />
     </if>
-    <ui btn()/>
+    <ui btn() />
 </form>
-<template "ui/foot"/>
+<script type="text/javascript">
+    var onSubmit = function (form, callback) {
+        if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(form['LC[name]'])) {
+            LCMS.util.notify({
+                type: "error",
+                content: "账号不能有特殊字符"
+            });
+            return;
+        }
+        if (form['LC[pass]'] && form['LC[pass]'].length < 6) {
+            LCMS.util.notify({
+                type: "error",
+                content: "密码长度不能少于6位"
+            });
+            return;
+        }
+        callback(true);
+    }
+</script>
+<template "ui/foot" />

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-06-03 18:22:22
+ * @LastEditTime: 2023-06-23 21:17:24
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -127,15 +127,12 @@ class index extends adminbase
         }
         //获取用户数据
         $admin = sql_get(["admin",
-            "pass = :pass AND (name = :name OR email = :name OR mobile = :name)",
-            "id DESC",
-            [
+            "name = :name OR email = :name OR mobile = :name",
+            "id DESC", [
                 ":name" => $LF['name'],
-                ":pass" => md5($LF['pass']),
-            ],
-        ]);
+            ]]);
         //如果无用户数据
-        if (!$admin) {
+        if (!$admin || md5("{$LF['pass']}{$admin['salt']}") != $admin['pass']) {
             LCMS::log([
                 "user" => $LF['name'],
                 "type" => "login",

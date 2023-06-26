@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2023-06-12 16:23:52
+ * @LastEditTime: 2023-06-23 15:23:59
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -47,23 +47,29 @@ class optimize extends adminbase
             case 'truncate':
                 set_time_limit(300);
                 $LC || ajaxout(0, "请选择需要操作的表");
+                $names = [];
                 foreach ($LC as $table) {
-                    if ($table['Engine'] == "MyISAM") {
+                    if ($table['Engine'] == "MyISAM" || $LF['action'] == "truncate") {
                         $info     = sql_query(strtoupper($LF['action']) . " TABLE `{$table['Name']}`");
                         $result[] = array_merge([
-                            "Msg_type" => "ststus",
+                            "Msg_type" => "status",
                             "Msg_text" => "OK",
                         ], $info ?: [], [
                             "Table" => $table['Name'],
                         ]);
+                        $names[] = $table['Name'];
                     }
                 }
-                $names = implode("、", array_column($LC, "Name"));
-                LCMS::log([
+                $names = implode("、", $names);
+                $names && LCMS::log([
                     "type" => "system",
                     "info" => "数据优化-{$LF['action']}-{$names}",
                 ]);
-                ajaxout(2, "数据表操作完成", "showResult", $result ?: []);
+                ajaxout(2, "数据表操作完成", "showResult", $result ?: [[
+                    "Table"    => "操作完成",
+                    "Msg_type" => "status",
+                    "Msg_text" => "OK",
+                ]]);
                 break;
             default:
                 $table = [

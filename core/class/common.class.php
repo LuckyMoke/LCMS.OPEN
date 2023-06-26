@@ -2,13 +2,15 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2022-08-27 21:01:06
+ * @LastEditTime: 2023-06-21 01:02:00
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 load::sys_func('file');
+load::sys_class('sqlpdo');
 load::sys_class('mysql');
+load::sys_func('mysql');
 load::sys_class('session');
 load::sys_class('http');
 class common
@@ -35,7 +37,10 @@ class common
         global $_L;
         if (is_file(PATH_CORE . 'config.php')) {
             require_once PATH_CORE . 'config.php';
-            DB::dbconn($_L['mysql']);
+            if ($_L['mysql']['slave']['on'] != 1) {
+                unset($_L['mysql']['slave']);
+            }
+            $_L['DB'] = new MYSQL($_L['mysql']);
         } else {
             okinfo("/install/");
             exit;
@@ -70,7 +75,7 @@ class common
     protected function load_common_tables()
     {
         global $_L;
-        $table = DB::$mysql->get_tables();
+        $table = $_L['DB']->get_tables();
         foreach ($table as $val) {
             $name          = str_replace($_L['mysql']['pre'], "", $val);
             $tables[$name] = $val;
@@ -126,7 +131,7 @@ class common
     {
         global $_L;
         if (!empty($_L['table'])) {
-            DB::$mysql->close();
+            $_L['DB']->close();
         }
         while (ob_end_flush() > 0) {
             ob_end_flush();

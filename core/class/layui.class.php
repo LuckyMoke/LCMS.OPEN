@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-13 12:35:44
+ * @LastEditTime: 2023-06-24 12:00:30
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -44,12 +44,15 @@ class LAY
     }
     public static function html($para)
     {
-        $para = self::start($para);
-        $html = "
+        $para             = self::start($para);
+        $para['nodrop']   = $para['nodrop'] ? " lcms-form-html-nodrop" : "";
+        $para['copy']     = $para['copy'] ? " lcms-form-copy" : "";
+        $para['copytext'] = $para['copytext'] ?: $para['value'];
+        $html             = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <div class='lcms-form-html'>{$para['value']}</div>
+                    <div class='lcms-form-html{$para['nodrop']}{$para['copy']}' data-copytext='{$para['copytext']}'>{$para['value']}</div>
                 </div>
             </div>";
         echo $html;

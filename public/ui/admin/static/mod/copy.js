@@ -1,0 +1,1 @@
+$(".lcms-form-copy").on("click",(function(){const text=$(this).attr("data-copytext");text=text?text:$(this).text(),text&&LCMS.util.copy(text)})),$(".lcms-form-copy").hover((function(){tindex=layer.tips("点击复制",$(this),{tips:[1,"#303133"],time:0})}),(function(){layer.close(tindex)}));

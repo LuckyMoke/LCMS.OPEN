@@ -51,7 +51,7 @@
             </loop>
         </ul>
     </div>
-    <div style="margin:0 10px 20px 10px;font-size:12px;color:#909399">&copy;{{ echo date("Y") }} {{$_L['config']['admin']['developer']}} 版权所有 翻版必究 当前系统版本 V{{ $_L['config']['ver'] }} 页面加载时间 {{ echo round(microtime(true)-PAGE_START, 5) }} 秒</div>
+    <div style="margin:0 10px 20px 10px;font-size:12px;color:#909399">&copy;{{date("Y")}} {{$_L['config']['admin']['developer']}} V{{$_L['config']['ver']}}</div>
     <script type="text/javascript" src="{{$_L['url']['static']}}prettify/prettify.js?{{$_L['config']['ver']}}"></script>
     <script>
         prettyPrint();

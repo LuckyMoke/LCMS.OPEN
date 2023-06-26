@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2022-09-20 14:25:00
+ * @LastEditTime: 2023-06-23 21:47:04
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -120,10 +120,13 @@ class reg extends adminbase
         PUB::ishave("name", $LF['name']);
         //检测密码是否合规
         PUB::ishave("pass", $LF['pass']);
+        //生成盐
+        $salt  = randstr(8);
         $admin = [
             "name"    => $LF['name'],
             "title"   => $LF['title'] ?: $LF['name'],
-            "pass"    => md5($LF['pass']),
+            "pass"    => md5("{$LF['pass']}{$salt}"),
+            "salt"    => $salt,
             "status"  => $UCFG['reg']['status'],
             "addtime" => datenow(),
             "type"    => $UCFG['reg']['level'],

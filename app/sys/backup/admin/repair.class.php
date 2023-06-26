@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-06-13 16:48:41
+ * @LastEditTime: 2023-06-23 14:52:27
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -41,8 +41,9 @@ class repair extends adminbase
                     if (!$sqls) {
                         continue;
                     }
-                    $engine  = $val['data']['LCMSDATAOTHER']['engine'] ?: "MyISAM";
-                    $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . ") ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
+                    $engine  = $val['data']['LCMSDATAOTHER']['engine'];
+                    $engine  = $engine ? " ENGINE={$engine}" : "";
+                    $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . "){$engine} DEFAULT CHARSET=utf8mb4;";
                     break;
                 default:
                     foreach ($val['data'] as $key => $data) {
@@ -162,8 +163,12 @@ class repair extends adminbase
                             default:
                                 $diff = array_diff($val, $old[$name][$key]);
                                 if ($diff) {
-                                    if ($old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
+                                    if ($diff['index'] && $old[$name][$key]['index']) {
                                         $diff['indexdrop'] = true;
+                                    } else {
+                                        if (!$diff['default'] && in_string($diff['type'], "int")) {
+                                            continue;
+                                        }
                                     }
                                     $diff = array_merge([
                                         "type"    => $val['type'],
@@ -289,12 +294,8 @@ class repair extends adminbase
     private function getEngine($table)
     {
         global $_L, $LF, $LC;
-        $engine = "MyISAM";
-        $create = sql_query("SHOW CREATE TABLE {$_L['mysql']['pre']}{$table}");
-        if (in_string($create['Create Table'], "ENGINE=InnoDB")) {
-            $engine = "InnoDB";
-        }
-        return $engine;
+        $status = sql_query("SHOW TABLE STATUS LIKE '{$_L['mysql']['pre']}{$table}'");
+        return $status['Engine'];
     }
     /**
      * @description: 判断是否表字段
@@ -384,7 +385,7 @@ class repair extends adminbase
                     $end = false;
                     break;
             }
-            $sql = $create ? "{$sql} KEY" : ($data['indexdrop'] ? "DROP INDEX `{$key}`, " : "") . "ADD{$sql} INDEX";
+            $sql = $create ? "{$sql} KEY" : "ADD{$sql} INDEX";
             $sql .= $data['index'] != "PRIMARY" ? " `{$key}` " : " ";
             $sql .= "(`{$key}`)";
             $sql .= $end ? " USING BTREE" : "";

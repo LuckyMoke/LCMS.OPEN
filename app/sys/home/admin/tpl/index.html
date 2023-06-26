@@ -72,7 +72,10 @@
                                 <else />
                                 <span style="color:red;">{{$info['php']}} (PHP版本需>=7.2.0)</span>
                             </if>
-                            数据库/{{$info['mysql']}}
+                            主数据库/{{$info['mysql']['master']}}
+                            <if $info['mysql']['slave']>
+                                从数据库/{{$info['mysql']['slave']}}
+                            </if>
                         </td>
                     </tr>
                     <tr>

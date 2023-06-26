@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2023-01-07 18:15:30
+ * @LastEditTime: 2023-06-23 21:46:58
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -150,8 +150,10 @@ class find extends adminbase
                 if (mb_strlen($LF['pass'], "UTF8") < 6) {
                     ajaxout(0, "密码不能少于6位");
                 }
+                $salt = randstr(8);
                 sql_update(["admin", [
-                    "pass" => md5($LF['pass']),
+                    "pass" => md5("{$LF['pass']}{$salt}"),
+                    "salt" => $salt,
                 ], "email = :number OR mobile = :number", [
                     ":number" => $number,
                 ]]);

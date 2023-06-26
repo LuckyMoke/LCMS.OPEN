@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2023-06-09 18:50:08
+ * @LastEditTime: 2023-06-21 00:21:06
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -27,6 +27,12 @@ class index extends adminbase
         }
         $open = LEVEL::applist("open", true, 12);
         $info = server_info();
+        $info = array_merge($info, [
+            "mysql" => [
+                "master" => $_L['DB']->assign("master")->version(),
+                "slave"  => $_L['DB']->assign("slave")->version(),
+            ],
+        ]);
         if ($_L['LCMSADMIN']['lasttime'] && $_L['LCMSADMIN']['lasttime'] > "0000-00-00 00:00:00") {
             $lasttime = (strtotime($_L['LCMSADMIN']['lasttime']) - time()) / 86400;
         }

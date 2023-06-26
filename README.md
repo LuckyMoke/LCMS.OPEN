@@ -14,17 +14,15 @@
 
 #### 环境硬件要求
 
-环境要求：Apache/Nginx，PHP7.2-8.2，Mysql5.6以上
+环境要求：Apache/Nginx，PHP7.2-8.2，MySQL5.6以上
 
-PHP扩展：zip、curl、gd（宝塔均默认开启）
-
-硬件要求：支持虚拟主机、服务器CPU 1GHz，内存1G，硬盘空余10G
+硬件要求：支持虚拟主机、服务器最低1核CPU+512M内存
 
 #### 安装教程
 
 浏览器访问 http://你的域名/install/ 开始安装
 
-视频教程 [点击观看](https://ourcms.cn/show/news-1.html)
+图文教程 [点击查看](https://ourcms.cn/show/news-1.html)
 
 #### 安装方式
 
@@ -45,9 +43,9 @@ PHP扩展：zip、curl、gd（宝塔均默认开启）
 
 #### 注
 
-运城盘石科技官网 [https://www.panshi18.com/](https://www.panshi18.com/)
+盘企CMS-SaaS建站系统官网 [https://ourcms.cn/](https://ourcms.cn/)
 
-盘企建站CMS官网 [https://ourcms.cn/](https://ourcms.cn/)
+运城盘石科技官网 [https://www.panshi18.com/](https://www.panshi18.com/)
 
 盘企®是运城市盘石网络科技有限公司的注册商标
 

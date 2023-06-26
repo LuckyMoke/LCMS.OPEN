@@ -2,13 +2,14 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2023-05-26 11:24:15
+ * @LastEditTime: 2023-06-25 12:42:00
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 load::sys_class('table');
+load::own_class('pub');
 class power extends adminbase
 {
     public function __construct()
@@ -23,11 +24,10 @@ class power extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'list':
-                if (LCMS::SUPER()) {
-                    $data = TABLE::set("admin_level", "", "id ASC", "", "id, name, uid");
-                } else {
-                    $data = TABLE::set("admin_level", "uid = '{$_L['LCMSADMIN']['id']}'", "id ASC", "", "id, name, uid");
-                }
+                $where = LCMS::SUPER() ? "" : "uid = :uid";
+                $data  = TABLE::set("admin_level", $where, "id ASC", [
+                    ":uid" => $_L['LCMSADMIN']['id'],
+                ], "id, name, uid");
                 $adminlist = [];
                 foreach ($data as $index => $val) {
                     if (!$adminlist[$val['uid']]) {
@@ -37,40 +37,31 @@ class power extends adminbase
                     }
                     $admin        = $adminlist[$val['uid']];
                     $data[$index] = array_merge($val, [
-                        "uid" => $admin['title'] . " - [" . $admin['name'] . "]",
+                        "token" => PUB::id2token($val['id']),
+                        "uid"   => $admin['title'] . " - [" . $admin['name'] . "]",
                     ]);
                 }
                 TABLE::out($data);
                 break;
-            case 'list-save':
-                sql_update(["admin_level", [
-                    $LC['name'] => $LC['value'],
-                ], "id = :id", [
-                    ":id" => $LC['id'],
-                ]]);
-                if (sql_error()) {
-                    ajaxout(0, "保存失败" . sql_error());
-                } else {
-                    ajaxout(1, "保存成功");
-                }
-                break;
             case 'del':
-                $adminlist = sql_getall(["admin",
-                    "type = :type", "", [
+                $LC['id'] = PUB::token2id($LC['token']);
+                if (sql_counter([
+                    "table" => "admin",
+                    "where" => "type = :type",
+                    "bind"  => [
                         ":type" => $LC['id'],
-                    ]]);
-                if ($adminlist) {
+                    ],
+                ]) > 0) {
                     ajaxout(0, "有用户使用此权限");
+                }
+                if (TABLE::del("admin_level")) {
+                    LCMS::log([
+                        "type" => "system",
+                        "info" => "用户管理-删除权限-{$LC['name']}",
+                    ]);
+                    ajaxout(1, "删除成功", "reload");
                 } else {
-                    if (TABLE::del("admin_level")) {
-                        LCMS::log([
-                            "type" => "system",
-                            "info" => "用户管理-删除权限-{$LC['name']}",
-                        ]);
-                        ajaxout(1, "删除成功", "reload");
-                    } else {
-                        ajaxout(0, "删除失败");
-                    }
+                    ajaxout(0, "删除失败");
                 }
                 break;
             case 'edit':
@@ -138,6 +129,7 @@ class power extends adminbase
                 require LCMS::template("own/power/edit");
                 break;
             case 'save':
+                $LC['id'] = PUB::token2id($LF['token']);
                 if ($LF['level']) {
                     $level = json_decode($LF['level'], true);
                     if (is_array($level)) {
@@ -167,8 +159,7 @@ class power extends adminbase
                             "width"  => 80,
                             "align"  => "center"],
                         ["title" => "权限名", "field" => "name",
-                            "width"  => 200,
-                            "edit"   => "text"],
+                            "width"  => 200],
                         ["title" => "添加人", "field" => "uid",
                             "width"  => 300],
                         ["title"   => "操作", "field" => "do",
@@ -176,7 +167,7 @@ class power extends adminbase
                             "fixed"    => "right",
                             "toolbar"  => [
                                 ["title" => "编辑", "event" => "iframe",
-                                    "url"    => "index&action=edit",
+                                    "url"    => "index&action=edit&token={token}",
                                     "color"  => "default"],
                                 ["title" => "删除", "event" => "ajax",
                                     "url"    => "index&action=del",
