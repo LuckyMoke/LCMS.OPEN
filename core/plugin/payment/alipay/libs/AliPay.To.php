@@ -21,28 +21,21 @@ class AliPayTo
     public function Pay()
     {
         $input = [
-            'method'      => 'alipay.fund.trans.toaccount.transfer',
+            'method'      => 'alipay.fund.trans.uni.transfer',
             'app_id'      => $this->cfg['appid'],
             'format'      => $this->cfg['format'],
             'charset'     => $this->cfg['charset'],
             'sign_type'   => $this->cfg['sign_type'],
             'timestamp'   => $this->cfg['timestamp'],
             'version'     => $this->cfg['version'],
-            'biz_content' => json_encode([
-                'out_biz_no'      => $this->order['order_no'],
-                "payee_type"      => "ALIPAY_LOGONID",
-                "payee_account"   => $this->order['account'],
-                'amount'          => $this->order['pay'],
-                'payee_real_name' => $this->order['name'],
-                'remark'          => $this->order['info'],
-            ]),
+            'biz_content' => json_encode($this->order),
         ];
         $input  = AliPayApi::Sign($this->cfg, $input);
         $result = json_decode(HTTP::post($this->api, $input, true, [
             "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
         ]), true);
-        if ($result && $result['alipay_trade_refund_response']) {
-            return $result['alipay_trade_refund_response'];
+        if ($result && $result['alipay_fund_trans_uni_transfer_response']) {
+            return $result['alipay_fund_trans_uni_transfer_response'];
         } else {
             LCMS::X(401, "请求失败");
         }
@@ -55,23 +48,21 @@ class AliPayTo
     public function Check()
     {
         $input = [
-            'method'      => 'alipay.fund.trans.order.query',
+            'method'      => 'alipay.fund.trans.common.query',
             'app_id'      => $this->cfg['appid'],
             'format'      => $this->cfg['format'],
             'charset'     => $this->cfg['charset'],
             'sign_type'   => $this->cfg['sign_type'],
             'timestamp'   => $this->cfg['timestamp'],
             'version'     => $this->cfg['version'],
-            'biz_content' => json_encode([
-                'out_biz_no' => $this->order['order_no'],
-            ]),
+            'biz_content' => json_encode($this->order),
         ];
         $input  = AliPayApi::Sign($this->cfg, $input);
         $result = json_decode(HTTP::post($this->api, $input, true, [
             "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
         ]), true);
-        if ($result && $result['alipay_trade_refund_response']) {
-            return $result['alipay_trade_refund_response'];
+        if ($result && $result['alipay_fund_trans_common_query_response']) {
+            return $result['alipay_fund_trans_common_query_response'];
         } else {
             LCMS::X(401, "请求失败");
         }

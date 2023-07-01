@@ -28,10 +28,12 @@
                 <dt>商品名</dt>
                 <dd>{{$order['body']}}</dd>
             </dl>
-            <dl>
-                <dt>商户单号</dt>
-                <dd>{{$order['order_no_own']}}</dd>
-            </dl>
+            <if $order['order_no_own']>
+                <dl>
+                    <dt>商户单号</dt>
+                    <dd>{{$order['order_no_own']}}</dd>
+                </dl>
+            </if>
             <dl>
                 <dt>交易单号</dt>
                 <dd>{{$order['order_no']}}</dd>

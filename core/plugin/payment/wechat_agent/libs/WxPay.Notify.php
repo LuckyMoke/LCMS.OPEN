@@ -10,19 +10,19 @@ class WxPayNotify
             // 如果订单号存在，需要伪静态加一个订单号
             if ($_L['form']['orderno']) {
                 $order = sql_get([
-                    "order",
-                    "order_no = :orderno",
-                    "", [
+                    "table" => "order",
+                    "where" => "order_no = :orderno",
+                    "bind"  => [
                         ":orderno" => $_L['form']['orderno'],
                     ],
                 ]);
                 if ($order['payid'] && $order['status'] == "0") {
-                    $payment = LCMS::form([
+                    $payinfo = LCMS::form([
                         "table" => "payment",
                         "do"    => "get",
                         "id"    => $order['payid'],
                     ]);
-                    $config = new WxPayConfig($payment[$payname]);
+                    $config = new WxPayConfig($payinfo[$payname]);
                     if ($config->get['key']) {
                         $response = sodium_crypto_aead_aes256gcm_decrypt(base64_decode($ret['resource']['ciphertext']), $ret['resource']['associated_data'], $ret['resource']['nonce'], $config->get['key']);
                         $response = json_decode($response, true);

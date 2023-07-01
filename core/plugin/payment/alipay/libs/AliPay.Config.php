@@ -15,7 +15,7 @@ class AliPayConfig
             "version"         => "1.0",
             "timeout_express" => "2h",
         ], $config, [
-            "gatewayurl" => $config['gatewayurl'] == "1" ? "https://openapi.alipaydev.com/gateway.do" : "https://openapi.alipay.com/gateway.do",
+            "gatewayurl" => $config['gatewayurl'] == 1 ? "https://openapi-sandbox.dl.alipaydev.com/gateway.do" : "https://openapi.alipay.com/gateway.do",
         ]);
     }
 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-05 18:17:15
+ * @LastEditTime: 2023-06-26 21:44:15
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,13 +13,15 @@ class web extends adminbase
 {
     public function __construct()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         parent::__construct();
+        $LF = $_L['form'];
+        $LC = $LF['LC'];
     }
     public function doplugin()
     {
-        global $_L;
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
             case 'save':
                 LCMS::config([
                     "do"   => "save",
@@ -29,7 +31,7 @@ class web extends adminbase
                 ajaxout(1, "保存成功");
                 break;
             case 'test_eamil':
-                $email = $_L['form']['email'];
+                $email = $LF['email'];
                 if (is_email($email)) {
                     load::sys_class("email");
                     $result = EMAIL::send([
@@ -178,8 +180,8 @@ class web extends adminbase
     }
     public function dooss()
     {
-        global $_L;
-        switch ($_L['form']['action']) {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
             case 'save':
                 LCMS::config([
                     "do"   => "save",
@@ -406,22 +408,20 @@ class web extends adminbase
     }
     public function dopayment()
     {
-        global $_L;
+        global $_L, $LF, $LC;
         load::sys_class('table');
-        switch ($_L['form']['action']) {
+        load::sys_class('pays');
+        switch ($LF['action']) {
             case 'payment-list':
                 TABLE::out(TABLE::set("payment", "lcms = '{$_L['ROOTID']}'", "id DESC"));
                 break;
             case 'payment-edit':
-                load::sys_class('pays');
                 $payment = LCMS::form([
                     "table" => "payment",
                     "do"    => "get",
-                    "id"    => $_L['form']['id'],
+                    "id"    => $LF['id'],
                 ]);
                 foreach (PAYS::payment_config() as $key => $val) {
-                    $val = json_decode($val, true);
-
                     $payment_list['payment'][] = [
                         "title" => $val['info']['title'],
                         "value" => $val['info']['name'],
@@ -463,10 +463,11 @@ class web extends adminbase
                 require LCMS::template("own/payment-edit");
                 break;
             case 'payment-save':
-                $_L['form']['LC']['lcms'] = $_L['ROOTID'];
+                $LC['lcms'] = $_L['ROOTID'];
                 LCMS::form([
                     "table" => "payment",
                     "key"   => "parameter",
+                    "form"  => $LC,
                 ]);
                 if (sql_error()) {
                     ajaxout(0, "保存失败：" . sql_error());
@@ -480,6 +481,9 @@ class web extends adminbase
                 } else {
                     ajaxout(0, "删除失败");
                 }
+                break;
+            case 'payment-agent':
+                ajaxout(1, "success", "", PAYS::payment_list("{$LF['payment']}_agent"));
                 break;
             default:
                 $table = [

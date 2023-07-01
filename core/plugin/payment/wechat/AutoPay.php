@@ -12,10 +12,10 @@ class AutoPay
     public static function init($order)
     {
         global $_L;
-        $order['payment'] = array_merge($order['payment'], [
+        $order['payinfo'] = array_merge($order['payinfo'], [
             "notify_url" => "{$_L['url']['site']}paynotify/" . self::$payname . "/{$order['order']['order_no']}",
         ]);
-        $config = new WxPayConfig($order['payment']);
+        $config = new WxPayConfig($order['payinfo']);
         return [
             "config" => $config->get,
             "order"  => array_merge($order['order'], $order['other'] ?: []),
@@ -122,13 +122,18 @@ class AutoPay
     public static function payto($order)
     {
         require_once "libs/WxPay.To.php";
-        $init    = self::init($order);
-        $WxPayTo = new WxPayTo($init);
-        $result  = $WxPayTo->Pay();
-        return [
-            "code"     => 1,
-            "msg"      => "付款成功",
-            "order_no" => $result["out_batch_no"],
-        ];
+        $WxPayTo = new WxPayTo(self::init($order));
+        return $WxPayTo->Pay();
+    }
+    /**
+     * @description: 可选 转账结果查询
+     * @param array $order
+     * @return array
+     */
+    public static function payto_check($order)
+    {
+        require_once "libs/WxPay.To.php";
+        $WxPayTo = new WxPayTo(self::init($order));
+        return $WxPayTo->Check();
     }
 }

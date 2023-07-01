@@ -38,7 +38,7 @@ class WxPayOrder
             ],
         ]));
         if ($result['code'] || !$result['prepay_id']) {
-            LCMS::X(401, $result['message']);
+            LCMS::X($result['code'], $result['message']);
         } else {
             $jsapi = [
                 "appId"     => $this->cfg["appid"],
@@ -78,7 +78,7 @@ class WxPayOrder
             ],
         ]));
         if ($result['code'] || !$result['h5_url']) {
-            LCMS::X(401, $result['message']);
+            LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
@@ -103,7 +103,7 @@ class WxPayOrder
             ],
         ]));
         if ($result['code'] || !$result['code_url']) {
-            LCMS::X(401, $result['message']);
+            LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
@@ -126,7 +126,7 @@ class WxPayOrder
             ],
         ]));
         if ($result['code']) {
-            LCMS::X(401, $result['message']);
+            LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
@@ -141,7 +141,7 @@ class WxPayOrder
         global $_L;
         $url    = $this->api . "/v3/pay/transactions/out-trade-no/{$this->order['order_no']}?mchid=" . $this->cfg['mch_id'];
         $result = json_decode(WxPayApi::Request("GET", $url, "", [
-            "Authorization" => "WECHATPAY2-SHA256-RSA2048 " . WxPayApi::Sign($this->cfg, [
+            "Authorization" => WxPayApi::Sign($this->cfg, [
                 "method"    => "GET",
                 "url"       => $url,
                 "timeStamp" => time(),
@@ -150,7 +150,7 @@ class WxPayOrder
             ]),
         ]), true);
         if ($result['code']) {
-            LCMS::X(401, $result['message']);
+            LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
@@ -165,7 +165,7 @@ class WxPayOrder
     {
         $url    = $this->api . $url;
         $result = json_decode(WxPayApi::Request("POST", $url, $body, [
-            "Authorization" => "WECHATPAY2-SHA256-RSA2048 " . WxPayApi::Sign($this->cfg, [
+            "Authorization" => WxPayApi::Sign($this->cfg, [
                 "method"    => "POST",
                 "url"       => $url,
                 "timeStamp" => time(),
@@ -184,17 +184,18 @@ class WxPayOrder
     private function getOpenid()
     {
         global $_L;
+        $cfg = $this->cfg;
         load::plugin('WeChat/OA');
         $WX = new OA([
-            "appid"     => $this->cfg['appid'],
-            "appsecret" => $this->cfg['appsecret'],
+            "appid"     => $cfg['appid'],
+            "appsecret" => $cfg['appsecret'],
         ]);
         $sname = $WX->SID . "snsapi_base";
         $user  = SESSION::get($sname);
         if ($user['openid']) {
             return $user['openid'];
         } else {
-            if ($this->cfg['thirdapi']) {
+            if ($cfg['thirdapi']) {
                 if (in_string($_L['form']['code'], "OPENID|")) {
                     $code = str_replace("OPENID|", "", $_L['form']['code']);
                     $code = json_decode(ssl_decode($code), true);
@@ -205,11 +206,11 @@ class WxPayOrder
                         return $code['openid'];
                     }
                 }
-                okinfo($this->cfg['thirdapi'] . "oauth&scope=snsapi_base&goback=" . urlencode($_L['url']['now']));
+                okinfo($cfg['thirdapi'] . "oauth&scope=snsapi_base&goback=" . urlencode($_L['url']['now']));
             } else {
                 if (!isset($_L['form']['code'])) {
                     $query = http_build_query([
-                        "appid"         => $this->cfg['appid'],
+                        "appid"         => $cfg['appid'],
                         "redirect_uri"  => $_L['url']['now'],
                         "response_type" => "code",
                         "scope"         => "snsapi_base",

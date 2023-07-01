@@ -28,10 +28,12 @@
                 <dt>商品名</dt>
                 <dd>{{$order['body']}}</dd>
             </dl>
-            <dl>
-                <dt>商户单号</dt>
-                <dd>{{$order['order_no_own']}}</dd>
-            </dl>
+            <if $order['order_no_own']>
+                <dl>
+                    <dt>商户单号</dt>
+                    <dd>{{$order['order_no_own']}}</dd>
+                </dl>
+            </if>
             <dl>
                 <dt>交易单号</dt>
                 <dd>{{$order['order_no']}}</dd>
@@ -44,7 +46,7 @@
         <div class="pay-line"></div>
         <div class="pay-qrcode">
             <img src="{{$_L['url']['qrcode']}}{{$qrcode}}" />
-            <p>请使用微信扫码付款</p>
+            <p>请使用<b style="color:#F56C6C"> 微信 </b>扫码付款</p>
         </div>
     </div>
     <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js"></script>

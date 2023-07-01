@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-06-23 14:52:27
+ * @LastEditTime: 2023-06-29 16:43:11
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -163,12 +163,11 @@ class repair extends adminbase
                             default:
                                 $diff = array_diff($val, $old[$name][$key]);
                                 if ($diff) {
-                                    if ($diff['index'] && $old[$name][$key]['index']) {
+                                    if (!array_key_exists("default", $diff) && !array_key_exists("index", $diff) && in_string($diff['type'], "int") && !in_string($old[$name][$key]['type'], "int(") && (in_string($diff['type'], "unsigned") == in_string($old[$name][$key]['type'], "unsigned"))) {
+                                        continue;
+                                    }
+                                    if (array_key_exists("index", $diff) && !$diff['index'] && $old[$name][$key]['index']) {
                                         $diff['indexdrop'] = true;
-                                    } else {
-                                        if (!$diff['default'] && in_string($diff['type'], "int")) {
-                                            continue;
-                                        }
                                     }
                                     $diff = array_merge([
                                         "type"    => $val['type'],

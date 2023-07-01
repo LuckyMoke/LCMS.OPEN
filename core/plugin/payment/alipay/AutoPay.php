@@ -12,10 +12,10 @@ class AutoPay
     public static function init($order)
     {
         global $_L;
-        $order['payment'] = array_merge($order['payment'], [
+        $order['payinfo'] = array_merge($order['payinfo'], [
             "notify_url" => "{$_L['url']['site']}paynotify/" . self::$payname . "/{$order['order']['order_no']}",
         ]);
-        $config = new AliPayConfig($order['payment']);
+        $config = new AliPayConfig($order['payinfo']);
         return [
             "config" => $config->get,
             "order"  => array_merge($order['order'], $order['other'] ?: []),
@@ -153,19 +153,7 @@ class AutoPay
     {
         require_once "libs/AliPay.To.php";
         $AliPayTo = new AliPayTo(self::init($order));
-        $result   = $AliPayTo->Pay();
-        if ($result['code'] == "10000") {
-            return [
-                "code"     => 1,
-                "msg"      => "转账成功",
-                "order_no" => $result['out_biz_no'],
-            ];
-        } else {
-            return [
-                "code" => 0,
-                "msg"  => "转账失败：{$result['sub_msg']}",
-            ];
-        }
+        return $AliPayTo->Pay();
     }
     /**
      * @description: 可选 转账结果查询
@@ -176,18 +164,17 @@ class AutoPay
     {
         require_once "libs/AliPay.To.php";
         $AliPayTo = new AliPayTo(self::init($order));
-        $result   = $AliPayTo->Check();
-        if ($result['code'] == "10000") {
-            return [
-                "code"     => 1,
-                "msg"      => "转账成功",
-                "order_no" => $result['out_biz_no'],
-            ];
-        } else {
-            return [
-                "code" => 0,
-                "msg"  => "转账失败：{$result['sub_msg']}",
-            ];
-        }
+        return $AliPayTo->Check();
+    }
+    /**
+     * @description: 可选 获取用户UID
+     * @param array $order
+     * @return array
+     */
+    public static function getUid($order)
+    {
+        require_once "libs/AliPay.Oa.php";
+        $AliPayOa = new AliPayOa(self::init($order));
+        return $AliPayOa->getUid();
     }
 }

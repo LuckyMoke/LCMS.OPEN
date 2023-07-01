@@ -13,7 +13,7 @@ class WxPayApi
         }
         openssl_sign(implode("\n", $input) . "\n", $sign, openssl_get_privatekey($config['apiclient_key']), 'sha256WithRSAEncryption');
         if ($input['url']) {
-            return sprintf('mchid="%s",nonce_str="%s",timestamp="%d",serial_no="%s",signature="%s"', $config['mch_id'], $input['nonceStr'], $input['timeStamp'], $config['serial_no'], base64_encode($sign));
+            return "WECHATPAY2-SHA256-RSA2048 " . sprintf('mchid="%s",nonce_str="%s",timestamp="%d",serial_no="%s",signature="%s"', $config['mch_id'], $input['nonceStr'], $input['timeStamp'], $config['serial_no'], base64_encode($sign));
         } else {
             return base64_encode($sign);
         }

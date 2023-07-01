@@ -1,8 +1,9 @@
 <template "ui/head" />
 <p class="lcms-form-des">
     使用支付功能需要添加一条伪静态规则：<br/>
-    Nginx：rewrite ^/paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 last;<br/>
-    Apache：RewriteRule ^paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 [L]<br/>
+    ▲ Nginx：<code class="lcms-form-copy">rewrite ^/paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 last;</code><br/>
+    ▲ Apache：<code class="lcms-form-copy">RewriteRule ^paynotify/(.*)/(.*)$ /app/index.php?n=system&c=pay&a=notify&payment=$1&orderno=$2 [L]</code><br/>
+    添加完伪静态，点击访问一下 <a href="{{$_L['url']['site']}}paynotify/alipay/test" target="_blank">{{$_L['url']['site']}}paynotify/alipay/test</a> 如果提示“非法请求”，说明伪静态配置正确
 </p>
 <ui table($table) />
 <template "ui/foot" />

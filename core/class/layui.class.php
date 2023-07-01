@@ -44,11 +44,13 @@ class LAY
     }
     public static function html($para)
     {
-        $para             = self::start($para);
-        $para['nodrop']   = $para['nodrop'] ? " lcms-form-html-nodrop" : "";
-        $para['copy']     = $para['copy'] ? " lcms-form-copy" : "";
-        $para['copytext'] = $para['copytext'] ?: $para['value'];
-        $html             = "
+        $para           = self::start($para);
+        $para['nodrop'] = $para['nodrop'] ? " lcms-form-html-nodrop" : "";
+        if ($para['copy']) {
+            $para['copy']     = " lcms-form-copy";
+            $para['copytext'] = $para['copytext'] ?: $para['value'];
+        }
+        $html = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
