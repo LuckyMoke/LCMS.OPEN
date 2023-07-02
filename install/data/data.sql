@@ -55,7 +55,7 @@ CREATE TABLE `[_PRE]cache`  (
   INDEX(`name`),
   INDEX(`updatetime`),
   INDEX(`lcms`)
-) ENGINE = MyISAM CHARACTER SET = utf8mb4 COMMENT='框架缓存';
+) CHARACTER SET = utf8mb4 COMMENT='框架缓存';
 
 CREATE TABLE `[_PRE]config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -107,7 +107,7 @@ CREATE TABLE `[_PRE]upload`  (
   INDEX(`name`),
   INDEX(`uid`),
   INDEX(`lcms`)
-) ENGINE = MyISAM CHARACTER SET = utf8mb4 COMMENT='上传文件表';
+) CHARACTER SET = utf8mb4 COMMENT='上传文件表';
 
 CREATE TABLE `[_PRE]order` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -118,7 +118,7 @@ CREATE TABLE `[_PRE]order` (
   `paytype` varchar(32) DEFAULT NULL COMMENT '支付具体方式',
   `payid` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式的id',
   `status` int(1) DEFAULT '0' COMMENT '支付状态',
-  `callback` varchar(64) DEFAULT NULL COMMENT '支付回调',,
+  `callback` varchar(64) DEFAULT NULL COMMENT '支付回调',
   `addtime` datetime DEFAULT NULL COMMENT '下单时间',
   `paytime` datetime DEFAULT NULL COMMENT '支付时间',
   `repaytime` datetime DEFAULT NULL COMMENT '退款时间',

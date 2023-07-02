@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-02-28 12:06:00
+ * @LastEditTime: 2023-07-01 23:02:57
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -458,26 +458,32 @@ function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamear
 /**
  * @description: 读取csv文件
  * @param string $file
+ * @param function $callback
  * @return array|null
  */
-function read_csv($file)
+function read_csv($file, $callback = false)
 {
     $file = path_absolute($file);
     if (is_file($file)) {
-        $file = fopen($file, "r");
+        $fp   = fopen($file, "r");
         $keys = [];
         $i    = 0;
-        while (($arr = fgetcsv($file)) !== false) {
+        while (($list = fgetcsv($fp)) !== false) {
             if ($i == 0) {
-                $keys = $arr;
+                $keys = $list;
             } else {
-                foreach ($keys as $index => $key) {
-                    $csv[$i - 1][$key] = $arr[$index];
+                $csv = gbk2utf8(array_combine($keys, $list));
+                if ($callback) {
+                    if ($callback($csv) === false) {
+                        break;
+                    }
+                } else {
+                    $csvs[$i - 1] = $csv;
                 }
             }
             $i++;
         }
-        fclose($file);
-        return gbk2utf8($csv);
+        fclose($fp);
+        return $csvs ?: [];
     }
 }

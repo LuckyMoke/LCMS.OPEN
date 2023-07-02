@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-06-29 16:43:11
+ * @LastEditTime: 2023-07-01 14:59:58
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -97,7 +97,7 @@ class repair extends adminbase
             ]);
             ajaxout(1, "{$title}成功");
         } else {
-            ajaxout(0, "数据结构不需要{$title}");
+            ajaxout(1, "数据结构不需要{$title}");
         }
     }
     /**
@@ -122,7 +122,7 @@ class repair extends adminbase
             }
             return json_decode($file, true);
         }
-        ajaxout(0, "未找到对应数据结构文件");
+        ajaxout(1, "无数据结构文件");
     }
     /**
      * @description: 对比数据结构不同
