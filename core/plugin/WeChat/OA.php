@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-03-13 17:09:08
+ * @LastEditTime: 2023-07-08 18:05:53
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -456,6 +456,31 @@ class OA
         $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex([
             "template_id" => $tplid,
         ]));
+        $result = json_decode($result, true);
+        return $result ?: [];
+    }
+    /**
+     * @description: 发送订阅消息
+     * @param array $para
+     * @return array
+     */
+    public function send_subscribe($para = [])
+    {
+        global $_L, $LF, $SID, $TRDAPI;
+        $this->access_token();
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
+        return json_decode($result, true);
+    }
+    /**
+     * @description: 创建二维码
+     * @param array $para
+     * @return array
+     */
+    public function create_qrcode($para = [])
+    {
+        global $_L, $LF, $SID, $TRDAPI;
+        $this->access_token();
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result ?: [];
     }

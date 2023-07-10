@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-21 10:37:43
+ * @LastEditTime: 2023-07-06 22:59:13
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -46,6 +46,7 @@ class SQLPDO
      */
     public function prepare($sql, $bind = [])
     {
+        global $_L;
         $this->psm = $this->pdo->prepare($sql);
         if ($this->psm) {
             try {
@@ -57,11 +58,15 @@ class SQLPDO
                 $this->psm->execute($bind);
                 return $this->psm;
             } catch (Exception $e) {
-                LCMS::X($this->errno(), $this->error());
+                if ($_L['config']['admin']['development'] > 0) {
+                    $query = $e->getTrace()[1]['args'][0];
+                    $error = $this->error();
+                    $error .= $query ? " ({$query})" : "";
+                    LCMS::X($this->errno(), $error);
+                }
             }
-        } else {
-            LCMS::X(500, "数据错误");
         }
+        LCMS::X(500, "出现了一些问题");
     }
     /**
      * @description: 从结果集中获取下一行

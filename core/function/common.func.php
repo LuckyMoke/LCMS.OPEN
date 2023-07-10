@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-20 19:41:33
+ * @LastEditTime: 2023-07-05 18:39:34
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -348,14 +348,15 @@ function sqlinsert($string)
             $string[$key] = sqlinsert($val);
         }
     } else {
-        $string = str_ireplace([
-            "\0", "\\", "*", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep",
+        $string = str_replace([
+            "\0", "\\", "*", "@", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep", "script", "eval", "document",
         ], [
-            "_", "_", "/*", "&#92;", "&#34;", "&#39;", "sel/ect", "ins/ert", "up/date", "del/ete", "un/ion", "in/to", "load/_file", "out/file", "sl/eep",
+            "_", "_", "/*", "&#64;", "&#92;", "&#34;", "&#39;", "sel/ect", "ins/ert", "up/date", "del/ete", "un/ion", "in/to", "load/_file", "out/file", "sl/eep", "scr/ipt", "ev/al", "docu/ment",
         ], $string);
         if (!is_url($string)) {
-            $string = trim(htmlspecialchars($string));
+            $string = htmlspecialchars($string);
         }
+        $string = trim($string);
     }
     return $string;
 }
@@ -372,7 +373,7 @@ function filterform($string)
         }
     } else {
         if (L_MODULE != "admin") {
-            $string = trim(sqlinsert($string));
+            $string = sqlinsert($string);
         } else {
             $string = trim($string);
         }
@@ -827,9 +828,9 @@ function oss($url = "", $watermark = true)
  */
 function server_info()
 {
-    $serverinfo['os']    = php_uname('s');
-    $serverinfo['sys']   = $_SERVER["SERVER_SOFTWARE"];
-    $serverinfo['php']   = PHP_VERSION;
+    $serverinfo['os']  = php_uname('s');
+    $serverinfo['sys'] = $_SERVER["SERVER_SOFTWARE"];
+    $serverinfo['php'] = PHP_VERSION;
     if (function_exists("opcache_get_status")) {
         $opcache = opcache_get_status();
         if ($opcache['memory_usage']) {

@@ -52,6 +52,7 @@ class AutoPay
                 return $WxPay->Jsapi($order['openid']);
                 break;
             case 'pc':
+            case 'qr':
                 $result = $WxPay->Pc();
                 $qrcode = urlencode($result['code_url']);
                 require LCMS::template(self::$tpl . "pc");

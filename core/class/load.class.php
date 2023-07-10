@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-01-13 14:27:21
+ * @LastEditTime: 2023-07-06 22:20:42
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -93,8 +93,7 @@ class LOAD
         if (is_file($file)) {
             require_once $file;
         } else {
-            $file = str_replace(PATH_WEB, '', $file);
-            LCMS::X(404, "{$file} 文件不存在");
+            LCMS::X(404, "文件不存在");
         }
         if ($action) {
             $cname = end(explode("/", $file));
@@ -102,12 +101,12 @@ class LOAD
             $class = $cname ? new $cname : null;
             if ($action != "new") {
                 if (substr($action, 0, 2) != 'do') {
-                    LCMS::X(403, "{$action} 方法禁止访问");
+                    LCMS::X(403, "方法禁止访问");
                 }
                 if (method_exists($class, $action)) {
                     call_user_func([$class, $action]);
                 } else {
-                    LCMS::X(404, "{$action} 方法没有找到");
+                    LCMS::X(404, "方法未找到");
                 }
             }
             return $class;
@@ -124,8 +123,7 @@ class LOAD
         if (is_file($file)) {
             require_once $file;
         } else {
-            $file = str_replace(PATH_WEB, '', $file);
-            LCMS::X(404, "{$file} 文件不存在");
+            LCMS::X(404, "文件不存在");
         }
     }
     /**
@@ -139,8 +137,7 @@ class LOAD
         if (is_file($file)) {
             require_once $file;
         } else {
-            $file = str_replace(PATH_WEB, '', $file);
-            LCMS::X(404, "{$file} 文件不存在");
+            LCMS::X(404, "文件不存在");
         }
     }
 }

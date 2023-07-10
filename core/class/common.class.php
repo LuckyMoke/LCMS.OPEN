@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2023-06-21 01:02:00
+ * @LastEditTime: 2023-07-07 11:59:51
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -26,6 +26,7 @@ class common
         $this->load_common_form();
         $this->load_common_tables();
         $this->load_common_config();
+        load::sys_class('developer');
         SESSION::init();
     }
     /**
@@ -123,20 +124,4 @@ class common
         }
         $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
     }
-    /**
-     * @description: 结束销毁
-     * @return {*}
-     */
-    public function __destruct()
-    {
-        global $_L;
-        if (!empty($_L['table'])) {
-            $_L['DB']->close();
-        }
-        while (ob_end_flush() > 0) {
-            ob_end_flush();
-        }
-        exit;
-    }
 }
-load::sys_class('developer');

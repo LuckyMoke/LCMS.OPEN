@@ -1,11 +1,4 @@
 <?php
-/*
- * @Author: 小小酥很酥
- * @Date: 2023-01-05 14:12:27
- * @LastEditTime: 2023-05-04 15:52:04
- * @Description: 安装处理文件
- * Copyright 2023 运城市盘石网络科技有限公司
- */
 error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
 date_default_timezone_set("Asia/Shanghai");
 define("IN_LCMS", true);
@@ -155,8 +148,9 @@ switch ($_GET['action']) {
         if ($admin['pass'] != $admin['repass']) {
             ajaxout(0, "两次密码不一样");
         }
+        $salt = randstr(16);
         $mydb = new SQLPDO("mysql:host={$_L['mysql']['host']};dbname={$_L['mysql']['name']};port={$_L['mysql']['port']};charset=utf8mb4", $_L['mysql']['user'], $_L['mysql']['pass']);
-        $mydb->query("INSERT INTO `{$_L['mysql']['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','" . md5($admin['pass']) . "',NULL,NULL,'lcms','0.00','2019-01-01 00:00:00',NULL,NULL,'',NULL,0);");
+        $mydb->query("INSERT INTO `{$_L['mysql']['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`salt`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','" . md5($admin['pass'] . $salt) . "','{$salt}',NULL,NULL,'lcms','0.00','" . date("Y-m-d H:i:s") . "',NULL,NULL,'',NULL,0);");
         file_put_contents(PATH_CORE . "install.lock", date("Y-m-d H:i:s"));
         $mydb->error() || deldir(PATH_WEB . "install");
         ajaxout(1, "success");

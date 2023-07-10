@@ -1,6 +1,10 @@
 <?php
 error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
 date_default_timezone_set("Asia/Shanghai");
+if (!preg_match("/^\w+$/", L_TYPE . L_NAME . L_MODULE . L_CLASS . L_ACTION)) {
+    header("HTTP/1.1 403 Forbidden");
+    exit();
+}
 define("IN_LCMS", true);
 define("PATH_WEB", substr(dirname(__FILE__), 0, -4));
 define("PATH_APP", PATH_WEB . "app/");
@@ -24,9 +28,6 @@ define("SERVER_IP", $_SERVER['SERVER_ADDR']);
 define("PAGE_START", microtime(true));
 require_once PATH_CORE_FUNC . "common.func.php";
 require_once PATH_CORE_CLASS . "lcms.class.php";
-if ((!L_NAME || !L_CLASS || !L_ACTION) && !preg_match('/^[A-Za-z0-9_]+$/', L_TYPE . L_NAME . L_MODULE . L_CLASS . L_ACTION)) {
-    LCMS::X(403, "拒绝访问");
-}
 require_once PATH_CORE_CLASS . "load.class.php";
 define("CLIENT_IP", LCMS::IP());
 LOAD::init();

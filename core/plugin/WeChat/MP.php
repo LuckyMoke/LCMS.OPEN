@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-04-01 18:53:45
+ * @LastEditTime: 2023-07-10 13:04:51
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -129,6 +129,17 @@ class MP
         $result = http::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
         $result = json_decode($result, true);
         return $result ?: [];
+    }
+    /**
+     * @description: 发送订阅消息
+     * @param array $para
+     * @return array
+     */
+    public function send_subscribe($para = [])
+    {
+        $this->access_token();
+        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={$this->CFG['access_token']['access_token']}", json_encode_ex($para));
+        return json_decode($result, true);
     }
     /**
      * [encode_data 解密敏感数据]

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-24 12:00:30
+ * @LastEditTime: 2023-07-04 14:57:39
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -64,13 +64,20 @@ class LAY
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
+        $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";
-        $para['affix']       = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $html                = "
+        if ($para['type'] == "number") {
+            $para['affix'] = "number";
+            $para['step']  = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+            $para['min']   = isset($para['min']) ? " min='{$para['min']}'" : "";
+            $para['max']   = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+        }
+        $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+        $html          = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['affix']}{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
         echo $html;
@@ -80,14 +87,21 @@ class LAY
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
+        $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";
-        $para['affix']       = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $html                = "
+        if ($para['type'] == "number") {
+            $para['affix'] = "number";
+            $para['step']  = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+            $para['min']   = isset($para['min']) ? " min='{$para['min']}'" : "";
+            $para['max']   = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+        }
+        $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+        $html          = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['affix']}{$para['maxlength']}{$para['verifybox']}" . ($para['disabled'] ? ' readonly' : '') . "/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['maxlength']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
                 </div>
