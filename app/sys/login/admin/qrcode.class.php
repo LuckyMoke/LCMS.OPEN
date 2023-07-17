@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2023-03-13 13:22:40
+ * @LastEditTime: 2023-07-12 11:02:51
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -14,7 +14,7 @@ class qrcode extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $UCFG, $RID, $CID, $WX, $WUSER;
+        global $_L, $LF, $WUSER;
         parent::__construct();
         $LF   = $_L['form'];
         $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
@@ -33,18 +33,8 @@ class qrcode extends adminbase
             exit;
         }
         SESSION::set("LOGINROOTID", $RID);
-        if ($LF['token']) {
-            $token = json_decode(ssl_decode($LF['token']), true);
-            if ($token && $token['time'] > time()) {
-                $CID = $token['cid'];
-                SESSION::set("LOGINCID", $CID);
-            } else {
-                LCMS::X(403, "二维码已过期<br/>请重新获取二维码");
-            }
-        } else {
-            $CID = SESSION::get("LOGINCID");
-        }
-        $CID || LCMS::X(403, "禁止访问");
+        SESSION::get("LOGINQRCODETIME") < time() && LCMS::X(403, "请重新扫码");
+        SESSION::get("LCMSADMIN") && LCMS::Y(200, "用户已登录");
         switch ($LF['name']) {
             case 'qrcode':
                 load::plugin("WeChat/OA");
@@ -74,7 +64,7 @@ class qrcode extends adminbase
      */
     public function doindex()
     {
-        global $_L, $LF, $UCFG, $RID, $CID, $WUSER;
+        global $_L, $LF, $WUSER;
         $ids = sql_get(["admin_band",
             "openid = :openid",
             "id ASC", [
@@ -99,7 +89,7 @@ class qrcode extends adminbase
      */
     public function dologin()
     {
-        global $_L, $LF, $UCFG, $RID, $CID;
+        global $_L, $LF, $WUSER;
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",
             "id DESC", [
@@ -122,13 +112,13 @@ class qrcode extends adminbase
                         "logintime" => $time,
                     ]);
                     unset($admin['pass']);
-                    $result = HTTP::get("{$_L['url']['own_form']}logincid&c=index&rootsid={$CID}&cookie=" . ssl_encode(json_encode($admin)));
-                    $result = json_decode($result, true);
-                    if ($result['code'] == 1) {
-                        LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
-                    } else {
-                        LCMS::X(403, "登陆失败");
-                    }
+                    SESSION::set("LCMSADMIN", $admin);
+                    LCMS::log([
+                        "user" => $admin['name'],
+                        "type" => "login",
+                        "info" => "登陆成功-第三方登陆",
+                    ]);
+                    LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
                 }
             } else {
                 LCMS::X(403, "登陆失败<br/>此账号已停用");
@@ -144,7 +134,7 @@ class qrcode extends adminbase
      */
     public function dounband()
     {
-        global $_L, $LF, $UCFG, $RID, $CID, $WUSER;
+        global $_L, $LF, $WUSER;
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",
             "id DESC", [

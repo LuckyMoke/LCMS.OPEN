@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2022-08-18 15:12:35
+ * @LastEditTime: 2023-07-12 00:28:59
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -59,21 +59,22 @@ class config extends adminbase
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg"],
                         ["layui" => "title", "title" => "三方登录"],
-                        ["layui" => "des", "title" => "微信扫码登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html"],
-                        ["layui" => "radio", "title" => "微信扫码",
+                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html"],
+                        ["layui" => "radio", "title" => "微信登录",
                             "name"   => "LC[reg][qrcode]",
-                            "value"  => $config['reg']['qrcode'] ?? "0",
+                            "value"  => $config['reg']['qrcode'] ?? 0,
                             "radio"  => [
-                                ["title" => "关闭", "value" => "0"],
-                                ["title" => "启用", "value" => "1"],
+                                ["title" => "关闭", "value" => 0],
+                                ["title" => "普通扫码", "value" => 1],
+                                ["title" => "关注公众号", "value" => 2],
                             ],
                         ],
                         ["layui" => "radio", "title" => "QQ登录",
                             "name"   => "LC[reg][qqlogin]",
-                            "value"  => $config['reg']['qqlogin'] ?? "0",
+                            "value"  => $config['reg']['qqlogin'] ?? 0,
                             "radio"  => [
-                                ["title" => "关闭", "value" => "0", "tab" => "tab_qqlogin0"],
-                                ["title" => "启用", "value" => "1", "tab" => "tab_qqlogin"],
+                                ["title" => "关闭", "value" => 0, "tab" => "tab_qqlogin0"],
+                                ["title" => "启用", "value" => 1, "tab" => "tab_qqlogin"],
                             ],
                         ],
                         ["layui" => "input", "title" => "APPID",

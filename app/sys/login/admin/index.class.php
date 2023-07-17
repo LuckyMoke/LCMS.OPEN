@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-06-23 21:17:24
+ * @LastEditTime: 2023-07-12 11:02:45
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -199,30 +199,6 @@ class index extends adminbase
         }
     }
     /**
-     * @description: 通过CID登陆
-     * @param {*}
-     * @return {*}
-     */
-    public function dologincid()
-    {
-        global $_L, $LF, $CFG, $USER, $RID;
-        if ($LF['cookie']) {
-            $admin = ssl_decode($LF['cookie']);
-            if ($admin) {
-                $admin = json_decode($admin, true);
-                SESSION::set("LCMSADMIN", $admin);
-                LCMS::log([
-                    "user" => $admin['name'],
-                    "type" => "login",
-                    "info" => "登陆成功-第三方登陆",
-                ]);
-                ajaxout(1, "success");
-            }
-        }
-        header("HTTP/1.1 404 Not Found");
-        exit;
-    }
-    /**
      * @description: 登陆状态检测
      * @param {*}
      * @return {*}
@@ -244,15 +220,49 @@ class index extends adminbase
     public function dogetqrcode()
     {
         global $_L, $LF, $CFG, $USER, $RID;
-        $token = ssl_encode(json_encode([
-            "cid"  => $_COOKIE['LCMSCID'],
-            "time" => time() + 180,
-        ]));
-        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
-            ajaxout(1, "success", "{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&token={$token}&name={$LF['name']}");
-        } else {
-            goheader("{$_L['url']['own_form']}index&c=qrcode&rootid={$RID}&token={$token}&name={$LF['name']}");
+        $SID    = SESSION::getid();
+        $regcfg = LCMS::config([
+            "type" => "sys",
+            "name" => "user",
+            "cate" => "admin",
+            "lcms" => $RID,
+        ]);
+        switch ($LF['name']) {
+            case 'qrcode':
+                switch ($regcfg['reg']['qrcode']) {
+                    case '2':
+                        load::plugin("WeChat/OA");
+                        $WX     = new OA();
+                        $result = $WX->create_qrcode([
+                            "expire_seconds" => 180,
+                            "action_name"    => "QR_STR_SCENE",
+                            "action_info"    => [
+                                "scene" => [
+                                    "scene_str" => "LOGIN|{$RID}|{$SID}",
+                                ],
+                            ],
+                        ]);
+                        if ($result['url']) {
+                            $url = $result['url'];
+                            SESSION::set("LOGINQRCODE", "{$_L['url']['own_form']}index&c=qrcode&rootsid={$SID}&rootid={$RID}&name={$LF['name']}");
+                        } else {
+                            ajaxout(0, "微信接口错误");
+                        }
+                        break;
+                    case '1':
+                        $url = "{$_L['url']['own_form']}index&c=qrcode&rootsid={$SID}&rootid={$RID}&name={$LF['name']}";
+                        break;
+                }
+                break;
+            case 'qqlogin':
+                $url = "{$_L['url']['own_form']}index&c=qrcode&rootsid={$SID}&rootid={$RID}&name={$LF['name']}";
+                if ($LF['click'] == "true") {
+                    goheader($url);
+                }
+                break;
         }
+        SESSION::set("LOGINQRCODETIME", time() + 180);
+        ajaxout(1, "success", $url);
     }
     /**
      * @description: 获取用户协议

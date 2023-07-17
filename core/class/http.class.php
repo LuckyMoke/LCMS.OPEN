@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-14 14:35:36
+ * @LastEditTime: 2023-07-12 09:58:25
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -121,6 +121,9 @@ class HTTP
      */
     private static function setBaseOpt($data = "")
     {
+        if (!is_array($data) && !is_null(json_decode($data)) && !self::$HEADER['Content-Type']) {
+            self::$HEADER['Content-Type'] = "application/json; charset=utf-8";
+        }
         if (self::$HEADER) {
             foreach (self::$HEADER as $k => $v) {
                 $h[] = "{$k}: {$v}";
