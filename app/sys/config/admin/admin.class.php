@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-09 18:24:07
+ * @LastEditTime: 2023-07-21 21:29:34
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -44,7 +44,6 @@ class admin extends adminbase
                     "lcms" => true,
                 ]);
                 $form = array(
-                    ["layui" => "title", "title" => "基础信息"],
                     ["layui" => "input", "title" => "系统名称",
                         "name"   => "LC[title]",
                         "value"  => $config['title'],
@@ -65,11 +64,15 @@ class admin extends adminbase
                         "placeholder" => "不填任意域名可访问后台",
                         "tips"        => "不填任意域名可打开后台，填写后任意域名访问后台，均自动跳转到填写的域名",
                     ],
-                    ["layui" => "input", "title" => "开发者",
+                    ["layui" => "input", "title" => "页脚版权",
                         "name"   => "LC[developer]",
                         "value"  => $config['developer'],
                         "verify" => "required"],
-                    ["layui" => "title", "title" => "通知公告"],
+                    ["layui" => "upload", "title" => "登录背景",
+                        "name"   => "LC[login_background]",
+                        "value"  => $config['login_background'],
+                        "local"  => true,
+                        "tips"   => "推荐尺寸1920*1080"],
                     ["layui" => "editor", "title" => "后台公告",
                         "name"   => "LC[gonggao]",
                         "value"  => $config['gonggao'],
@@ -207,31 +210,6 @@ class admin extends adminbase
                             ["title" => "单设备", "value" => "0"],
                             ["title" => "多设备", "value" => "1"],
                         ]],
-                    ["layui" => "radio", "title" => "登陆验证码",
-                        "name"   => "LC[login_code][type]",
-                        "value"  => $config['login_code']['type'] ?? "0",
-                        "radio"  => [
-                            ["title" => "图片验证码", "value" => "0", "tab" => "login_code"],
-                            ["title" => "Luosimao", "value" => "Luosimao", "tab" => "login_code_Luosimao"],
-                            ["title" => "Vaptcha", "value" => "Vaptcha", "tab" => "login_code_Vaptcha"],
-                            ["title" => "极验", "value" => "Geetest", "tab" => "login_code_Geetest"],
-                            ["title" => "reCAPTCHA", "value" => "Google", "tab" => "login_code_Google"],
-                            ["title" => "Turnstile", "value" => "Cloudflare", "tab" => "login_code_Cloudflare"],
-                        ]],
-                    ["layui"      => "input", "title" => "使用域名",
-                        "name"        => "LC[login_code][domain]",
-                        "value"       => $config['login_code']['domain'],
-                        "cname"       => "hidden login_code_Luosimao login_code_Vaptcha login_code_Geetest login_code_Google login_code_Cloudflare",
-                        "placeholder" => "请填写主域名！",
-                        "tips"        => "请填写主域名！"],
-                    ["layui" => "input", "title" => "站点ID",
-                        "name"   => "LC[login_code][site_key]",
-                        "value"  => $config['login_code']['site_key'],
-                        "cname"  => "hidden login_code_Luosimao login_code_Vaptcha login_code_Geetest login_code_Google login_code_Cloudflare"],
-                    ["layui" => "input", "title" => "密钥",
-                        "name"   => "LC[login_code][secret]",
-                        "value"  => $config['login_code']['secret'],
-                        "cname"  => "hidden login_code_Luosimao login_code_Vaptcha login_code_Geetest login_code_Google login_code_Cloudflare"],
                     ["layui" => "title", "title" => "后台水印"],
                     ["layui" => "radio", "title" => "功能开关",
                         "name"   => "LC[admin_water]",

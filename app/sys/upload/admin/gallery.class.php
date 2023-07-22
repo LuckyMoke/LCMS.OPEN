@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-04 12:41:25
+ * @LastEditTime: 2023-07-21 21:20:47
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -70,6 +70,9 @@ class gallery extends adminbase
     {
         global $_L, $LF, $LC;
         $form = [
+            ["layui" => "input", "title" => "附件名称",
+                "name"   => "title",
+                "verify" => "required"],
             ["layui" => "file", "title" => "上传附件",
                 "name"   => "file",
                 "verify" => "required"],
@@ -134,15 +137,20 @@ class gallery extends adminbase
             "limit" => [($LF['page'] - 1) * $LF['limit'], $LF['limit']],
         ]);
         foreach ($image as $val) {
-            $size = getimagesize(path_absolute($val['src']));
             switch ($_L['plugin']['oss']['type']) {
                 case '':
                 case 'local':
+                    $size = getimagesize(path_absolute($val['src']));
+                    if (in_string($val['name'], ".svg")) {
+                        $size = "SVG图片";
+                    } else {
+                        $size = $size[0] . "×" . $size[1];
+                    }
                     $list[] = [
                         "name"    => $val['name'],
                         "src"     => $val['src'],
                         "datasrc" => $val['src'],
-                        "size"    => $size[0] . "×" . $size[1],
+                        "size"    => $size,
                     ];
                     break;
                 default:
@@ -150,8 +158,8 @@ class gallery extends adminbase
                         "name"    => $val['name'],
                         "src"     => oss($val['src']),
                         "datasrc" => $val['src'],
-                        "size"    => '',
-                        "stylle"  => 'opacity:0',
+                        "size"    => "",
+                        "stylle"  => "opacity:0",
                     ];
                     break;
             }

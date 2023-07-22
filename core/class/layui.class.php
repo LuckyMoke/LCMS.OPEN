@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-07-04 14:57:39
+ * @LastEditTime: 2023-07-19 16:52:00
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -346,11 +346,16 @@ class LAY
     public static function editor($para)
     {
         $para = self::start($para);
+        if ($para['value'] && !in_string($para['value'], "<")) {
+            if (is_base64($para['value'])) {
+                $para['value'] = base64_decode($para['value']);
+            }
+        }
         $html = "
             <div class='layui-form-item layui-form-text{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-editor' data-name='{$para['name']}'>
-                    <script name='{$para['name']}' type='text/plain'>" . base64_decode($para['value']) . "</script>
+                    <script name='{$para['name']}' type='text/plain'>{$para['value']}</script>
                 </div>
             </div>";
         echo $html;

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-07-12 11:02:45
+ * @LastEditTime: 2023-07-21 20:46:46
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -43,16 +43,6 @@ class index extends adminbase
             "lcms" => $RID == "0" ? true : $RID,
         ]) ?: [];
         SESSION::set("LOGINROOTID", $RID);
-        //判断验证码模式
-        if (!empty($CFG['login_code']['type']) && in_string(HTTP_HOST, $CFG['login_code']['domain'])) {
-            //第三方验证码
-            load::plugin("{$CFG['login_code']['type']}/captcha");
-            $captcha = new CAPTCHA($CFG['login_code']);
-            $yzcode  = $captcha->get();
-        } else {
-            //普通图形验证码
-            $CFG['login_code']['type'] = "default";
-        }
         if ($LF['action'] === "band") {
             $openid = SESSION::get("LOGINOPENID");
             if ($openid) {
@@ -99,32 +89,10 @@ class index extends adminbase
     public function docheck()
     {
         global $_L, $LF, $CFG, $USER, $RID;
-        if ($LF['code']) {
-            //图形验证码验证
-            load::sys_class("captcha");
-            CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
-        }
-        //判断验证码模式
-        if (!empty($CFG['login_code']['type']) && in_string(HTTP_HOST, $CFG['login_code']['domain'])) {
-            //第三方验证码
-            $token = $LF['response_token'];
-            if ($LF['code'] && $token == SESSION::get("LCMSCAPTCHATOKEN")) {
-                SESSION::del("LCMSCAPTCHATOKEN");
-            } elseif ($token) {
-                load::plugin("{$CFG['login_code']['type']}/captcha");
-                $YZ = new CAPTCHA($CFG['login_code']);
-                if (!$YZ->check($LF)) {
-                    SESSION::set("LCMSCAPTCHATOKEN", $token);
-                    ajaxout(2);
-                }
-            } else {
-                ajaxout(0, "请进行人机验证");
-            }
-        } else {
-            //普通图形验证码
-            $LF['code'] || ajaxout(0, "验证码错误");
-            $CFG['login_code']['type'] = "default";
-        }
+        $LF['code'] || ajaxout(0, "验证码错误");
+        //图形验证码验证
+        load::sys_class("captcha");
+        CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
         //获取用户数据
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",

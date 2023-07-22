@@ -11,14 +11,10 @@
         <div class="login-input">
             <input type="password" name="pass" placeholder="密码" required="required" />
         </div>
-        <if $yzcode>
-            <div style="margin-top:20px;">{{$yzcode}}</div>
-            <else />
-            <div class="login-input login-code">
-                <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="4" required="required" />
-                <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
-            </div>
-        </if>
+        <div class="login-input login-code">
+            <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="4" required="required" />
+            <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
+        </div>
         <div class="login-readme">
             <label>
                 <input type="checkbox" checked="checked" required="required" />

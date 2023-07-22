@@ -24,7 +24,7 @@
     </head>
     <body>
         <div class="login">
-            <div class="login-left" id="lizitexiao"></div>
+            <div class="login-left" {{$CFG['login_background']?'style="background-image:url('.$CFG['login_background'].');background-position:left center"':'id="lizitexiao"'}}></div>
             <div class="login-right">
                 <div class="login-form">
                     <div class="login-tab login-tab{{count($page['tab'])}}">
