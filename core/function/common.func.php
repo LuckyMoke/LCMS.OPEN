@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-07-05 18:39:34
+ * @LastEditTime: 2023-07-27 18:19:27
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -728,6 +728,20 @@ function in_ua($needle = [])
     return false;
 }
 /**
+ * @description: url安全的base64
+ * @param string $str
+ * @return string
+ */
+function urlsafe_base64_encode($str)
+{
+    $data = base64_encode($str);
+    return str_replace([
+        "+", "/", "=",
+    ], [
+        "-", "_", "",
+    ], $data);
+}
+/**
  * @description: HTML内容解码懒加载
  * @param string $content
  * @param bool $lazyload
@@ -772,7 +786,7 @@ function oss($url = "", $watermark = true)
     $webp   = $config['attwebp'] > 0 ? true : false;
     $cfgwat = array_merge($cfgwat, [
         "on"   => $cfgwat['on'] > 0 && $watermark && !in_string($url, ".gif") ? true : false,
-        "text" => base64_encode($cfgwat['text']),
+        "text" => urlsafe_base64_encode($cfgwat['text']),
     ]);
     //如果开启云存储
     if ($url && $cfgoss['type'] != "local") {
@@ -790,12 +804,12 @@ function oss($url = "", $watermark = true)
                 case 'qiniu':
                     $url .= "?imageMogr2/interlace/1/quality/75";
                     $url .= $webp ? "/format/webp" : "";
-                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/6buR5L2T/fontsize/" . ($cfgwat['size'] * 20) . "/fill" . "/" . base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/gravity/{$cfgwat['gravity']}/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
+                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/V2VuUXVhbllpIE1pY3JvIEhlaQ/fontsize/" . ($cfgwat['size'] * 20) . "/fill" . "/" . urlsafe_base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/gravity/{$cfgwat['gravity']}/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
                     break;
                 case 'tencent':
                     $url .= "?imageMogr2/interlace/1/quality/75";
                     $url .= $webp ? "/format/webp" : "";
-                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/c2ltaGVp6buR5L2TLnR0Zg/fontsize/{$cfgwat['size']}/fill" . "/" . base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/shadow/{$cfgwat['shadow']}/gravity/" . (strtolower($cfgwat['gravity'])) . "/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
+                    $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/c2ltaGVp6buR5L2TLnR0Zg/fontsize/{$cfgwat['size']}/fill" . "/" . urlsafe_base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/shadow/{$cfgwat['shadow']}/gravity/" . (strtolower($cfgwat['gravity'])) . "/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
                     break;
                 case 'aliyun':
                     switch ($cfgwat['gravity']) {

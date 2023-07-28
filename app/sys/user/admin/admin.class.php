@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-25 12:31:59
+ * @LastEditTime: 2023-07-28 10:56:51
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -124,7 +124,7 @@ class admin extends adminbase
                     ["layui"      => "input", "title" => "账号",
                         "name"        => "LC[name]",
                         "value"       => $admin['name'],
-                        "placeholder" => "登录帐号不能重复",
+                        "placeholder" => "登录账号不能重复",
                         "verify"      => "required",
                         "disabled"    => $admin['name'] && $admin['type'] != "lcms" && $admin['id'] == $_L['LCMSADMIN']['id'] ? true : false],
                     ["layui"      => "input", "title" => "姓名",
@@ -250,7 +250,7 @@ class admin extends adminbase
                         ["title" => "头像", "field" => "headimg",
                             "width"  => 50,
                             "align"  => "center"],
-                        ["title"   => "帐号", "field" => "name",
+                        ["title"   => "账号", "field" => "name",
                             "minWidth" => 90],
                         ["title" => "姓名", "field" => "title",
                             "width"  => 150],
@@ -393,7 +393,7 @@ class admin extends adminbase
                         ["title" => "头像", "field" => "headimg",
                             "width"  => 50,
                             "align"  => "center"],
-                        ["title" => "帐号", "field" => "name",
+                        ["title" => "账号", "field" => "name",
                             "width"  => 180],
                         ["title"   => "姓名", "field" => "title",
                             "minWidth" => 100],

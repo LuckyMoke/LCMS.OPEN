@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-14 16:01:23
+ * @LastEditTime: 2023-07-28 10:32:02
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -218,7 +218,7 @@ class index extends adminbase
             "src"      => "../" . $LF['file'],
         ]);
         ajaxout(1, "上传成功", "", [
-            "dir"      => "../" . $LF['dir'],
+            "dir"      => "../" . str_replace($LF['name'], "", $LF['file']),
             "filename" => $LF['name'],
             "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
             "datasrc"  => "../" . $LF['file'],

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-26 21:44:15
+ * @LastEditTime: 2023-07-28 10:56:44
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -254,7 +254,7 @@ class web extends adminbase
                             "value"  => $plugin['oss']['super'] ?? 0,
                             "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun",
                             "radio"  => [
-                                ["title" => "子帐号独立设置", "value" => 0],
+                                ["title" => "子账号独立设置", "value" => 0],
                                 ["title" => "子账号使用此设置", "value" => 1],
                             ]],
                     ]);
