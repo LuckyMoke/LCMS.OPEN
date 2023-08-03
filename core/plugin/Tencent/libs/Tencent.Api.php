@@ -29,11 +29,11 @@ class TencentApi
         $StringToSign .= "" . "\n";
         $StringToSign .= "content-type:application/json" . "\n";
         $StringToSign .= "host:{$this->cfg['Host']}" . "\n";
+        $StringToSign .= "x-tc-action:" . strtolower($this->cfg['Action']) . "\n";
         $StringToSign .= "" . "\n";
-        $StringToSign .= "content-type;host" . "\n";
+        $StringToSign .= "content-type;host;x-tc-action" . "\n";
         $StringToSign .= hash("SHA256", $PData);
-        $StringToSign = "TC3-HMAC-SHA256\n{$time}\n{$utcdate}/{$this->cfg['ProName']}/tc3_request\n" . hash("SHA256", $StringToSign);
-
+        $StringToSign  = "TC3-HMAC-SHA256\n{$time}\n{$utcdate}/{$this->cfg['ProName']}/tc3_request\n" . hash("SHA256", $StringToSign);
         $SecretSigning = hash_hmac('SHA256', $utcdate, "TC3" . $this->cfg['secretkey'], true);
         $SecretSigning = hash_hmac('SHA256', $this->cfg['ProName'], $SecretSigning, true);
         $SecretSigning = hash_hmac('SHA256', "tc3_request", $SecretSigning, true);
@@ -41,17 +41,16 @@ class TencentApi
 
         $Authorization = "TC3-HMAC-SHA256 ";
         $Authorization .= "Credential=" . $this->cfg['secretId'] . "/{$utcdate}/{$this->cfg['ProName']}/tc3_request, ";
-        $Authorization .= "SignedHeaders=content-type;host, ";
+        $Authorization .= "SignedHeaders=content-type;host;x-tc-action, ";
         $Authorization .= "Signature=" . $Signature;
-
         return [
-            "Authorization: " . $Authorization,
-            "Content-Type: application/json",
-            "Host: {$this->cfg['Host']}",
-            "X-TC-Action: {$this->cfg['Action']}",
-            "X-TC-Region: {$this->cfg['Region']}",
-            "X-TC-Timestamp: " . $time,
-            "X-TC-Version: {$this->cfg['Version']}",
+            "Authorization"  => $Authorization,
+            "Content-Type"   => "application/json",
+            "Host"           => $this->cfg['Host'],
+            "X-TC-Action"    => $this->cfg['Action'],
+            "X-TC-Region"    => $this->cfg['Region'],
+            "X-TC-Timestamp" => $time,
+            "X-TC-Version"   => $this->cfg['Version'],
         ];
     }
     /**

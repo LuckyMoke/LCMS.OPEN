@@ -21,7 +21,7 @@ class WxPayTo
     public function Pay()
     {
         $url    = "/v3/transfer/batches";
-        $result = $this->postJson("POST", $url, json_encode(array_merge([
+        $result = WxPayApi::Request("POST", $this->api . $url, $this->cfg, json_encode(array_merge([
             "appid" => $this->cfg['appid'],
         ], $this->order)));
         if ($result['code'] || !$result['out_batch_no']) {
@@ -44,34 +44,11 @@ class WxPayTo
             "limit=" . ($this->order['limit'] ?: "20"),
             "detail_status=" . ($this->order['detail_status'] ?: "ALL"),
         ]);
-        $result = $this->postJson("GET", $url);
+        $result = WxPayApi::Request("GET", $url, $this->cfg);
         if ($result['code'] || !$result['transfer_batch']) {
             LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
-    }
-    /**
-     * @description: 提交JSON数据
-     * @param string $method
-     * @param string $url
-     * @param string $body
-     * @return array
-     */
-    private function postJson($method = "POST", $url, $body = "")
-    {
-        $url    = $this->api . $url;
-        $result = json_decode(WxPayApi::Request($method, $url, $body, [
-            "Authorization" => WxPayApi::Sign($this->cfg, [
-                "method"    => $method,
-                "url"       => $url,
-                "timeStamp" => time(),
-                "nonceStr"  => randstr(32, "let"),
-                "body"      => $body,
-            ]),
-            "Content-Type"  => "application/json; charset=utf-8",
-            "Accept"        => "application/json",
-        ]), true);
-        return $result ?: [];
     }
 }

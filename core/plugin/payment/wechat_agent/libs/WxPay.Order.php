@@ -24,7 +24,7 @@ class WxPayOrder
         $url    = "/v3/pay/partner/transactions/jsapi";
         $openid = $openid ?: $this->getOpenid();
         $openid || LCMS::X(403, "缺少OPENID");
-        $result = $this->postJson($url, json_encode([
+        $result = WxPayApi::Request("POST", $this->api . $url, $this->cfg, json_encode([
             "sp_appid"     => $this->agent['appid'],
             "sp_mchid"     => $this->agent['mch_id'],
             "sub_appid"    => $this->cfg['appid'],
@@ -63,7 +63,7 @@ class WxPayOrder
     public function H5()
     {
         $url    = "/v3/pay/partner/transactions/h5";
-        $result = $this->postJson($url, json_encode([
+        $result = WxPayApi::Request("POST", $this->api . $url, $this->cfg, json_encode([
             "sp_appid"     => $this->agent['appid'],
             "sp_mchid"     => $this->agent['mch_id'],
             "sub_appid"    => $this->cfg['appid'],
@@ -96,7 +96,7 @@ class WxPayOrder
     public function Pc()
     {
         $url    = "/v3/pay/partner/transactions/native";
-        $result = $this->postJson($url, json_encode([
+        $result = WxPayApi::Request("POST", $this->api . $url, $this->cfg, json_encode([
             "sp_appid"     => $this->agent['appid'],
             "sp_mchid"     => $this->agent['mch_id'],
             "sub_appid"    => $this->cfg['appid'],
@@ -123,7 +123,7 @@ class WxPayOrder
     public function Repay()
     {
         $url    = "/v3/refund/domestic/refunds";
-        $result = $this->postJson($url, json_encode([
+        $result = WxPayApi::Request("POST", $this->api . $url, $this->cfg, json_encode([
             "out_trade_no"  => $this->order['order_no'],
             "out_refund_no" => $this->order['order_no'] . "R",
             "amount"        => [
@@ -147,42 +147,12 @@ class WxPayOrder
     {
         global $_L;
         $url    = $this->api . "/v3/pay/transactions/out-trade-no/{$this->order['order_no']}?sp_mchid=" . $this->agent['mch_id'] . "&sub_mchid=" . $this->cfg['mch_id'];
-        $result = json_decode(WxPayApi::Request("GET", $url, "", [
-            "Authorization" => WxPayApi::Sign($this->agent, [
-                "method"    => "GET",
-                "url"       => $url,
-                "timeStamp" => time(),
-                "nonceStr"  => randstr(32, "let"),
-                "body"      => "",
-            ]),
-        ]), true);
+        $result = WxPayApi::Request("GET", $url, $this->cfg);
         if ($result['code']) {
             LCMS::X($result['code'], $result['message']);
         } else {
             return $result;
         }
-    }
-    /**
-     * @description: 提交JSON数据
-     * @param string $url
-     * @param string $body
-     * @return array
-     */
-    private function postJson($url, $body)
-    {
-        $url    = $this->api . $url;
-        $result = json_decode(WxPayApi::Request("POST", $url, $body, [
-            "Authorization" => WxPayApi::Sign($this->agent, [
-                "method"    => "POST",
-                "url"       => $url,
-                "timeStamp" => time(),
-                "nonceStr"  => randstr(32, "let"),
-                "body"      => $body,
-            ]),
-            "Content-Type"  => "application/json; charset=utf-8",
-            "Accept"        => "application/json",
-        ]), true);
-        return $result ?: [];
     }
     /**
      * @description: 获取用户OPENID
