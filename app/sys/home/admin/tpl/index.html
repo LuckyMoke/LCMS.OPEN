@@ -4,7 +4,7 @@
     <if LCMS::SUPER()>
         <if $_L['config']['admin']['dir']=="admin">
             <p class="lcms-form-des">
-                系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，请尽快 <a href="?t=sys&n=config&c=admin&a=safe">修改后台目录</a>，以提高安全性！
+                系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，点击 <a href="?t=sys&n=config&c=admin&a=safe">修改后台目录</a>，以提高安全性！
             </p>
         </if>
         <if is_dir(PATH_WEB . "install")>

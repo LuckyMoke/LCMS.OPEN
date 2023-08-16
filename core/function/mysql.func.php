@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2023-06-23 14:27:09
+ * @LastEditTime: 2023-08-05 15:37:31
  * @Description: Mysql数据库操作方法
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -148,6 +148,18 @@ function sql_begin($assign = "master")
     $_L['DB']
         ->assign($assign)
         ->begin();
+}
+/**
+ * @description: 事务回滚
+ * @param string $assign
+ * @return {*}
+ */
+function sql_rollback($assign = "master")
+{
+    global $_L;
+    $_L['DB']
+        ->assign($assign)
+        ->rollback();
 }
 /**
  * @description: 提交事务

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2023-06-23 19:45:44
+ * @LastEditTime: 2023-08-05 15:36:33
  * @Description: Mysql数据库操作类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -280,13 +280,21 @@ class MYSQL
         $this->query("begin");
     }
     /**
+     * @description: 事务回滚
+     * @return {*}
+     */
+    public function rollback()
+    {
+        $this->query("rollback");
+    }
+    /**
      * @description: 事务提交
      * @return bool
      */
     public function commit()
     {
         if ($this->error()) {
-            $this->query("rollback");
+            $this->rollback();
             return false;
         } else {
             $this->query("commit");

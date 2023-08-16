@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-14 16:03:20
+ * @LastEditTime: 2023-08-16 11:26:47
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,6 @@ class UPLOAD
         $CFG = $_L['config']['admin'];
         if (makedir($dir)) {
             if (!is_array($para) && is_url($para)) {
-                // 如果文件地址是url链接，远程下载
                 $result = HTTP::get($para, true);
                 if ($result['code'] == 200 && $result['length'] > 0) {
                     $file = $result['body'];
@@ -161,51 +160,85 @@ class UPLOAD
     private static function img2watermark($img)
     {
         global $_L, $CFG, $MIME, $SIZE;
-        ob_start();
         $cfgwat = $_L['plugin']['watermark'] ?: [];
-        $cmime  = $MIME;
         if ($CFG['attwebp'] > 0 && in_array($MIME, [
-            "jpeg", "jpg", "png",
+            "jpeg", "jpg", "png", "bmp", "wpng", "wbmp",
         ]) && function_exists("imagewebp")) {
             $MIME = "webp";
         }
-        if ($cfgwat['on'] > 0) {
-            if (in_array($MIME, [
-                "jpeg", "jpg", "png", "webp",
-            ])) {
-                $thumb = imagecreatefromstring($img);
-                $x     = imagesx($thumb);
-                $y     = imagesy($thumb);
+        if (in_array($MIME, [
+            "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
+        ]) && (
+            round($SIZE / 1024) > $CFG['attsize'] ||
+            $cfgwat['on'] > 0
+        )) {
+            ob_start();
+            $src   = imagecreatefromstring($img);
+            $srcwh = getimagesizefromstring($img);
+            if (round($SIZE / 1024) > $CFG['attsize']) {
+                //如果图片大小超过，启用压缩
+                $times  = $CFG['attsize'] / round($SIZE / 1024);
+                $thumbx = intval($srcwh[0] * $times);
+                $thumby = intval($srcwh[1] * $times);
+                if ($thumbx > 1920 || $thumby > 1920) {
+                    if ($thumbx > 1920) {
+                        $thumbx = 1920;
+                        $thumby = intval($thumby * 1920 / $srcwh[0]);
+                    } else {
+                        $thumbx = intval($thumbx * 1920 / $srcwh[1]);
+                        $thumby = 1920;
+                    }
+                }
+                $thumb = imagecreatetruecolor($thumbx, $thumby);
                 imagealphablending($thumb, true);
                 imagesavealpha($thumb, true);
-                self::watermark($thumb, $x, $y);
-                switch ($MIME) {
-                    case 'jpg':
-                    case 'jpeg':
-                        imagejpeg($thumb);
-                        break;
-                    case 'png':
-                        imagepng($thumb);
-                        break;
-                    case 'webp':
-                        imagewebp($thumb);
-                        break;
-                    case 'wbmp':
-                        imagewbmp($thumb);
-                        break;
+                if (in_array($MIME, ["jpeg", "jpg", "bmp", "wbmp"])) {
+                    $bgcolor = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
+                } else {
+                    $bgcolor = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
                 }
-                imagedestroy($thumb);
-                $img = ob_get_contents();
-
+                imagefill($thumb, 0, 0, $bgcolor);
+                imagecopyresampled($thumb, $src, 0, 0, 0, 0, $thumbx, $thumby, $srcwh[0], $srcwh[1]);
             }
-        } elseif ($MIME == "webp" && $cmime != "webp") {
-            $thumb = imagecreatefromstring($img);
-            imagewebp($thumb);
+            if ($cfgwat['on'] > 0) {
+                //如果要加水印
+                if (!$thumb) {
+                    $thumb  = $src;
+                    $thumbx = $srcwh[0];
+                    $thumby = $srcwh[1];
+                    imagealphablending($thumb, true);
+                    imagesavealpha($thumb, true);
+                }
+                self::watermark($thumb, $thumbx, $thumby);
+            }
+            switch ($MIME) {
+                case 'jpg':
+                case 'jpeg':
+                    imagejpeg($thumb);
+                    break;
+                case 'png':
+                    imagepng($thumb);
+                    break;
+                case 'bmp':
+                    imagebmp($thumb);
+                    break;
+                case 'webp':
+                case 'wpng':
+                    imagewebp($thumb);
+                    break;
+                case 'wbmp':
+                    imagewbmp($thumb);
+                    break;
+            }
             imagedestroy($thumb);
             $img = ob_get_contents();
+            imagedestroy($src);
+            ob_clean();
+            $SIZE = strlen($img);
+            if ($cfgwat['on'] > 0) {
+                $SIZE = $SIZE - 5000;
+            }
         }
-        ob_clean();
-        $SIZE = strlen($img);
         return $img;
     }
     private static function watermark($image, $w, $h)

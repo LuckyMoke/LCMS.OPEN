@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-07-21 21:29:34
+ * @LastEditTime: 2023-08-16 12:22:32
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -160,9 +160,11 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
+                if (mb_strlen($LC['dir']) < 5) {
+                    ajaxout(0, "后台目录最少需要5个字符");
+                }
                 if ($LC['dir'] != $_L['config']['admin']['dir']) {
                     if (!getdirpower(PATH_WEB)) {
-                        unset($LC['dir']);
                         ajaxout(1, "根目录没有写权限", "reload");
                     } else {
                         $change = true;
@@ -189,11 +191,12 @@ class admin extends adminbase
                 ));
                 $form = [
                     ["layui" => "title", "title" => "登陆安全"],
-                    ["layui" => "input_sort", "title" => "后台目录",
-                        "name"   => "LC[dir]",
-                        "value"  => $config['dir'] ?: "admin",
-                        "tips"   => "建议修改后台目录提高安全性",
-                        "verify" => "required"],
+                    ["layui"    => "input_sort", "title" => "后台目录",
+                        "name"      => "LC[dir]",
+                        "value"     => $config['dir'] ?: "admin",
+                        "minlength" => 6,
+                        "tips"      => "修改后台目录提高安全性，最少5个字符",
+                        "verify"    => "required"],
                     ["layui"  => "slider", "title" => "自动登出",
                         "name"    => "LC[sessiontime]",
                         "value"   => $config['sessiontime'],
@@ -204,11 +207,11 @@ class admin extends adminbase
                         "settips" => "分钟"],
                     ["layui" => "radio", "title" => "登陆限制",
                         "name"   => "LC[login_limit]",
-                        "value"  => $config['login_limit'] ?? "0",
+                        "value"  => $config['login_limit'] ?? 1,
                         "tips"   => "是否限制一个账号可同时在多个设备登陆",
                         "radio"  => [
-                            ["title" => "单设备", "value" => "0"],
-                            ["title" => "多设备", "value" => "1"],
+                            ["title" => "单设备", "value" => 0],
+                            ["title" => "多设备", "value" => 1],
                         ]],
                     ["layui" => "title", "title" => "后台水印"],
                     ["layui" => "radio", "title" => "功能开关",

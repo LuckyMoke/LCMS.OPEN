@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-07-21 20:46:46
+ * @LastEditTime: 2023-08-11 18:53:09
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -79,6 +79,9 @@ class index extends adminbase
             }
         }
         $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
+        //设置登录TOKEN
+        $logintoken = randstr(32);
+        SESSION::set("LOGINTOKEN", $logintoken);
         require LCMS::template("own/{$tplpath}/index");
     }
     /**
@@ -93,6 +96,14 @@ class index extends adminbase
         //图形验证码验证
         load::sys_class("captcha");
         CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
+        //解密数据
+        $token = SESSION::get("LOGINTOKEN");
+        $iv    = md5($token);
+        $token || ajaxout(0, "账号或密码错误");
+        $LF['name'] = openssl_decrypt($LF['name'], "AES-256-CBC", $token, 0, $iv);
+        $LF['name'] || ajaxout(0, "请刷新一下页面再试");
+        $LF['pass'] = openssl_decrypt($LF['pass'], "AES-256-CBC", $token, 0, $iv);
+        $LF['pass'] || ajaxout(0, "请刷新一下页面再试");
         //获取用户数据
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",
@@ -118,6 +129,7 @@ class index extends adminbase
                 ]);
                 ajaxout(0, "此账户已到期");
             } else {
+                SESSION::del("LOGINTOKEN");
                 if ($LF['band'] > 0) {
                     $openid = SESSION::get("LOGINOPENID");
                     $openid || LCMS::X(403, "您未登录");
