@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-06-20 15:53:15
+ * @LastEditTime: 2023-08-19 22:04:21
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -50,6 +50,7 @@ class TABLE
         $toolbar = $toolbar['toolbar'];
         $search  = self::search($table['search']);
         foreach ($table['cols'] as $key => $val) {
+            $table['cols'][$key]['expandedWidth'] = 1;
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
@@ -224,6 +225,7 @@ class TABLE
         $laytpl  = $toolbar['laytpl'];
         $toolbar = $toolbar['toolbar'];
         foreach ($tree['cols'] as $key => $val) {
+            $tree['cols'][$key]['expandedWidth'] = 1;
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
@@ -280,8 +282,10 @@ class TABLE
                             if (!in_string($val['url'], "javascript:") && !is_url($val['url'])) {
                                 $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
                             }
+                            $val['cname']      = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
+                            $val['color']      = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
                             $val['target']     = $val['target'] ? " target={$val['target']}" : "";
-                            $arr[$index][$key] = "<a href=\"{$val['url']}\"{$val['target']}><i class='layui-icon layui-icon-unlink'></i> {$val['title']}</a>";
+                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-unlink'></i> {$val['title']}</a>";
                             break;
                     }
                 }

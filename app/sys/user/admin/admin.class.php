@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-07-28 10:56:51
+ * @LastEditTime: 2023-08-17 18:21:28
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -174,70 +174,7 @@ class admin extends adminbase
                 require LCMS::template("own/admin/edit");
                 break;
             case 'save':
-                $LC['id'] = PUB::token2id($LF['token']);
-                if ($LF['type'] == "profile") {
-                    $keys = ["id", "headimg", "title", "pass"];
-                } else {
-                    $keys = ["id", "headimg", "name", "title", "pass", "email", "mobile", "status", "lasttime", "addtime"];
-                }
-                foreach ($keys as $key) {
-                    $LCN[$key] = $LC[$key];
-                }
-                $LC = $LCN;
-                if ($LC['id'] == $_L['LCMSADMIN']['id']) {
-                    unset($LC['status']);
-                }
-                if ($LC['pass']) {
-                    $LC['salt'] = randstr(8);
-                    $LC['pass'] = md5("{$LC['pass']}{$LC['salt']}");
-                } else {
-                    unset($LC['pass']);
-                }
-                foreach ([
-                    ["name" => "name", "msg" => "账号已存在"],
-                    ["name" => "email", "msg" => "邮箱已存在"],
-                    ["name" => "mobile", "msg" => "手机号已存在"],
-                ] as $check) {
-                    if ($LC[$check['name']] && sql_get([
-                        "table" => "admin",
-                        "where" => "(name = :value OR email = :value OR mobile = :value) AND id != :id",
-                        "order" => "id DESC",
-                        "bind"  => [
-                            ":value" => $LC[$check['name']],
-                            ":id"    => $LC['id'] ?: 0,
-                        ],
-                    ])) {
-                        ajaxout(0, $check['msg']);
-                    }
-                }
-                if ($LF['admin_level']) {
-                    $level = explode("/", $LF['admin_level']);
-                    if (!$level[1]) {
-                        ajaxout(0, "请设置用户权限");
-                    } else {
-                        $LC['lcms'] = $level[0];
-                        $LC['type'] = $level[1];
-                    }
-                }
-                LCMS::form([
-                    "table" => "admin",
-                    "form"  => $LC,
-                ]);
-                if (sql_error()) {
-                    ajaxout(0, "保存失败", "", sql_error());
-                } else {
-                    if ($LC['id'] == $_L['LCMSADMIN']['id']) {
-                        SESSION::set("LCMSADMIN", array_merge($_L['LCMSADMIN'], [
-                            "name"  => $LC['name'],
-                            "title" => $LC['title'],
-                        ]));
-                    }
-                    LCMS::log([
-                        "type" => "system",
-                        "info" => "用户管理-" . ($LC['id'] ? "修改" : "添加") . "用户-{$LC['name']}",
-                    ]);
-                    ajaxout(1, "保存成功", "close");
-                }
+                PUB::userSave(["id", "headimg", "name", "title", "pass", "email", "mobile", "status", "lasttime", "addtime"]);
                 break;
             default:
                 $table = [
@@ -307,7 +244,8 @@ class admin extends adminbase
     public function doprofile()
     {
         global $_L, $LF, $LC;
-        $admin = LCMS::form([
+        $nopower = true;
+        $admin   = LCMS::form([
             "do"    => "get",
             "table" => "admin",
             "id"    => $_L['LCMSADMIN']['id'],

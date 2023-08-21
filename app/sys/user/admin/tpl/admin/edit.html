@@ -1,8 +1,7 @@
 <template "ui/head" />
 <template "ui/iframe" />
-<form class="layui-form layui-form-pane iframe-admin-edit" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self" data-onsubmit="onSubmit">
+<form class="layui-form layui-form-pane iframe-admin-edit" action="{{$_L['url']['own_form']}}index&action=save{{$nopower?'&c=change':''}}" method="post" target="_self" data-onsubmit="onSubmit">
     <input type="hidden" name="token" value="{{$LF['token']}}" />
-    <input type="hidden" name="type" value="{{$LF['a']}}" />
     <input type="hidden" name="LC[addtime]" value="{{$admin['addtime']?:datenow()}}" />
     <ui form($form['base']) />
     <if $admin['id']!=$_L['LCMSADMIN']['id']>

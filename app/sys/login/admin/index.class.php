@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-08-11 18:53:09
+ * @LastEditTime: 2023-08-20 19:44:28
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -81,7 +81,10 @@ class index extends adminbase
         $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
         //设置登录TOKEN
         $logintoken = randstr(32);
-        SESSION::set("LOGINTOKEN", $logintoken);
+        SESSION::set("LOGINTOKEN", [
+            "token"      => $logintoken,
+            "expires_in" => time() + 300,
+        ]);
         require LCMS::template("own/{$tplpath}/index");
     }
     /**
@@ -98,12 +101,19 @@ class index extends adminbase
         CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
         //解密数据
         $token = SESSION::get("LOGINTOKEN");
-        $iv    = md5($token);
+        if ($token['expires_in'] > time()) {
+            $token = $token['token'];
+        } else {
+            ajaxout(0, "登录超时/请重试", "reload");
+        }
+        $iv = md5($token);
         $token || ajaxout(0, "账号或密码错误");
         $LF['name'] = openssl_decrypt($LF['name'], "AES-256-CBC", $token, 0, $iv);
-        $LF['name'] || ajaxout(0, "请刷新一下页面再试");
+        $LF['name'] || ajaxout(0, "签名错误", "reload");
+        $LF['name'] = substr($LF['name'], 4);
         $LF['pass'] = openssl_decrypt($LF['pass'], "AES-256-CBC", $token, 0, $iv);
-        $LF['pass'] || ajaxout(0, "请刷新一下页面再试");
+        $LF['pass'] || ajaxout(0, "签名错误", "reload");
+        $LF['pass'] = substr($LF['pass'], 4);
         //获取用户数据
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",
