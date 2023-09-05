@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-07-28 10:56:44
+ * @LastEditTime: 2023-08-24 19:24:09
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -168,10 +168,11 @@ class web extends adminbase
                         "name"   => "LC[sms][tencent][secretkey]",
                         "value"  => $PLG['tencent']['secretkey'],
                         "cname"  => "hidden sms-tencent"],
-                    ["layui" => "input", "title" => "AppId",
+                    ["layui" => "input", "title" => "SDK AppId",
                         "name"   => "LC[sms][tencent][SmsSdkAppId]",
                         "value"  => $PLG['tencent']['SmsSdkAppId'],
-                        "cname"  => "hidden sms-tencent"],
+                        "cname"  => "hidden sms-tencent",
+                        "tips"   => "在短信功能的应用列表里获取"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];
                 require LCMS::template("own/web_plugin");

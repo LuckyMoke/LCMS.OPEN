@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2023-07-12 00:28:59
+ * @LastEditTime: 2023-09-04 10:53:02
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -54,12 +54,14 @@ class config extends adminbase
                     "base" => [
                         ["layui" => "html", "title" => "登陆地址",
                             "name"   => "login_url",
-                            "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login"],
+                            "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
+                            "copy"   => true],
                         ["layui" => "html", "title" => "注册地址",
                             "name"   => "login_url",
-                            "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg"],
+                            "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
+                            "copy"   => true],
                         ["layui" => "title", "title" => "三方登录"],
-                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html"],
+                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
                         ["layui" => "radio", "title" => "微信登录",
                             "name"   => "LC[reg][qrcode]",
                             "value"  => $config['reg']['qrcode'] ?? 0,
@@ -108,11 +110,11 @@ class config extends adminbase
                                 ["title" => "自动审核", "value" => "1"],
                             ],
                         ],
-                        ["layui" => "input", "title" => "短信ID",
+                        ["layui" => "input", "title" => "短信模板ID",
                             "name"   => "LC[reg][sms_tplcode]",
                             "value"  => $config['reg']['sms_tplcode'],
                             "cname"  => "hidden tab_mobile",
-                            "tips"   => "请先到全局设置中配置短信插件",
+                            "tips"   => "请先到全局设置中配置短信插件，然后在短信模板中获取模板ID，必须使用只有1个验证码参数的模板。",
                         ],
                         ["layui" => "input", "title" => "短信签名",
                             "name"   => "LC[reg][sms_signname]",

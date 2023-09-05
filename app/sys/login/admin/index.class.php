@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-08-20 19:44:28
+ * @LastEditTime: 2023-08-23 12:21:28
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -41,7 +41,7 @@ class index extends adminbase
             "type" => "sys",
             "cate" => "admin",
             "lcms" => $RID == "0" ? true : $RID,
-        ]) ?: [];
+        ]);
         SESSION::set("LOGINROOTID", $RID);
         if ($LF['action'] === "band") {
             $openid = SESSION::get("LOGINOPENID");
@@ -285,12 +285,26 @@ class index extends adminbase
     public function dologinout()
     {
         global $_L, $LF, $CFG, $USER, $RID;
+        $RID = $_L['LCMSADMIN']['lcms'] ?: 0;
+        if (LCMS::SUPER()) {
+            $RID = 0;
+        } elseif ($RID == 0) {
+            $RID = $_L['LCMSADMIN']['id'];
+        }
+        $UCFG = LCMS::config([
+            "name" => "user",
+            "type" => "sys",
+            "cate" => "admin",
+            "lcms" => $RID == 0 ? true : $RID,
+        ]);
+        if (!$UCFG || !in_array($UCFG['reg']['on'], ["mobile", "email"])) {
+            $RID = 0;
+        }
         $_L['LCMSADMIN'] && LCMS::log([
             "user" => $_L['LCMSADMIN']['name'],
             "type" => "login",
             "info" => "退出登陆",
         ]);
-        $RID = $_L['LCMSADMIN']['lcms'] ?: 0;
         SESSION::del("LCMSADMIN");
         okinfo("{$_L['url']['own']}rootid={$RID}&n=login&go=" . urlencode($LF['go']));
     }

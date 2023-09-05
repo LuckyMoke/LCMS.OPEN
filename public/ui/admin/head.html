@@ -36,9 +36,6 @@
                 ROOTID: parseInt('{{$_L["ROOTID"]}}'),
                 onload : []
             };
-            if (window.location.href.search('console=true') != -1) {
-                document.write('<scr'+'ipt src="https://lib.baomitu.com/eruda/2.11.3/eruda.min.js"></scr'+'ipt><scr'+'ipt>eruda.init();</scr'+'ipt>');
-            };
         </script>
         <if $_L['developer'] && $_L['developer']['fontfamily']>
             <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}","Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"}</style>

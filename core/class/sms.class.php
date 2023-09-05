@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-07-26 17:56:47
- * @LastEditTime: 2022-02-27 14:49:50
+ * @LastEditTime: 2023-08-23 18:14:39
  * @Description: 短信发送类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -18,6 +18,12 @@ class SMS
             "cate" => "plugin",
         ])['sms'];
         $type = $config['type'];
+        if (!$type) {
+            return [
+                "code" => 0,
+                "msg"  => "未配置短信接口",
+            ];
+        }
         return [
             "type" => $type,
             "cfg"  => $config[$type],

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-06 22:59:13
+ * @LastEditTime: 2023-08-30 16:44:27
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -149,7 +149,8 @@ class SQLPDO
      */
     public function insert($sql, $bind = [])
     {
-        return $this->prepare($sql, $bind)->rowCount();
+        $this->prepare($sql, $bind);
+        return $this->insert_id();
     }
     /**
      * @description:
