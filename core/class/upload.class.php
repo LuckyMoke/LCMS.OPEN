@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-08-16 11:26:47
+ * @LastEditTime: 2023-09-10 15:57:00
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,9 @@ class UPLOAD
     public static function file($dir, $para = "", $mime = "", $force = 0)
     {
         global $_L, $CFG, $MIME, $SIZE;
-        $CFG = $_L['config']['admin'];
+        $CFG                 = $_L['config']['admin'];
+        $CFG['attsize']      = $CFG['attsize'] ?: 300;
+        $CFG['attsize_file'] = $CFG['attsize_file'] ?: 300;
         if (makedir($dir)) {
             if (!is_array($para) && is_url($para)) {
                 $result = HTTP::get($para, true);
@@ -50,23 +52,29 @@ class UPLOAD
                 $SIZE = $file['size'];
                 $file = self::img2watermark(file_get_contents($file['tmp_name']));
             }
-            if (round($SIZE / 1024) > $CFG['attsize']) {
-                // 如果文件大小超过上传限制
-                $return = self::out(0, "文件大小超过{$CFG['attsize']}KB");
-            } else {
-                if ($MIME && in_array($MIME, explode("|", $CFG['mimelist']))) {
-                    $name = date("dHis") . randstr(6) . ".{$MIME}";
-                    if (file_put_contents("{$dir}{$name}", $file)) {
-                        $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, $SIZE);
-                    } else {
-                        $return = self::out(0, "上传失败");
-                    }
-                } else {
-                    $return = self::out(0, "禁止上传此格式文件");
+            if (in_array($MIME, [
+                "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
+            ])) {
+                if (round($SIZE / 1024) > $CFG['attsize']) {
+                    // 如果图片大小超过上传限制
+                    return self::out(0, "图片大小超过{$CFG['attsize']}KB");
                 }
+            } elseif (round($SIZE / 1024) > $CFG['attsize_file']) {
+                // 如果文件大小超过上传限制
+                return self::out(0, "文件大小超过{$CFG['attsize_file']}KB");
+            }
+            if ($MIME && in_array($MIME, explode("|", $CFG['mimelist']))) {
+                $name = date("dHis") . randstr(6) . ".{$MIME}";
+                if (file_put_contents("{$dir}{$name}", $file)) {
+                    $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, $SIZE);
+                } else {
+                    $return = self::out(0, "上传失败");
+                }
+            } else {
+                $return = self::out(0, "禁止上传此格式文件");
             }
         } else {
-            $return = self::out(0, "upload文件夹没有写权限");
+            return self::out(0, "upload文件夹没有写权限");
         }
         //强制本地存储
         if ($force) {

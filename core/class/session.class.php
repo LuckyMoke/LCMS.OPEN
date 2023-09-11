@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-07 00:41:18
+ * @LastEditTime: 2023-09-10 13:53:45
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,17 +21,20 @@ class SESSION
         $stime = $stime > "0" ? $stime * 60 : 86400;
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
-            $userid = preg_replace("/(LCMS)?/i", "", $_L['form']['rootsid']);
-            $userid = "LCMS" . strtoupper($userid);
-            $userid = preg_replace("/[^A-Z0-9]/i", "", $userid);
-        } else {
-            if (empty($_COOKIE['LCMSCID'])) {
-                $cookie = strtoupper(substr(md5(time() . randstr(6) . CLIENT_IP . $_SERVER['HTTP_USER_AGENT']), 8, 16)) . randstr(6);
-                setcookie("LCMSCID", $cookie, 0, "/", "", 0, true);
-            } else {
-                $cookie = $_COOKIE['LCMSCID'];
+            $userid = $_L['form']['rootsid'];
+            $userid = preg_replace("/[^A-Za-z0-9-]/", "", $userid);
+            if (!in_string($userid, "lcms-") || strlen($userid) > 31) {
+                $userid = "lcms-" . substr(md5($userid), 8, 16) . substr($userid, -10);
             }
-            $userid = "LCMS{$cookie}";
+        } else {
+            if ($_COOKIE['LCMSCID']) {
+                $cookie = ssl_decode($_COOKIE['LCMSCID']);
+            }
+            if (!$cookie) {
+                $cookie = session_create_id();
+                setcookie("LCMSCID", ssl_encode($cookie), 0, "/", "", 0, true);
+            }
+            $userid = "lcms-{$cookie}";
         }
         $_L['SESSION'] = [
             "id"   => $userid,
@@ -169,10 +172,6 @@ class SESSION
     public static function getid($type = false)
     {
         $SESSION = self::start();
-        if ($type) {
-            return str_replace("LCMS", "", $SESSION['id']);
-        } else {
-            return $SESSION['id'];
-        }
+        return $SESSION['id'];
     }
 }

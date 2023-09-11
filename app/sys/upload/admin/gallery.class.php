@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-21 21:20:47
+ * @LastEditTime: 2023-09-10 19:17:30
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -38,6 +38,7 @@ class gallery extends adminbase
         $form = [
             ["layui" => "file", "title" => "视频链接",
                 "name"   => "src",
+                "mime"   => "video",
                 "verify" => "required"],
             ["layui" => "upload", "title" => "视频封面",
                 "name"   => "poster"],

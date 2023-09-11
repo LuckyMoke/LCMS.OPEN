@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-08 18:05:53
+ * @LastEditTime: 2023-09-08 11:46:48
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -182,14 +182,6 @@ class OA
             //获取用户信息
             $openid = $this->getOpenidFromMp($LF['code']);
             if ($openid['openid']) {
-                //如果是虚假数据
-                $openid['is_snapshotuser'] && exit(str_replace([
-                    "[oaname]", "[logo]",
-                ], [
-                    $this->CFG['oaname'],
-                    $this->CFG['logo'],
-                ], file_get_contents(PATH_CORE . "plugin/WeChat/oauth.html")));
-                //如果不是虚假数据
                 $this->user([
                     "do"     => "save",
                     "openid" => $openid['openid'],
@@ -208,7 +200,7 @@ class OA
         } elseif (!in_string($_L['config']['web']['domain_api'], HTTP_HOST)) {
             //如果不是API域名
             okinfo("{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=wechat&c=index&a=oauth&scope={$scope}&goback={$goback}");
-        } else {
+        } elseif ($scope == "snsapi_base" || $LF['LCMSWEIXINGOOAUTH'] == 1) {
             //发起授权
             $query = http_build_query([
                 "appid"         => $this->CFG['appid'],
@@ -218,6 +210,15 @@ class OA
                 "state"         => "LCMSWEIXINOAUTH",
             ]);
             $this->header_nocache("https://open.weixin.qq.com/connect/oauth2/authorize?{$query}#wechat_redirect");
+        } else {
+            //展示授权页
+            exit(str_replace([
+                "[oaname]", "[logo]", "[url]",
+            ], [
+                $this->CFG['oaname'],
+                $this->CFG['logo'],
+                "{$_L['url']['now']}&LCMSWEIXINGOOAUTH=1",
+            ], file_get_contents(PATH_CORE . "plugin/WeChat/oauth.html")));
         }
     }
     /**

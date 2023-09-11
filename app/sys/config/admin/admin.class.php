@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-08-16 12:22:32
+ * @LastEditTime: 2023-09-10 18:20:25
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -223,10 +223,15 @@ class admin extends adminbase
                         ],
                         "tips"   => "后台界面显示用户名等水印"],
                     ["layui" => "title", "title" => "上传安全"],
-                    ["layui" => "input_sort", "title" => "上传大小",
+                    ["layui" => "input_sort", "title" => "图片大小限制",
                         "name"   => "LC[attsize]",
-                        "value"  => $config['attsize'],
-                        "tips"   => "限制上传文件的大小，单位KB",
+                        "value"  => $config['attsize'] ?: 300,
+                        "tips"   => "KB，限制上传图片的大小",
+                        "verify" => "required"],
+                    ["layui" => "input_sort", "title" => "文件大小限制",
+                        "name"   => "LC[attsize_file]",
+                        "value"  => $config['attsize_file'] ?: 300,
+                        "tips"   => "KB，限制上传文件的大小，上传视频等大文件请开启云存储",
                         "verify" => "required"],
                     ["layui" => "radio", "title" => "图片转WEBP",
                         "name"   => "LC[attwebp]",
