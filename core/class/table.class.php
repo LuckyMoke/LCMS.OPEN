@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-08-19 22:04:21
+ * @LastEditTime: 2023-09-11 13:07:15
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -50,7 +50,6 @@ class TABLE
         $toolbar = $toolbar['toolbar'];
         $search  = self::search($table['search']);
         foreach ($table['cols'] as $key => $val) {
-            $table['cols'][$key]['expandedWidth'] = 1;
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
@@ -225,7 +224,6 @@ class TABLE
         $laytpl  = $toolbar['laytpl'];
         $toolbar = $toolbar['toolbar'];
         foreach ($tree['cols'] as $key => $val) {
-            $tree['cols'][$key]['expandedWidth'] = 1;
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];

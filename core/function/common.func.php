@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-10 00:10:01
+ * @LastEditTime: 2023-09-12 01:16:28
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -760,12 +760,12 @@ function urlsafe_base64_encode($str)
  */
 function urlsafe_base64_decode($str)
 {
-    $data = base64_encode($str);
-    return str_replace([
+    $data = str_replace([
         "-", "_",
     ], [
         "+", "/",
-    ], $data);
+    ], $str);
+    return base64_decode($data);
 }
 /**
  * @description: HTML内容解码懒加载
