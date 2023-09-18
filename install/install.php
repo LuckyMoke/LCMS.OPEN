@@ -107,6 +107,12 @@ switch ($_GET['action']) {
             "dirs"   => $dirs,
         ]);
         break;
+    case 'mysql-check':
+        $db   = $_POST['db'];
+        $mydb = new SQLPDO("mysql:host={$db['host']};port={$db['port']};charset=utf8mb4", $db['user'], $db['pass']);
+        $ver  = $mydb->version();
+        $ver && ajaxout(1, "success", "", $mydb->version());
+        break;
     case 'mysql':
         $db   = $_POST['db'];
         $mydb = new SQLPDO("mysql:host={$db['host']};port={$db['port']};charset=utf8mb4", $db['user'], $db['pass']);

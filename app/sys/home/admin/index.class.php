@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2023-09-05 14:02:14
+ * @LastEditTime: 2023-09-14 19:38:49
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -27,6 +27,9 @@ class index extends adminbase
         }
         $open = LEVEL::applist("open", true, 12);
         $info = server_info();
+        if (in_string(strtoupper($info['sys']), "IIS")) {
+            $info['sys'] = "<span style='color:red'>{$info['sys']} (请使用Apache/Nginx环境)</span>";
+        }
         $info = array_merge($info, [
             "mysql" => [
                 "master" => $_L['DB']->assign("master")->version(),

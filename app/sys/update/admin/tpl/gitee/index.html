@@ -17,7 +17,7 @@
 <div class="layui-row layui-col-space20 update-gitee" data-power="{{$powertest}}">
     <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
         <div class="update-gitee-version">
-            <p>当前版本：V{{$version}}{{$CFG['gitee_ref']=='beta'?'-beta':''}}</p>
+            <p>当前版本：V{{$version}}{{$CFG['gitee_ref']=='beta'?'-内测版<i style="font-size:12px;color:#F56C6C">（点击更新设置可切换更新通道）</i>':''}}</p>
             <p>最新版本：<span>
                     <font color="#f56c6c"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>&nbsp;正在检测更新</font>
                 </span></p>

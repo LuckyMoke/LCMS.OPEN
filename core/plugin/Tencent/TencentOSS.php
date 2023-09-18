@@ -6,8 +6,10 @@ class TencentOSS
     public function __construct($config)
     {
         $this->cfg = $config;
-        // 截取区域参数
-        $this->cfg['Region'] = str_replace(["{$this->cfg['Bucket']}.cos.", ".myqcloud.com"], "", $this->cfg['Region']);
+        //Region清理
+        $this->cfg['Region'] = str_replace([
+            "http://", "https://", "/", "{$this->cfg['Bucket']}.cos.", ".myqcloud.com",
+        ], "", $this->cfg['Region']);
         // 拼接接口地址
         $this->api = "{$this->cfg['Bucket']}.cos.{$this->cfg['Region']}.myqcloud.com";
     }

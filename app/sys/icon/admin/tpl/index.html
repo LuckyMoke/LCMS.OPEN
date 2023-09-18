@@ -2,11 +2,17 @@
 <template "ui/iframe" />
 <template "ui/css" />
 <link rel="stylesheet" href="{{$_L['url']['static']}}fontawesome/css/fontawesome.min.css?{{$_L['config']['ver']}}" />
+<div class="layui-input-wrap">
+    <div class="layui-input-prefix">
+        <i class="layui-icon layui-icon-search"></i>
+    </div>
+    <input type="text" placeholder="请输入关键词搜索图标" class="layui-input" lay-affix="clear">
+</div>
 <div class="layui-tab layui-tab-card icon" data-id="{{$_L['form']['id']}}">
     <ul class="layui-tab-title">
-        <li class="layui-this">实心图标<i></i></li>
-        <li>常规图标<i></i></li>
-        <li>品牌图标<i></i></li>
+        <li class="layui-this" type="fas">实心图标<i></i></li>
+        <li type="far">常规图标<i></i></li>
+        <li type="fab">品牌图标<i></i></li>
     </ul>
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
@@ -24,5 +30,10 @@
     <li data-value="{class} fa-{name}" title="{name}">
         <i class="{class} fa-fw fa-{name}"></i>{name}
     </li>
+</script>
+<script type="text/javascript">
+    LCMS.onload.push(function () {
+        LCMS.util.loading("start");
+    });
 </script>
 <template "ui/foot" />

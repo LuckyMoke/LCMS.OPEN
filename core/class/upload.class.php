@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-10 15:57:00
+ * @LastEditTime: 2023-09-14 17:23:50
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -97,6 +97,11 @@ class UPLOAD
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
                     $OSS = new AliyunOSS($osscfg['aliyun']);
+                    $rst = $OSS->upload($return['src']);
+                    break;
+                case 'baidu':
+                    load::plugin("Baidu/BaiduOSS");
+                    $OSS = new BaiduOSS($osscfg['baidu']);
                     $rst = $OSS->upload($return['src']);
                     break;
             }

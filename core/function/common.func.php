@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-12 01:16:28
+ * @LastEditTime: 2023-09-14 18:02:10
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -855,6 +855,40 @@ function oss($url = "", $watermark = true)
                     $url .= "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_75";
                     $url .= $webp ? "/format,webp" : "";
                     $url .= $cfgwat['on'] ? "/watermark,text_{$cfgwat['text']},type_d3F5LW1pY3JvaGVp,color_" . str_replace("#", "", $cfgwat['fill']) . ",size_{$cfgwat['size']},shadow_{$cfgwat['shadow']},g_" . (strtolower($cfgwat['gravity'])) . ",x_{$cfgwat['dx']},y_{$cfgwat['dy']}" : "";
+                    break;
+                case 'baidu':
+                    switch ($cfgwat['gravity']) {
+                        case 'NorthWest':
+                            $cfgwat['gravity'] = 1;
+                            break;
+                        case 'North':
+                            $cfgwat['gravity'] = 2;
+                            break;
+                        case 'NorthEast':
+                            $cfgwat['gravity'] = 3;
+                            break;
+                        case 'West':
+                            $cfgwat['gravity'] = 4;
+                            break;
+                        case 'Center':
+                            $cfgwat['gravity'] = 5;
+                            break;
+                        case 'East':
+                            $cfgwat['gravity'] = 6;
+                            break;
+                        case 'SouthWest':
+                            $cfgwat['gravity'] = 7;
+                            break;
+                        case 'South':
+                            $cfgwat['gravity'] = 8;
+                            break;
+                        case 'SouthEast':
+                            $cfgwat['gravity'] = 9;
+                            break;
+                    }
+                    $url .= "?x-bce-process=image/auto-orient,o_1/interlace,i_progressive/quality,q_75";
+                    $url .= $webp ? "/format,f_webp" : "";
+                    $url .= $cfgwat['on'] ? "/watermark,text_{$cfgwat['text']},type_RlpIZWk,color_" . str_replace("#", "", $cfgwat['fill']) . ",size_{$cfgwat['size']},g_{$cfgwat['gravity']},x_{$cfgwat['dx']},y_{$cfgwat['dy']}" : "";
                     break;
             }
         }

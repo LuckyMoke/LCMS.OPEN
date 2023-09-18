@@ -6,8 +6,10 @@ class AliyunOSS
     public function __construct($config)
     {
         $this->cfg = $config;
-        // 截取区域参数
-        $this->cfg['Region'] = str_replace(["oss-", ".aliyuncs.com"], "", $this->cfg['Region']);
+        //Region清理
+        $this->cfg['Region'] = str_replace([
+            "http://", "https://", "/", "oss-", ".aliyuncs.com",
+        ], "", $this->cfg['Region']);
         // 拼接接口地址
         $this->api = "{$this->cfg['Bucket']}.oss-{$this->cfg['Region']}.aliyuncs.com";
     }
@@ -19,10 +21,10 @@ class AliyunOSS
     public function token()
     {
         $policy = base64_encode(json_encode([
-            "expiration" => gmdate("Y-m-d\TH:m:s\Z", time() + 3600),
-            "conditions" => [["content-length-range", 0, 1048576000]],
+            "expiration" => gmdate("Y-m-d\TH:i:s\Z", time() + 3600),
+            "conditions" => [["content-length-range", 0, 1073741824]],
         ]));
-        $sign = base64_encode(hash_hmac('sha1', $policy, $this->cfg['AccessKeySecret'], true));
+        $sign = base64_encode(hash_hmac("sha1", $policy, $this->cfg['AccessKeySecret'], true));
         return [
             "api"         => "https://" . $this->api,
             "AccessKeyId" => $this->cfg['AccessKeyId'],

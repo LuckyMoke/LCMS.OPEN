@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-08-24 19:24:09
+ * @LastEditTime: 2023-09-16 13:02:53
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -199,17 +199,21 @@ class web extends adminbase
                 $phpext  = extension_loaded("fileinfo") ? false : true;
                 $local   = false;
                 $osstype = [
-                    ["title"   => "七牛云存储",
+                    ["title"   => "七牛云",
                         "value"    => "qiniu",
                         "tab"      => "oss-qiniu",
                         "disabled" => $phpext],
-                    ["title"   => "腾讯云存储",
+                    ["title"   => "腾讯云",
                         "value"    => "tencent",
                         "tab"      => "oss-tencent",
                         "disabled" => $phpext],
-                    ["title"   => "阿里云存储",
+                    ["title"   => "阿里云",
                         "value"    => "aliyun",
                         "tab"      => "oss-aliyun",
+                        "disabled" => $phpext],
+                    ["title"   => "百度云",
+                        "value"    => "baidu",
+                        "tab"      => "oss-baidu",
                         "disabled" => $phpext],
                 ];
                 if (!LCMS::SUPER()) {
@@ -221,7 +225,7 @@ class web extends adminbase
                     $local = $aplugin['oss']['must'] > 0 ? true : false;
                 }
                 $osstype = $local ? $osstype : array_merge([
-                    ["title"   => "本地存储",
+                    ["title"   => "本地",
                         "value"    => "local",
                         "tab"      => "oss-0",
                         "disabled" => $local]], $osstype);
@@ -235,7 +239,6 @@ class web extends adminbase
                     ["layui" => "radio", "title" => "图片裁剪",
                         "name"   => "LC[thumb][type]",
                         "value"  => $plugin['thumb']['type'] ?: 0,
-                        "cname"  => "hidden oss-0 oss-qiniu",
                         "radio"  => [
                             ["title" => "铺满图片", "value" => 0],
                             ["title" => "背景留白", "value" => 1],
@@ -253,7 +256,7 @@ class web extends adminbase
                         ["layui" => "radio", "title" => "云存储权限",
                             "name"   => "LC[oss][super]",
                             "value"  => $plugin['oss']['super'] ?? 0,
-                            "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun",
+                            "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun oss-baidu",
                             "radio"  => [
                                 ["title" => "子账号独立设置", "value" => 0],
                                 ["title" => "子账号使用此设置", "value" => 1],
@@ -268,7 +271,7 @@ class web extends adminbase
                         "value"       => $plugin['oss']['domain'],
                         "placeholder" => "https://www.domain.com/",
                         "tips"        => "请填写完整域名地址 https://www.domain.com/",
-                        "cname"       => "hidden oss-qiniu oss-tencent oss-aliyun"],
+                        "cname"       => "hidden oss-qiniu oss-tencent oss-aliyun oss-baidu"],
                     ["layui" => "input", "title" => "AccessKey",
                         "name"   => "LC[oss][qiniu][AccessKey]",
                         "value"  => $plugin['oss']['qiniu']['AccessKey'],
@@ -323,6 +326,22 @@ class web extends adminbase
                         "name"   => "LC[oss][aliyun][Bucket]",
                         "value"  => $plugin['oss']['aliyun']['Bucket'],
                         "cname"  => "hidden oss-aliyun"],
+                    ["layui" => "input", "title" => "Access Key",
+                        "name"   => "LC[oss][baidu][AccessKey]",
+                        "value"  => $plugin['oss']['baidu']['AccessKey'],
+                        "cname"  => "hidden oss-baidu"],
+                    ["layui" => "input", "title" => "Secret Key",
+                        "name"   => "LC[oss][baidu][SecretKey]",
+                        "value"  => $plugin['oss']['baidu']['SecretKey'],
+                        "cname"  => "hidden oss-baidu"],
+                    ["layui" => "input", "title" => "官方域名",
+                        "name"   => "LC[oss][baidu][Region]",
+                        "value"  => $plugin['oss']['baidu']['Region'],
+                        "cname"  => "hidden oss-baidu"],
+                    ["layui" => "input", "title" => "Bucket",
+                        "name"   => "LC[oss][baidu][Bucket]",
+                        "value"  => $plugin['oss']['baidu']['Bucket'],
+                        "cname"  => "hidden oss-baidu"],
                 ]);
                 $form = array_merge($form, [
                     ["layui" => "title", "title" => "图片水印"],

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-05 18:21:50
+ * @LastEditTime: 2023-09-14 18:15:41
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -62,20 +62,43 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/thumbnail/x{$y}/gravity/center/crop/0x{$y}";
                         } elseif ($x && $y) {
-                            $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}";
+                            if ($cfgthumb['type'] > 0) {
+                                $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}/pad/1/color/I0ZGRkZGRg";
+                            } else {
+                                $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}";
+                            }
                         }
                         $url = $url[1] ? implode("|", $url) : $url[0];
                         break;
                     case 'aliyun':
-                        $url = explode("q_75", $url);
+                        $url = explode("/quality,q_75", $url);
                         if ($x != 0 && $y == 0) {
                             $url[0] .= "/resize,m_lfit,w_{$x},limit_0";
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/resize,m_lfit,h_{$y},limit_0";
                         } elseif ($x && $y) {
-                            $url[0] .= "/resize,m_fill,w_{$x},h_{$y},limit_0";
+                            if ($cfgthumb['type'] > 0) {
+                                $url[0] .= "/resize,m_pad,w_{$x},h_{$y},limit_0,color_FFFFFF";
+                            } else {
+                                $url[0] .= "/resize,m_fill,w_{$x},h_{$y},limit_0";
+                            }
                         }
-                        $url = $url[1] ? implode("q_75", $url) : $url[0];
+                        $url = $url[1] ? implode("/quality,q_75", $url) : $url[0];
+                        break;
+                    case 'baidu':
+                        $url = explode("/quality,q_75", $url);
+                        if ($x != 0 && $y == 0) {
+                            $url[0] .= "/resize,m_lfit,w_{$x},limit_0";
+                        } elseif ($x == 0 && $y != 0) {
+                            $url[0] .= "/resize,m_lfit,h_{$y},limit_0";
+                        } elseif ($x && $y) {
+                            if ($cfgthumb['type'] > 0) {
+                                $url[0] .= "/resize,m_pad,w_{$x},h_{$y},limit_0,color_FFFFFF";
+                            } else {
+                                $url[0] .= "/resize,m_fill,w_{$x},h_{$y},limit_0";
+                            }
+                        }
+                        $url = $url[1] ? implode("/quality,q_75", $url) : $url[0];
                         break;
                 }
                 return $url;

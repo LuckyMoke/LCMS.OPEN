@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-08-14 22:25:15
+ * @LastEditTime: 2023-09-14 16:51:26
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -76,6 +76,10 @@ class index extends adminbase
                 case 'aliyun':
                     load::plugin("Aliyun/AliyunOSS");
                     $OSS = new AliyunOSS($_L['plugin']['oss']['aliyun']);
+                    break;
+                case 'baidu':
+                    load::plugin("Baidu/BaiduOSS");
+                    $OSS = new BaiduOSS($_L['plugin']['oss']['baidu']);
                     break;
             }
         }
@@ -198,6 +202,26 @@ class index extends adminbase
         switch ($LF['action']) {
             case 'token':
                 $token = $Aliyun->token();
+                ajaxout(1, "success", "", $token);
+                break;
+            case 'success':
+                $this->ossSuccess();
+                break;
+        }
+    }
+    /**
+     * @description: 百度云上传
+     * @param {*}
+     * @return {*}
+     */
+    public function dobaidu()
+    {
+        global $_L, $LF, $LC;
+        load::plugin("Baidu/BaiduOSS");
+        $Baidu = new BaiduOSS($_L['plugin']['oss']['baidu']);
+        switch ($LF['action']) {
+            case 'token':
+                $token = $Baidu->token();
                 ajaxout(1, "success", "", $token);
                 break;
             case 'success':
