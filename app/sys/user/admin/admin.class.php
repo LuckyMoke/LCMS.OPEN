@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-08-17 18:21:28
+ * @LastEditTime: 2023-09-22 12:24:18
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -48,21 +48,24 @@ class admin extends adminbase
                     $level        = $levellist[$val['type']];
                     $token        = PUB::id2token($val['id']);
                     $data[$index] = array_merge($val, [
-                        "token"   => $token,
-                        "headimg" => [
+                        "token"    => $token,
+                        "headimg"  => [
                             "type"   => "image",
                             "width"  => 20,
                             "height" => 20,
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
-                        "lcms"    => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
-                        "type"    => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
-                        "status"  => [
+                        "lcms"     => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
+                        "type"     => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
+                        "status"   => [
                             "type"  => "switch",
                             "url"   => "index&action=list-save&token={$token}",
                             "text"  => "启用|禁用",
                             "value" => $val['status'],
                         ],
+                        "email"    => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
+                        "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
+                        "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
                     ]);
                 }
                 TABLE::out($data);
@@ -307,6 +310,8 @@ class admin extends adminbase
                             "height" => 20,
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
+                        "email"   => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
+                        "mobile"  => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                     ]);
                 }
                 TABLE::out($data);
@@ -315,6 +320,9 @@ class admin extends adminbase
                 $admin = sql_get(["admin", "id = {$LC['id']}"]);
                 if ($_L['LCMSADMIN']['god']) {
                     $admin['god'] = $_L['LCMSADMIN']['god'];
+                    if ($admin['type'] == "lcms") {
+                        unset($admin['god']);
+                    }
                 } else {
                     $admin['god'] = $_L['LCMSADMIN']['id'];
                 }
@@ -337,7 +345,7 @@ class admin extends adminbase
                             "minWidth" => 100],
                         ["title" => "电话", "field" => "mobile",
                             "width"  => 120],
-                        ["title"   => "邮箱", "field" => "eamil",
+                        ["title"   => "邮箱", "field" => "email",
                             "minWidth" => 100],
                         ["title"  => "操作", "field" => "do",
                             "width"   => 60,

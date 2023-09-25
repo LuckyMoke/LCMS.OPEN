@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2022-04-26 13:44:09
+ * @LastEditTime: 2023-09-21 11:52:13
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -102,7 +102,7 @@ class PUB
      */
     public static function is_email($email)
     {
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (is_email($email)) {
             $email = explode("@", $email);
             if (!in_array($email[1], [
                 "yopmail.com",

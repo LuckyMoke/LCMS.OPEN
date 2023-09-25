@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-08-23 12:21:28
+ * @LastEditTime: 2023-09-21 12:02:17
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -12,13 +12,28 @@ class index extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         parent::__construct();
         $LF   = $_L['form'];
         $CFG  = $_L['config']['admin'];
         $USER = $_L['LCMSADMIN'];
-        //初始化ROOTID
-        $RID = $_L['ROOTID'] = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
+        $UCFG = LCMS::config([
+            "name" => "user",
+            "type" => "sys",
+            "cate" => "admin",
+            "lcms" => true,
+        ]);
+        if ($UCFG['reg']['mode'] < 1) {
+            $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
+            $UCFG = $RID > 0 ? LCMS::config([
+                "name" => "user",
+                "type" => "sys",
+                "cate" => "admin",
+                "lcms" => $RID,
+            ]) : $UCFG;
+        } else {
+            $RID = $_L['ROOTID'] = 0;
+        }
     }
     /**
      * @description: 登陆首页
@@ -27,7 +42,7 @@ class index extends adminbase
      */
     public function doindex()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         //如果域名不正确，跳转到正确域名
         if ($CFG['domain'] && $CFG['domain'] != HTTP_HOST && !$LF['fixed']) {
             okinfo(str_replace(HTTP_HOST, $CFG['domain'], $_L['url']['now']));
@@ -36,12 +51,6 @@ class index extends adminbase
         if ($USER && $USER['id'] && $USER['name']) {
             okinfo($LF['go'] ?: $_L['url']['admin']);
         }
-        $UCFG = LCMS::config([
-            "name" => "user",
-            "type" => "sys",
-            "cate" => "admin",
-            "lcms" => $RID == "0" ? true : $RID,
-        ]);
         SESSION::set("LOGINROOTID", $RID);
         if ($LF['action'] === "band") {
             $openid = SESSION::get("LOGINOPENID");
@@ -94,7 +103,7 @@ class index extends adminbase
      */
     public function docheck()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         $LF['code'] || ajaxout(0, "验证码错误");
         //图形验证码验证
         load::sys_class("captcha");
@@ -195,7 +204,7 @@ class index extends adminbase
      */
     public function doping()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         if ($_L['LCMSADMIN']) {
             ajaxout(1, "登陆成功", $LF['go'] ?: $_L['url']['admin']);
         } else {
@@ -209,17 +218,11 @@ class index extends adminbase
      */
     public function dogetqrcode()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
-        $SID    = SESSION::getid();
-        $regcfg = LCMS::config([
-            "type" => "sys",
-            "name" => "user",
-            "cate" => "admin",
-            "lcms" => $RID,
-        ]);
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        $SID = SESSION::getid();
         switch ($LF['name']) {
             case 'qrcode':
-                switch ($regcfg['reg']['qrcode']) {
+                switch ($UCFG['reg']['qrcode']) {
                     case '2':
                         load::plugin("WeChat/OA");
                         $WX     = new OA();
@@ -261,18 +264,13 @@ class index extends adminbase
      */
     public function doreadme()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
-        $config = LCMS::config([
-            "name" => "user",
-            "type" => "sys",
-            "cate" => "admin",
-        ]);
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         switch ($LF['action']) {
             case 'user':
-                $content = $config['readme']['user'];
+                $content = $UCFG['readme']['user'];
                 break;
             case 'privacy':
-                $content = $config['readme']['privacy'];
+                $content = $UCFG['readme']['privacy'];
                 break;
         }
         ajaxout(1, "success", "", html_editor($content));
@@ -284,19 +282,13 @@ class index extends adminbase
      */
     public function dologinout()
     {
-        global $_L, $LF, $CFG, $USER, $RID;
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         $RID = $_L['LCMSADMIN']['lcms'] ?: 0;
         if (LCMS::SUPER()) {
             $RID = 0;
         } elseif ($RID == 0) {
             $RID = $_L['LCMSADMIN']['id'];
         }
-        $UCFG = LCMS::config([
-            "name" => "user",
-            "type" => "sys",
-            "cate" => "admin",
-            "lcms" => $RID == 0 ? true : $RID,
-        ]);
         if (!$UCFG || !in_array($UCFG['reg']['on'], ["mobile", "email"])) {
             $RID = 0;
         }

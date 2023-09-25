@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2023-09-04 10:53:02
+ * @LastEditTime: 2023-09-21 13:20:11
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -12,10 +12,18 @@ class config extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $CFG;
         parent::__construct();
-        $LF = $_L['form'];
-        $LC = $LF['LC'];
+        $LF  = $_L['form'];
+        $LC  = $LF['LC'];
+        $CFG = LCMS::config([
+            "type" => "sys",
+            "cate" => "admin",
+            "lcms" => true,
+        ]);
+        if (!LCMS::SUPER() && $CFG['reg']['mode'] == 1) {
+            LCMS::X(403, "此功能仅超级管理员可用");
+        }
     }
     /**
      * @用户注册设置:
@@ -24,7 +32,7 @@ class config extends adminbase
      */
     public function doindex()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $CFG;
         if ($_L['LCMSADMIN']['lcms'] != "0") {
             LCMS::X(403, "此功能仅管理员可用");
         }
@@ -46,12 +54,19 @@ class config extends adminbase
                 }
                 break;
             default:
-                $config = LCMS::config([
+                $config = LCMS::SUPER() ? $CFG : LCMS::config([
                     "type" => "sys",
                     "cate" => "admin",
                 ]);
                 $form = [
                     "base" => [
+                        ["layui" => "radio", "title" => "注册模式",
+                            "name"   => "LC[reg][mode]",
+                            "value"  => $config['reg']['mode'] ?? 0,
+                            "radio"  => [
+                                ["title" => "总平台", "value" => 1],
+                                ["title" => "子平台", "value" => 0],
+                            ]],
                         ["layui" => "html", "title" => "登陆地址",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
@@ -61,7 +76,7 @@ class config extends adminbase
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                             "copy"   => true],
                         ["layui" => "title", "title" => "三方登录"],
-                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！<br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
+                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！如需关注公众号，需要在应用“扫码事件”中添加一个<code>sys@login</code><br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
                         ["layui" => "radio", "title" => "微信登录",
                             "name"   => "LC[reg][qrcode]",
                             "value"  => $config['reg']['qrcode'] ?? 0,
@@ -153,6 +168,9 @@ class config extends adminbase
                             "value"  => $config['readme']['privacy']],
                     ],
                 ];
+                if (!LCMS::SUPER() && $CFG['reg']['mode'] < 1) {
+                    unset($form['base'][0]);
+                }
                 require LCMS::template("own/config/index");
                 break;
         }

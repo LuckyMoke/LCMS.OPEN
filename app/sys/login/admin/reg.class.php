@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2023-06-23 21:47:04
+ * @LastEditTime: 2023-09-21 11:56:47
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -17,13 +17,23 @@ class reg extends adminbase
         global $_L, $LF, $UCFG, $PLG, $RID;
         parent::__construct();
         $LF   = $_L['form'];
-        $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
         $UCFG = LCMS::config([
             "name" => "user",
             "type" => "sys",
             "cate" => "admin",
-            "lcms" => $RID == "0" ? true : $RID,
+            "lcms" => true,
         ]);
+        if ($UCFG['reg']['mode'] < 1) {
+            $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
+            $UCFG = $RID > 0 ? LCMS::config([
+                "name" => "user",
+                "type" => "sys",
+                "cate" => "admin",
+                "lcms" => $RID,
+            ]) : $UCFG;
+        } else {
+            $RID = $_L['ROOTID'] = 0;
+        }
         if ($RID != 0 && !$UCFG) {
             header("HTTP/1.1 404 Not Found");
             exit;
@@ -36,7 +46,7 @@ class reg extends adminbase
             "name" => "config",
             "type" => "sys",
             "cate" => "plugin",
-            "lcms" => $RID == "0" ? true : $RID,
+            "lcms" => $RID == 0 ? true : $RID,
         ]);
         SESSION::set("LOGINROOTID", $RID);
     }

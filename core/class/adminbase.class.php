@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-08 11:39:25
+ * @LastEditTime: 2023-09-21 11:25:44
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -59,7 +59,8 @@ class adminbase extends common
     {
         global $_L;
         $_L['LCMSADMIN'] = SESSION::get("LCMSADMIN");
-        $loginrootid     = SESSION::get("LCMSLOGINROOTID") ?: $_L['form']['rootid'] ?: "0";
+        $loginrootid     = SESSION::get("LOGINROOTID");
+        $loginrootid     = $loginrootid ?: $_L['form']['rootid'] ?: 0;
         $loginurl        = "{$_L['url']['admin']}index.php?rootid={$loginrootid}&n=login";
         $okinfourl       = okinfo($loginurl, 0, "top", true);
         if ($_L['LCMSADMIN']) {

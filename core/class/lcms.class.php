@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-07 12:12:58
+ * @LastEditTime: 2023-09-18 17:39:53
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -45,7 +45,7 @@ class LCMS
             $X = [
                 "icon"  => "layui-icon-face-cry",
                 "color" => "#F56C6C",
-                "title" => "SORRY",
+                "title" => "ERROR",
                 "code"  => $code,
                 "msg"   => $msg,
             ];

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2023-06-23 21:46:58
+ * @LastEditTime: 2023-09-21 12:02:23
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -17,13 +17,23 @@ class find extends adminbase
         global $_L, $LF, $UCFG, $PLG, $RID;
         parent::__construct();
         $LF   = $_L['form'];
-        $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
         $UCFG = LCMS::config([
             "name" => "user",
             "type" => "sys",
             "cate" => "admin",
-            "lcms" => $RID == "0" ? true : $RID,
+            "lcms" => true,
         ]);
+        if ($UCFG['reg']['mode'] < 1) {
+            $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
+            $UCFG = $RID > 0 ? LCMS::config([
+                "name" => "user",
+                "type" => "sys",
+                "cate" => "admin",
+                "lcms" => $RID,
+            ]) : $UCFG;
+        } else {
+            $RID = $_L['ROOTID'] = 0;
+        }
         if ($RID != 0 && !$UCFG) {
             header("HTTP/1.1 404 Not Found");
             exit;
@@ -48,7 +58,7 @@ class find extends adminbase
     public function doindex()
     {
         global $_L, $LF, $UCFG, $PLG, $RID;
-        if ($UCFG['reg']['findpass'] > "0") {
+        if ($UCFG['reg']['findpass'] > 0) {
             $page = [
                 "title" => "找回密码 - {$_L['config']['admin']['title']}",
                 "tab"   => [

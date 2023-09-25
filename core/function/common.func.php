@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-14 18:02:10
+ * @LastEditTime: 2023-09-24 22:07:09
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -302,11 +302,34 @@ function url_auto($url)
  */
 function okinfo($url, $time = 0, $win = "window", $return = false)
 {
-    $url = "/public/static/loading/index.html?v=20221230#go=" . urlencode($url) . "&time={$time}&win={$win}";
+    $url = "/public/static/loading/index.html?v=20230918#go=" . urlencode($url) . "&time={$time}&win={$win}";
     if ($return) {
         return $url;
     }
     goheader($url);
+}
+/**
+ * @description: JS表单跳转
+ * @param string $url
+ * @param array $form
+ * @param int $time
+ * @param string $other
+ * @return {*}
+ */
+function okform($url, $form = [], $time = 0, $other = "")
+{
+    $html  = file_get_contents(PATH_PUBLIC . "static/loading/index.html");
+    $input = "";
+    foreach ($form as $name => $val) {
+        $input .= '<input type="hidden" name="' . $name . '" value="' . $val . '" />';
+    }
+    $html = str_replace([
+        "<!--okform-->", "/**okform*/",
+    ], [
+        '<form id="form" method="POST" action="' . $url . '">' . $input . '<button id="bclick" type"submit" style="display:none;margin-top:20px;font-size:12px;color:#47a1ff;border:none;background:none;cursor:pointer;outline:none;text-decoration:underline">点击跳转</button></form>' . $other,
+        "times=time={$time};",
+    ], $html);
+    exit($html);
 }
 /**
  * @description: 302跳转
@@ -361,9 +384,43 @@ function sqlinsert($string)
         }
     } else {
         $string = str_replace([
-            "\0", "\\", "*", "@", "%5C", "%22", "%27", "select", "insert", "update", "delete", "union", "into", "load_file", "outfile", "sleep", "script", "eval", "document",
+            "\\",
+            "*",
+            "%5C",
+            "%22",
+            "%27",
+            "select",
+            "insert",
+            "update",
+            "delete",
+            "union",
+            "into",
+            "load_file",
+            "outfile",
+            "sleep",
+            "/script",
+            "script",
+            "eval",
+            "document",
         ], [
-            "_", "_", "/*", "&#64;", "&#92;", "&#34;", "&#39;", "sel/ect", "ins/ert", "up/date", "del/ete", "un/ion", "in/to", "load/_file", "out/file", "sl/eep", "scr/ipt", "ev/al", "docu/ment",
+            "&#92;",
+            "&#42;",
+            "&#37;&#53;&#67;",
+            "&#37;&#50;&#50;",
+            "&#37;&#50;&#55;",
+            "&#115;&#101;&#108;&#101;&#99;&#116;",
+            "&#105;&#110;&#115;&#101;&#114;&#116;",
+            "&#117;&#112;&#100;&#97;&#116;&#101;",
+            "&#100;&#101;&#108;&#101;&#116;&#101;",
+            "&#117;&#110;&#105;&#111;&#110;",
+            "&#105;&#110;&#116;&#111;",
+            "&#108;&#111;&#97;&#100;&#95;&#102;&#105;&#108;&#101;",
+            "&#111;&#117;&#116;&#102;&#105;&#108;&#101;",
+            "&#115;&#108;&#101;&#101;&#112;",
+            "&#47;&#115;&#99;&#114;&#105;&#112;&#116;",
+            "&#115;&#99;&#114;&#105;&#112;&#116;",
+            "&#101;&#118;&#97;&#108;",
+            "&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;",
         ], $string);
         if (!is_url($string)) {
             $string = htmlspecialchars($string);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-14 17:23:50
+ * @LastEditTime: 2023-09-25 14:07:37
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -170,7 +170,7 @@ class UPLOAD
      * @param string $img
      * @return string
      */
-    private static function img2watermark($img)
+    private static function img2watermark($img, $times = 1)
     {
         global $_L, $CFG, $MIME, $SIZE;
         $cfgwat = $_L['plugin']['watermark'] ?: [];
@@ -186,23 +186,24 @@ class UPLOAD
             $cfgwat['on'] > 0
         )) {
             ob_start();
-            $src   = imagecreatefromstring($img);
-            $srcwh = getimagesizefromstring($img);
+            $src    = imagecreatefromstring($img);
+            $srcwh  = getimagesizefromstring($img);
+            $thumbx = $srcwh[0];
+            $thumby = $srcwh[1];
+            if ($thumbx > 1920 || $thumby > 1920) {
+                if ($thumbx > 1920) {
+                    $thumby = intval($thumby * 1920 / $thumbx);
+                    $thumbx = 1920;
+                } else {
+                    $thumbx = intval($thumbx * 1920 / $thumby);
+                    $thumby = 1920;
+                }
+            }
             if (round($SIZE / 1024) > $CFG['attsize']) {
                 //如果图片大小超过，启用压缩
-                $times  = $CFG['attsize'] / round($SIZE / 1024);
-                $thumbx = intval($srcwh[0] * $times);
-                $thumby = intval($srcwh[1] * $times);
-                if ($thumbx > 1920 || $thumby > 1920) {
-                    if ($thumbx > 1920) {
-                        $thumbx = 1920;
-                        $thumby = intval($thumby * 1920 / $srcwh[0]);
-                    } else {
-                        $thumbx = intval($thumbx * 1920 / $srcwh[1]);
-                        $thumby = 1920;
-                    }
-                }
-                $thumb = imagecreatetruecolor($thumbx, $thumby);
+                $thumbx = intval($thumbx * $times);
+                $thumby = intval($thumby * $times);
+                $thumb  = imagecreatetruecolor($thumbx, $thumby);
                 imagealphablending($thumb, true);
                 imagesavealpha($thumb, true);
                 if (in_array($MIME, ["jpeg", "jpg", "bmp", "wbmp"])) {
@@ -216,9 +217,7 @@ class UPLOAD
             if ($cfgwat['on'] > 0) {
                 //如果要加水印
                 if (!$thumb) {
-                    $thumb  = $src;
-                    $thumbx = $srcwh[0];
-                    $thumby = $srcwh[1];
+                    $thumb = $src;
                     imagealphablending($thumb, true);
                     imagesavealpha($thumb, true);
                 }
@@ -244,13 +243,18 @@ class UPLOAD
                     break;
             }
             imagedestroy($thumb);
-            $img = ob_get_contents();
+            $nimg = ob_get_contents();
             imagedestroy($src);
             ob_clean();
-            $SIZE = strlen($img);
+            $SIZE = strlen($nimg);
             if ($cfgwat['on'] > 0) {
                 $SIZE = $SIZE - 5000;
             }
+            $times = $times - 0.1;
+            if (round($SIZE / 1024) > $CFG['attsize'] && $times > 0) {
+                $nimg = self::img2watermark($img, $times);
+            }
+            $img = $nimg;
         }
         return $img;
     }
