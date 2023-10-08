@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-25 14:07:37
+ * @LastEditTime: 2023-10-05 14:48:50
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,6 +23,9 @@ class UPLOAD
         $CFG                 = $_L['config']['admin'];
         $CFG['attsize']      = $CFG['attsize'] ?: 300;
         $CFG['attsize_file'] = $CFG['attsize_file'] ?: 300;
+        if ($dir == "image" || $dir == "file") {
+            $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
+        }
         if (makedir($dir)) {
             if (!is_array($para) && is_url($para)) {
                 $result = HTTP::get($para, true);
@@ -32,7 +35,7 @@ class UPLOAD
                     $SIZE = $result['length'];
                     $file = self::img2watermark($file);
                 } else {
-                    self::out(0, "远程文件下载失败");
+                    return self::out(0, "远程文件下载失败");
                 }
             } else {
                 // 如果文件地址是本地上传
@@ -68,21 +71,22 @@ class UPLOAD
                 if (file_put_contents("{$dir}{$name}", $file)) {
                     $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, $SIZE);
                 } else {
-                    $return = self::out(0, "上传失败");
+                    return self::out(0, "上传失败");
                 }
             } else {
-                $return = self::out(0, "禁止上传此格式文件");
+                return self::out(0, "禁止上传此格式文件");
             }
         } else {
             return self::out(0, "upload文件夹没有写权限");
         }
         //强制本地存储
         if ($force) {
+            self::sql_save($dir, $return);
             return $return;
         }
         //云存储处理
         $osscfg = $_L['plugin']['oss'];
-        if ($return['code'] == 1) {
+        if ($return['src']) {
             switch ($osscfg['type']) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
@@ -105,11 +109,16 @@ class UPLOAD
                     $rst = $OSS->upload($return['src']);
                     break;
             }
-            if ($rst['code'] == 1) {
-                $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+            if ($rst) {
                 delfile($return['src']);
+                if ($rst['code'] == 1) {
+                    $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                } else {
+                    return self::out(0, "云存储上传失败");
+                }
             }
         }
+        self::sql_save($dir, $return);
         return $return;
     }
     /**
@@ -326,5 +335,31 @@ class UPLOAD
             $bbox['height'] = abs($bbox[7] - $bbox[1]) - 1;
         }
         return $bbox;
+    }
+    /**
+     * @description: 数据库操作
+     * @param string $dir
+     * @param array $data
+     * @return {*}
+     */
+    private static function sql_save($dir, $data = [])
+    {
+        global $_L;
+        if ($data['code'] == 1) {
+            $info = path_relative($dir);
+            $info = explode("/", $info);
+            if ($info[2] == "file" || $info[2] == "image" && strlen($info[3]) == 6) {
+                sql_insert(["upload", [
+                    "type"    => $info[2],
+                    "datey"   => $info[3],
+                    "name"    => $data['filename'],
+                    "size"    => $data['size'],
+                    "src"     => $data['src'],
+                    "addtime" => datenow(),
+                    "uid"     => $_L['LCMSADMIN']['id'] ?: ($_L['ROOTID'] > 0 ?: 1),
+                    "lcms"    => $_L['ROOTID'],
+                ]]);
+            }
+        }
     }
 }

@@ -128,6 +128,19 @@ CREATE TABLE `[_PRE]order` (
   KEY `status` (`status`)
 ) DEFAULT CHARSET=utf8mb4 COMMENT='全局订单数据';
 
+CREATE TABLE `[_PRE]shortlink` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(8) NOT NULL,
+  `hval` varchar(32) NOT NULL,
+  `lasttime` int(11) unsigned NOT NULL,
+  `url` text,
+  `data` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`),
+  UNIQUE KEY `hval` (`hval`),
+  KEY `lasttime` (`lasttime`)
+) DEFAULT CHARSET=utf8mb4 COMMENT='短链数据';
+
 CREATE TABLE `[_PRE]payment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(64) DEFAULT NULL COMMENT '名称',

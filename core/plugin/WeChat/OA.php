@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-08 11:46:48
+ * @LastEditTime: 2023-10-01 12:20:08
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -82,32 +82,20 @@ class OA
         global $_L, $LF, $SID, $TRDAPI;
         $this->cache();
         if (!$this->CFG['access_token'] || $this->CFG['access_token']['expires_in'] < time()) {
-            if ($TRDAPI) {
-                //如果启用第三方接口
-                $token = json_decode(HTTP::get("{$TRDAPI}accesstoken"), true);
-                if ($token['code'] == 1) {
-                    $this->CFG['access_token'] = $token['data'];
-                    $this->cache("save");
-                } else {
-                    return $token;
-                }
+            $token = HTTP::post("https://api.weixin.qq.com/cgi-bin/stable_token", json_encode([
+                "grant_type" => "client_credential",
+                "appid"      => $this->CFG['appid'],
+                "secret"     => $this->CFG['appsecret'],
+            ]));
+            $token = json_decode($token, true);
+            if ($token['access_token']) {
+                $this->CFG['access_token'] = [
+                    "access_token" => $token['access_token'],
+                    "expires_in"   => $token['expires_in'] + time() - 300,
+                ];
+                $this->cache("save");
             } else {
-                //系统自处理
-                $query = http_build_query([
-                    "appid"      => $this->CFG['appid'],
-                    "secret"     => $this->CFG['appsecret'],
-                    "grant_type" => "client_credential",
-                ]);
-                $token = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
-                if ($token['access_token']) {
-                    $this->CFG['access_token'] = [
-                        "access_token" => $token['access_token'],
-                        "expires_in"   => time() + 3600,
-                    ];
-                    $this->cache("save");
-                } else {
-                    return $token;
-                }
+                return $token;
             }
         }
         return $this->CFG['access_token'] ?: [];

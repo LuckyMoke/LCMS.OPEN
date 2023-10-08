@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-21 11:25:44
+ * @LastEditTime: 2023-10-07 15:45:43
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -48,8 +48,8 @@ class adminbase extends common
             "upload"   => "{$url_site}upload/",
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
-            "captcha"  => "{$url_site}app/index.php?{$rootsid}n=system&c=pin",
-            "qrcode"   => "{$url_site}app/index.php?n=system&c=qr&text=",
+            "captcha"  => "{$url_site}quick/captcha.php?{$rootsid}",
+            "qrcode"   => "{$url_site}quick/qrcode.php?text=",
             "own"      => "{$url_admin}index.php?{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
             "own_form" => "{$url_admin}index.php?{$rootsid}t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",

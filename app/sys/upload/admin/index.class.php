@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-25 15:04:40
+ * @LastEditTime: 2023-10-04 22:14:32
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -26,13 +26,10 @@ class index extends adminbase
     public function dolocal()
     {
         global $_L, $LF, $LC;
-        $datey = date("Ym");
-        $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$LF['type']}/{$datey}/";
         if ($_FILES['file']) {
-            $res = UPLOAD::file($dir, "", "", $LF['force'] > 0 ? 1 : 0);
+            $res = UPLOAD::file($LF['type'], "", "", $LF['force'] > 0 ? true : false);
             if ($res['code'] == 1) {
                 unset($res['code'], $res['msg']);
-                $this->sql($LF['type'], $datey, $res);
                 ajaxout(1, $res['msg'], "", $res);
             } else {
                 ajaxout(0, $res['msg'], "", "");
@@ -111,8 +108,6 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         $jt    = $_FILES['file'];
-        $datey = date("Ym");
-        $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/image/{$datey}/";
         $files = $LF['files'] ?? ($jt ? [$jt] : []);
         foreach ($files as $url) {
             if (!is_array($url) && $_L['plugin']['oss']['type'] != "local" && in_string($url, $_L['plugin']['oss']['domain'])) {
@@ -123,14 +118,13 @@ class index extends adminbase
                 ];
                 continue;
             }
-            $res = UPLOAD::file($dir, $url);
+            $res = UPLOAD::file("image", $url);
             if ($res['code'] == 1) {
                 $result[] = [
                     "state"  => "SUCCESS",
                     "source" => $url,
                     "url"    => $res['url'] ?: $res['src'],
                 ];
-                $this->sql("image", $datey, $res);
             } else {
                 $result[] = [
                     "state"  => "FAIL",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-13 17:26:36
+ * @LastEditTime: 2023-09-25 21:23:20
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -218,7 +218,7 @@ class TABLE
         if (is_array($tree['toolbar'])) {
             $tree['toolbar'] = array_merge($tree['toolbar'], [[
                 "title" => "展开/折叠",
-                "event" => "treeTableOpenClose",
+                "event" => "LCMSTREETABLE_EXPAND",
                 "color" => "primary",
             ]]);
         }
@@ -285,7 +285,7 @@ class TABLE
                             $val['cname']      = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
                             $val['color']      = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
                             $val['target']     = $val['target'] ? " target={$val['target']}" : "";
-                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-unlink'></i> {$val['title']}</a>";
+                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-rss'> </i>{$val['title']}</a>";
                             break;
                     }
                 }
