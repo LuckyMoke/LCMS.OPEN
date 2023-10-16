@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-10 18:20:25
+ * @LastEditTime: 2023-10-12 17:24:27
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -75,8 +75,7 @@ class admin extends adminbase
                         "tips"   => "推荐尺寸1920*1080"],
                     ["layui" => "editor", "title" => "后台公告",
                         "name"   => "LC[gonggao]",
-                        "value"  => $config['gonggao'],
-                    ],
+                        "value"  => $config['gonggao']],
                     ["layui" => "btn", "title" => "立即保存"],
                 );
                 require LCMS::template("own/admin_index");
@@ -170,6 +169,9 @@ class admin extends adminbase
                         $change = true;
                     }
                 }
+                if ($LC['mimelist']) {
+                    $LC['mimelist'] = str_replace([".", ","], "", $LC['mimelist']);
+                }
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
@@ -226,7 +228,7 @@ class admin extends adminbase
                     ["layui" => "input_sort", "title" => "图片大小限制",
                         "name"   => "LC[attsize]",
                         "value"  => $config['attsize'] ?: 300,
-                        "tips"   => "KB，限制上传图片的大小",
+                        "tips"   => "KB，限制上传图片的大小，超过的图片会自动压缩",
                         "verify" => "required"],
                     ["layui" => "input_sort", "title" => "文件大小限制",
                         "name"   => "LC[attsize_file]",

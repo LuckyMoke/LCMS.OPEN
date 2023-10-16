@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-10-07 14:20:09
- * @LastEditTime: 2023-10-07 19:33:20
+ * @LastEditTime: 2023-10-09 12:28:55
  * @Description: 短链系统
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -61,7 +61,6 @@ class SHORTLINK
     public static function get($code = "")
     {
         global $_L;
-        self::clearLink();
         if ($code && strlen($code) === 8) {
             $link = sql_getall([
                 "table" => "shortlink",
@@ -73,8 +72,12 @@ class SHORTLINK
             ]);
         }
         if ($link) {
-            $link         = $link[0];
-            $link['data'] = sql2arr($link['data']);
+            $link = $link[0];
+            if ($link['lasttime'] > time()) {
+                $link['data'] = sql2arr($link['data']);
+            } else {
+                $link = [];
+            }
         }
         return $link ?: [];
     }

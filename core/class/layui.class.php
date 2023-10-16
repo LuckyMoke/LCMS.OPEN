@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-08-14 17:38:03
+ * @LastEditTime: 2023-10-09 18:17:30
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -351,10 +351,17 @@ class LAY
                 $para['value'] = base64_decode($para['value']);
             }
         }
+        if ($para['simple']) {
+            if (is_array($para['simple'])) {
+                $para['simple'] = " data-simple='" . base64_encode(json_encode($para['simple'])) . "'";
+            } else {
+                $para['simple'] = " data-simple='1'";
+            }
+        }
         $html = "
             <div class='layui-form-item layui-form-text{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block lcms-form-editor' data-name='{$para['name']}'>
+                <div class='layui-input-block lcms-form-editor' data-name='{$para['name']}'{$para['simple']}>
                     <script name='{$para['name']}' type='text/plain'>{$para['value']}</script>
                 </div>
             </div>";

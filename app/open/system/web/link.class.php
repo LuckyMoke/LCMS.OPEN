@@ -15,11 +15,13 @@ class link extends webbase
         $code = $_SERVER['QUERY_STRING'];
         if (!$code) {
             header("HTTP/1.1 404 Not Found");
+            LCMS::X(404, "Not Found");
             exit;
         }
         $link = SHORTLINK::get($code);
         if (!$link) {
             header("HTTP/1.1 404 Not Found");
+            LCMS::X(404, "Not Found");
             exit;
         }
         if ($link['data']) {

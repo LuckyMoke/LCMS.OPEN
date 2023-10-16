@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-24 22:07:09
+ * @LastEditTime: 2023-10-13 18:22:27
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -343,32 +343,32 @@ function goheader($url)
 }
 /**
  * @description: 编码转换
- * @param mixed $str
- * @return mixed
+ * @param string $str
+ * @return string
  */
-function gbk2utf8($mixed = "")
+function gbk2utf8($str = "")
 {
-    if (mb_detect_encoding($mixed, [
+    if (mb_detect_encoding($str, [
         "ASCII", "GB2312", "GBK", "BIG5", "UTF-8",
     ]) != "UTF-8") {
-        return mb_convert_encoding($mixed, "UTF-8", "GBK, GB2312, BIG5, ASCII");
+        return mb_convert_encoding($str, "UTF-8", "GBK, GB2312, BIG5, ASCII");
     } else {
-        return $mixed;
+        return $str;
     }
 }
 /**
  * @description: 编码转换
- * @param mixed $str
- * @return mixed
+ * @param string $str
+ * @return string
  */
-function utf82gbk($mixed = "")
+function utf82gbk($str = "")
 {
-    if (mb_detect_encoding($mixed, [
+    if (mb_detect_encoding($str, [
         "ASCII", "GB2312", "GBK", "BIG5", "UTF-8",
     ]) == "UTF-8") {
-        return mb_convert_encoding($mixed, "GBK", "UTF-8");
+        return mb_convert_encoding($str, "GBK", "UTF-8");
     } else {
-        return $mixed;
+        return $str;
     }
 }
 /**
@@ -826,31 +826,54 @@ function urlsafe_base64_decode($str)
 }
 /**
  * @description: HTML内容解码懒加载
- * @param string $content
+ * @param string $body
  * @param bool $lazyload
  * @param bool $watermark
  * @return string
  */
-function html_editor($content = "", $lazyload = false)
+function html_editor($body = "", $lazyload = false)
 {
-    if ($content) {
-        $content = is_base64($content) ? base64_decode($content) : $content;
-        preg_match_all("/<img.*?src=['\"](.*?)['\"].*?[\/]?>/i", $content, $match);
+    if ($body) {
+        $body = is_base64($body) ? base64_decode($body) : $body;
+        preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/is', $body, $match);
         if ($match[1]) {
-            $imgs = [];
-            foreach ($match[1] as $index => $img) {
-                $imgs[] = str_replace($img, oss($img), $match[0][$index]);
+            $tags = [];
+            foreach ($match[1] as $index => $src) {
+                $tag = $match[0][$index];
+                $sch = [$src];
+                $rce = [oss($src)];
+                if ($lazyload) {
+                    if (in_string($tag, "class=")) {
+                        $sch = array_merge($sch, [
+                            "class='",
+                            'class="',
+                        ]);
+                        $rce = array_merge($rce, [
+                            "class='lazyload ",
+                            'class="lazyload ',
+                        ]);
+                    } else {
+                        $sch = array_merge($sch, ["<img "]);
+                        $rce = array_merge($rce, ['<img class="lazyload" ']);
+                    }
+                    $sch = array_merge($sch, ["src="]);
+                    $rce = array_merge($rce, ["data-src="]);
+                }
+                $tags[] = str_replace($sch, $rce, $tag);
             }
-            $content = str_replace($match[0], $imgs, $content);
+            $body = str_replace($match[0], $tags, $body);
         }
         if ($lazyload) {
-            $content = preg_replace('/(<img[^>]*)src(=["\'][^>]*>)/', '$1class="lazyload" data-src$2', $content);
-            $content = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $content);
-            $content = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe frameborder="0" data-src="$2"$3></iframe>', $content);
+            $body = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $body);
+            $body = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe frameborder="no" border="0" data-src="$2"$3></iframe>', $body);
         }
-        $content = str_replace(["<p><br /></p>", "<p><br/></p>", "<p><br></p>"], "", $content);
+        $body = str_replace([
+            "<p><br /></p>",
+            "<p><br/></p>",
+            "<p><br></p>",
+        ], "", $body);
     }
-    return $content ?: "";
+    return $body ?: "";
 }
 /**
  * @description: 获取云存储链接

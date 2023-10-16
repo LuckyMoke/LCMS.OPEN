@@ -85,12 +85,12 @@
                     <tr>
                         <td>PHP扩展</td>
                         <td>
-                            <span style="padding-right:2px;color:{{function_exists('curl_init')?'green':'red';}}">[cURL/必须]</span>
-                            <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">[GD/必须]</span>
-                            <span style="padding-right:2px;color:{{class_exists('ZipArchive')?'green':'red';}}">[ZipArchive/必须]</span>
-                            <span style="padding-right:2px;color:{{function_exists('gzinflate')?'green':'red';}}">[gzinflate/必须]</span>
-                            <span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">[fileinfo]</span>
-                            <span style="padding-right:2px;color:{{class_exists('Redis')?'green':'red';}}">[Redis]</span>
+                            [必要：<span style="padding-right:2px;color:{{function_exists('curl_init')?'green':'red';}}">cURL</span>/
+                            <span style="padding-right:2px;color:{{function_exists('imagecreate')?'green':'red';}}">GD</span>/
+                            <span style="padding-right:2px;color:{{class_exists('ZipArchive')?'green':'red';}}">ZipArchive</span>/
+                            <span style="padding-right:2px;color:{{function_exists('gzinflate')?'green':'red';}}">gzinflate</span>]&nbsp;
+                            [非必要：<span style="padding-right:2px;color:{{extension_loaded('fileinfo')?'green':'red';}}">fileinfo</span>/
+                            <span style="padding-right:2px;color:{{class_exists('Redis')?'green':'red';}}">Redis</span>]
                         </td>
                     </tr>
                     <tr>
