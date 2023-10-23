@@ -2,44 +2,49 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-05 14:48:50
+ * @LastEditTime: 2023-10-20 14:17:26
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class UPLOAD
 {
+    private static $CFG;
+    private static $MIME;
+    private static $SIZE;
     /**
      * @description: 文件上传操作
      * @param string $dir
-     * @param array|string $para
+     * @param array|string $form
      * @param string $mime
      * @param bool $force
      * @return array
      */
-    public static function file($dir, $para = "", $mime = "", $force = 0)
+    public static function file($dir, $form = "", $mime = "", $force = 0)
     {
-        global $_L, $CFG, $MIME, $SIZE;
-        $CFG                 = $_L['config']['admin'];
-        $CFG['attsize']      = $CFG['attsize'] ?: 300;
-        $CFG['attsize_file'] = $CFG['attsize_file'] ?: 300;
+        global $_L;
+        self::$CFG = $_L['config']['admin'];
+        self::$CFG = array_merge(self::$CFG, [
+            "attsize"      => self::$CFG['attsize'] ?: 300,
+            "attsize_file" => self::$CFG['attsize_file'] ?: 300,
+        ]);
         if ($dir == "image" || $dir == "file") {
             $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
         }
         if (makedir($dir)) {
-            if (!is_array($para) && is_url($para)) {
-                $result = HTTP::get($para, true);
+            if (!is_array($form) && is_url($form)) {
+                $result = HTTP::get($form, true);
                 if ($result['code'] == 200 && $result['length'] > 0) {
-                    $file = $result['body'];
-                    $MIME = $mime ?: self::mime($result['type']);
-                    $SIZE = $result['length'];
-                    $file = self::img2watermark($file);
+                    $file       = $result['body'];
+                    self::$MIME = $mime ?: self::mime($result['type']);
+                    self::$SIZE = $result['length'];
+                    $file       = self::img2watermark($file);
                 } else {
                     return self::out(0, "远程文件下载失败");
                 }
             } else {
                 // 如果文件地址是本地上传
-                $file = $para ?: $_FILES['file'];
+                $file = $form ?: $_FILES['file'];
                 if ($file['error'] != 0) {
                     switch ($file['error']) {
                         case 1:
@@ -51,25 +56,25 @@ class UPLOAD
                     }
                     return self::out(0, "上传失败:{$file['error']}");
                 }
-                $MIME = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
-                $SIZE = $file['size'];
-                $file = self::img2watermark(file_get_contents($file['tmp_name']));
+                self::$MIME = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
+                self::$SIZE = $file['size'];
+                $file       = self::img2watermark(file_get_contents($file['tmp_name']));
             }
-            if (in_array($MIME, [
+            if (in_array(self::$MIME, [
                 "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
             ])) {
-                if (round($SIZE / 1024) > $CFG['attsize']) {
+                if (round(self::$SIZE / 1024) > self::$CFG['attsize']) {
                     // 如果图片大小超过上传限制
-                    return self::out(0, "图片大小超过{$CFG['attsize']}KB");
+                    return self::out(0, "图片大小超过" . self::$CFG['attsize'] . "KB");
                 }
-            } elseif (round($SIZE / 1024) > $CFG['attsize_file']) {
+            } elseif (round(self::$SIZE / 1024) > self::$CFG['attsize_file']) {
                 // 如果文件大小超过上传限制
-                return self::out(0, "文件大小超过{$CFG['attsize_file']}KB");
+                return self::out(0, "文件大小超过" . self::$CFG['attsize_file'] . "KB");
             }
-            if ($MIME && in_array($MIME, explode("|", $CFG['mimelist']))) {
-                $name = date("dHis") . randstr(6) . ".{$MIME}";
+            if (self::$MIME && in_array(self::$MIME, explode("|", self::$CFG['mimelist']))) {
+                $name = date("dHis") . randstr(6) . "." . self::$MIME;
                 if (file_put_contents("{$dir}{$name}", $file)) {
-                    $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, $SIZE);
+                    $return = self::out(1, "上传成功", path_relative($dir, "../"), $name, self::$SIZE);
                 } else {
                     return self::out(0, "上传失败");
                 }
@@ -181,17 +186,17 @@ class UPLOAD
      */
     private static function img2watermark($img, $times = 1)
     {
-        global $_L, $CFG, $MIME, $SIZE;
+        global $_L;
         $cfgwat = $_L['plugin']['watermark'] ?: [];
-        if ($CFG['attwebp'] > 0 && in_array($MIME, [
+        if (self::$CFG['attwebp'] > 0 && in_array(self::$MIME, [
             "jpeg", "jpg", "png", "bmp", "wpng", "wbmp",
         ]) && function_exists("imagewebp")) {
-            $MIME = "webp";
+            self::$MIME = "webp";
         }
-        if (in_array($MIME, [
+        if (in_array(self::$MIME, [
             "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
         ]) && (
-            round($SIZE / 1024) > $CFG['attsize'] ||
+            round(self::$SIZE / 1024) > self::$CFG['attsize'] ||
             $cfgwat['on'] > 0
         )) {
             ob_start();
@@ -208,14 +213,14 @@ class UPLOAD
                     $thumby = 1920;
                 }
             }
-            if (round($SIZE / 1024) > $CFG['attsize']) {
+            if (round(self::$SIZE / 1024) > self::$CFG['attsize']) {
                 //如果图片大小超过，启用压缩
                 $thumbx = intval($thumbx * $times);
                 $thumby = intval($thumby * $times);
                 $thumb  = imagecreatetruecolor($thumbx, $thumby);
                 imagealphablending($thumb, true);
                 imagesavealpha($thumb, true);
-                if (in_array($MIME, ["jpeg", "jpg", "bmp", "wbmp"])) {
+                if (in_array(self::$MIME, ["jpeg", "jpg", "bmp", "wbmp"])) {
                     $bgcolor = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
                 } else {
                     $bgcolor = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
@@ -232,7 +237,7 @@ class UPLOAD
                 }
                 self::watermark($thumb, $thumbx, $thumby);
             }
-            switch ($MIME) {
+            switch (self::$MIME) {
                 case 'jpg':
                 case 'jpeg':
                     imagejpeg($thumb);
@@ -255,12 +260,12 @@ class UPLOAD
             $nimg = ob_get_contents();
             imagedestroy($src);
             ob_clean();
-            $SIZE = strlen($nimg);
+            self::$SIZE = strlen($nimg);
             if ($cfgwat['on'] > 0) {
-                $SIZE = $SIZE - 5000;
+                self::$SIZE = self::$SIZE - 5000;
             }
             $times = $times - 0.1;
-            if (round($SIZE / 1024) > $CFG['attsize'] && $times > 0) {
+            if (round(self::$SIZE / 1024) > self::$CFG['attsize'] && $times > 0) {
                 $nimg = self::img2watermark($img, $times);
             }
             $img = $nimg;
@@ -269,7 +274,7 @@ class UPLOAD
     }
     private static function watermark($image, $w, $h)
     {
-        global $_L, $CFG, $MIME, $SIZE;
+        global $_L;
         $cfgwat = $_L['plugin']['watermark'] ?: [];
         $font   = PATH_PUBLIC . "static/fonts/Chinese.ttf";
         $text   = self::imagettfbboxextended($cfgwat['size'], 0, $font, $cfgwat['text']);

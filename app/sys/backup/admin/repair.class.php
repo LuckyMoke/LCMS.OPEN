@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-07-01 14:59:58
+ * @LastEditTime: 2023-10-17 18:05:45
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -166,7 +166,7 @@ class repair extends adminbase
                                     if (!array_key_exists("default", $diff) && !array_key_exists("index", $diff) && in_string($diff['type'], "int") && !in_string($old[$name][$key]['type'], "int(") && (in_string($diff['type'], "unsigned") == in_string($old[$name][$key]['type'], "unsigned"))) {
                                         continue;
                                     }
-                                    if (array_key_exists("index", $diff) && !$diff['index'] && $old[$name][$key]['index']) {
+                                    if (array_key_exists("index", $diff) && $old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
                                         $diff['indexdrop'] = true;
                                     }
                                     $diff = array_merge([
