@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-02-13 12:21:32
+ * @LastEditTime: 2023-10-25 10:08:22
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -58,6 +58,7 @@ class EMAIL
                 $EMAIL->SMTPSecure = $cfg['SSL'] ? "ssl" : "tls";
                 $EMAIL->Port       = $cfg['Port'];
                 $EMAIL->Timeout    = 30;
+                $EMAIL->CharSet    = "utf-8";
                 $EM                = [];
                 if (is_array($Param['TO'])) {
                     foreach ($Param['TO'] as $val) {

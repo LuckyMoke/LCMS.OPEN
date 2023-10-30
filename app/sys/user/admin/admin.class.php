@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-22 12:24:18
+ * @LastEditTime: 2023-10-27 16:12:33
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -51,8 +51,8 @@ class admin extends adminbase
                         "token"    => $token,
                         "headimg"  => [
                             "type"   => "image",
-                            "width"  => 20,
-                            "height" => 20,
+                            "width"  => "auto",
+                            "height" => "100%",
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
                         "lcms"     => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
@@ -306,8 +306,8 @@ class admin extends adminbase
                     $data[$index] = array_merge($val, [
                         "headimg" => [
                             "type"   => "image",
-                            "width"  => 20,
-                            "height" => 20,
+                            "width"  => "auto",
+                            "height" => "100%",
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
                         "email"   => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',

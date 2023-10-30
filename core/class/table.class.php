@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-10-11 16:52:37
+ * @LastEditTime: 2023-10-27 16:11:57
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -276,6 +276,8 @@ class TABLE
                         case 'image':
                             $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";
                             $val['src']        = in_string($val['src'], "../upload/") ? oss($val['src']) : $val['src'];
+                            $val['width']      = $val['width'] ?: "auto";
+                            $val['height']     = $val['height'] ?: "100%";
                             $arr[$index][$key] = $val['src'] ? "<img src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='display:block;max-width:none;{$val['style']}'/>" : "";
                             break;
                         case 'link':

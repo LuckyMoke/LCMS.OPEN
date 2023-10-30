@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-10 19:17:30
+ * @LastEditTime: 2023-10-29 20:29:45
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -141,17 +141,10 @@ class gallery extends adminbase
             switch ($_L['plugin']['oss']['type']) {
                 case '':
                 case 'local':
-                    $size = getimagesize(path_absolute($val['src']));
-                    if (in_string($val['name'], ".svg")) {
-                        $size = "SVG图片";
-                    } else {
-                        $size = $size[0] . "×" . $size[1];
-                    }
                     $list[] = [
                         "name"    => $val['name'],
                         "src"     => $val['src'],
                         "datasrc" => $val['src'],
-                        "size"    => $size,
                     ];
                     break;
                 default:
@@ -159,12 +152,9 @@ class gallery extends adminbase
                         "name"    => $val['name'],
                         "src"     => oss($val['src']),
                         "datasrc" => $val['src'],
-                        "size"    => "",
-                        "stylle"  => "opacity:0",
                     ];
                     break;
             }
-
         }
         ajaxout(1, "success", "", [
             "list"  => $list ?: [],
