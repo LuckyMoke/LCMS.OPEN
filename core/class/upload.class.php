@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-20 14:17:26
+ * @LastEditTime: 2023-10-31 10:55:24
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,8 +25,8 @@ class UPLOAD
         global $_L;
         self::$CFG = $_L['config']['admin'];
         self::$CFG = array_merge(self::$CFG, [
-            "attsize"      => self::$CFG['attsize'] ?: 300,
-            "attsize_file" => self::$CFG['attsize_file'] ?: 300,
+            "attsize"      => intval((self::$CFG['attsize'] ?: 300) * 1024),
+            "attsize_file" => intval((self::$CFG['attsize_file'] ?: 300) * 1024),
         ]);
         if ($dir == "image" || $dir == "file") {
             $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
@@ -63,13 +63,23 @@ class UPLOAD
             if (in_array(self::$MIME, [
                 "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
             ])) {
-                if (round(self::$SIZE / 1024) > self::$CFG['attsize']) {
+                if (self::$SIZE > self::$CFG['attsize']) {
                     // 如果图片大小超过上传限制
-                    return self::out(0, "图片大小超过" . self::$CFG['attsize'] . "KB");
+                    return self::out(0, "图片大小超过" . intval(self::$CFG['attsize'] / 1024) . "KB");
                 }
-            } elseif (round(self::$SIZE / 1024) > self::$CFG['attsize_file']) {
+            } elseif (self::$SIZE > self::$CFG['attsize_file']) {
                 // 如果文件大小超过上传限制
-                return self::out(0, "文件大小超过" . self::$CFG['attsize_file'] . "KB");
+                return self::out(0, "文件大小超过" . intval(self::$CFG['attsize_file'] / 1024) . "KB");
+            }
+            if ($_L['ROOTID'] > 0) {
+                $admin = sql_get([
+                    "table" => "admin",
+                    "where" => "id = {$_L['ROOTID']}",
+                ]);
+                if ($admin['storage'] > 0 && self::$SIZE > intval(($admin['storage'] - $admin['storage_used']) * 1024)) {
+                    //如果上传文件超过存储空间限制
+                    return self::out(0, "存储空间已满");
+                }
             }
             if (self::$MIME && in_array(self::$MIME, explode("|", self::$CFG['mimelist']))) {
                 $name = date("dHis") . randstr(6) . "." . self::$MIME;
@@ -86,7 +96,7 @@ class UPLOAD
         }
         //强制本地存储
         if ($force) {
-            self::sql_save($dir, $return);
+            self::sql_save($dir, $return, true);
             return $return;
         }
         //云存储处理
@@ -196,7 +206,7 @@ class UPLOAD
         if (in_array(self::$MIME, [
             "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
         ]) && (
-            round(self::$SIZE / 1024) > self::$CFG['attsize'] ||
+            self::$SIZE > self::$CFG['attsize'] ||
             $cfgwat['on'] > 0
         )) {
             ob_start();
@@ -213,7 +223,7 @@ class UPLOAD
                     $thumby = 1920;
                 }
             }
-            if (round(self::$SIZE / 1024) > self::$CFG['attsize']) {
+            if (self::$SIZE > self::$CFG['attsize']) {
                 //如果图片大小超过，启用压缩
                 $thumbx = intval($thumbx * $times);
                 $thumby = intval($thumby * $times);
@@ -265,7 +275,7 @@ class UPLOAD
                 self::$SIZE = self::$SIZE - 5000;
             }
             $times = $times - 0.1;
-            if (round(self::$SIZE / 1024) > self::$CFG['attsize'] && $times > 0) {
+            if (self::$SIZE > self::$CFG['attsize'] && $times > 0) {
                 $nimg = self::img2watermark($img, $times);
             }
             $img = $nimg;
@@ -347,7 +357,7 @@ class UPLOAD
      * @param array $data
      * @return {*}
      */
-    private static function sql_save($dir, $data = [])
+    private static function sql_save($dir, $data = [], $force = false)
     {
         global $_L;
         if ($data['code'] == 1) {
@@ -360,10 +370,21 @@ class UPLOAD
                     "name"    => $data['filename'],
                     "size"    => $data['size'],
                     "src"     => $data['src'],
+                    "local"   => $force ? 1 : 0,
                     "addtime" => datenow(),
                     "uid"     => $_L['LCMSADMIN']['id'] ?: ($_L['ROOTID'] > 0 ?: 1),
                     "lcms"    => $_L['ROOTID'],
                 ]]);
+                $_L['ROOTID'] > 0 && sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "storage_used" => intval($data['size'] / 1024),
+                    ],
+                    "where" => "id = {$_L['ROOTID']}",
+                    "math"  => [
+                        "storage_used" => "+",
+                    ],
+                ]);
             }
         }
     }

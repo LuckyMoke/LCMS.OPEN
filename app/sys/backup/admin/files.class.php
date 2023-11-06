@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-09-28 14:32:25
- * @LastEditTime: 2023-06-14 15:56:08
+ * @LastEditTime: 2023-10-30 19:31:23
  * @Description: 文件管理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -37,7 +37,12 @@ class files extends adminbase
                     $data[$index] = array_merge($val, [
                         "type" => $val['type'] === "file" ? "文件" : "图片",
                         "size" => $this->getsize($val['size']),
-                        "href" => "<a href='{$doamin}{$src}' target='_blank'><i class='layui-icon layui-icon-unlink'></i> /{$src}</a>",
+                        "href" => [
+                            "type"   => "link",
+                            "title"  => "/{$src}",
+                            "url"    => ($val['local'] == 1 ? $_L['url']['site'] : $doamin) . $src,
+                            "target" => "_blank",
+                        ],
                     ]);
                 }
                 TABLE::out($data);

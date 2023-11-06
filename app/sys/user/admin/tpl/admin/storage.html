@@ -1,0 +1,7 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=storage-save" method="post" target="_self">
+    <input type="hidden" name="token" value="{{$LF['token']}}" />
+    <ui form($form) />
+</form>
+<template "ui/foot" />

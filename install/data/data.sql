@@ -1,30 +1,32 @@
 CREATE TABLE `[_PRE]admin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tuid` int(11) DEFAULT '0' COMMENT '推广用户',
-  `status` int(1) DEFAULT '1' COMMENT '账号状态',
-  `name` varchar(64) DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `tuid` int(11) unsigned DEFAULT '0' COMMENT '推广用户',
+  `status` int(1) unsigned DEFAULT '1' COMMENT '账号状态',
+  `name` varchar(64) DEFAULT NULL COMMENT '账号',
   `title` varchar(100) DEFAULT NULL COMMENT '用户中文说明',
-  `pass` varchar(64) DEFAULT NULL,
-  `salt` varchar(16) DEFAULT NULL,
-  `email` varchar(64) DEFAULT NULL,
-  `mobile` varchar(11) DEFAULT NULL,
+  `pass` varchar(64) DEFAULT NULL COMMENT '密码',
+  `salt` varchar(16) DEFAULT NULL COMMENT '盐',
+  `email` varchar(64) DEFAULT NULL COMMENT '邮箱',
+  `mobile` varchar(11) DEFAULT NULL COMMENT '手机号',
   `type` varchar(20) DEFAULT NULL COMMENT '级别',
   `headimg` varchar(255) DEFAULT NULL COMMENT '头像',
-  `points` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '积分',
-  `balance` decimal(12,2) DEFAULT '0.00' COMMENT '余额',
+  `points` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
+  `balance` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '余额',
+  `storage` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '存储空间',
+  `storage_used` int(11) DEFAULT '0' COMMENT '存储空间已使用',
   `addtime` datetime DEFAULT NULL COMMENT '添加时间',
   `lasttime` datetime DEFAULT NULL COMMENT '到期时间',
   `logintime` datetime DEFAULT NULL COMMENT '最后登陆时间',
-  `parameter` longtext COMMENT '套餐包',
   `ip` varchar(64) DEFAULT NULL COMMENT '登录IP',
-  `lcms` int(11) NOT NULL DEFAULT 0 COMMENT '上级用户',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `type` (`type`),
-  KEY `lcms` (`lcms`),
-  KEY `email` (`email`),
-  KEY `mobile` (`mobile`),
-  KEY `tuid` (`tuid`)
+  `parameter` longtext COMMENT '套餐包',
+  `lcms` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`) USING BTREE,
+  KEY `type` (`type`) USING BTREE,
+  KEY `lcms` (`lcms`) USING BTREE,
+  KEY `email` (`email`) USING BTREE,
+  KEY `mobile` (`mobile`) USING BTREE,
+  KEY `tuid` (`tuid`) USING BTREE
 ) DEFAULT CHARSET=utf8mb4 COMMENT='管理员信息';
 
 CREATE TABLE `[_PRE]admin_band` (
@@ -91,22 +93,23 @@ CREATE TABLE `[_PRE]log` (
   KEY `lcms` (`lcms`) USING BTREE
 ) DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `[_PRE]upload`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(10) NULL COMMENT '上传类型',
-  `datey` varchar(6) NULL COMMENT '上传目录',
-  `name` varchar(32) NULL COMMENT '文件名称',
-  `size` int(11) NOT NULL DEFAULT 0 COMMENT '文件大小',
-  `src` varchar(255) NULL COMMENT '文件链接',
+CREATE TABLE `[_PRE]upload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(10) DEFAULT NULL COMMENT '上传类型',
+  `datey` varchar(6) DEFAULT NULL COMMENT '上传目录',
+  `name` varchar(32) DEFAULT NULL COMMENT '文件名称',
+  `size` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '文件大小',
+  `src` varchar(255) DEFAULT NULL COMMENT '文件链接',
+  `local` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '强制本地存储',
   `addtime` datetime DEFAULT NULL COMMENT '上传时间',
-  `uid` int(11) NOT NULL DEFAULT 0,
-  `lcms` int(11) NOT NULL DEFAULT 0,
+  `uid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `lcms` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  INDEX(`type`),
-  INDEX(`datey`),
-  INDEX(`name`),
-  INDEX(`uid`),
-  INDEX(`lcms`)
+  KEY `type` (`type`),
+  KEY `datey` (`datey`),
+  KEY `name` (`name`),
+  KEY `lcms` (`lcms`),
+  KEY `uid` (`uid`)
 ) CHARACTER SET = utf8mb4 COMMENT='上传文件表';
 
 CREATE TABLE `[_PRE]order` (

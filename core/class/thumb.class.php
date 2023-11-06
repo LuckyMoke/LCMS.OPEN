@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-14 18:15:41
+ * @LastEditTime: 2023-11-03 23:02:28
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -33,6 +33,12 @@ class THUMB
         }
         //如果没有裁剪，返回原图
         if ($x == 0 && $y == 0) {
+            return oss($path, $watermark);
+        }
+        //如果格式不匹配，返回原图
+        if (!in_string($path, [
+            "jpg", "jpeg", "png", "gif", "bmp", "webp", "wpng", "wbmp",
+        ])) {
             return oss($path, $watermark);
         }
         //如果使用云存储

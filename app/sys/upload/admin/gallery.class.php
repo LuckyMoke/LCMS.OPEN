@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-29 20:29:45
+ * @LastEditTime: 2023-10-30 19:45:50
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -141,20 +141,17 @@ class gallery extends adminbase
             switch ($_L['plugin']['oss']['type']) {
                 case '':
                 case 'local':
-                    $list[] = [
-                        "name"    => $val['name'],
-                        "src"     => $val['src'],
-                        "datasrc" => $val['src'],
-                    ];
+                    $src = $val['src'];
                     break;
                 default:
-                    $list[] = [
-                        "name"    => $val['name'],
-                        "src"     => oss($val['src']),
-                        "datasrc" => $val['src'],
-                    ];
+                    $src = $val['local'] == 1 ? $val['src'] : oss($val['src']);
                     break;
             }
+            $list[] = [
+                "name"     => $val['name'],
+                "src"      => $src,
+                "original" => $val['src'],
+            ];
         }
         ajaxout(1, "success", "", [
             "list"  => $list ?: [],

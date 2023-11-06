@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2023-07-07 11:59:51
+ * @LastEditTime: 2023-11-04 11:59:58
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -56,17 +56,21 @@ class common
         global $_L;
         isset($_REQUEST['GLOBALS']) && exit('Access Error');
         parse_str(substr(strstr(HTTP_QUERY, '?'), 1), $QUERY);
-        foreach ($QUERY as $k => $v) {
-            $k[0] != '_' && $_L['form'][$k] = filterform($v);
-        }
-        foreach ($_COOKIE as $k => $v) {
-            $k[0] != '_' && $_L['form'][$k] = filterform($v);
-        }
-        foreach ($_POST as $k => $v) {
-            $k[0] != '_' && $_L['form'][$k] = filterform($v);
-        }
-        foreach ($_GET as $k => $v) {
-            $k[0] != '_' && $_L['form'][$k] = filterform($v);
+        $forms = array_merge($QUERY ?: [], $_COOKIE ?: [], $_POST ?: [], $_GET ?: []);
+        foreach ($forms as $key => $val) {
+            if ($val) {
+                if (in_array($key, [
+                    "t", "n", "c", "a", "action", "cls", "do",
+                ])) {
+                    if (preg_match("/^[a-zA-Z0-9_-]+$/", $val)) {
+                        $_L['form'][$key] = $val;
+                    } else {
+                        LCMS::X(403, "参数不合法");
+                    }
+                } else {
+                    $_L['form'][$key] = filterform($val);
+                }
+            }
         }
     }
     /**

@@ -9,4 +9,16 @@
         });
     </script>
 </if>
+<script type="text/javascript">
+    var changeStorage = function (token) {
+        layer.closeAll("iframe", function () {
+            LCMS.util.iframe({
+                id: "lcms-user-storage",
+                title: "存储空间",
+                url: LCMS.url.own_form + "index&action=storage-edit&token=" + token,
+                area: ["400px", "400px"]
+            });
+        });
+    }
+</script>
 <template "ui/foot" />

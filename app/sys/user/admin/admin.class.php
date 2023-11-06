@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-10-27 16:12:33
+ * @LastEditTime: 2023-11-05 21:16:42
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,16 +24,32 @@ class admin extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'list':
-                $where = $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
+                if ($LC['name']) {
+                    if (is_email($LC['name'])) {
+                        //邮箱
+                        $where = "email = :id";
+                    } elseif (is_phone($LC['name'])) {
+                        //手机号
+                        $where = "mobile = :id";
+                    } else {
+                        //ID、账号、姓名
+                        $where = "id = :id OR name LIKE :name OR title LIKE :name";
+                    }
+                }
                 if (LCMS::SUPER()) {
-                    $data = TABLE::set("admin", "id != 0{$where}", "id ASC", [
+                    $data = TABLE::set("admin", $where, "id ASC", [
+                        ":id"   => $LC['name'],
                         ":name" => "%{$LC['name']}%",
                     ]);
                 } else {
-                    $data = TABLE::set("admin", "(lcms = :id OR id = :id){$where}", "id ASC", [
-                        ":id"   => $_L['LCMSADMIN']['id'],
+                    $data = TABLE::set("admin", "lcms = :lcms" . ($where ? " AND ({$where})" : ""), "id ASC", [
+                        ":id"   => $LC['name'],
                         ":name" => "%{$LC['name']}%",
+                        ":lcms" => $_L['LCMSADMIN']['id'],
                     ]);
+                    if (!$where) {
+                        $data = array_merge([$_L['LCMSADMIN']], $data ?: []);
+                    }
                 }
                 $adminlist = [];
                 $levellist = [];
@@ -44,9 +60,20 @@ class admin extends adminbase
                     if (!$levellist[$val['type']]) {
                         $levellist[$val['type']] = sql_get(["admin_level", "id = '{$val['type']}'"]);
                     }
-                    $admin        = $adminlist[$val['lcms']];
-                    $level        = $levellist[$val['type']];
-                    $token        = PUB::id2token($val['id']);
+                    $admin = $adminlist[$val['lcms']];
+                    $level = $levellist[$val['type']];
+                    $token = PUB::id2token($val['id']);
+                    if ($val['lcms'] == 0) {
+                        if ($val['storage'] > 0) {
+                            $storage = number_format($val['storage_used'] / $val['storage'] * 100, 2);
+                            $storage = $storage > 100 ? 100 : $storage;
+                        } else {
+                            $storage = 100;
+                        }
+                        $storage .= "%";
+                    } else {
+                        $storage = null;
+                    }
                     $data[$index] = array_merge($val, [
                         "token"    => $token,
                         "headimg"  => [
@@ -55,7 +82,7 @@ class admin extends adminbase
                             "height" => "100%",
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
-                        "lcms"     => $val['lcms'] == "0" ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
+                        "lcms"     => $val['lcms'] == 0 ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
                         "type"     => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
                         "status"   => [
                             "type"  => "switch",
@@ -66,6 +93,8 @@ class admin extends adminbase
                         "email"    => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
                         "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                         "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
+                        "storage"  => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
+                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
                     ]);
                 }
                 TABLE::out($data);
@@ -179,13 +208,43 @@ class admin extends adminbase
             case 'save':
                 PUB::userSave(["id", "headimg", "name", "title", "pass", "email", "mobile", "status", "lasttime", "addtime"]);
                 break;
+            case 'storage-edit':
+                $admin = LCMS::form([
+                    "do"    => "get",
+                    "table" => "admin",
+                    "id"    => PUB::token2id($LF['token']),
+                ]);
+                if ($admin['type'] == "lcms" || $admin['id'] == $_L['LCMSADMIN']['id']) {
+                    LCMS::X(403, "禁止修改");
+                }
+                $form = [
+                    ["layui" => "html", "title" => "当前账号",
+                        "value"  => "{$admin['name']} - {$admin['title']} - [ID:{$admin['id']}]",
+                        "nodrop" => true],
+                    ["layui" => "input", "title" => "存储上限/单位MB",
+                        "name"   => "LC[storage]",
+                        "value"  => intval($admin['storage'] / 1024),
+                        "type"   => "number",
+                        "verify" => "required",
+                        "tips"   => "0为无限，单位MB",
+                        "min"    => 0,
+                        "max"    => 1048576,
+                        "step"   => 1],
+                    ["layui" => "btn", "title" => "立即保存"],
+                ];
+                require LCMS::template("own/admin/storage");
+                break;
+            case 'storage-save':
+                $LC['storage'] = intval(abs($LC['storage']) * 1024);
+                PUB::userSave(["id", "storage"]);
+                break;
             default:
                 $table = [
                     "url"     => "index&action=list",
                     "cols"    => [
                         ["checkbox" => "checkbox", "width" => 50],
                         ["title" => "ID", "field" => "id",
-                            "width"  => 80,
+                            "width"  => 70,
                             "align"  => "center"],
                         ["title" => "头像", "field" => "headimg",
                             "width"  => 50,
@@ -195,15 +254,18 @@ class admin extends adminbase
                         ["title" => "姓名", "field" => "title",
                             "width"  => 150],
                         ["title" => "邮箱", "field" => "email",
-                            "width"  => 200],
+                            "width"  => 150],
                         ["title" => "手机", "field" => "mobile",
                             "width"  => 120],
                         ["title" => "用户权限", "field" => "type",
-                            "width"  => 200],
+                            "width"  => 160],
                         ["title" => "上级用户", "field" => "lcms",
-                            "width"  => 200],
+                            "width"  => 160],
                         ["title" => "到期时间", "field" => "lasttime",
                             "width"  => 170,
+                            "align"  => "center"],
+                        ["title" => "存储空间", "field" => "storage",
+                            "width"  => 150,
                             "align"  => "center"],
                         ["title" => "状态", "field" => "status",
                             "width"  => 90,
@@ -232,7 +294,7 @@ class admin extends adminbase
                             "tips"   => "删除用户会导致此用户内的所有数据丢失，不使用禁用即可，真的要删除？"],
                     ],
                     "search"  => [
-                        ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
+                        ["title" => "ID/账号/姓名/邮箱/手机", "name" => "name"],
                     ],
                 ];
                 $acount = sql_counter(["admin"]);
@@ -297,10 +359,24 @@ class admin extends adminbase
         }
         switch ($LF['action']) {
             case 'list':
-                $where = "status = 1 AND (lasttime IS NULL OR lasttime > '" . datenow() . "')";
-                $where .= $LC['name'] ? " AND (name LIKE :name OR title LIKE :name OR email LIKE :name OR mobile LIKE :name)" : "";
+                $where = "status = 1 AND (lasttime IS NULL OR lasttime > :lasttime)";
+                if ($LC['name']) {
+                    $where .= " AND ";
+                    if (is_email($LC['name'])) {
+                        //邮箱
+                        $where .= "email = :id";
+                    } elseif (is_phone($LC['name'])) {
+                        //手机号
+                        $where .= "mobile = :id";
+                    } else {
+                        //ID、账号、姓名
+                        $where = "(id = :id OR name LIKE :name OR title LIKE :name)";
+                    }
+                }
                 $data = TABLE::set("admin", $where, "id ASC", [
-                    ":name" => "%{$LC['name']}%",
+                    ":lasttime" => datenow(),
+                    ":id"       => $LC['name'],
+                    ":name"     => "%{$LC['name']}%",
                 ]);
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [
@@ -360,7 +436,7 @@ class admin extends adminbase
                             ]],
                     ],
                     "search" => [
-                        ["title" => "账号/姓名/邮箱/手机", "name" => "name"],
+                        ["title" => "ID/账号/姓名/邮箱/手机", "name" => "name"],
                     ],
                 ];
                 require LCMS::template("own/admin/god");

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-04 22:14:32
+ * @LastEditTime: 2023-10-31 11:47:49
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -82,10 +82,9 @@ class index extends adminbase
         }
         if ($OSS) {
             $OSS->delete($files);
-        } else {
-            foreach ($files as $file) {
-                delfile("../{$file}");
-            }
+        }
+        foreach ($files as $file) {
+            delfile("../{$file}");
         }
         if ($ids) {
             $this->sql("deletebyid", $ids);
@@ -97,6 +96,21 @@ class index extends adminbase
             "type" => "system",
             "info" => "删除文件-" . implode(",", $files),
         ]);
+        if ($_L['ROOTID'] > 0) {
+            $admin = sql_get([
+                "table" => "admin",
+                "where" => "id = {$_L['ROOTID']}",
+            ]);
+            if ($admin['storage_used'] < 0) {
+                sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "storage_used" => 0,
+                    ],
+                    "where" => "id = {$admin['id']}",
+                ]);
+            }
+        }
         ajaxout(1, "删除成功", "reload");
     }
     /**
@@ -255,37 +269,85 @@ class index extends adminbase
         switch ($type) {
             case 'delete':
                 $data = explode("/", $datey);
-                sql_delete([
-                    "upload",
-                    "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
-                    [
+                $data = sql_get([
+                    "table"  => "upload",
+                    "where"  => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
+                    "bind"   => [
                         ":type"  => $data[2],
                         ":datey" => $data[3],
                         ":name"  => $data[4],
                         ":lcms"  => $_L['ROOTID'],
                     ],
+                    "fields" => "id, size",
                 ]);
-                break;
-            case 'deletebyid':
-                $datey && sql_delete([
-                    "upload",
-                    "id IN ({$datey}) AND lcms = :lcms",
-                    [
-                        ":lcms" => $_L['ROOTID'],
+                $data && sql_delete([
+                    "table" => "upload",
+                    "where" => "id = {$data['id']}",
+                ]);
+                $_L['ROOTID'] > 0 && $data['size'] > 0 && sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "storage_used" => intval($data['size'] / 1024),
+                    ],
+                    "where" => "id = {$_L['ROOTID']}",
+                    "math"  => [
+                        "storage_used" => "-",
                     ],
                 ]);
                 break;
+            case 'deletebyid':
+                if ($datey) {
+                    $ids  = $datey;
+                    $data = sql_get([
+                        "table"  => "upload",
+                        "where"  => "id IN({$ids}) AND lcms = :lcms",
+                        "bind"   => [
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                        "fields" => "SUM(size) AS size",
+                    ]);
+                    sql_delete([
+                        "table" => "upload",
+                        "where" => "id IN({$ids}) AND lcms = :lcms",
+                        "bind"  => [
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                    ]);
+                    $_L['ROOTID'] > 0 && $data['size'] > 0 && sql_update([
+                        "table" => "admin",
+                        "data"  => [
+                            "storage_used" => intval($data['size'] / 1024),
+                        ],
+                        "where" => "id = {$_L['ROOTID']}",
+                        "math"  => [
+                            "storage_used" => "-",
+                        ],
+                    ]);
+                }
+                break;
             default:
-                $data && sql_insert(["upload", [
-                    "type"    => $type,
-                    "datey"   => $datey,
-                    "name"    => $data['filename'],
-                    "size"    => $data['size'],
-                    "src"     => $data['src'],
-                    "addtime" => datenow(),
-                    "uid"     => $_L['LCMSADMIN']['id'],
-                    "lcms"    => $_L['ROOTID'],
-                ]]);
+                if ($data) {
+                    sql_insert(["upload", [
+                        "type"    => $type,
+                        "datey"   => $datey,
+                        "name"    => $data['filename'],
+                        "size"    => $data['size'],
+                        "src"     => $data['src'],
+                        "addtime" => datenow(),
+                        "uid"     => $_L['LCMSADMIN']['id'],
+                        "lcms"    => $_L['ROOTID'],
+                    ]]);
+                    $_L['ROOTID'] > 0 && sql_update([
+                        "table" => "admin",
+                        "data"  => [
+                            "storage_used" => intval($data['size'] / 1024),
+                        ],
+                        "where" => "id = {$_L['ROOTID']}",
+                        "math"  => [
+                            "storage_used" => "+",
+                        ],
+                    ]);
+                }
                 break;
         }
     }
