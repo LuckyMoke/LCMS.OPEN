@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-31 10:55:24
+ * @LastEditTime: 2023-11-07 17:37:14
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -28,7 +28,7 @@ class UPLOAD
             "attsize"      => intval((self::$CFG['attsize'] ?: 300) * 1024),
             "attsize_file" => intval((self::$CFG['attsize_file'] ?: 300) * 1024),
         ]);
-        if ($dir == "image" || $dir == "file") {
+        if ($dir == "image" || $dir == "file" || $dir == "user") {
             $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
         }
         if (makedir($dir)) {
@@ -153,7 +153,7 @@ class UPLOAD
             "dir"      => $dir,
             "filename" => $filename,
             "src"      => "{$dir}{$filename}",
-            "datasrc"  => "{$dir}{$filename}",
+            "original" => "{$dir}{$filename}",
             "size"     => $size,
         ];
     }

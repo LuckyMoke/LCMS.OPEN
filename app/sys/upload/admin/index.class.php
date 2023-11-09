@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-31 11:47:49
+ * @LastEditTime: 2023-11-09 11:14:20
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -28,12 +28,14 @@ class index extends adminbase
         global $_L, $LF, $LC;
         if ($_FILES['file']) {
             $res = UPLOAD::file($LF['type'], "", "", $LF['force'] > 0 ? true : false);
-            if ($res['code'] == 1) {
-                unset($res['code'], $res['msg']);
-                ajaxout(1, $res['msg'], "", $res);
-            } else {
-                ajaxout(0, $res['msg'], "", "");
-            }
+        } elseif ($LF['url'] && is_url($LF['url'])) {
+            $res = UPLOAD::file("image", $LF['url'], "", $LF['force'] > 0 ? true : false);
+        }
+        if ($res && $res['code'] == 1) {
+            unset($res['code'], $res['msg']);
+            ajaxout(1, $res['msg'], "", $res);
+        } else {
+            ajaxout(0, $res['msg'] ?: "上传失败", "", "");
         }
     }
     /**
@@ -253,7 +255,7 @@ class index extends adminbase
             "dir"      => "../" . str_replace($LF['name'], "", $LF['file']),
             "filename" => $LF['name'],
             "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
-            "datasrc"  => "../" . $LF['file'],
+            "original" => "../" . $LF['file'],
         ]);
     }
     /**
