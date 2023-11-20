@@ -1,10 +1,10 @@
 <?php
 /*
  * @Author: 小小酥很酥
- * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2023-04-28 12:22:58
- * @Description: 框架菜单处理
- * Copyright 2021 运城市盘石网络科技有限公司
+ * @Date: 2023-03-07 15:50:06
+ * @LastEditTime: 2023-11-19 15:04:49
+ * @Description: Index页面
+ * Copyright 2023 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
@@ -92,13 +92,5 @@ class index extends adminbase
         }
         $homeurl = $homeurl ?: "{$_L['url']['admin']}index.php?n=home";
         require LCMS::template("own/index");
-    }
-    public function doheart()
-    {
-        global $_L, $LF, $LC;
-        if (!$_L['LCMSADMIN'] || $_L['LCMSADMIN']['name'] != $LF['name']) {
-            ajaxout(0, "refresh");
-        }
-        ajaxout(1, "success");
     }
 };

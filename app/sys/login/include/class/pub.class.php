@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2023-09-21 11:52:13
+ * @LastEditTime: 2023-11-18 13:25:02
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -59,6 +59,7 @@ class PUB
     public static function sendsms($mobile, $text)
     {
         global $_L, $UCFG, $PLG;
+        self::isAttack($mobile);
         load::sys_class("sms");
         $result = SMS::send([
             "ID"    => $UCFG['reg']['sms_tplcode'],
@@ -69,6 +70,7 @@ class PUB
             ],
         ], $PLG['sms']);
         if ($result['code'] == 1) {
+            self::isAttack($mobile, "update");
             return true;
         } else {
             ajaxout(0, $result['msg']);
@@ -83,6 +85,7 @@ class PUB
     public static function sendemail($email, $text)
     {
         global $_L, $UCFG, $PLG;
+        self::isAttack($email);
         load::sys_class("email");
         $result = EMAIL::send([
             "TO"    => $email,
@@ -90,6 +93,7 @@ class PUB
             "Body"  => "验证码为：{$text}，5分钟有效！",
         ], $PLG['email']);
         if ($result['code'] == 1) {
+            self::isAttack($email, "update");
             return true;
         } else {
             ajaxout(0, $result['msg']);
@@ -111,5 +115,28 @@ class PUB
             }
         }
         return false;
+    }
+    /**
+     * @description: 检测是否攻击
+     * @return {*}
+     */
+    public static function isAttack($ma, $type = "")
+    {
+        global $_L;
+        $cip = LCMS::ram("login" . CLIENT_IP);
+        $cma = LCMS::ram("login{$ma}");
+        switch ($type) {
+            case 'update':
+                $cip = $cip ? $cip * 1 + 1 : 1;
+                LCMS::ram("login" . CLIENT_IP, $cip, 43200);
+                $cma = $cma ? $cma * 1 + 1 : 1;
+                LCMS::ram("login{$ma}", $cma, 43200);
+                break;
+            default:
+                if ($cip >= 3 || $cma >= 3) {
+                    ajaxout(0, "今日请求已达上限，请联系客服协助验证！");
+                }
+                break;
+        }
     }
 }

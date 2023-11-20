@@ -16,20 +16,21 @@
         <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?lcmsver={{$_L['config']['ver']}}" />
         <script type="text/javascript">
-            var LCMS = {
-                url: JSON.parse('{{json_encode($_L["url"])}}'),
-                config: {
-                    ver: "{{$_L['config']['ver']}}"
-                },
-                plugin: {editor:{}, upload:{}}
-            };
+            var LCMSISTOPWINDOW = true,
+                LCMS = {
+                    url: JSON.parse('{{json_encode($_L["url"])}}'),
+                    config: {
+                        ver: "{{$_L['config']['ver']}}"
+                    },
+                    plugin: {editor:{}, upload:{}}
+                };
         </script>
         <if $_L['developer'] && $_L['developer']['fontfamily']>
-            <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}","Segoe UI","Lucida Grande",Helvetica,"PingFang SC","Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,Arial,sans-serif,"Segoe UI Emoji"}</style>
+            <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}"}</style>
         </if>
         <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.js?lcmsver={{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">layer.load(2,{shade:[1,"#fff"]})</script>
+        <script type="text/javascript">layer.load(2,{shade:[1,"#fff"]});localStorage.setItem("LCMS_user","{{$_L['LCMSADMIN']['name']}}")</script>
     </head>
     <body data-update="{{$update}}">
         <div id="LCMS">

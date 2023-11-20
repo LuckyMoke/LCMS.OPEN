@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-09-18 17:39:53
+ * @LastEditTime: 2023-11-18 18:47:02
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -88,49 +88,126 @@ class LCMS
         return $_L['LCMSADMIN']['type'] === "lcms" ? true : false;
     }
     /**
-     * @description: 系统缓存读写操作
+     * @description: 硬盘缓存读写操作
      * @param string $name
-     * @param string|array $para
+     * @param string|array $value
      * @param bool $lcms
      * @return array
      */
-    public static function cache($name, $para = [], $lcms = false)
+    public static function cache($name, $value = [], $lcms = false)
     {
         global $_L;
         $name  = substr(md5(L_NAME . $name), 8, 16);
         $lcms  = $lcms ? 0 : $_L['ROOTID'];
-        $cache = sql_get(["cache",
-            "name = :name AND lcms = :lcms", "", [
+        $cache = sql_get([
+            "table" => "cache",
+            "where" => "name = :name AND lcms = :lcms",
+            "bind"  => [
                 ":name" => $name,
                 ":lcms" => $lcms,
-            ]]);
-        if ($para) {
-            if ($para === "clear") {
-                sql_delete(["cache",
-                    "name = :name AND lcms = :lcms", [
+            ],
+        ]);
+        if ($value === "clear") {
+            sql_delete([
+                "table" => "cache",
+                "where" => "name = :name AND lcms = :lcms",
+                "bind"  => [
+                    ":name" => $name,
+                    ":lcms" => $lcms,
+                ],
+            ]);
+        } elseif ($value && is_array($value)) {
+            if ($cache) {
+                sql_update([
+                    "table" => "cache",
+                    "data"  => [
+                        "parameter" => arr2sql($value),
+                    ],
+                    "where" => "name = :name AND lcms = :lcms",
+                    "bind"  => [
                         ":name" => $name,
                         ":lcms" => $lcms,
-                    ]]);
-            } elseif (is_array($para)) {
-                if ($cache) {
-                    sql_update(["cache", [
-                        "parameter"  => arr2sql($para),
-                        "updatetime" => datenow(),
-                    ], "name = :name AND lcms = :lcms", [
-                        ":name" => $name,
-                        ":lcms" => $lcms,
-                    ]]);
-                } else {
-                    sql_insert(["cache", [
-                        "name"       => $name,
-                        "parameter"  => arr2sql($para),
-                        "updatetime" => datenow(),
-                        "lcms"       => $lcms,
-                    ]]);
-                }
+                    ],
+                ]);
+            } else {
+                sql_insert([
+                    "table" => "cache",
+                    "data"  => [
+                        "name"      => $name,
+                        "parameter" => arr2sql($value),
+                        "lcms"      => $lcms,
+                    ],
+                ]);
             }
         } else {
             return $cache ? sql2arr($cache['parameter']) : [];
+        }
+    }
+    /**
+     * @description: 内存缓存读写操作
+     * @param string $name
+     * @param string $value
+     * @param int $time
+     * @param bool $lcms
+     * @return string
+     */
+    public static function ram($name, $value = "", $time = 0, $lcms = false)
+    {
+        global $_L;
+        $name = substr(md5(L_NAME . $name), 8, 16);
+        $lcms = $lcms ? 0 : $_L['ROOTID'];
+        $time = $time > 0 ? intval($time) : 86400;
+        $ram  = sql_get([
+            "table" => "ram",
+            "where" => "name = :name AND lcms = :lcms",
+            "bind"  => [
+                ":name" => $name,
+                ":lcms" => $lcms,
+            ],
+        ]);
+        if ($value === "clear") {
+            sql_delete([
+                "table" => "ram",
+                "where" => "name = :name AND lcms = :lcms",
+                "bind"  => [
+                    ":name" => $name,
+                    ":lcms" => $lcms,
+                ],
+            ]);
+        } elseif ($value) {
+            if ($ram) {
+                sql_update([
+                    "table" => "ram",
+                    "data"  => [
+                        "value" => $value,
+                        "time"  => time() + $time,
+                    ],
+                    "where" => "name = :name AND lcms = :lcms",
+                    "bind"  => [
+                        ":name" => $name,
+                        ":lcms" => $lcms,
+                    ],
+                ]);
+            } else {
+                sql_insert([
+                    "table" => "ram",
+                    "data"  => [
+                        "name"  => $name,
+                        "value" => $value,
+                        "time"  => time() + $time,
+                        "lcms"  => $lcms,
+                    ],
+                ]);
+                sql_delete([
+                    "table" => "ram",
+                    "where" => "time < :time",
+                    "bind"  => [
+                        ":time" => time(),
+                    ],
+                ]);
+            }
+        } else {
+            return $ram && $ram['time'] > time() ? $ram['value'] : "";
         }
     }
     /**
@@ -150,29 +227,39 @@ class LCMS
             "lcms"  => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
             "unset" => $paran['unset'] ?: "",
         ];
-        $config = sql_get(["config",
-            "name = :name AND type = :type AND cate = :cate AND lcms = :lcms",
-            "", [
+        $config = sql_get([
+            "table" => "config",
+            "where" => "name = :name AND type = :type AND cate = :cate AND lcms = :lcms",
+            "bind"  => [
                 ":name" => $para['name'],
                 ":type" => $para['type'],
                 ":cate" => $para['cate'],
                 ":lcms" => $para['lcms'] ?: 0,
-            ]]);
+            ],
+        ]);
         if ($para['do'] === "save") {
             if ($config) {
-                sql_update(["config", [
-                    "parameter" => arr2sql($config['parameter'], $para['form'], $para['unset']),
-                ], "id = :id", [
-                    ":id" => $config['id'],
-                ]]);
+                sql_update([
+                    "table" => "config",
+                    "data"  => [
+                        "parameter" => arr2sql($config['parameter'], $para['form'], $para['unset']),
+                    ],
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => $config['id'],
+                    ],
+                ]);
             } else {
-                sql_insert(["config", [
-                    "name"      => $para['name'],
-                    "type"      => $para['type'],
-                    "cate"      => $para['cate'],
-                    "parameter" => arr2sql($para['form']),
-                    "lcms"      => $para['lcms'] ?: 0,
-                ]]);
+                sql_insert([
+                    "table" => "config",
+                    "data"  => [
+                        "name"      => $para['name'],
+                        "type"      => $para['type'],
+                        "cate"      => $para['cate'],
+                        "parameter" => arr2sql($para['form']),
+                        "lcms"      => $para['lcms'] ?: 0,
+                    ],
+                ]);
             }
         } else {
             return $config['parameter'] != "N;" ? sql2arr($config['parameter']) : [];
@@ -194,8 +281,10 @@ class LCMS
             "key"   => $paran['key'] ?: "parameter",
             "unset" => $paran['unset'] ?: "",
         ];
-        $data = $para['id'] ? sql_get([$para['table'],
-            "id = :id", "", [
+        $data = $para['id'] ? sql_get([
+            "table" => $para['table'],
+            "where" => "id = :id",
+            "bind"  => [
                 ":id" => $para['id'],
             ]]) : [];
         if ($para['do'] === "get") {
@@ -221,15 +310,22 @@ class LCMS
                     $form[$para['key']] = arr2sql($data[$para['key']], $parameter);
                 }
             }
-            sql_update([$para['table'],
-                $form, "id = :id", [
+            sql_update([
+                "table" => $para['table'],
+                "data"  => $form,
+                "where" => "id = :id",
+                "bind"  => [
                     ":id" => $para['id'],
-                ]]);
+                ],
+            ]);
         } else {
             if ($parameter) {
                 $form[$para['key']] = arr2sql($parameter);
             }
-            sql_insert([$para['table'], $form]);
+            sql_insert([
+                "table" => $para['table'],
+                "data"  => $form,
+            ]);
         }
     }
     /**
@@ -252,7 +348,10 @@ class LCMS
             ]) : "",
             "lcms"      => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
         ];
-        $para['type'] && sql_insert(["log", $para]);
+        $para['type'] && sql_insert([
+            "table" => "log",
+            "data"  => $para,
+        ]);
     }
     /**
      * @description: 模板标签处理
