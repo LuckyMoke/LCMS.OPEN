@@ -4,18 +4,16 @@
         <title>{{htmlspecialchars($page['title']?$page['title']:$_L['config']['web']['title'])}}</title>
         <meta name="keywords" content="{{htmlspecialchars($page['keywords']?$page['keywords']:'')}}" />
         <meta name="description" content="{{htmlspecialchars($page['description']?$page['description']:'')}}" />
-        <meta name="generator" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <meta name="renderer" content="webkit" />
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0{{is_pc()?'':', viewport-fit=cover'}}" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="generator" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <if $_L['url']['scheme']=="https://">
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
-        <meta content="yes" name="apple-mobile-web-app-capable" />
-        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-        <meta content="telephone=no" name="format-detection" />
         <link rel="icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" rel="shortcut icon" type="image/x-icon" />
         <if !$_L['ui']['nocache']>
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::cachename())}}.css?tplver={{TPL::$ver}}&lcmsver={{$_L['config']['ver']}}" />

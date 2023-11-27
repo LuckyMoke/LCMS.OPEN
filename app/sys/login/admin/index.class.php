@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-09-21 12:02:17
+ * @LastEditTime: 2023-11-26 21:26:11
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -144,9 +144,9 @@ class index extends adminbase
                 LCMS::log([
                     "user" => $admin['name'],
                     "type" => "login",
-                    "info" => "登陆失败-此账户已到期",
+                    "info" => "登陆失败-此账号已到期，请联系客服",
                 ]);
-                ajaxout(0, "此账户已到期");
+                ajaxout(0, "此账号已到期，请联系客服");
             } else {
                 SESSION::del("LOGINTOKEN");
                 if ($LF['band'] > 0) {
@@ -194,7 +194,7 @@ class index extends adminbase
                 }
             }
         } else {
-            ajaxout(0, "此账户已停用");
+            ajaxout(0, "此账号已禁用，请联系客服");
         }
     }
     /**

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2023-11-19 15:04:49
+ * @LastEditTime: 2023-11-22 11:47:06
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -92,5 +92,10 @@ class index extends adminbase
         }
         $homeurl = $homeurl ?: "{$_L['url']['admin']}index.php?n=home";
         require LCMS::template("own/index");
+    }
+    public function doheart()
+    {
+        global $_L, $LF, $LC;
+        ajaxout(1, "success");
     }
 };

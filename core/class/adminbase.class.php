@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-07 15:45:43
+ * @LastEditTime: 2023-11-26 21:27:15
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -72,6 +72,10 @@ class adminbase extends common
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
                 LCMS::X(403, "系统权限已修改，请重新登陆", $okinfourl);
+            }
+            if ($admininfo['status'] != 1) {
+                SESSION::del("LCMSADMIN");
+                LCMS::X(403, "此账号已禁用，请联系客服", $okinfourl);
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
                 $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);

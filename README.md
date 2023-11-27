@@ -28,12 +28,11 @@
 
  - 方式一： [官网下载](https://ourcms.cn/list/55-1.html)
  - 方式二： [码云下载](https://gitee.com/luckymoke/LCMS.OPEN/releases)
- - 方式三： [GitHub下载](https://github.com/LuckyMoke/LCMS.OPEN/releases)
- - 方式四： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
+ - 方式三： 在宝塔应用商店“一键部署”中搜索“盘企”安装，版本可能不是最新。
 
-#### QQ讨论群
+#### 联系我们
 
-[849966898](https://jq.qq.com/?\_wv=1027&k=5hOL21w)
+点击访问 [https://ourcms.cn/](https://ourcms.cn/) 官网咨询在线客服。
 
 #### 开发文档
 

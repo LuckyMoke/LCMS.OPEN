@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2023-09-21 12:02:34
+ * @LastEditTime: 2023-11-26 21:26:59
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -110,7 +110,7 @@ class qrcode extends adminbase
             //todo验证账号是否绑定
             if ($admin['status'] == '1') {
                 if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
-                    LCMS::X(403, "登陆失败<br/>此账号已到期");
+                    LCMS::X(403, "登陆失败<br/>此账号已到期，请联系客服");
                 } else {
                     $time = datenow();
                     sql_update(["admin", [
@@ -131,7 +131,7 @@ class qrcode extends adminbase
                     LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
                 }
             } else {
-                LCMS::X(403, "登陆失败<br/>此账号已停用");
+                LCMS::X(403, "登陆失败<br/>此账号已禁用，请联系客服");
             }
         } else {
             LCMS::X(403, "登陆失败<br/>请先注册账号绑定");
