@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2023-11-18 13:25:02
+ * @LastEditTime: 2023-11-29 18:02:48
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -34,7 +34,7 @@ class PUB
                 break;
             case 'email':
                 $text = "邮箱账号";
-                self::is_email($name) || ajaxout(0, "邮箱地址错误");
+                is_email($name) || ajaxout(0, "邮箱地址错误");
                 break;
         }
         $admin = sql_get(["admin",
@@ -60,6 +60,12 @@ class PUB
     {
         global $_L, $UCFG, $PLG;
         self::isAttack($mobile);
+        if ($UCFG['reg']['sms_black']) {
+            $REG = "/^(" . $UCFG['reg']['sms_black'] . ")\d+$/";
+            if (preg_match($REG, $mobile)) {
+                ajaxout(0, "此手机号禁止注册<br>请联系客服协助处理");
+            }
+        }
         load::sys_class("sms");
         $result = SMS::send([
             "ID"    => $UCFG['reg']['sms_tplcode'],
@@ -86,6 +92,9 @@ class PUB
     {
         global $_L, $UCFG, $PLG;
         self::isAttack($email);
+        if (preg_match("/^[a-zA-Z0-9_-]+@(yopmail.com)$/", $email)) {
+            ajaxout(0, "此邮箱禁止注册<br>请联系客服协助处理");
+        }
         load::sys_class("email");
         $result = EMAIL::send([
             "TO"    => $email,
@@ -98,23 +107,6 @@ class PUB
         } else {
             ajaxout(0, $result['msg']);
         }
-    }
-    /**
-     * @description: 判断是否为邮箱地址
-     * @param string $email
-     * @return bool
-     */
-    public static function is_email($email)
-    {
-        if (is_email($email)) {
-            $email = explode("@", $email);
-            if (!in_array($email[1], [
-                "yopmail.com",
-            ])) {
-                return true;
-            }
-        }
-        return false;
     }
     /**
      * @description: 检测是否攻击
@@ -134,7 +126,7 @@ class PUB
                 break;
             default:
                 if ($cip >= 3 || $cma >= 3) {
-                    ajaxout(0, "今日请求已达上限，请联系客服协助验证！");
+                    ajaxout(0, "今日请求已达上限<br>请联系客服协助验证");
                 }
                 break;
         }

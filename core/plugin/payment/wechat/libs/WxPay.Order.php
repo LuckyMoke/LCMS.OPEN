@@ -97,6 +97,7 @@ class WxPayOrder
             "description"  => $this->order['body'],
             "out_trade_no" => $this->order['order_no'],
             "notify_url"   => $this->cfg['notify_url'],
+            "time_expire"  => date("Y-m-d\TH:i:s\+08:00", time() + 400),
             "amount"       => [
                 "total"    => intval($this->order['pay'] * 100),
                 "currency" => "CNY",

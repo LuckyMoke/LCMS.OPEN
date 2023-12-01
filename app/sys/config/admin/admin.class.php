@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-10-12 17:24:27
+ * @LastEditTime: 2023-11-30 18:37:32
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -159,6 +159,9 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
+                if ($LC['dir'] == "admin") {
+                    ajaxout(0, "不能使用admin");
+                }
                 if (mb_strlen($LC['dir']) < 5) {
                     ajaxout(0, "后台目录最少需要5个字符");
                 }

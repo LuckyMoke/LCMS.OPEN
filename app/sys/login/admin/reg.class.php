@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2023-09-21 11:56:47
+ * @LastEditTime: 2023-11-29 17:58:38
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -143,7 +143,7 @@ class reg extends adminbase
             "lcms"    => $UCFG['reg']['lcms'],
         ];
         $number = SESSION::get("LOGINNUMBER");
-        if (PUB::is_email($number)) {
+        if (is_email($number)) {
             //如果是邮件验证
             if ($number) {
                 $admin['email'] = $number;

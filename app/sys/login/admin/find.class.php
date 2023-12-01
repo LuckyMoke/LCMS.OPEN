@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2023-09-21 12:02:23
+ * @LastEditTime: 2023-11-29 17:58:44
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -145,7 +145,7 @@ class find extends adminbase
             header("HTTP/1.1 404 Not Found");
             exit;
         }
-        if (!PUB::is_email($number) && !is_phone($number)) {
+        if (!is_email($number) && !is_phone($number)) {
             okinfo("{$_L['url']['own']}rootid={$RID}&n=login&c=find");
         }
         $admin = sql_get(["admin",

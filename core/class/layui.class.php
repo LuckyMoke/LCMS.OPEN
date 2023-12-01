@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-11-01 10:39:21
+ * @LastEditTime: 2023-11-28 21:23:58
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -63,7 +63,7 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['precision']   = $para['maxlength'] ? " lay-precision='{$para['precision']}'" : "";
+        $para['precision']   = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";
@@ -87,7 +87,7 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['precision']   = $para['maxlength'] ? " lay-precision='{$para['precision']}'" : "";
+        $para['precision']   = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";

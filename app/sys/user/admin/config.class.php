@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2023-09-21 13:20:11
+ * @LastEditTime: 2023-11-29 11:50:35
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -136,6 +136,12 @@ class config extends adminbase
                             "value"  => $config['reg']['sms_signname'],
                             "cname"  => "hidden tab_mobile",
                             "tips"   => "请先到全局设置中配置短信插件",
+                        ],
+                        ["layui" => "tags", "title" => "禁止号段",
+                            "name"   => "LC[reg][sms_black]",
+                            "value"  => $config['reg']['sms_black'],
+                            "cname"  => "hidden tab_mobile",
+                            "tips"   => "禁止注册的手机号段",
                         ],
                         ["layui" => "selectN", "title" => "默认权限",
                             "name"   => "admin_level",

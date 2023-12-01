@@ -34,7 +34,7 @@
                         <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
                             <div class="li" data-name="{{$name}}" data-ver="{{$app['ver']}}" data-description="{{$app['description']}}">
                                 <a href="{{$app['url']}}">
-                                    <img src="{{$app['icon']}}" title="{{$app['title']}}" />
+                                    <img class="lazyload" data-src="{{$app['icon']}}" />
                                     <h3 title="{{$app['title']}}">
                                         {{$app['title']}}
                                     </h3>

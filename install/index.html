@@ -6,10 +6,10 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-    <link rel="stylesheet" href="/public/static/layui/css/layui.css?20230905" />
-    <link rel="stylesheet" href="/public/ui/admin/static/style.css?20230905" />
-    <link rel="stylesheet" href="static/style.css?20230905" />
-    <script type="text/javascript" src="/public/static/jquery.min.js?20230905"></script>
+    <link rel="stylesheet" href="/public/static/layui/css/layui.css?20231129" />
+    <link rel="stylesheet" href="/public/ui/admin/static/style.css?20231129" />
+    <link rel="stylesheet" href="static/style.css?20231129" />
+    <script type="text/javascript" src="/public/static/jquery.min.js?20231129"></script>
     <script type="text/javascript">
         var LCMS = {
             url: {
@@ -17,7 +17,7 @@
                 static: window.location.origin + '/public/static/'
             },
             config: {
-                ver: '20230104'
+                ver: '20231129'
             },
             plugin: {
                 upload: {}
@@ -34,9 +34,7 @@
             </div>
             <div class="step-tab">步骤三<p>数据库配置</p>
             </div>
-            <div class="step-tab">步骤四<p>超级管理员</p>
-            </div>
-            <div class="step-tab">步骤五<p>安装完成</p>
+            <div class="step-tab">步骤四<p>安装完成</p>
             </div>
         </div>
         <div class="step-body">
@@ -117,50 +115,24 @@
             <div class="step-btn">下一步</div>
         </div>
         <div class="step-body">
-            <div class="step-alert">请一定要牢记超级管理员账号密码</div>
-            <div class="step-nr">
-                <form class="layui-form layui-form-pane" lay-filter="admin-set">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">账号</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="admin[name]" placeholder="请输入超级管理员账号" class="layui-input" lay-verify="required" />
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">密码</label>
-                        <div class="layui-input-block">
-                            <input type="password" name="admin[pass]" placeholder="请输入超级管理员密码" class="layui-input" lay-verify="required" />
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">重复密码</label>
-                        <div class="layui-input-block">
-                            <input type="password" name="admin[repass]" placeholder="请再次输入超级管理员密码" class="layui-input" lay-verify="required" />
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="step-btn">下一步</div>
-        </div>
-        <div class="step-body">
             <div class="step-nr">
                 <br /><br /><br /><br />
                 <div style="text-align:center">
                     <i class="layui-icon layui-icon-ok-circle" style="font-size:100px;color:#67C23A;"> </i>
                     <h2>安装成功</h2>
                     <br />
-                    <p>恭喜您，安装成功！访问后台开始你的探索吧！</p>
+                    <p>请务必保存好以下信息！</p>
+                    <pre class="layui-code code-admin"></pre>
                 </div>
                 <br /><br /><br />
             </div>
-            <a class="step-btn" href="/admin/">访问后台</a>
         </div>
         <div class="copyright">
             ©2023 运城市盘石网络科技有限公司 版权所有
         </div>
     </div>
-    <script type="text/javascript" src="/public/static/layui/layui.js?20230905"></script>
-    <script type="text/javascript" src="/public/ui/admin/static/ljs.js?20230905"></script>
-    <script type="text/javascript" src="static/fun.js?20230905"></script>
+    <script type="text/javascript" src="/public/static/layui/layui.js?20231129"></script>
+    <script type="text/javascript" src="/public/ui/web/static/ljs.js?20231129"></script>
+    <script type="text/javascript" src="static/fun.js?20231129"></script>
 </body>
 </html>

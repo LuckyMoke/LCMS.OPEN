@@ -23,14 +23,8 @@ require_once PATH_CORE_FUNC . "common.func.php";
 require_once PATH_CORE_FUNC . 'file.func.php';
 require_once PATH_CORE_CLASS . "lcms.class.php";
 require_once PATH_CORE_CLASS . "sqlpdo.class.php";
-is_file(PATH_CORE . "install.lock") && ajaxout(404, [
-    "title" => "安装失败",
-    "msg"   => "此框架已经安装过了，如需重新安装，请手动删除 /core/install.lock 文件",
-]);
-PHP_SELF != "/install/install.php" && ajaxout(404, [
-    "title" => "安装失败",
-    "msg"   => "本程序无法在二级目录下安装",
-]);
+is_file(PATH_CORE . "install.lock") && ajaxout(404, "此框架已经安装过了，如需重新安装，请手动删除 /core/install.lock 文件");
+PHP_SELF != "/install/install.php" && ajaxout(404, "本程序无法在二级目录下安装");
 switch ($_GET['action']) {
     case 'readme':
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));
@@ -143,22 +137,28 @@ switch ($_GET['action']) {
         }
         file_put_contents(PATH_CORE . "config.php", $cfg);
         if (file_get_contents(PATH_CORE . "config.php")) {
-            ajaxout(1, "success");
+            //生成超级管理员用户
+            $salt  = randstr(8);
+            $admin = [
+                "name" => randstr(8),
+                "pass" => randstr(12),
+                "dir"  => randstr(8),
+            ];
+            $mydb->query("INSERT INTO `{$db['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`salt`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','" . md5($admin['pass'] . $salt) . "','{$salt}',NULL,NULL,'lcms','0.00','" . date("Y-m-d H:i:s") . "',NULL,NULL,'',NULL,0);");
+            $paras = $mydb->query("SELECT * FROM `{$db['pre']}config` WHERE name = 'config' AND type = 'sys' AND cate = 'admin'");
+            if ($paras) {
+                copydir(PATH_WEB . "install/data/admin", PATH_WEB . $admin['dir']);
+                $paras        = sql2arr($paras['parameter']);
+                $paras['dir'] = $admin['dir'];
+                $paras        = arr2sql($paras);
+                $mydb->query("UPDATE `{$db['pre']}config` SET parameter = '{$paras}' WHERE name = 'config' AND type = 'sys' AND cate = 'admin'");
+            }
+            deldir(PATH_WEB . "install");
+            deldir(PATH_WEB . "admin");
+            file_put_contents(PATH_CORE . "install.lock", date("Y-m-d H:i:s"));
+            ajaxout(1, "success", "", $admin);
         } else {
             ajaxout(0, "无法生成配置文件，请检查目录权限，或着关闭防篡改之类的插件！");
         }
-        break;
-    case 'admin':
-        require_once PATH_CORE . "config.php";
-        $admin = $_POST['admin'];
-        if ($admin['pass'] != $admin['repass']) {
-            ajaxout(0, "两次密码不一样");
-        }
-        $salt = randstr(16);
-        $mydb = new SQLPDO("mysql:host={$_L['mysql']['host']};dbname={$_L['mysql']['name']};port={$_L['mysql']['port']};charset=utf8mb4", $_L['mysql']['user'], $_L['mysql']['pass']);
-        $mydb->query("INSERT INTO `{$_L['mysql']['pre']}admin`(`id`,`tuid`,`status`,`name`,`title`,`pass`,`salt`,`email`,`mobile`,`type`,`balance`,`addtime`,`lasttime`,`logintime`,`parameter`,`ip`,`lcms`) values (1,0,1,'{$admin['name']}','超级管理员','" . md5($admin['pass'] . $salt) . "','{$salt}',NULL,NULL,'lcms','0.00','" . date("Y-m-d H:i:s") . "',NULL,NULL,'',NULL,0);");
-        file_put_contents(PATH_CORE . "install.lock", date("Y-m-d H:i:s"));
-        $mydb->error() || deldir(PATH_WEB . "install");
-        ajaxout(1, "success");
         break;
 }
