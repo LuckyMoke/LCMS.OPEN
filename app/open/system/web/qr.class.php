@@ -13,7 +13,7 @@ class qr extends webbase
     {
         global $_L;
         if ($_L['form']['text']) {
-            phpqrcode::png($_L['form']['text'], false, "L", 10, 1);
+            phpqrcode::png($_L['form']['text'], false, "H", 10, 1);
         } else {
             header("HTTP/1.1 404 Not Found");
             exit;

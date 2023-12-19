@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2023-11-29 18:02:48
+ * @LastEditTime: 2023-12-12 00:02:30
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -109,24 +109,47 @@ class PUB
         }
     }
     /**
-     * @description: 检测是否攻击
+     * @description: 注册攻击检测
+     * @param string $ma
+     * @param string $type
      * @return {*}
      */
     public static function isAttack($ma, $type = "")
     {
         global $_L;
-        $cip = LCMS::ram("login" . CLIENT_IP);
-        $cma = LCMS::ram("login{$ma}");
+        $cip = LCMS::ram("login_reg" . CLIENT_IP);
+        $cma = LCMS::ram("login_reg{$ma}");
         switch ($type) {
             case 'update':
                 $cip = $cip ? $cip * 1 + 1 : 1;
-                LCMS::ram("login" . CLIENT_IP, $cip, 43200);
+                LCMS::ram("login_reg" . CLIENT_IP, $cip, 43200);
                 $cma = $cma ? $cma * 1 + 1 : 1;
-                LCMS::ram("login{$ma}", $cma, 43200);
+                LCMS::ram("login_reg{$ma}", $cma, 43200);
                 break;
             default:
                 if ($cip >= 3 || $cma >= 3) {
                     ajaxout(0, "今日请求已达上限<br>请联系客服协助验证");
+                }
+                break;
+        }
+    }
+    /**
+     * @description: 登录攻击检测
+     * @param string $type
+     * @return {*}
+     */
+    public static function isLoginAttack($type = "")
+    {
+        global $_L;
+        $cip = LCMS::ram("login_check" . CLIENT_IP);
+        switch ($type) {
+            case 'update':
+                $cip = $cip ? $cip * 1 + 1 : 1;
+                LCMS::ram("login_check" . CLIENT_IP, $cip, 600);
+                break;
+            default:
+                if ($cip >= 5) {
+                    ajaxout(0, "请10分钟后再试<br>如遇问题可联系客服处理");
                 }
                 break;
         }

@@ -2,12 +2,13 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-11-26 21:26:11
+ * @LastEditTime: 2023-12-12 00:00:44
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
+load::own_class('pub');
 class index extends adminbase
 {
     public function __construct()
@@ -104,6 +105,7 @@ class index extends adminbase
     public function docheck()
     {
         global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        PUB::isLoginAttack();
         $LF['code'] || ajaxout(0, "验证码错误");
         //图形验证码验证
         load::sys_class("captcha");
@@ -136,6 +138,7 @@ class index extends adminbase
                 "type" => "login",
                 "info" => "登陆失败-账号或密码错误",
             ]);
+            PUB::isLoginAttack("update");
             ajaxout(0, "账号或密码错误");
         }
         //如果有用户数据
@@ -146,6 +149,7 @@ class index extends adminbase
                     "type" => "login",
                     "info" => "登陆失败-此账号已到期，请联系客服",
                 ]);
+                PUB::isLoginAttack("update");
                 ajaxout(0, "此账号已到期，请联系客服");
             } else {
                 SESSION::del("LOGINTOKEN");

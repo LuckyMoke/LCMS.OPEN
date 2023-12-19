@@ -154,6 +154,9 @@ class LCMS
     public static function ram($name, $value = "", $time = 0, $lcms = false)
     {
         global $_L;
+        if (!$_L['table']['ram']) {
+            return "";
+        }
         $name = substr(md5(L_NAME . $name), 8, 16);
         $lcms = $lcms ? 0 : $_L['ROOTID'];
         $time = $time > 0 ? intval($time) : 86400;

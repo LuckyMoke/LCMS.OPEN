@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2023-11-27 17:02:25
+ * @LastEditTime: 2023-12-14 11:13:52
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -59,7 +59,7 @@ class common
         parse_str(substr(strstr(HTTP_QUERY, '?'), 1), $QUERY);
         $forms = array_merge($QUERY ?: [], $_COOKIE ?: [], $_POST ?: [], $_GET ?: []);
         foreach ($forms as $key => $val) {
-            if ($val) {
+            if ($val !== "") {
                 if (in_array($key, [
                     "t", "n", "c", "a", "action", "cls", "do",
                 ])) {

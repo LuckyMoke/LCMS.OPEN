@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-11-23 11:19:04
+ * @LastEditTime: 2023-12-12 18:37:09
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -420,7 +420,7 @@ function sqlinsert($string)
  * @param array|string $string
  * @return array|string
  */
-function filterform($string)
+function filterform($string = null)
 {
     if (is_array($string)) {
         foreach ($string as $key => $val) {

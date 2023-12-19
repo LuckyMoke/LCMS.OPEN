@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-04-03 02:20:33
+ * @LastEditTime: 2023-12-08 16:02:09
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -110,7 +110,7 @@ class LEVEL
             $cache = [];
             foreach ($applist['open'] as $name => $app) {
                 if ($app['menu']) {
-                    $icon = "{$_L['url']['static']}images/appicon.gif?v20220816";
+                    $icon = "{$_L['url']['static']}images/appicon.gif?ver={$_L['config']['ver']}";
                     if (is_file(PATH_APP . "open/{$name}/icon.gif")) {
                         $icon = "{$_L['url']['app']}open/{$name}/icon.gif?ver={$app['info']['ver']}";
                     }
