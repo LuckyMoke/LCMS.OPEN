@@ -27,7 +27,7 @@ CREATE TABLE `[_PRE]admin` (
   KEY `email` (`email`) USING BTREE,
   KEY `mobile` (`mobile`) USING BTREE,
   KEY `tuid` (`tuid`) USING BTREE
-) DEFAULT CHARSET=utf8mb4 COMMENT='管理员信息';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员信息';
 
 CREATE TABLE `[_PRE]admin_band` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -36,7 +36,7 @@ CREATE TABLE `[_PRE]admin_band` (
   PRIMARY KEY (`id`),
   KEY `aid` (`aid`),
   KEY `openid` (`openid`)
-) DEFAULT CHARSET=utf8mb4 COMMENT='管理员绑定';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员绑定';
 
 CREATE TABLE `[_PRE]admin_level` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -45,7 +45,7 @@ CREATE TABLE `[_PRE]admin_level` (
   `parameter` longtext COMMENT '权限内容',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`)
-) DEFAULT CHARSET=utf8mb4 COMMENT='管理员权限';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员权限';
 
 CREATE TABLE `[_PRE]cache` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -55,7 +55,7 @@ CREATE TABLE `[_PRE]cache` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `lcms` (`lcms`) USING BTREE,
   KEY `name` (`name`) USING BTREE
-) DEFAULT CHARSET=utf8mb4 COMMENT='硬盘缓存';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='硬盘缓存';
 
 CREATE TABLE `[_PRE]config` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -69,7 +69,7 @@ CREATE TABLE `[_PRE]config` (
   KEY `type` (`type`),
   KEY `lcms` (`lcms`),
   KEY `cate` (`cate`) USING BTREE
-) DEFAULT CHARSET=utf8mb4 COMMENT='全局设置数据';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='全局设置数据';
 
 insert  into `[_PRE]config`(`id`,`name`,`type`,`cate`,`parameter`,`lcms`) values (1, 'menu', 'sys', 'admin', 'a:1:{s:4:\"open\";a:0:\"\"}', 0),(2,'config','sys','admin','a:9:{s:10:\"oauth_code\";s:0:\"\";s:5:\"title\";s:21:\"盘企PHP开发框架\";s:9:\"developer\";s:39:\"运城市盘石网络科技有限公司\";s:5:\"https\";s:1:\"0\";s:7:\"gonggao\";s:1508:\"PHRhYmxlPjx0Ym9keT48dHIgY2xhc3M9ImZpcnN0Um93Ij48dGQgd2lkdGg9IjYwIiB2YWxpZ249InRvcCI+PGJyLz48L3RkPjx0ZCB3aWR0aD0iIiB2YWxpZ249Im1pZGRsZSIgc3R5bGU9IndvcmQtYnJlYWs6IGJyZWFrLWFsbDsiIGFsaWduPSJjZW50ZXIiPjxzdHJvbmc+55uY5LyBUEhQ5byA5Y+R5qGG5p62PC9zdHJvbmc+PC90ZD48dGQgd2lkdGg9IiIgdmFsaWduPSJtaWRkbGUiIHN0eWxlPSJ3b3JkLWJyZWFrOiBicmVhay1hbGw7IiBhbGlnbj0iY2VudGVyIj48c3Ryb25nPuebmOS8gUNNUy1TYWFT5bu656uZ57O757ufPC9zdHJvbmc+PC90ZD48L3RyPjx0cj48dGQgd2lkdGg9IiIgdmFsaWduPSJtaWRkbGUiIHN0eWxlPSJ3b3JkLWJyZWFrOiBicmVhay1hbGw7IiBhbGlnbj0icmlnaHQiPuWumOaWuee9keermTwvdGQ+PHRkIHdpZHRoPSIiIHZhbGlnbj0ibWlkZGxlIiBzdHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyIgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iaHR0cHM6Ly93d3cucGFuc2hpMTguY29tLyIgdGFyZ2V0PSJfYmxhbmsiPmh0dHBzOi8vd3d3LnBhbnNoaTE4LmNvbS88L2E+PC90ZD48dGQgd2lkdGg9IiIgdmFsaWduPSJtaWRkbGUiIHN0eWxlPSJ3b3JkLWJyZWFrOiBicmVhay1hbGw7IiBhbGlnbj0iY2VudGVyIj48YSBocmVmPSJodHRwczovL291cmNtcy5jbi8iIHRhcmdldD0iX2JsYW5rIj5odHRwczovL291cmNtcy5jbi88L2E+PC90ZD48L3RyPjx0cj48dGQgd2lkdGg9IiIgdmFsaWduPSJtaWRkbGUiIHN0eWxlPSJ3b3JkLWJyZWFrOiBicmVhay1hbGw7IiBhbGlnbj0icmlnaHQiPuW8gOWPkeaWh+ahozwvdGQ+PHRkIHdpZHRoPSIiIHZhbGlnbj0ibWlkZGxlIiBzdHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyIgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iaHR0cHM6Ly9kb2Mub3VyY21zLmNuIiB0YXJnZXQ9Il9ibGFuayI+54K55Ye75p+l55yLPC9hPjwvdGQ+PHRkIHdpZHRoPSIiIHZhbGlnbj0ibWlkZGxlIiBzdHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyIgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iaHR0cHM6Ly9kb2Mub3VyY21zLmNuIiB0YXJnZXQ9Il9ibGFuayI+54K55Ye75p+l55yLPC9hPjwvdGQ+PC90cj48L3Rib2R5PjwvdGFibGU+\";s:3:\"dir\";s:5:\"admin\";s:11:\"sessiontime\";s:0:\"\";s:7:\"attsize\";s:3:\"300\";s:8:\"mimelist\";s:45:\"jpg|jpeg|png|gif|bmp|webp|ico|mp3|mp4|txt|csv\";}',0),(3,'config','sys','plugin','a:2:{s:5:\"email\";a:6:\"\";s:3:\"sms\";a:0:\"\"}',0),(4,'config','sys','web','a:7:{s:5:\"https\";s:1:\"1\";s:6:\"domain\";s:0:\"\";s:4:\"logo\";s:0:\"\";s:11:\"domain_must\";s:1:\"0\";s:5:\"title\";s:21:\"盘企PHP开发框架\";s:13:\"image_default\";s:0:\"\";s:6:\"tongji\";s:0:\"\";}',0);
 
@@ -89,7 +89,7 @@ CREATE TABLE `[_PRE]log` (
   KEY `ip` (`ip`) USING BTREE,
   KEY `addtime` (`addtime`) USING BTREE,
   KEY `lcms` (`lcms`) USING BTREE
-) DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `[_PRE]upload` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -108,7 +108,7 @@ CREATE TABLE `[_PRE]upload` (
   KEY `name` (`name`),
   KEY `lcms` (`lcms`),
   KEY `uid` (`uid`)
-) CHARACTER SET = utf8mb4 COMMENT='上传文件表';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='上传文件表';
 
 CREATE TABLE `[_PRE]order` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -127,7 +127,7 @@ CREATE TABLE `[_PRE]order` (
   UNIQUE KEY `order_no` (`order_no`),
   KEY `payment` (`payment`),
   KEY `status` (`status`)
-) DEFAULT CHARSET=utf8mb4 COMMENT='全局订单数据';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='全局订单数据';
 
 CREATE TABLE `[_PRE]ram` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -152,7 +152,7 @@ CREATE TABLE `[_PRE]shortlink` (
   UNIQUE KEY `code` (`code`),
   UNIQUE KEY `hval` (`hval`),
   KEY `lasttime` (`lasttime`)
-) DEFAULT CHARSET=utf8mb4 COMMENT='短链数据';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='短链数据';
 
 CREATE TABLE `[_PRE]payment` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -163,4 +163,4 @@ CREATE TABLE `[_PRE]payment` (
   PRIMARY KEY (`id`),
   KEY `payment` (`payment`),
   KEY `lcms` (`lcms`)
-) DEFAULT CHARSET=utf8mb4 COMMENT='全局支付方式';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='全局支付方式';

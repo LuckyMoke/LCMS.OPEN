@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-10-17 18:05:45
+ * @LastEditTime: 2024-01-09 10:55:46
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -42,7 +42,7 @@ class repair extends adminbase
                         continue;
                     }
                     $engine  = $val['data']['LCMSDATAOTHER']['engine'];
-                    $engine  = $engine ? " ENGINE={$engine}" : "";
+                    $engine  = $engine ? " ENGINE={$engine}" : " ENGINE=MyISAM";
                     $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . "){$engine} DEFAULT CHARSET=utf8mb4;";
                     break;
                 default:
