@@ -18,10 +18,10 @@
             });
             return;
         }
-        if (form['LC[pass]'] && form['LC[pass]'].length < 6) {
+        if (form['LC[pass]'] && form['LC[pass]'].length < 10) {
             LCMS.util.notify({
                 type: "error",
-                content: "密码长度不能少于6位"
+                content: "密码长度不能少于10位"
             });
             return;
         }

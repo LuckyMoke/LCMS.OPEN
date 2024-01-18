@@ -11,14 +11,13 @@
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}saveindex" method="post" target="_self">
     <div class="layui-row app-local">
         <loop $open,$app,$name>
-            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2">
+            <div class="li-box">
                 <input type="hidden" name="LC[{{$name}}]" value="1" />
                 <div class="li" data-name="{{$name}}" data-ver="{{$app['ver']}}" data-description="{{$app['description']}}">
                     <a href="{{$app['url']}}">
                         <img src="{{$app['icon']}}" />
-                        <h3 title="{{$app['title']}}">
-                            {{$app['title']}}
-                        </h3>
+                        <h3 title="{{$app['title']}}">{{$app['title']}}</h3>
+                        <span>{{$app['description']}}</span>
                     </a>
                     <if LCMS::SUPER()>
                         <div class="layui-btn-group">
@@ -28,6 +27,11 @@
                             <a class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&apptitle=%E4%BF%AE%E5%A4%8D&appname={{$name}}">修复</a>
                             <a class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$name}}">卸载</a>
                         </div>
+                        <else>
+                            <div class="layui-btn-group">
+                                <a class="layui-btn layui-btn-xs layui-btn-primary" href="{{$app['url']}}">打开</a>
+                            </div>
+                        </else>
                     </if>
                     <if $isindex>
                         <div class="move">

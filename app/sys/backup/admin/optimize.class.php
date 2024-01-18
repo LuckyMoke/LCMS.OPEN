@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2023-06-23 15:23:59
+ * @LastEditTime: 2024-01-12 22:37:15
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -71,6 +71,34 @@ class optimize extends adminbase
                     "Msg_text" => "OK",
                 ]]);
                 break;
+            case 'alter':
+                set_time_limit(300);
+                $LC || ajaxout(0, "请选择需要操作的表");
+                $names = [];
+                foreach ($LC as $table) {
+                    if ($table['Engine'] == "MyISAM") {
+                        sql_query("ALTER TABLE `{$table['Name']}` ENGINE=InnoDB");
+                    } elseif ($table['Engine'] == "InnoDB") {
+                        sql_query("ALTER TABLE `{$table['Name']}` ENGINE=MyISAM");
+                    }
+                    $result[] = array_merge([
+                        "Table"    => $table['Name'],
+                        "Msg_type" => sql_error() ? "error" : "status",
+                        "Msg_text" => sql_error() ?: "OK",
+                    ]);
+                    $names[] = $table['Name'];
+                }
+                $names = implode("、", $names);
+                $names && LCMS::log([
+                    "type" => "system",
+                    "info" => "数据优化-{$LF['action']}-{$names}",
+                ]);
+                ajaxout(2, "数据表操作完成", "showResult", $result ?: [[
+                    "Table"    => "操作完成",
+                    "Msg_type" => "status",
+                    "Msg_text" => "OK",
+                ]]);
+                break;
             default:
                 $table = [
                     "url"     => "index&action=list",
@@ -101,24 +129,31 @@ class optimize extends adminbase
                             "minWidth" => 150],
                     ],
                     "toolbar" => [
-                        ["title"  => "分析表", "event" => "ajax",
+                        ["title"  => "分析", "event" => "ajax",
                             "url"     => "index&action=analyze",
+                            "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认分析数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "优化表", "event" => "ajax",
+                        ["title"  => "优化", "event" => "ajax",
                             "url"     => "index&action=optimize",
+                            "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认优化数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "检查表", "event" => "ajax",
+                        ["title"  => "检查", "event" => "ajax",
                             "url"     => "index&action=check",
+                            "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认检查数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "修复表", "event" => "ajax",
+                        ["title"  => "转换", "event" => "ajax",
+                            "url"     => "index&action=alter",
+                            "timeout" => 0,
+                            "tips"    => "确认转换数据表？表类型会在InnoDB与MyISAM之间互相转换！<span style=\"color:red\">请先做好数据库备份！！！</span>"],
+                        ["title"  => "修复", "event" => "ajax",
                             "url"     => "index&action=repair",
                             "color"   => "warm",
                             "timeout" => 0,
                             "tips"    => "确认修复数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "清空表", "event" => "ajax",
+                        ["title"  => "清空", "event" => "ajax",
                             "url"     => "index&action=truncate",
                             "color"   => "danger",
                             "timeout" => 0,

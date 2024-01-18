@@ -9,8 +9,9 @@
     </ul>
 </div>
 <div class="lcms-form-video">
-    <div class="layui-form layui-form-pane">
+    <form class="layui-form layui-form-pane" data-onsubmit="dosubmit">
         <ui form($form) />
-    </div>
+    </form>
 </div>
+<script type="text/javascript">var dosubmit=function(form){window.parent.postMessage({type:"lcms-editor-addvideo",field:form},"*");LCMS.util.iframe({do:"close"})}</script>
 <template "ui/foot" />

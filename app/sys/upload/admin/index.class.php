@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-11-09 11:14:20
+ * @LastEditTime: 2024-01-16 10:58:36
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -247,9 +247,10 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         $this->sql($LF['type'], $LF['datey'], [
-            "filename" => $LF['name'],
-            "size"     => $LF['size'],
-            "src"      => "../" . $LF['file'],
+            "oname" => $LF['oname'] ?: null,
+            "name"  => $LF['name'],
+            "size"  => $LF['size'],
+            "src"   => "../" . $LF['file'],
         ]);
         ajaxout(1, "上传成功", "", [
             "dir"      => "../" . str_replace($LF['name'], "", $LF['file']),
@@ -332,7 +333,8 @@ class index extends adminbase
                     sql_insert(["upload", [
                         "type"    => $type,
                         "datey"   => $datey,
-                        "name"    => $data['filename'],
+                        "oname"   => $data['oname'],
+                        "name"    => $data['name'],
                         "size"    => $data['size'],
                         "src"     => $data['src'],
                         "addtime" => datenow(),

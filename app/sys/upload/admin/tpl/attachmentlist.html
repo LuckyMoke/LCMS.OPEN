@@ -1,0 +1,21 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<ui table($table) />
+<script type="text/javascript">
+    var player = function () { };
+</script>
+<if $LF['layerid']>
+    <script type="text/javascript">
+        player = function () {
+            parent.parent.layer.restore(`{{$LF['layerid']}}`);
+        };
+    </script>
+</if>
+<script type="text/javascript">
+    var choice = function (obj) {
+        $("#{{$LF['id']}}", parent.document).parent("div").siblings("input").val(obj.data.src);
+        LCMS.util.iframe({do: "close"});
+        player();
+    }
+</script>
+<template "ui/foot" />

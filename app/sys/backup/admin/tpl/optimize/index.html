@@ -1,32 +1,4 @@
 <template "ui/head" />
 <ui table($table) />
-<script type="text/javascript">
-    var showResult = function (tables) {
-        let html = "";
-        for (let i = 0; i < tables.length; i++) {
-            switch (tables[i].Msg_type) {
-                case 'warning':
-                    $msgtype = "<span style='color:#E6A23C'>警告：" + tables[i].Msg_text + "</span>";
-                    break;
-                case 'error':
-                    $msgtype = "<span style='color:#F56C6C'>错误：" + tables[i].Msg_text + "</span>";
-                    break;
-                default:
-                    $msgtype = "<span style='color:#67C23A'>" + tables[i].Msg_type + "：" + tables[i].Msg_text + "</span>";
-                    break;
-            }
-            html += "<p>" + tables[i].Table + " -> " + $msgtype + "</p>";
-        }
-        layer.open({
-            title: "操作记录",
-            type: 1,
-            area: "auto",
-            maxHeight: 500,
-            content: "<div class='optimizeLog' style='font-family:Monaco,Menlo,Consolas;margin:10px 20px;line-height:24px;font-size:14px;min-width:300px'>" + html + "</div>",
-            end: function () {
-                window.location.reload();
-            }
-        });
-    }
-</script>
+<script type="text/javascript">var showResult=function(tables){let html="";for(let i=0;i<tables.length;i++){switch(tables[i].Msg_type){case'warning':$msgtype="<span style='color:#E6A23C'>警告："+tables[i].Msg_text+"</span>";break;case'error':$msgtype="<span style='color:#F56C6C'>错误："+tables[i].Msg_text+"</span>";break;default:$msgtype="<span style='color:#67C23A'>"+tables[i].Msg_type+"："+tables[i].Msg_text+"</span>";break}html+="<p>"+tables[i].Table+" -> "+$msgtype+"</p>"}layer.open({title:"操作记录",type:1,area:"auto",maxHeight:500,content:"<div class='optimizeLog' style='font-family:Monaco,Menlo,Consolas;margin:10px 20px;line-height:24px;font-size:14px;min-width:300px'>"+html+"</div>",end:function(){window.location.reload()}})}</script>
 <template "ui/foot" />

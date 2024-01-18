@@ -15,4 +15,5 @@
     <img src="{{$_L['url']['own_path']}}admin/tpl/static/video.jpg" width="100%" height="auto"/>
     <br/>
 </div>
+<script type="text/javascript">$(".lcms-form-ivideo button").on("click",function(){var video=$(".lcms-form-ivideo textarea").val();if(video){window.parent.postMessage({type:"lcms-editor-addivideo",content:video},"*");LCMS.util.iframe({do:"close"})}else{LCMS.util.notify({type:"error",content:"请填入视频链接"})}});</script>
 <template "ui/foot" />

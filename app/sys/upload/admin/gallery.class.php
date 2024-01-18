@@ -2,12 +2,13 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-30 19:45:50
+ * @LastEditTime: 2024-01-17 13:39:33
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
+LOAD::sys_class('adminbase');
+LOAD::sys_class("table");
 class gallery extends adminbase
 {
     public function __construct()
@@ -17,21 +18,37 @@ class gallery extends adminbase
         $LF = $_L['form'];
         $LC = $LF['LC'];
     }
+    /**
+     * @description: 图库列表
+     * @return {*}
+     */
     public function doindex()
     {
         global $_L, $LF, $LC;
         require LCMS::template("own/gallery");
     }
+    /**
+     * @description: 上传图片
+     * @return {*}
+     */
     public function doupload()
     {
         global $_L, $LF, $LC;
         require LCMS::template("own/upload");
     }
+    /**
+     * @description: 第三方视频
+     * @return {*}
+     */
     public function doivideo()
     {
         global $_L, $LF, $LC;
         require LCMS::template("own/ivideo");
     }
+    /**
+     * @description: 上传视频
+     * @return {*}
+     */
     public function dovideo()
     {
         global $_L, $LF, $LC;
@@ -67,6 +84,10 @@ class gallery extends adminbase
         ];
         require LCMS::template("own/video");
     }
+    /**
+     * @description: 上传附件
+     * @return {*}
+     */
     public function doattachment()
     {
         global $_L, $LF, $LC;
@@ -80,6 +101,70 @@ class gallery extends adminbase
             ["layui" => "btn", "title" => "插入附件"],
         ];
         require LCMS::template("own/attachment");
+    }
+    /**
+     * @description: 附件列表选择
+     * @return {*}
+     */
+    public function doattachmentlist()
+    {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'list':
+                $doamin = $_L['plugin']['oss']['type'] != "local" ? $_L['plugin']['oss']['domain'] : $_L['url']['site'];
+                $where  = $LC['name'] ? " AND name LIKE :name" : "";
+                $data   = TABLE::set("upload", "lcms = :lcms AND type = 'file' AND local = 0 AND uid = :uid{$where}", "id DESC", [
+                    ":lcms" => $_L['ROOTID'],
+                    ":uid"  => $_L['LCMSADMIN']['id'],
+                    ":name" => "%{$LC['name']}%",
+                ]);
+                foreach ($data as $index => $val) {
+                    $src          = str_replace("../", "", $val['src']);
+                    $data[$index] = array_merge($val, [
+                        "size"  => getunit($val['size']),
+                        "oname" => $val['oname'] ?: '<span style="color:#cccccc">无</span>',
+                        "href"  => [
+                            "type"   => "link",
+                            "title"  => "查看",
+                            "url"    => ($val['local'] == 1 ? $_L['url']['site'] : $doamin) . $src,
+                            "target" => "_blank",
+                        ],
+                    ]);
+                }
+                TABLE::out($data);
+                break;
+            default:
+                $table = [
+                    "url"    => "attachmentlist&action=list",
+                    "cols"   => [
+                        ["title" => "存储文件名", "field" => "name",
+                            "width"  => 180],
+                        ["title"   => "原始文件名", "field" => "oname",
+                            "minWidth" => 200],
+                        ["title" => "文件大小", "field" => "size",
+                            "width"  => 100,
+                            "align"  => "center"],
+                        ["title" => "上传时间", "field" => "addtime",
+                            "width"  => 170,
+                            "align"  => "center"],
+                        ["title" => "查看", "field" => "href",
+                            "align"  => "center",
+                            "width"  => 70],
+                        ["title"  => "操作", "field" => "do",
+                            "width"   => 70,
+                            "align"   => "center",
+                            "fixed"   => "right",
+                            "toolbar" => [
+                                ["title" => "选择", "event" => "choice"],
+                            ]],
+                    ],
+                    "search" => [
+                        ["title" => "存储文件名", "name" => "name"],
+                    ],
+                ];
+                require LCMS::template("own/attachmentlist");
+                break;
+        }
     }
     /**
      * @description: 图片目录列表

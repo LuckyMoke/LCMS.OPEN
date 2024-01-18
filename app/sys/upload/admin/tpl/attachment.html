@@ -1,10 +1,9 @@
 <template "ui/head" />
-<template "ui/css" />
 <template "ui/iframe" />
-<style>.layui-form-label{display:none}#LCONTENT .lcms-form-upload-file input{width:100%}#LCONTENT .lcms-form-upload-file-btn{position:absolute;top:0;right:0}#LCONTENT .lcms-form-upload-file input[type=text]{width:calc(100% - 65px)}.layui-form-item:last-child{margin-bottom:0}</style>
 <div class="lcms-form-attachment">
-    <div class="layui-form layui-form-pane">
+    <form class="layui-form layui-form-pane" data-onsubmit="dosubmit">
         <ui form($form) />
-    </div>
+    </form>
 </div>
+<script type="text/javascript">var dosubmit=function(form){window.parent.postMessage({type:"lcms-editor-addattachment",title:form.title,file:form.file},"*");LCMS.util.iframe({do:"close"})}</script>
 <template "ui/foot" />

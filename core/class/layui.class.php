@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-11-28 21:23:58
+ * @LastEditTime: 2024-01-17 13:29:18
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -335,13 +335,19 @@ class LAY
         $para          = self::start($para);
         $para['local'] = $para['local'] ? true : false;
         $para['mime']  = $para['mime'] ? $para['mime'] : "file";
-        $html          = "
+        if ($para['local'] || $para['select'] === false) {
+            $para['select'] = "";
+        } else {
+            $para['select'] = "<a class='layui-btn layui-btn-warm layui-btn-xl _box' onclick='javascript:;'>文库</a>";
+        }
+        $html = "
             <div class='layui-form-item lcms-form-upload-file{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     <div class='layui-btn-group lcms-form-upload-file-btn'>
                         <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        {$para['select']}
                     </div>
                     <div class='lcms-word-aux'>{$para['tips']}</div>
                     <div class='clear'></div>

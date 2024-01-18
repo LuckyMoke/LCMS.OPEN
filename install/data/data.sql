@@ -95,6 +95,7 @@ CREATE TABLE `[_PRE]upload` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(10) DEFAULT NULL COMMENT '上传类型',
   `datey` varchar(6) DEFAULT NULL COMMENT '上传目录',
+  `oname` varchar(64) DEFAULT NULL COMMENT '文件原始名',
   `name` varchar(32) DEFAULT NULL COMMENT '文件名称',
   `size` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '文件大小',
   `src` varchar(255) DEFAULT NULL COMMENT '文件链接',

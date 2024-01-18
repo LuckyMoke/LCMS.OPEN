@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-09-28 14:32:25
- * @LastEditTime: 2023-10-30 19:31:23
+ * @LastEditTime: 2024-01-17 11:00:58
  * @Description: 文件管理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -35,9 +35,10 @@ class files extends adminbase
                 foreach ($data as $index => $val) {
                     $src          = str_replace("../", "", $val['src']);
                     $data[$index] = array_merge($val, [
-                        "type" => $val['type'] === "file" ? "文件" : "图片",
-                        "size" => $this->getsize($val['size']),
-                        "href" => [
+                        "type"  => $val['type'] === "file" ? "文件" : "图片",
+                        "size"  => getunit($val['size']),
+                        "oname" => $val['oname'] ?: '<span style="color:#cccccc">无</span>',
+                        "href"  => [
                             "type"   => "link",
                             "title"  => "/{$src}",
                             "url"    => ($val['local'] == 1 ? $_L['url']['site'] : $doamin) . $src,
@@ -64,8 +65,12 @@ class files extends adminbase
                         ["title" => "文件大小", "field" => "size",
                             "width"  => 100,
                             "align"  => "center"],
-                        ["title"   => "文件链接", "field" => "href",
-                            "minWidth" => 300],
+                        ["title" => "存储文件名", "field" => "name",
+                            "width"  => 180],
+                        ["title" => "文件链接", "field" => "href",
+                            "width"  => 370],
+                        ["title"   => "原始文件名", "field" => "oname",
+                            "minWidth" => 200],
                         ["title" => "上传时间", "field" => "addtime",
                             "width"  => 170,
                             "align"  => "center"],
@@ -95,46 +100,11 @@ class files extends adminbase
                                 ["title" => "图片",
                                     "value"  => "image"],
                             ]],
-                        ["title" => "文件名称", "name" => "name"],
+                        ["title" => "存储文件名", "name" => "name"],
                     ],
                 ];
                 require LCMS::template("own/files/index");
                 break;
         }
-    }
-    /**
-     * @description: 字节大小转换
-     * @param int $size
-     * @return string
-     */
-    public function getsize($size = 0)
-    {
-        if ($size >= 1073741824) {
-            $unit = "GB";
-        } elseif ($size >= 1048576) {
-            $unit = "MB";
-        } elseif ($size >= 1024) {
-            $unit = "KB";
-        } else {
-            $unit = "B";
-        }
-        switch ($unit) {
-            case 'GB':
-                $size = $size / 1073741824;
-                $size = sprintf("%.2f", $size);
-                break;
-            case 'MB':
-                $size = $size / 1048576;
-                $size = sprintf("%.2f", $size);
-                break;
-            case 'B':
-                $size = sprintf("%.2f", $size);
-                break;
-            default:
-                $size = $size / 1024;
-                $size = sprintf("%.2f", $size);
-                break;
-        }
-        return $size . $unit;
     }
 }

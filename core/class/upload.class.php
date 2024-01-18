@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-11-19 14:12:07
+ * @LastEditTime: 2024-01-16 10:56:50
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,6 +10,7 @@ defined('IN_LCMS') or exit('No permission');
 class UPLOAD
 {
     private static $CFG;
+    private static $ONAME;
     private static $MIME;
     private static $SIZE;
     /**
@@ -56,9 +57,10 @@ class UPLOAD
                     }
                     return self::out(0, "上传失败:{$file['error']}");
                 }
-                self::$MIME = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
-                self::$SIZE = $file['size'];
-                $file       = self::img2watermark(file_get_contents($file['tmp_name']));
+                self::$MIME  = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
+                self::$SIZE  = $file['size'];
+                self::$ONAME = $file['name'];
+                $file        = self::img2watermark(file_get_contents($file['tmp_name']));
             }
             if (in_array(self::$MIME, [
                 "jpeg", "jpg", "png", "bmp", "webp", "wpng", "wbmp",
@@ -367,6 +369,7 @@ class UPLOAD
                 sql_insert(["upload", [
                     "type"    => $info[2],
                     "datey"   => $info[3],
+                    "oname"   => self::$ONAME ?: NULL,
                     "name"    => $data['filename'],
                     "size"    => $data['size'],
                     "src"     => $data['src'],
