@@ -4,14 +4,14 @@
         <meta charset="UTF-8">
             <title>图片对话框</title>
             <script type="text/javascript" src="../internal.js"></script>
-            <link rel="stylesheet" href="image.css?v=20220905" type="text/css" />
+            <link rel="stylesheet" href="image.css?v=20240118" type="text/css" />
     </head>
     <body>
         <div class="wrapper">
-            <div id="tabhead" class="tabhead" style="display:none">
-                <span class="tab" data-content-id="remote"><var id="lang_tab_remote"></var></span>
-                <span class="tab focus" data-content-id="upload"><var id="lang_tab_upload"></var></span>
-                <span class="tab" data-content-id="search"><var id="lang_tab_search"></var></span>
+            <div id="tabhead" class="tabhead">
+                <span class="tab focus" data-content-id="remote">信息</span>
+                <span class="tab" data-content-id="upload">上传图片</span>
+                <span class="tab" data-content-id="gallery">图库</span>
             </div>
             <div class="alignBar">
                 <label class="algnLabel"><var id="lang_input_align"></var></label>
@@ -24,7 +24,7 @@
                 <input id="align" name="align" type="hidden" value="none" />
             </div>
             <div id="tabbody" class="tabbody">
-                <div id="remote" class="panel">
+                <div id="remote" class="panel focus">
                     <div class="top">
                         <div class="row">
                             <label for="url"><var id="lang_input_url"></var></label>
@@ -54,7 +54,7 @@
                         <div id="preview"></div>
                     </div>
                 </div>
-                <div id="upload" class="panel focus">
+                <div id="upload" class="panel">
                     <div id="queueList" class="queueList">
                         <div class="statusBar element-invisible">
                             <div class="progress">
@@ -80,7 +80,7 @@
                 <div id="online" class="panel">
                     <div id="imageList"><var id="lang_imgLoading"></var></div>
                 </div>
-                <div id="search" class="panel">
+                <div id="gallery" class="panel">
                     <div class="searchBar">
                         <input id="searchTxt" class="searchTxt text" type="text" />
                         <select id="searchType" class="searchType">
@@ -103,6 +103,6 @@
 
             </div>
         </div>
-        <script type="text/javascript" src="image.js?v=20220904"></script>
+        <script type="text/javascript" src="image.js?v=20240118"></script>
     </body>
     </html>

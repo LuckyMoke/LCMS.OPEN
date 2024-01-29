@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-11-05 21:16:42
+ * @LastEditTime: 2024-01-29 11:38:32
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -54,6 +54,7 @@ class admin extends adminbase
                 $adminlist = [];
                 $levellist = [];
                 foreach ($data as $index => $val) {
+                    unset($val['pass'], $val['salt']);
                     if (!$adminlist[$val['lcms']]) {
                         $adminlist[$val['lcms']] = sql_get(["admin", "id = '{$val['lcms']}'"]);
                     }
@@ -189,10 +190,10 @@ class admin extends adminbase
                 ];
                 $form['level'] = [
                     ["layui" => "title", "title" => "权限设置"],
+                    ["layui" => "des", "title" => "如“用户权限”中无可选择项，请先到“权限管理”里新建权限。"],
                     ["layui"  => "selectN", "title" => "用户权限",
                         "name"    => "admin_level",
                         "value"   => "{$admin['lcms']}/{$admin['type']}",
-                        "tips"    => "先新建用户权限再选择",
                         "default" => "请选择|请选择",
                         "verify"  => "required",
                         "url"     => "select&action=admin-level"],
@@ -379,6 +380,7 @@ class admin extends adminbase
                     ":name"     => "%{$LC['name']}%",
                 ]);
                 foreach ($data as $index => $val) {
+                    unset($val['pass'], $val['salt']);
                     $data[$index] = array_merge($val, [
                         "headimg" => [
                             "type"   => "image",
