@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-01-29 11:38:32
+ * @LastEditTime: 2024-02-01 13:21:10
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -54,7 +54,7 @@ class admin extends adminbase
                 $adminlist = [];
                 $levellist = [];
                 foreach ($data as $index => $val) {
-                    unset($val['pass'], $val['salt']);
+                    $val = array_merge($val, sql2arr($val['parameter']));
                     if (!$adminlist[$val['lcms']]) {
                         $adminlist[$val['lcms']] = sql_get(["admin", "id = '{$val['lcms']}'"]);
                     }
@@ -84,7 +84,11 @@ class admin extends adminbase
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
                         "lcms"     => $val['lcms'] == 0 ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
-                        "type"     => $val['type'] === "lcms" ? "超级权限" : "{$level['name']} - [ID:{$level['id']}]",
+                        "type"     => $val['type'] === "lcms" ? "超级权限" : [
+                            "type"  => "link",
+                            "title" => $val['level'] ? "自定义权限" : "{$level['name']} - [ID:{$level['id']}]",
+                            "url"   => "javascript:setPower('{$token}')",
+                        ],
                         "status"   => [
                             "type"  => "switch",
                             "url"   => "index&action=list-save&token={$token}",
@@ -95,8 +99,9 @@ class admin extends adminbase
                         "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                         "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
                         "storage"  => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
-                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
+                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')"><i class="layui-icon layui-icon-chart"></i>' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
                     ]);
+                    unset($val['pass'], $val['salt'], $val['parameter'], $val['level']);
                 }
                 TABLE::out($data);
                 break;
@@ -190,7 +195,7 @@ class admin extends adminbase
                 ];
                 $form['level'] = [
                     ["layui" => "title", "title" => "权限设置"],
-                    ["layui" => "des", "title" => "如“用户权限”中无可选择项，请先到“权限管理”里新建权限。"],
+                    ["layui" => "des", "title" => "如“用户权限”中无可选择项，请先到“权限管理”里新建权限。<br>如需单独给某个用户自定义权限，可在添加用户后，点击用户列表中对应权限列，进行权限自定义。"],
                     ["layui"  => "selectN", "title" => "用户权限",
                         "name"    => "admin_level",
                         "value"   => "{$admin['lcms']}/{$admin['type']}",
@@ -239,6 +244,49 @@ class admin extends adminbase
                 $LC['storage'] = intval(abs($LC['storage']) * 1024);
                 PUB::userSave(["id", "storage"]);
                 break;
+            case 'power-edit':
+                $admin = LCMS::form([
+                    "do"    => "get",
+                    "table" => "admin",
+                    "id"    => PUB::token2id($LF['token']),
+                ]);
+                list($level, $hide) = PUB::getLevelList($admin['level'] ?: LCMS::form([
+                    "do"    => "get",
+                    "table" => "admin_level",
+                    "id"    => $admin['type'],
+                ]));
+                $form = [
+                    ["layui"  => "selectN", "title" => "用户权限",
+                        "name"    => "admin_level",
+                        "value"   => "{$admin['lcms']}/{$admin['type']}",
+                        "default" => "请选择|请选择",
+                        "verify"  => "required",
+                        "url"     => "select&action=admin-level"],
+                    ["layui" => "radio", "title" => "另自定义",
+                        "name"   => "custom",
+                        "value"  => $admin['level'] ? 1 : 0,
+                        "radio"  => [
+                            ["title" => "使用上方所选权限", "value" => 0, "tab" => "custom0"],
+                            ["title" => "我要完全自定义权限", "value" => 1, "tab" => "custom1"],
+                        ]],
+                    ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！", "cname" => "hidden custom1"],
+                ];
+                $isadmin = true;
+                require LCMS::template("own/power/edit");
+                break;
+            case 'power-save':
+                if ($LF['custom'] > 0) {
+                    unset($LC['uid']);
+                    $LC = [
+                        "level" => $LC,
+                    ];
+                } else {
+                    $LC = [
+                        "level" => [],
+                    ];
+                }
+                PUB::userSave(["id", "level"]);
+                break;
             default:
                 $table = [
                     "url"     => "index&action=list",
@@ -259,7 +307,7 @@ class admin extends adminbase
                         ["title" => "手机", "field" => "mobile",
                             "width"  => 120],
                         ["title" => "用户权限", "field" => "type",
-                            "width"  => 160],
+                            "width"  => 200],
                         ["title" => "上级用户", "field" => "lcms",
                             "width"  => 160],
                         ["title" => "到期时间", "field" => "lasttime",
@@ -282,7 +330,7 @@ class admin extends adminbase
                                 ["title" => "删除", "event" => "ajax",
                                     "url"    => "index&action=del",
                                     "color"  => "danger",
-                                    "tips"   => "删除用户会导致此用户内的所有数据丢失，不使用禁用即可，真的要删除？"],
+                                    "tips"   => "删除用户会导致此用户内的所有数据丢失，一般禁用即可，真的要删除用户[{name}]？"],
                             ]],
                     ],
                     "toolbar" => [
@@ -292,7 +340,7 @@ class admin extends adminbase
                         ["title" => "批量删除", "event" => "ajax",
                             "url"    => "index&action=del",
                             "color"  => "danger",
-                            "tips"   => "删除用户会导致此用户内的所有数据丢失，不使用禁用即可，真的要删除？"],
+                            "tips"   => "删除用户会导致此用户内的所有数据丢失，一般禁用即可，真的要删除？"],
                     ],
                     "search"  => [
                         ["title" => "ID/账号/姓名/邮箱/手机", "name" => "name"],
@@ -380,7 +428,7 @@ class admin extends adminbase
                     ":name"     => "%{$LC['name']}%",
                 ]);
                 foreach ($data as $index => $val) {
-                    unset($val['pass'], $val['salt']);
+                    unset($val['pass'], $val['salt'], $val['parameter']);
                     $data[$index] = array_merge($val, [
                         "headimg" => [
                             "type"   => "image",
@@ -434,7 +482,7 @@ class admin extends adminbase
                                     "event"  => "ajax",
                                     "url"    => "god&action=login",
                                     "color"  => "default",
-                                    "tips"   => "确认登录到此用户？"],
+                                    "tips"   => "确认登录到用户[{name}]？"],
                             ]],
                     ],
                     "search" => [
@@ -489,7 +537,7 @@ class admin extends adminbase
                         if ($level["uid"] == $val['id']) {
                             $arr[$index]['children'][] = [
                                 "value" => $level['id'],
-                                "title" => $level['name'] . " - [ID" . $level['id'] . "]",
+                                "title" => $level['name'] . " - [ID:" . $level['id'] . "]",
                             ];
                         }
                     }

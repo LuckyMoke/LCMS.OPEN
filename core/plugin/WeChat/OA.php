@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-21 14:49:04
+ * @LastEditTime: 2024-01-31 12:14:36
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,7 +12,7 @@ class OA
     public function __construct($config = [])
     {
         global $_L, $LF;
-        $LF = $_L['form'];
+        $LF = $LF ?: $_L['form'];
         if (!$config) {
             $config = LCMS::config([
                 "name" => "wechat",

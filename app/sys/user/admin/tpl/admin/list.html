@@ -19,6 +19,15 @@
                 area: ["400px", "400px"]
             });
         });
+    };
+    var setPower = function (token) {
+        layer.closeAll("iframe", function () {
+            LCMS.util.iframe({
+                id: "lcms-user-power",
+                title: "用户权限",
+                url: LCMS.url.own_form + "index&action=power-edit&token=" + token
+            });
+        });
     }
 </script>
 <template "ui/foot" />

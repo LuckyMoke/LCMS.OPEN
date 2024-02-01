@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2024-01-18 10:32:07
+ * @LastEditTime: 2024-01-31 14:28:50
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -64,6 +64,7 @@ class PUB
         LCMS::form([
             "table" => "admin",
             "form"  => $LC,
+            "unset" => "level",
         ]);
         if (sql_error()) {
             ajaxout(0, "保存失败", "", sql_error());
@@ -102,5 +103,52 @@ class PUB
         $id = $token ? ssl_decode($token, $_L['LCMSADMIN']['salt']) : "";
         $id = intval($id);
         return $id > 0 ? $id : "";
+    }
+    /**
+     * @description: 获取权限选择列表
+     * @param array $level
+     * @return {*}
+     */
+    public static function getLevelList($level)
+    {
+        global $_L;
+        $level['sys'] && ksort($level['sys']);
+        $level['open'] && ksort($level['open']);
+        $appall = LEVEL::applist();
+        foreach ($appall as $type => $val) {
+            foreach ($val as $name => $info) {
+                if (!empty($info['class'])) {
+                    $level[$type][$name]['title'] = $info['info']['title'];
+                    foreach ($info['class'] as $class => $val) {
+                        if (!empty($val['level'])) {
+                            $level[$type][$name]['class'][$class]['title'] = $val['title'];
+                            foreach ($val['level'] as $key => $val) {
+                                if ($info['power'][$class][$key] != "no") {
+                                    $level[$type][$name]['class'][$class]['select'][] = [
+                                        "value" => $key,
+                                        "title" => $val['title'],
+                                    ];
+                                } else {
+                                    $hide[$type][$name][$class][$key] = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        foreach ($level as $type => $list) {
+            foreach ($list as $name => $li) {
+                foreach ($li['class'] as $class => $val) {
+                    if (empty($val['select'])) {
+                        unset($level[$type][$name]['class'][$class]);
+                        if (empty($level[$type][$name]['class'])) {
+                            unset($level[$type][$name]);
+                        }
+                    }
+                }
+            }
+        }
+        return [$level ?: [], $hide ? htmlspecialchars(json_encode($hide)) : ""];
     }
 }

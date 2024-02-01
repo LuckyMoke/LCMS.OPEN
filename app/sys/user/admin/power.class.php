@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2023-06-25 12:42:00
+ * @LastEditTime: 2024-01-31 13:53:21
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -65,48 +65,11 @@ class power extends adminbase
                 }
                 break;
             case 'edit':
-                $level = $LF['id'] ? LCMS::form([
+                list($level, $hide) = PUB::getLevelList(LCMS::form([
                     "do"    => "get",
                     "table" => "admin_level",
                     "id"    => $LF['id'],
-                ]) : [];
-                $level['sys'] && ksort($level['sys']);
-                $level['open'] && ksort($level['open']);
-                $appall = LEVEL::applist();
-                foreach ($appall as $type => $val) {
-                    foreach ($val as $name => $info) {
-                        if (!empty($info['class'])) {
-                            $level[$type][$name]['title'] = $info['info']['title'];
-                            foreach ($info['class'] as $class => $val) {
-                                if (!empty($val['level'])) {
-                                    $level[$type][$name]['class'][$class]['title'] = $val['title'];
-                                    foreach ($val['level'] as $key => $val) {
-                                        if ($info['power'][$class][$key] != "no") {
-                                            $level[$type][$name]['class'][$class]['select'][] = [
-                                                "value" => $key,
-                                                "title" => $val['title'],
-                                            ];
-                                        } else {
-                                            $hide[$type][$name][$class][$key] = 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach ($level as $type => $list) {
-                    foreach ($list as $name => $li) {
-                        foreach ($li['class'] as $class => $val) {
-                            if (empty($val['select'])) {
-                                unset($level[$type][$name]['class'][$class]);
-                                if (empty($level[$type][$name]['class'])) {
-                                    unset($level[$type][$name]);
-                                }
-                            }
-                        }
-                    }
-                }
+                ]));
                 $form = [
                     ["layui"      => "input", "title" => "权限名",
                         "name"        => "LC[name]",
@@ -125,7 +88,6 @@ class power extends adminbase
                     ],
                     ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！"],
                 ];
-                $hide = $hide ? htmlspecialchars(json_encode($hide)) : "";
                 require LCMS::template("own/power/edit");
                 break;
             case 'save':
@@ -151,6 +113,28 @@ class power extends adminbase
                     ajaxout(1, "保存成功", "close");
                 }
                 break;
+            case 'copy':
+                $where = LCMS::SUPER() ? "" : " AND uid = :uid";
+                $level = sql_get([
+                    "table" => "admin_level",
+                    "where" => "id = :id{$where}",
+                    "bind"  => [
+                        ":id"  => $LC['id'],
+                        ":uid" => $_L['LCMSADMIN']['id'],
+                    ],
+                ]);
+                if ($level) {
+                    unset($level['id']);
+                    sql_insert([
+                        "table" => "admin_level",
+                        "data"  => array_merge($level, [
+                            "name" => "{$level['name']}-副本",
+                        ]),
+                    ]);
+                    ajaxout(1, "复制成功", "reload");
+                }
+                ajaxout(0, "复制失败");
+                break;
             default:
                 $table = [
                     "url"     => "index&action=list",
@@ -163,12 +147,16 @@ class power extends adminbase
                         ["title" => "添加人", "field" => "uid",
                             "width"  => 300],
                         ["title"   => "操作", "field" => "do",
-                            "minWidth" => 90,
+                            "minWidth" => 130,
                             "fixed"    => "right",
                             "toolbar"  => [
                                 ["title" => "编辑", "event" => "iframe",
                                     "url"    => "index&action=edit&token={token}",
                                     "color"  => "default"],
+                                ["title" => "复制", "event" => "ajax",
+                                    "url"    => "index&action=copy",
+                                    "color"  => "warm",
+                                    "tips"   => "确认复制此权限？"],
                                 ["title" => "删除", "event" => "ajax",
                                     "url"    => "index&action=del",
                                     "color"  => "danger",

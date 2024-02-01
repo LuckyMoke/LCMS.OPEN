@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-11-26 21:27:15
+ * @LastEditTime: 2024-01-31 14:45:14
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -78,11 +78,21 @@ class adminbase extends common
                 LCMS::X(403, "此账号已禁用，请联系客服", $okinfourl);
             }
             if ($_L['LCMSADMIN']['type'] != "lcms") {
-                $level                    = sql_get(["admin_level", "id = '{$_L['LCMSADMIN']['type']}'"]);
-                $_L['LCMSADMIN']['level'] = sql2arr($level['parameter']);
+                $level = sql2arr($_L['LCMSADMIN']['parameter'])['level'];
+                if (!$level) {
+                    $level = sql_get([
+                        "table" => "admin_level",
+                        "where" => "id = {$_L['LCMSADMIN']['type']}",
+                    ]);
+                    $level = sql2arr($level['parameter']);
+                }
+                $_L['LCMSADMIN']['level'] = $level;
             }
             if ($_L['LCMSADMIN']['tuid']) {
-                $_L['LCMSADMIN']['lcms'] = sql_get(["admin", "id = '{$_L['LCMSADMIN']['tuid']}'"])['lcms'];
+                $_L['LCMSADMIN']['lcms'] = sql_get([
+                    "table" => "admin",
+                    "where" => "id = {$_L['LCMSADMIN']['tuid']}",
+                ])['lcms'];
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
             $_L['ROOTID'] = LCMS::SUPER() ? 0 : $_L['ROOTID'];

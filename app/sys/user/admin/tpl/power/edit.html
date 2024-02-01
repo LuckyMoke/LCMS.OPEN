@@ -1,53 +1,28 @@
 <template "ui/head" />
 <template "ui/iframe" />
 <template "ui/css" />
-<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action={{$isadmin?'power-save':'save'}}" method="post" target="_self">
     <input type="hidden" name="token" value="{{$LF['token']}}" />
     <input type="hidden" name="LC[uid]" value="{{$level['uid']?$level['uid']:$_L['LCMSADMIN']['id']}}" />
     <input type="hidden" name="level" value="{{$hide}}" />
     <ui form($form) />
-    <div class="layui-collapse">
-        <div class="layui-colla-item">
-            <h2 class="layui-colla-title">系统权限</h2>
-            <div class="layui-colla-content layui-show">
-                <loop $level['sys'],$val,$name>
-                    <if $val['class']>
-                        <div class="lcms-admin-level-box">
-                            <div class="lcms-admin-level-title">
-                                {{$val['title']}}
-                            </div>
-                            <loop $val['class'],$val,$class>
-                                <if $val['select']>
-                                    <div class="lcms-admin-level-check lcms-form-checkbox">
-                                        <p>{{$val['title']}}</p>
-                                        <loop $val['select'],$check>
-                                            <input type="checkbox" name="LC[sys][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['sys'][$name][$class][$check['value']]=="1"?"checked":""}}>
-                                        </loop>
-                                    </div>
-                                </if>
-                            </loop>
-                        </div>
-                    </if>
-                </loop>
-            </div>
-        </div>
-    </div>
-    <br />
-    <if $level['open']>
+    <div class="{{$isadmin?'hidden custom1':''}}">
         <div class="layui-collapse">
             <div class="layui-colla-item">
-                <h2 class="layui-colla-title">应用权限</h2>
+                <h2 class="layui-colla-title">系统权限</h2>
                 <div class="layui-colla-content layui-show">
-                    <loop $level['open'],$val,$name>
+                    <loop $level['sys'],$val,$name>
                         <if $val['class']>
                             <div class="lcms-admin-level-box">
-                                <div class="lcms-admin-level-title">{{$val['title']}}</div>
+                                <div class="lcms-admin-level-title">
+                                    {{$val['title']}}
+                                </div>
                                 <loop $val['class'],$val,$class>
                                     <if $val['select']>
                                         <div class="lcms-admin-level-check lcms-form-checkbox">
                                             <p>{{$val['title']}}</p>
                                             <loop $val['select'],$check>
-                                                <input type="checkbox" name="LC[open][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['open'][$name][$class][$check['value']]==1?"checked":""}}>
+                                                <input type="checkbox" name="LC[sys][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['sys'][$name][$class][$check['value']]=="1"?"checked":""}}>
                                             </loop>
                                         </div>
                                     </if>
@@ -59,7 +34,34 @@
             </div>
         </div>
         <br />
-    </if>
+        <if $level['open']>
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">应用权限</h2>
+                    <div class="layui-colla-content layui-show">
+                        <loop $level['open'],$val,$name>
+                            <if $val['class']>
+                                <div class="lcms-admin-level-box">
+                                    <div class="lcms-admin-level-title">{{$val['title']}}</div>
+                                    <loop $val['class'],$val,$class>
+                                        <if $val['select']>
+                                            <div class="lcms-admin-level-check lcms-form-checkbox">
+                                                <p>{{$val['title']}}</p>
+                                                <loop $val['select'],$check>
+                                                    <input type="checkbox" name="LC[open][{{$name}}][{{$class}}][{{$check['value']}}]" title="{{$check['title']}}" lay-skin="primary" {{$level['open'][$name][$class][$check['value']]==1?"checked":""}}>
+                                                </loop>
+                                            </div>
+                                        </if>
+                                    </loop>
+                                </div>
+                            </if>
+                        </loop>
+                    </div>
+                </div>
+            </div>
+            <br />
+        </if>
+    </div>
     <div style="margin-bottom:50px;"></div>
     <php>
         LAY::btn([
