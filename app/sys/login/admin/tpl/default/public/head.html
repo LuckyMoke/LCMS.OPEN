@@ -25,6 +25,11 @@
             <div class="login-left" {{$_L['config']['admin']['login_background']?'style="background-image:url('.$_L['config']['admin']['login_background'].');background-position:left center"':'id="lizitexiao"'}}></div>
             <div class="login-right">
                 <div class="login-form">
+                    <if $_L['config']['admin']['login_logo']>
+                        <div class="login-logo">
+                            <img src="{{$_L['config']['admin']['login_logo']}}" />
+                        </div>
+                    </if>
                     <div class="login-tab login-tab{{count($page['tab'])}}">
                         <loop $page['tab'],$tab,$index>
                             <a href="{{$tab['href']?:'javascript:;'}}" name="{{$tab['name']}}" class="{{$index=='0'?'active':''}}">{{$tab['title']}}</a>

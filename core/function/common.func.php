@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-12-12 18:37:09
+ * @LastEditTime: 2024-02-14 15:39:00
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -577,7 +577,7 @@ function realhost($host = "")
 function ssl_encode($string, $key = "LCMS")
 {
 
-    $encrypt = openssl_encrypt($string, 'AES-128-ECB', $key, OPENSSL_RAW_DATA);
+    $encrypt = openssl_encrypt($string, "AES-128-ECB", $key, OPENSSL_RAW_DATA);
     $encrypt = strtolower(bin2hex($encrypt));
     return $encrypt;
 }
@@ -589,7 +589,7 @@ function ssl_encode($string, $key = "LCMS")
  */
 function ssl_decode($string, $key = "LCMS")
 {
-    $decrypted = openssl_decrypt(hex2bin($string), 'AES-128-ECB', $key, OPENSSL_RAW_DATA);
+    $decrypted = openssl_decrypt(hex2bin($string), "AES-128-ECB", $key, OPENSSL_RAW_DATA);
     return $decrypted;
 }
 /**

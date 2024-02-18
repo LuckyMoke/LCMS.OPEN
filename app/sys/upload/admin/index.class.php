@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-01-16 10:58:36
+ * @LastEditTime: 2024-02-13 12:48:34
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -81,6 +81,8 @@ class index extends adminbase
                     $OSS = new BaiduOSS($_L['plugin']['oss']['baidu']);
                     break;
             }
+        } else {
+            ajaxout(0, "无可删除文件");
         }
         if ($OSS) {
             $OSS->delete($files);

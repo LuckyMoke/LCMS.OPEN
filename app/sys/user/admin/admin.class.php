@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-02-01 13:21:10
+ * @LastEditTime: 2024-02-13 18:18:26
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -47,7 +47,7 @@ class admin extends adminbase
                         ":name" => "%{$LC['name']}%",
                         ":lcms" => $_L['LCMSADMIN']['id'],
                     ]);
-                    if (!$where) {
+                    if (!$where && $LF['page'] == 1) {
                         $data = array_merge([$_L['LCMSADMIN']], $data ?: []);
                     }
                 }

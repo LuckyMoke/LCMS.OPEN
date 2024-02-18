@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-11-30 18:37:32
+ * @LastEditTime: 2024-02-16 18:51:32
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -68,6 +68,11 @@ class admin extends adminbase
                         "name"   => "LC[developer]",
                         "value"  => $config['developer'],
                         "verify" => "required"],
+                    ["layui" => "upload", "title" => "登录LOGO",
+                        "name"   => "LC[login_logo]",
+                        "value"  => $config['login_logo'],
+                        "local"  => true,
+                        "tips"   => "推荐尺寸600*120"],
                     ["layui" => "upload", "title" => "登录背景",
                         "name"   => "LC[login_background]",
                         "value"  => $config['login_background'],
@@ -94,8 +99,11 @@ class admin extends adminbase
                 } else {
                     $LC['https'] = "";
                 }
-                if ($LC['domain_api']) {
-                    $LC['domain_api'] = realhost($LC['domain_api']);
+                $domain = parse_url($LC['domain_api']);
+                if ($domain['host']) {
+                    $LC['domain_api'] = ($domain['scheme'] ?: "http") . "://" . realhost($domain['host']) . "/";
+                } else {
+                    $LC['domain_api'] = "http://{$LC['domain']}/";
                 }
                 LCMS::config([
                     "do"   => "save",
@@ -159,15 +167,15 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
-                if ($LC['dir'] == "admin") {
-                    ajaxout(0, "不能使用admin");
+                if (strtolower($LC['dir']) == "admin") {
+                    ajaxout(0, "后台目录不能使用admin");
                 }
                 if (mb_strlen($LC['dir']) < 5) {
                     ajaxout(0, "后台目录最少需要5个字符");
                 }
                 if ($LC['dir'] != $_L['config']['admin']['dir']) {
                     if (!getdirpower(PATH_WEB)) {
-                        ajaxout(1, "根目录没有写权限", "reload");
+                        ajaxout(0, "根目录没有写权限");
                     } else {
                         $change = true;
                     }

@@ -145,7 +145,7 @@
         <script type="text/javascript">function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&alert("请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。");</script>
         <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript">$(window).on('load',function(){setTimeout(()=>{layer.closeAll("loading")},200)})</script>
-        <if $_L['config']['admin']['development'] != 1 && $_L['config']['admin']['dir']=="admin">
+        <if $_L['config']['admin']['development'] != 1 && strtolower($_L['config']['admin']['dir'])=="admin">
             <script type="text/javascript">let href="?P3Q9c3lzJm49Y29uZmlnJmM9YWRtaW4mYT1zYWZl";if(window.location.search!=href)layer.confirm("检测到您的后台目录为默认的admin，为了后台安全，立即修改以提高安全性！<br><span style='color:red'>不修改100%会被黑客攻击！</span>",{title:"重要提示",area:"300px",btn:"立即修改",closeBtn:0},function(){window.location.href=href});</script>
         </if>
     </body>
