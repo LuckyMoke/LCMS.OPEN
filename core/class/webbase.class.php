@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-07 15:46:48
+ * @LastEditTime: 2024-02-27 22:19:32
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -39,7 +39,7 @@ class webbase extends common
         }
         // 当前域名数据
         $domain    = $domain ?: (HTTP_HOST ?: $_L['config']['web']['domain']);
-        $scheme    = $scheme ?: ($_L['config']['web']['https'] == "1" ? "https://" : "http://");
+        $scheme    = $scheme ?: (get_scheme() ? "https://" : "http://");
         $url_site  = "{$scheme}{$domain}/";
         $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}";

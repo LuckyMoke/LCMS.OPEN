@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-01-12 21:42:05
+ * @LastEditTime: 2024-02-29 11:36:25
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -137,7 +137,7 @@ class TABLE
                                 $options .= "<option value='{$option['value']}'" . ($val['value'] == $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
                             }
                         }
-                        $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix">
+                        $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
                         <i class="layui-icon layui-icon-more-vertical"></i></div><select name="LC[' . $val['name'] . ']" lay-verify><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
                         break;
                     case 'year':
@@ -145,16 +145,16 @@ class TABLE
                     case 'date':
                     case 'time':
                     case 'datetime':
-                        $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date"><div class="layui-input-prefix">
+                        $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date" title="' . $val['title'] . '"><div class="layui-input-prefix">
                         <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" readonly autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix"><i class="layui-icon layui-icon-down"></i></div></div>';
                         break;
                     default:
-                        $html .= '<div class="layui-input-inline layui-input-wrap"><div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-search"></i></div><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input" lay-affix="clear"></div>';
+                        $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-search"></i></div><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input"></div>';
                         break;
                 }
             }
-            return '<script type="text/html" class="lcms-table-toolbar-search-tpl"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
+            return '<script type="text/html" class="lcms-table-toolbar-search-tpl"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH" title="搜索"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
         }
     }
     /**

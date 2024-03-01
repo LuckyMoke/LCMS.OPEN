@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-01-31 14:45:14
+ * @LastEditTime: 2024-02-27 22:15:55
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -31,7 +31,7 @@ class adminbase extends common
                 $scheme = "https://";
                 break;
             default:
-                $scheme = $_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === 'on' || HTTP_PORT == 443 ? "https://" : "http://";
+                $scheme = get_scheme() ? "https://" : "http://";
                 break;
         }
         $url_site  = $scheme . HTTP_HOST . "/";
