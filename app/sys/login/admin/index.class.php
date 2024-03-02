@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2023-12-12 00:00:44
+ * @LastEditTime: 2024-03-01 14:28:56
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -113,18 +113,17 @@ class index extends adminbase
         //解密数据
         $token = SESSION::get("LOGINTOKEN");
         if ($token['expires_in'] > time()) {
-            $token = $token['token'];
+            $token = md5($token['token']);
         } else {
             ajaxout(0, "登录超时/请重试", "reload");
         }
-        $iv = md5($token);
         $token || ajaxout(0, "账号或密码错误");
-        $LF['name'] = openssl_decrypt($LF['name'], "AES-256-CBC", $token, 0, $iv);
+        $LF['name'] = openssl_decrypt($LF['name'], "AES-256-CBC", $token, 0, $token);
         $LF['name'] || ajaxout(0, "签名错误", "reload");
-        $LF['name'] = substr($LF['name'], 4);
-        $LF['pass'] = openssl_decrypt($LF['pass'], "AES-256-CBC", $token, 0, $iv);
+        $LF['name'] = substr($LF['name'], 8);
+        $LF['pass'] = openssl_decrypt($LF['pass'], "AES-256-CBC", $token, 0, $token);
         $LF['pass'] || ajaxout(0, "签名错误", "reload");
-        $LF['pass'] = substr($LF['pass'], 4);
+        $LF['pass'] = substr($LF['pass'], 8);
         //获取用户数据
         $admin = sql_get(["admin",
             "name = :name OR email = :name OR mobile = :name",
