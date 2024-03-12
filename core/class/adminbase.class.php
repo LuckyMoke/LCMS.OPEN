@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-01 14:03:58
+ * @LastEditTime: 2024-03-10 23:47:37
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -35,7 +35,7 @@ class adminbase extends common
                 break;
         }
         $url_site  = $scheme . HTTP_HOST . "/";
-        $url_now   = $scheme . HTTP_HOST . HTTP_QUERY;
+        $url_now   = $scheme . HTTP_HOST . HTTP_URI;
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
         $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url'] = [
@@ -97,10 +97,10 @@ class adminbase extends common
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
             $_L['ROOTID'] = LCMS::SUPER() ? 0 : $_L['ROOTID'];
         } else {
-            if (PHP_SELF == HTTP_QUERY . "index.php") {
+            if (PHP_SELF == HTTP_URI . "index.php") {
                 okinfo($loginurl);
             }
-            if (!in_string(HTTP_QUERY, "n=login")) {
+            if (!in_string(HTTP_URI, "n=login")) {
                 LCMS::X(403, "请重新登录", $okinfourl);
             }
         }

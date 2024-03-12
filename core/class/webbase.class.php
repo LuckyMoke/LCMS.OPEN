@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-01 14:04:06
+ * @LastEditTime: 2024-03-10 23:47:27
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -46,7 +46,7 @@ class webbase extends common
         $_L['url'] = [
             "scheme"   => $scheme,
             "site"     => $url_site,
-            "now"      => "{$scheme}{$domain}" . HTTP_QUERY,
+            "now"      => "{$scheme}{$domain}" . HTTP_URI,
             "public"   => "{$url_site}public/",
             "static"   => "{$url_site}public/static/",
             "upload"   => "{$url_site}upload/",

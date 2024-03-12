@@ -16,7 +16,7 @@ define("PHP_SELF", htmlentities($_SERVER['PHP_SELF']) == "" ? $_SERVER['SCRIPT_N
 define("SYS_TIME", time());
 define("HTTP_PORT", $_SERVER['SERVER_PORT']);
 define("HTTP_TOP", $_SERVER['HTTP_REFERER']);
-define("HTTP_QUERY", $_SERVER['REQUEST_URI']);
+define("HTTP_URI", $_SERVER['REQUEST_URI']);
 define("SERVER_IP", $_SERVER['SERVER_ADDR']);
 define("PAGE_START", microtime(true));
 require_once PATH_CORE_FUNC . "common.func.php";

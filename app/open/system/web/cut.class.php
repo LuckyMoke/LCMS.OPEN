@@ -20,7 +20,9 @@ class cut extends webbase
         }
         list($x, $y, $path) = explode(",", $LF['para']);
         $path               = path_absolute("../{$path}");
-        $path               = is_file($path) ? $path : $_L['config']['web']['image_default'];
+        if (!is_file($path)) {
+            $path = $_L['config']['web']['image_default'];
+        }
         if (!is_file($path)) {
             header("HTTP/1.1 404 Not Found");
             LCMS::X(404, "未找到图片");
