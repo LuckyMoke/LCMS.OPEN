@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-03-01 20:31:48
+ * @LastEditTime: 2024-03-23 14:43:59
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -19,7 +19,7 @@ function dump($vars, $type = false)
     if ($type) {
         var_dump($vars);
     } else {
-        echo htmlspecialchars(print_r($vars, true), ENT_COMPAT, 'ISO-8859-1');
+        echo htmlspecialchars(print_r($vars, true), ENT_COMPAT, "ISO-8859-1");
     }
     echo "</pre>\n";
 }
@@ -194,8 +194,11 @@ function randstr($length = 4, $type = "all")
         case 'letter':
             $str = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjklmnpqrstuvwxyz";
             break;
-        default:
+        case 'all':
             $str = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjklmnpqrstuvwxyz23456789";
+            break;
+        default:
+            $str = $type;
             break;
     }
     $result = "";

@@ -100,15 +100,23 @@
                             <dd>
                                 <div style="cursor:pointer;" onclick="LCMS.util.iframe({
                                     title: '个人资料',
-                                    url: LCMS.url.admin+'index.php?n=user&c=admin&a=profile&action=admin-edit',
-                                    shade: true
+                                    url: `${LCMS.url.admin}index.php?n=user&c=admin&a=profile`,
+                                    shade: true,
+                                    area: ['600px', '600px']
                                 })">个人资料</div>
+                            </dd>
+                            <dd>
+                                <div style="cursor:pointer;" onclick="LCMS.util.iframe({
+                                    title: '两步验证',
+                                    url: `${LCMS.url.admin}index.php?n=user&c=admin&a=profile&action=2fa`,
+                                    shade: true
+                                })">两步验证</div>
                             </dd>
                             <if LCMS::SUPER()||$_L['LCMSADMIN']['god']>
                                 <dd>
                                     <div style="cursor:pointer;" onclick="LCMS.util.iframe({
                                         title: '上帝视角 - 超级管理员可快速切换登录任意用户后台',
-                                        url: LCMS.url.admin+'?n=user&c=admin&a=god',
+                                        url: `${LCMS.url.admin}index.php?n=user&c=admin&a=god`,
                                         shade: true,
                                     })">上帝视角</div>
                                 </dd>
@@ -117,14 +125,14 @@
                                 <dd>
                                     <div style="cursor:pointer;" onclick="LCMS.util.iframe({
                                         title: '清除缓存',
-                                        url: LCMS.url.admin+'?n=config&c=admin&a=clear&action=admin-edit',
+                                        url: `${LCMS.url.admin}index.php?n=config&c=admin&a=clear`,
                                         shade: true,
                                         area: ['300px', '260px']
                                     })">清除缓存</div>
                                 </dd>
                             </if>
                             <dd>
-                                <div style="cursor:pointer;color:#F56C6C;" onclick="location.href=LCMS.url.admin+'index.php?n=login&a=loginout&go='"><i class="layui-icon layui-icon-logout" style="font-size:16px !important"></i> 退出</div>
+                                <div style="cursor:pointer;color:#F56C6C;" onclick="location.href=`${LCMS.url.admin}index.php?n=login&a=loginout`"><i class="layui-icon layui-icon-logout" style="font-size:16px !important"></i> 退出</div>
                             </dd>
                         </dl>
                     </li>

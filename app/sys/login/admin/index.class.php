@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-03-01 14:28:56
+ * @LastEditTime: 2024-03-26 13:29:23
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -44,6 +44,10 @@ class index extends adminbase
     public function doindex()
     {
         global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        //基础目录权限检测
+        if (!getdirpower("/cache")) {
+            LCMS::X(403, "<code>/cache</code>目录无读写权限");
+        }
         //如果域名不正确，跳转到正确域名
         if ($CFG['domain'] && $CFG['domain'] != HTTP_HOST && !$LF['fixed']) {
             okinfo(str_replace(HTTP_HOST, $CFG['domain'], $_L['url']['now']));
@@ -107,9 +111,11 @@ class index extends adminbase
         global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         PUB::isLoginAttack();
         $LF['code'] || ajaxout(0, "验证码错误");
-        //图形验证码验证
-        load::sys_class("captcha");
-        CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
+        if (!$LF['2fa']) {
+            //图形验证码验证
+            LOAD::sys_class("captcha");
+            CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
+        }
         //解密数据
         $token = SESSION::get("LOGINTOKEN");
         if ($token['expires_in'] > time()) {
@@ -130,6 +136,13 @@ class index extends adminbase
             "id DESC", [
                 ":name" => $LF['name'],
             ]]);
+        if ($LF['2fa']) {
+            //两步验证码验证
+            LOAD::plugin("2FA/TOTP");
+            (new TOTP())->verifyCode($admin['2fa'], $LF['code']) || ajaxout(0, "验证码错误");
+        } elseif ($admin['2fa']) {
+            ajaxout(2, "请输入两步验证码", "2fa");
+        }
         //如果无用户数据
         if (!$admin || md5("{$LF['pass']}{$admin['salt']}") != $admin['pass']) {
             LCMS::log([

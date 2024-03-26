@@ -1,0 +1,25 @@
+<template "ui/head" />
+<link rel="stylesheet" href="{{$_L['url']['public']}}ui/web/static/editor.css" />
+<template "ui/iframe" />
+<div class="lcms-editor">
+    <h3>什么是两步验证？</h3>
+    <p>使用手机APP令牌<code>离线生成验证码</code>进行登录验证，即使密码被泄露，账户也无法被非法访问，从而提供了比单独使用密码更高的安全性。</p>
+    <h3>推荐的APP</h3>
+    <p>任意支持通用TOTP算法的两步验证APP都可以使用，例如<code>Microsoft Authenticator</code>、<code>Google身份验证器</code>、<code>Authy</code>、<code>Tofu Authenticator</code>、<code>ente Authenticator</code>等等。</p>
+    <h3>如何开启两步验证？</h3>
+    <p>打开任意支持通用TOTP算法的两步验证APP，扫描下方二维码，将生成的验证码填入下方输入框内，点击立即开启即可！</p>
+    <table>
+        <tbody>
+            <tr>
+                <td width="160" align="center"><img src="{{$qrcode}}" width="150" /></td>
+                <td>
+                    <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}profile&action=2fa-save" method="post" target="_self">
+                        <input type="hidden" name="LC[2fa]" value="{{$secret}}" />
+                        <ui form($form) />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<template "ui/foot" />

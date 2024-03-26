@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-02-13 18:18:26
+ * @LastEditTime: 2024-03-26 13:02:07
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -358,43 +358,101 @@ class admin extends adminbase
     public function doprofile()
     {
         global $_L, $LF, $LC;
-        $nopower = true;
-        $admin   = LCMS::form([
-            "do"    => "get",
-            "table" => "admin",
-            "id"    => $_L['LCMSADMIN']['id'],
-        ]);
-        $form['base'] = [
-            ["layui"    => "upload", "title" => "头像",
-                "name"      => "LC[headimg]",
-                "value"     => $admin['headimg'],
-                "maxwidth"  => 200,
-                "maxheight" => 200,
-                "tips"      => "请上传200*200尺寸以内正方形图片"],
-            ["layui" => "html", "title" => "账号",
-                "name"   => "LC[name]",
-                "value"  => $admin['name'],
-                "nodrop" => true],
-            ["layui"      => "input", "title" => "姓名",
-                "name"        => "LC[title]",
-                "value"       => $admin['title'],
-                "placeholder" => "姓名只做显示",
-                "verify"      => "required"],
-            ["layui"      => "input", "title" => "密码",
-                "name"        => "LC[pass]",
-                "placeholder" => "请输入要修改的新密码",
-                "type"        => "password"],
-            ["layui" => "html", "title" => "邮箱",
-                "name"   => "email",
-                "value"  => $admin['email'] ?: "无",
-                "nodrop" => true],
-            ["layui" => "html", "title" => "手机",
-                "name"   => "mobile",
-                "value"  => $admin['mobile'] ?: "无",
-                "nodrop" => true],
-        ];
-        $LF['token'] = PUB::id2token($admin['id']);
-        require LCMS::template("own/admin/edit");
+        switch ($LF['action']) {
+            case '2fa':
+                if ($_L['LCMSADMIN']['2fa']) {
+                    $_L['APP']['info'] = [];
+                    LCMS::Y(200, "您已开启两步验证", [[
+                        "title" => "立即关闭",
+                        "url"   => "{$_L['url']['own_form']}profile&action=2fa-close",
+                        "color" => "danger",
+                    ]]);
+                }
+                LOAD::plugin("2FA/TOTP");
+                $TOTP   = new TOTP();
+                $secret = $TOTP->createSecret("uid:{$_L['LCMSADMIN']['id']}");
+                $qrcode = "{$_L['url']['qrcode']}" . urlencode($TOTP->getQRCode("{$_L['LCMSADMIN']['name']}@" . parse_url($_L['url']['site'])['host'], $secret));
+                $form   = [
+                    ["layui" => "des", "title" => "▲ 开启两步验证后，在登录时会弹出验证窗口，输入APP中的6位两步验证码即可登录！"],
+                    ["layui"      => "input", "title" => "验证码",
+                        "name"        => "LC[code]",
+                        "placeholder" => "请输入APP中生成的6位验证码",
+                        "maxlength"   => 6,
+                        "verify"      => "required"],
+                    ["layui" => "btn", "title" => "立即开启"],
+                ];
+                require LCMS::template("own/admin/2fa");
+                break;
+            case '2fa-save':
+                LOAD::plugin("2FA/TOTP");
+                $TOTP = new TOTP();
+                if (!$TOTP->verifyCode($LC['2fa'], $LC['code'])) {
+                    ajaxout(0, "验证码错误");
+                }
+                sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "2fa" => $LC['2fa'],
+                    ],
+                    "where" => "id = {$_L['LCMSADMIN']['id']}",
+                ]);
+                $_L['LCMSADMIN']['2fa'] = $LC['2fa'];
+                SESSION::set("LCMSADMIN", $_L['LCMSADMIN']);
+                ajaxout(1, "开启成功", "close");
+                break;
+            case '2fa-close':
+                sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "2fa" => null,
+                    ],
+                    "where" => "id = {$_L['LCMSADMIN']['id']}",
+                ]);
+                $_L['LCMSADMIN']['2fa'] = null;
+                SESSION::set("LCMSADMIN", $_L['LCMSADMIN']);
+                $_L['APP']['info'] = [];
+                LCMS::Y(200, "关闭成功");
+                break;
+            default:
+                $nopower = true;
+                $admin   = LCMS::form([
+                    "do"    => "get",
+                    "table" => "admin",
+                    "id"    => $_L['LCMSADMIN']['id'],
+                ]);
+                $form['base'] = [
+                    ["layui"    => "upload", "title" => "头像",
+                        "name"      => "LC[headimg]",
+                        "value"     => $admin['headimg'],
+                        "maxwidth"  => 200,
+                        "maxheight" => 200,
+                        "tips"      => "请上传200*200尺寸以内正方形图片"],
+                    ["layui" => "html", "title" => "账号",
+                        "name"   => "LC[name]",
+                        "value"  => $admin['name'],
+                        "nodrop" => true],
+                    ["layui"      => "input", "title" => "姓名",
+                        "name"        => "LC[title]",
+                        "value"       => $admin['title'],
+                        "placeholder" => "姓名只做显示",
+                        "verify"      => "required"],
+                    ["layui"      => "input", "title" => "密码",
+                        "name"        => "LC[pass]",
+                        "placeholder" => "请输入要修改的新密码",
+                        "type"        => "password"],
+                    ["layui" => "html", "title" => "邮箱",
+                        "name"   => "email",
+                        "value"  => $admin['email'] ?: "无",
+                        "nodrop" => true],
+                    ["layui" => "html", "title" => "手机",
+                        "name"   => "mobile",
+                        "value"  => $admin['mobile'] ?: "无",
+                        "nodrop" => true],
+                ];
+                $LF['token'] = PUB::id2token($admin['id']);
+                require LCMS::template("own/admin/edit");
+                break;
+        }
     }
     /**
      * @description: 上帝视角

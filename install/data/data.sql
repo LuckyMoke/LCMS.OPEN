@@ -14,6 +14,7 @@ CREATE TABLE `[_PRE]admin` (
   `balance` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '余额',
   `storage` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '存储空间',
   `storage_used` int(11) DEFAULT '0' COMMENT '存储空间已使用',
+  `2fa` varchar(32) DEFAULT NULL COMMENT '两步验证密钥',
   `addtime` datetime DEFAULT NULL COMMENT '添加时间',
   `lasttime` datetime DEFAULT NULL COMMENT '到期时间',
   `logintime` datetime DEFAULT NULL COMMENT '最后登陆时间',

@@ -2,12 +2,12 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-10 23:47:27
+ * @LastEditTime: 2024-03-12 16:34:59
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('common');
+LOAD::sys_class('common');
 class webbase extends common
 {
     public function __construct()
@@ -114,10 +114,10 @@ class webbase extends common
         global $_L;
         $config = PATH_APP_NOW . "web/tpl/{$tpl}/config.php";
         if (is_file($config)) {
-            load::sys_class("tpl");
+            LOAD::sys_class("tpl");
             TPL::$tplpath = $tpl;
             require_once $config;
-            TPL::getui($paths);
+            TPL::init($paths);
         }
     }
     public function domain($domain = "", $scheme = "", $autodomain = false)

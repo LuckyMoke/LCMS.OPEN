@@ -25,7 +25,7 @@
             </div>
         </if>
         <div class="login-input">
-            <input type="text" name="code" placeholder="验证码" autocomplete="off" maxlength="6" required="required" />
+            <input type="number" name="code" placeholder="验证码" autocomplete="off" required="required" />
         </div>
         <div class="login-readme">
             <label>
@@ -48,7 +48,7 @@
 <script type="text/html" class="tplcode">
     <div style="padding:0 20px 0 20px;">
         <div class="login-input">
-            <input type="text" class="login-send-code" placeholder="验证码" autocomplete="off" maxlength="4" />
+            <input type="number" class="login-send-code" placeholder="验证码" autocomplete="off" />
             <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
         </div>
         <a class="login-btn login-send" data-url="{{$_L['url']['own']}}n=login&c=reg&a=sendcode">发送验证码</a>
