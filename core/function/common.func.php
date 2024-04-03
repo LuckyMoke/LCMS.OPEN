@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-03-23 14:43:59
+ * @LastEditTime: 2024-03-27 16:59:51
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -574,25 +574,57 @@ function realhost($host = "")
 /**
  * @description: AES字符串加密
  * @param string $string
- * @param string $key
+ * @param string $token
  * @return string
  */
-function ssl_encode($string, $key = "LCMS")
+function ssl_encode($string, $token = "LCMS")
 {
 
-    $encrypt = openssl_encrypt($string, "AES-128-ECB", $key, OPENSSL_RAW_DATA);
+    $encrypt = openssl_encrypt($string, "AES-128-ECB", $token, OPENSSL_RAW_DATA);
     $encrypt = strtolower(bin2hex($encrypt));
     return $encrypt;
 }
 /**
  * @description: AES字符串解密
  * @param string $string
- * @param string $key
+ * @param string $token
  * @return string
  */
-function ssl_decode($string, $key = "LCMS")
+function ssl_decode($string, $token = "LCMS")
 {
-    $decrypted = openssl_decrypt(hex2bin($string), "AES-128-ECB", $key, OPENSSL_RAW_DATA);
+    $decrypted = openssl_decrypt(hex2bin($string), "AES-128-ECB", $token, OPENSSL_RAW_DATA);
+    return $decrypted;
+}
+/**
+ * @description: AES字符串加密并压缩
+ * @param string $string
+ * @param string $token
+ * @return string
+ */
+function ssl_encode_gzip($string, $token = "LCMS")
+{
+    $encrypt = openssl_encrypt($string, "AES-256-CBC", $token, OPENSSL_RAW_DATA);
+    $encrypt = gzcompress($encrypt, 9);
+    $encrypt = urlsafe_base64_encode($encrypt);
+    return $encrypt;
+}
+/**
+ * @description: AES字符串解压并解密
+ * @param string $string
+ * @param string $token
+ * @return string
+ */
+function ssl_decode_gzip($string, $token = "LCMS")
+{
+    $decrypted = urlsafe_base64_decode($string);
+    if (!$decrypted) {
+        return "";
+    }
+    $decrypted = gzuncompress($decrypted);
+    if (!$decrypted) {
+        return "";
+    }
+    $decrypted = openssl_decrypt($decrypted, "AES-256-CBC", $token, OPENSSL_RAW_DATA);
     return $decrypted;
 }
 /**

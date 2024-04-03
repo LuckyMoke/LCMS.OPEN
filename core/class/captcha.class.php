@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-03-11 12:28:27
+ * @LastEditTime: 2024-04-02 14:37:20
  * @Description: 验证码生成类
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -19,7 +19,7 @@ class CAPTCHA
             header("HTTP/1.1 403 Forbidden");
             exit();
         }
-        $pin = randstr(4, "num");
+        $pin = randstr(4, "234567890");
         self::savePin($pin);
         self::createImage($pin);
     }
@@ -77,10 +77,11 @@ class CAPTCHA
         $font = PATH_PUBLIC . 'static/fonts/Captcha.ttf';
         for ($i = 0; $i < 20; $i++) {
             $randcolor = ImageColorAllocate($im, mt_rand(100, 255), mt_rand(100, 255), mt_rand(100, 255));
-            imagettftext($im, mt_rand(20, 24), 20, mt_rand(0, $im_x), mt_rand(0, $im_y + 20), $randcolor, $font, randstr(1, "num"));
+            imagettftext($im, mt_rand(10, 14), 20, mt_rand(0, $im_x), mt_rand(0, $im_y + 20), $randcolor, $font, randstr(1, "num"));
         }
+        $pyx = mt_rand(5, 45);
         for ($i = 0; $i < strlen($pin); $i++) {
-            imagettftext($im, 38, mt_rand(1, 20), 20 + ($i * 38), mt_rand(45, 55), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($pin, $i, 1));
+            imagettftext($im, 24, mt_rand(-10, 20), $pyx + ($i * 40), mt_rand(45, 55), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($pin, $i, 1));
         }
         $rand  = mt_rand(25, 30);
         $rand1 = mt_rand(10, 25);

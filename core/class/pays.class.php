@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-01-10 20:00:32
+ * @LastEditTime: 2024-03-29 11:17:14
  * @Description:下单支付操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -162,25 +162,13 @@ class PAYS
             "payid"   => $para['payid'],
         ]);
         if ($order) {
-            $paycode = urlsafe_base64_encode(gzcompress(json_encode_ex([
+            $url = "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=system&c=pay&paycode=" . ssl_encode_gzip(json_encode([
                 "order_no"     => $order['order_no'],
                 "order_no_own" => $para['order_no_own'],
                 "payid"        => $order['payid'],
                 "parameter"    => $para['parameter'],
                 "goback"       => $para['goback'],
-            ])));
-            if ($para['parameter']['huabei'] > 0) {
-                $url = "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=system&c=pay&paycode={$paycode}";
-            } else {
-                LOAD::sys_class('shortlink');
-                $url = SHORTLINK::create([
-                    "url"  => "{$_L['config']['web']['domain_api']}app/index.php?rootid={$_L['ROOTID']}&n=system&c=pay",
-                    "time" => 900,
-                    "data" => [
-                        "paycode" => $paycode,
-                    ],
-                ]);
-            }
+            ]));
             return $url;
         }
     }

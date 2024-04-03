@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:13
- * @LastEditTime: 2024-01-10 20:00:48
+ * @LastEditTime: 2024-03-29 11:17:29
  * @Description: 系统支付操作
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -27,7 +27,8 @@ class pay extends webbase
     {
         global $_L, $LF;
         parent::domain($_L['config']['web']['domain_api']);
-        PAYS::pay(json_decode(gzuncompress(urlsafe_base64_decode($LF['paycode'])), true));
+        $LF['paycode'] || LCMS::X(403, "拒绝访问");
+        PAYS::pay(json_decode(ssl_decode_gzip($LF['paycode']), true));
     }
     /**
      * @description: 检查订单状态

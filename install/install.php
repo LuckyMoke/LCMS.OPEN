@@ -64,7 +64,7 @@ switch ($_GET['action']) {
                 "desc" => $_SERVER["SERVER_SOFTWARE"],
             ],
         ];
-        if (PHP_VERSION < "7.2.0") {
+        if (version_compare(PHP_VERSION, "7.2", "lt")) {
             $desc = "<span style='color:#F56C6C'><i class='layui-icon layui-icon-close'></i>请使用7.2.0及以上版本</span>";
             $code = 0;
         } else {
