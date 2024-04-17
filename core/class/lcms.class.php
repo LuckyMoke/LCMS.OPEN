@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-11-18 18:47:02
+ * @LastEditTime: 2024-04-17 10:50:53
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -212,6 +212,45 @@ class LCMS
         } else {
             return $ram && $ram['time'] > time() ? $ram['value'] : "";
         }
+    }
+    /**
+     * @description: 添加系统通知
+     * @param string $title
+     * @param string $body
+     * @param int $time
+     * @param int|bool $lcms
+     * @return {*}
+     */
+    public static function notify($title, $body = "", $time = 0, $lcms = false)
+    {
+        global $_L;
+        if (!$_L['table']['notify']) {
+            return false;
+        }
+        $code   = substr(md5(L_NAME . $title), 8, 16);
+        $lcms   = $lcms ? 0 : $_L['ROOTID'];
+        $notify = sql_get([
+            "table" => "notify",
+            "where" => "code = :code AND lcms = :lcms",
+            "order" => "id DESC",
+            "bind"  => [
+                ":code" => $code,
+                ":lcms" => $lcms,
+            ],
+        ]);
+        if (!$notify || (time() - strtotime($notify['addtime'])) > $time) {
+            sql_insert([
+                "table" => "notify",
+                "data"  => [
+                    "code"    => $code,
+                    "title"   => $title,
+                    "content" => $body,
+                    "addtime" => datenow(),
+                    "lcms"    => $lcms,
+                ],
+            ]);
+        }
+        return true;
     }
     /**
      * @description: 全自动序列化配置保存操作

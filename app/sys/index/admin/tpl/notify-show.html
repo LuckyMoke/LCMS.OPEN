@@ -1,0 +1,12 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/editor.css?lcmsver={{$_L['config']['ver']}}" />
+<style>#LCONTENT{padding:0}.box{padding:20px}.title{font-size:20px}.time{color:#888;margin-top:10px;padding-bottom:10px;border-bottom:1px #ccc dashed}.lcms-editor{margin-top:15px}pre{white-space:normal !important}</style>
+<div class="box">
+    <h1 class="title">{{$data['title']}}</h1>
+    <div class="time">{{$data['addtime']}}</div>
+    <div class="lcms-editor">
+        {{$data['content']}}
+    </div>
+</div>
+<template "ui/foot" />

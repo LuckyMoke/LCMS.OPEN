@@ -90,7 +90,21 @@ CREATE TABLE `[_PRE]log` (
   KEY `ip` (`ip`) USING BTREE,
   KEY `addtime` (`addtime`) USING BTREE,
   KEY `lcms` (`lcms`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统日志';
+
+CREATE TABLE `[_PRE]notify` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(32) NOT NULL,
+  `isread` int(1) unsigned NOT NULL DEFAULT '0',
+  `title` varchar(255) NOT NULL,
+  `content` longtext,
+  `addtime` datetime NOT NULL,
+  `lcms` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`),
+  KEY `isread` (`isread`),
+  KEY `lcms` (`lcms`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='系统通知';
 
 CREATE TABLE `[_PRE]upload` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

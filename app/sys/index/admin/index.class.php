@@ -2,12 +2,13 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-03-23 11:40:09
+ * @LastEditTime: 2024-04-17 12:18:49
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
+LOAD::sys_class('adminbase');
+LOAD::sys_class('table');
 class index extends adminbase
 {
     public function __construct()
@@ -93,9 +94,124 @@ class index extends adminbase
         $homeurl = $homeurl ?: "{$_L['url']['admin']}index.php?n=home";
         require LCMS::template("own/index");
     }
+    public function donotify()
+    {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'list':
+                $data = TABLE::set("notify", "lcms = :lcms", "id DESC", [
+                    ":lcms" => $_L['ROOTID'],
+                ], "id, title, isread, addtime, lcms");
+                foreach ($data as $index => $val) {
+                    $data[$index] = array_merge($val, [
+                        "title"  => [
+                            "type"  => "link",
+                            "url"   => "javascript:openNotify({$val['id']})",
+                            "title" => $val["title"],
+                        ],
+                        "isread" => $val["isread"] == 1 ? "已读" : '<span style="color:red">未读</span>',
+                    ]);
+                }
+                TABLE::out($data);
+                break;
+            case 'list-del':
+                if (TABLE::del("notify")) {
+                    ajaxout(1, "删除成功", "reload");
+                } else {
+                    ajaxout(0, "删除失败");
+                }
+                break;
+            case 'readall':
+                sql_update([
+                    "table" => "notify",
+                    "data"  => [
+                        "isread" => 1,
+                    ],
+                    "where" => "lcms = :lcms",
+                    "bind"  => [
+                        ":lcms" => $_L['ROOTID'],
+                    ],
+                ]);
+                ajaxout(1, "设置成功", "reload");
+                break;
+            case 'show':
+                $data = LCMS::form([
+                    "do"    => "get",
+                    "table" => "notify",
+                    "id"    => $LF['id'],
+                ]);
+                if ($data) {
+                    if ($data['isread'] == 0) {
+                        LCMS::form([
+                            "do"    => "save",
+                            "table" => "notify",
+                            "form"  => [
+                                "isread" => 1,
+                            ],
+                            "id"    => $data['id'],
+                        ]);
+                    }
+                    require LCMS::template("own/notify-show");
+                } else {
+                    LCMS::X(403, "未找到通知数据");
+                }
+                break;
+            default:
+                $table = [
+                    "url"     => "notify&action=list",
+                    "cols"    => [
+                        ["checkbox" => "checkbox", "width" => 50],
+                        ["title" => "ID", "field" => "id",
+                            "width"  => 70,
+                            "align"  => "center"],
+                        ["title" => "状态", "field" => "isread",
+                            "width"  => 70,
+                            "align"  => "center"],
+                        ["title"   => "标题", "field" => "title",
+                            "minWidth" => 300],
+                        ["title" => "时间", "field" => "addtime",
+                            "width"  => 170,
+                            "align"  => "center"],
+                    ],
+                    "toolbar" => [
+                        ["title" => "全部已读", "event" => "ajax",
+                            "url"    => "notify&action=readall",
+                            "color"  => "default",
+                            "tips"   => "确认设置全部已读？"],
+                        ["title" => "批量删除", "event" => "ajax",
+                            "url"    => "notify&action=list-del",
+                            "color"  => "danger",
+                            "tips"   => "确认删除（不可恢复）？"],
+                    ],
+                ];
+                require LCMS::template("own/notify");
+                break;
+        }
+    }
     public function doheart()
     {
         global $_L, $LF, $LC;
-        ajaxout(1, "success");
+        $count = sql_counter([
+            "table" => "notify",
+            "where" => "isread = 0 AND lcms = :lcms",
+            "bind"  => [
+                ":lcms" => $_L['ROOTID'],
+            ],
+        ]);
+        ajaxout(1, "success", "", [
+            "notify" => [
+                "count" => $count > 99 ? 99 : $count,
+                "list"  => sql_getall([
+                    "table"  => "notify",
+                    "where"  => "isread = 0 AND lcms = :lcms",
+                    "order"  => "id DESC",
+                    "bind"   => [
+                        ":lcms" => $_L['ROOTID'],
+                    ],
+                    "fields" => "id, title, isread, addtime, lcms",
+                    "limit"  => 10,
+                ]),
+            ],
+        ]);
     }
 };

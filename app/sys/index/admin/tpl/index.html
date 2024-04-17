@@ -91,6 +91,23 @@
                     </ul>
                 </div>
                 <ul class="layui-nav user">
+                    <li class="layui-nav-item sys-notify">
+                        <a href="javascript:;" title="系统通知">
+                            <i class="layui-icon layui-icon-notice"></i>
+                            <span class="layui-badge" style="display:none"></span>
+                        </a>
+                        <div class="layui-nav-child">
+                            <ul class="sys-notify-nodata"></ul>
+                            <section onclick="LCMS.util.iframe({
+                                title: '系统通知',
+                                url: `${LCMS.url.admin}index.php?n=index&a=notify`,
+                                shade: true,
+                                end: function(){
+                                    LCMS.plugin.notify();
+                                }
+                            })">查看更多</section>
+                        </div>
+                    </li>
                     <li class="layui-nav-item">
                         <a class="user-name" href="javascript:;" title="{{$_L['LCMSADMIN']['title']}}" data-name="{{$_L['LCMSADMIN']['name']}}">
                             <i class="layui-icon layui-icon-username"></i>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-01-17 13:29:18
+ * @LastEditTime: 2024-04-15 21:07:48
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -63,15 +63,15 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['precision']   = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         if ($para['type'] == "number") {
-            $para['affix'] = "number";
-            $para['step']  = $para['step'] > 0 ? " step='{$para['step']}'" : "";
-            $para['min']   = isset($para['min']) ? " min='{$para['min']}'" : "";
-            $para['max']   = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+            $para['affix']     = "number";
+            $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+            $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
+            $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+            $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         }
         $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
         $html          = "
@@ -87,17 +87,18 @@ class LAY
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['precision']   = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $para['disabled']    = $para['disabled'] ? " readonly" : "";
         $para['type']        = $para['type'] ? $para['type'] : "text";
         if ($para['type'] == "number") {
-            $para['affix'] = "number";
-            $para['step']  = $para['step'] > 0 ? " step='{$para['step']}'" : "";
-            $para['min']   = isset($para['min']) ? " min='{$para['min']}'" : "";
-            $para['max']   = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+            $para['affix']     = "number";
+            $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+            $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
+            $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+            $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         }
         $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+        $para['tips']  = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
         $html          = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
@@ -105,7 +106,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
-                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -190,6 +191,7 @@ class LAY
         $para                = self::start($para);
         $para['format']      = $para['format'] ?: "rgb";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请选择颜色";
+        $para['tips']        = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html                = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
@@ -198,17 +200,18 @@ class LAY
                         <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}'{$para['verifybox']} />
                     </div>
                     <div class='_color'></div>
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
     }
     public static function slider($para)
     {
-        $para        = self::start($para);
-        $para['min'] = $para['min'] ? $para['min'] : 0;
-        $para['max'] = $para['max'] ? $para['max'] : 100;
-        $html        = "
+        $para         = self::start($para);
+        $para['min']  = $para['min'] ? $para['min'] : 0;
+        $para['max']  = $para['max'] ? $para['max'] : 100;
+        $para['tips'] = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-slider' data-value='{$para['value']}' data-min='{$para['min']}' data-max='{$para['max']}' data-step='{$para['step']}' data-settips='{$para['settips']}'>
@@ -216,7 +219,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <div class='_slider'></div>
                     </div>
-                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -226,6 +229,7 @@ class LAY
         $para          = self::start($para);
         $para['type']  = $para['type'] ? $para['type'] : "datetime";
         $para['range'] = $para['range'] ? ($para['range'] === true ? "--" : $para['range']) : false;
+        $para['tips']  = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
         $html          = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
@@ -233,7 +237,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
                     </div>
-                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -273,12 +277,13 @@ class LAY
             $tab      = $val['tab'] ? " class='lcms-form-radio-tab' lay-filter='lcms-form-radio-tab' data-tab='{$val['tab']}'" : "";
             $radio .= "<input type='radio' name='{$para['name']}' value='{$val['value']}' title='{$val['title']}'{$tab}{$disabled}{$checked}>";
         }
-        $html = "
+        $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-radio'>
                     {$radio}
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -295,12 +300,13 @@ class LAY
                 $checkbox .= "<input type='checkbox' name='{$para['name']}[{$val['value']}]' value='1' title='{$val['title']}'" . ($val['disabled'] ? ' disabled' : '') . ($para['value'][$val['value']] ? ' checked' : '') . " lay-skin='{$para['skin']}' />";
             }
         }
-        $html = "
+        $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-checkbox'>
                     {$checkbox}
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -315,7 +321,8 @@ class LAY
         } else {
             $para['gallery'] = "<a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a><a class='layui-btn layui-btn-primary layui-btn-sm _other'>粘贴</a>";
         }
-        $html = "
+        $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane>
                 <input type='hidden' name='{$para['name']}' value='{$para['value']}' data-many='{$para['many']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
@@ -325,7 +332,7 @@ class LAY
                         <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         {$para['gallery']}
                     </div>
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;
@@ -340,7 +347,8 @@ class LAY
         } else {
             $para['select'] = "<a class='layui-btn layui-btn-warm layui-btn-xl _box' onclick='javascript:;'>文库</a>";
         }
-        $html = "
+        $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item lcms-form-upload-file{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
@@ -349,7 +357,7 @@ class LAY
                         <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         {$para['select']}
                     </div>
-                    <div class='lcms-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                     <div class='clear'></div>
                 </div>
             </div>";
@@ -381,8 +389,9 @@ class LAY
     }
     public static function icon($para)
     {
-        $para = self::start($para);
-        $html = "
+        $para         = self::start($para);
+        $para['tips'] = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
+        $html         = "
             <div class='layui-form-item lcms-form-icon{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
@@ -390,7 +399,7 @@ class LAY
                         <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     <div class='_change'>选择</div>
-                    <div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>
+                    {$para['tips']}
                 </div>
             </div>";
         echo $html;

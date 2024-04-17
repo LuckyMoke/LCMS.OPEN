@@ -21,7 +21,7 @@ class link extends webbase
         $link = SHORTLINK::get($code);
         if (!$link) {
             header("HTTP/1.1 404 Not Found");
-            LCMS::X(404, "Not Found");
+            LCMS::X(404, "链接已失效");
             exit;
         }
         if ($link['data']) {

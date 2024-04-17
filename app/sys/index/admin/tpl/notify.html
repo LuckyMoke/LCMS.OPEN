@@ -1,0 +1,18 @@
+<template "ui/head" />
+<template "ui/iframe" />
+<ui table($table) />
+<script type="text/javascript">
+    var openNotify = function (id) {
+        LCMS.util.iframe({
+            title: '通知详情',
+            url: `${LCMS.url.admin}index.php?n=index&c=index&a=notify&action=show&id=${id}`,
+            shade: true,
+            shadeClose: true,
+            area: ["500px", "500px"],
+            end: function () {
+                $('.layui-table-tool-self > div[lay-event="LCMSTABLE_REFRESH"]').click();
+            }
+        });
+    }
+</script>
+<template "ui/foot" />
