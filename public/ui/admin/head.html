@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
         <meta name="format-detection" content="telephone=no" />
-        <meta name="generator" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
+        <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <if $_L['url']['scheme']=="https://">
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
@@ -61,9 +61,11 @@
                         <ul>
                             <loop $_L['APP']['menu'],$val,$cname>
                                 <li class="{{$_L['form']['c']==$cname?'active':''}}">
-                                    <a href="{{$_L['APP']['url'][$cname]}}">
-                                        {{$val['title']}}
-                                    </a>
+                                    <if $val['href']>
+                                        <a href="{{$val['href']}}" target="{{$val['target']?:'_self'}}">{{$val['title']}}</a>
+                                        <else/>
+                                        <a href="{{$_L['APP']['url'][$cname]}}">{{$val['title']}}</a>
+                                    </if>
                                 </li>
                             </loop>
                         </ul>

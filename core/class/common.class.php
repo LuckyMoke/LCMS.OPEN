@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-03-10 23:47:31
+ * @LastEditTime: 2024-04-19 12:31:57
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -22,7 +22,7 @@ class common
     public function __construct()
     {
         global $_L;
-        header("X-Powered-By: PanQi-PHP-Framework; PanQi-CMS");
+        header("X-Framework: 55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY");
         $this->load_common_mysql();
         $this->load_common_form();
         $this->load_common_tables();

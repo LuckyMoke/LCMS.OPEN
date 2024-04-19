@@ -2,7 +2,7 @@
     <div id="APPTAB">
         <loop $_L['APP']['menu'][L_CLASS]['level'],$val,$func>
             <if $val['href']>
-                <a href="{{$val['href']}}" title="{{$val['title']}}" target="{{$val['href']?:'_self'}}">{{$val['title']}}</a>
+                <a href="{{$val['href']}}" title="{{$val['title']}}" target="{{$val['target']?:'_self'}}">{{$val['title']}}</a>
                 <else />
                 <a href="{{$_L['url']['own_form']}}{{$func}}" class="{{L_ACTION=='do'.$func?'active':''}}" title="{{$val['title']}}">{{$val['title']}}</a>
             </if>

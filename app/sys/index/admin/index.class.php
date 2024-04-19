@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-04-17 12:18:49
+ * @LastEditTime: 2024-04-17 14:01:57
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -191,27 +191,30 @@ class index extends adminbase
     public function doheart()
     {
         global $_L, $LF, $LC;
-        $count = sql_counter([
-            "table" => "notify",
-            "where" => "isread = 0 AND lcms = :lcms",
-            "bind"  => [
-                ":lcms" => $_L['ROOTID'],
-            ],
-        ]);
-        ajaxout(1, "success", "", [
-            "notify" => [
-                "count" => $count > 99 ? 99 : $count,
-                "list"  => sql_getall([
-                    "table"  => "notify",
-                    "where"  => "isread = 0 AND lcms = :lcms",
-                    "order"  => "id DESC",
-                    "bind"   => [
-                        ":lcms" => $_L['ROOTID'],
-                    ],
-                    "fields" => "id, title, isread, addtime, lcms",
-                    "limit"  => 10,
-                ]),
-            ],
-        ]);
+        if ($_L['table']['notify']) {
+            $count = sql_counter([
+                "table" => "notify",
+                "where" => "isread = 0 AND lcms = :lcms",
+                "bind"  => [
+                    ":lcms" => $_L['ROOTID'],
+                ],
+            ]);
+            ajaxout(1, "success", "", [
+                "notify" => [
+                    "count" => $count > 99 ? 99 : $count,
+                    "list"  => sql_getall([
+                        "table"  => "notify",
+                        "where"  => "isread = 0 AND lcms = :lcms",
+                        "order"  => "id DESC",
+                        "bind"   => [
+                            ":lcms" => $_L['ROOTID'],
+                        ],
+                        "fields" => "id, title, isread, addtime, lcms",
+                        "limit"  => 10,
+                    ]),
+                ],
+            ]);
+        }
+        ajaxout(1, "success");
     }
 };

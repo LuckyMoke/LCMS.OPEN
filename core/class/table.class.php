@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-02-29 11:36:25
+ * @LastEditTime: 2024-04-19 13:18:23
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -287,7 +287,7 @@ class TABLE
                             $val['cname']      = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
                             $val['color']      = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
                             $val['target']     = $val['target'] ? " target={$val['target']}" : "";
-                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-rss'> </i>{$val['title']}</a>";
+                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-edge layui-font-14'> </i>{$val['title']}</a>";
                             break;
                     }
                 }

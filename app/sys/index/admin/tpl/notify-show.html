@@ -5,8 +5,14 @@
 <div class="box">
     <h1 class="title">{{$data['title']}}</h1>
     <div class="time">{{$data['addtime']}}</div>
-    <div class="lcms-editor">
-        {{$data['content']}}
-    </div>
+    <div class="lcms-editor">{{$data['content']}}</div>
 </div>
+<script>
+    var setUrl = function(url) {
+        top.layer.closeAll();
+        top.LCMS.plugin.setUrl(url, {
+            loading: 500
+        });
+    }
+</script>
 <template "ui/foot" />

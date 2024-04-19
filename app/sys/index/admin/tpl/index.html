@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
         <meta name="format-detection" content="telephone=no" />
-        <meta name="generator" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
+        <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <if $_L['url']['scheme']=="https://">
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
@@ -110,7 +110,11 @@
                     </li>
                     <li class="layui-nav-item">
                         <a class="user-name" href="javascript:;" title="{{$_L['LCMSADMIN']['title']}}" data-name="{{$_L['LCMSADMIN']['name']}}">
-                            <i class="layui-icon layui-icon-username"></i>
+                            <if $_L['LCMSADMIN']['headimg']>
+                                <img src="{{oss($_L['LCMSADMIN']['headimg'])}}"/>
+                                <else/>
+                                <i class="layui-icon layui-icon-username"></i>
+                            </if>
                             <span>{{$_L['LCMSADMIN']['title']}}</span>
                         </a>
                         <dl class="layui-nav-child">
@@ -169,7 +173,7 @@
         </script>
         <script type="text/javascript">function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&alert("请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。");</script>
         <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?lcmsver={{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">$(window).on('load',function(){setTimeout(()=>{layer.closeAll("loading")},200)})</script>
+        <script type="text/javascript">$(window).on('load',function(){layer.closeAll("loading")})</script>
         <if $_L['config']['admin']['development'] != 1 && strtolower($_L['config']['admin']['dir'])=="admin">
             <script type="text/javascript">let href="?P3Q9c3lzJm49Y29uZmlnJmM9YWRtaW4mYT1zYWZl";if(window.location.search!=href)layer.confirm("检测到您的后台目录为默认的admin，为了后台安全，立即修改以提高安全性！<br><span style='color:red'>不修改100%会被黑客攻击！</span>",{title:"重要提示",area:"300px",btn:"立即修改",closeBtn:0},function(){window.location.href=href});</script>
         </if>

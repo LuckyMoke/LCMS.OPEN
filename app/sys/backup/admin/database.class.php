@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2023-05-25 12:59:13
+ * @LastEditTime: 2024-04-19 13:23:46
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -29,7 +29,12 @@ class database extends adminbase
                 $data   = array_slice($bklist, ($LF['page'] - 1) * $LF['limit'], $LF['limit']);
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [
-                        "link" => "<a href='{$_L['url']['site']}backup/data/" . urlencode($val['name']) . "' target='_blank'><i class='layui-icon layui-icon-unlink'></i> {$val['name']}</a>",
+                        "link" => [
+                            "type"   => "link",
+                            "url"    => "{$_L['url']['site']}backup/data/" . urlencode($val['name']),
+                            "title"  => $val['name'],
+                            "target" => "_blank",
+                        ],
                     ]);
                 }
                 TABLE::$count = count($bklist);

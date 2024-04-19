@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2024-01-31 14:28:50
+ * @LastEditTime: 2024-04-19 16:30:11
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -71,8 +71,9 @@ class PUB
         } else {
             if ($LC['id'] == $_L['LCMSADMIN']['id']) {
                 SESSION::set("LCMSADMIN", array_merge($_L['LCMSADMIN'], [
-                    "name"  => $LC['name'] ?: $_L['LCMSADMIN']['name'],
-                    "title" => $LC['title'],
+                    "name"    => $LC['name'] ?: $_L['LCMSADMIN']['name'],
+                    "title"   => $LC['title'] ?: $_L['LCMSADMIN']['title'],
+                    "headimg" => isset($LC['headimg']) ? $LC['headimg'] : $_L['LCMSADMIN']['headimg'],
                 ]));
             }
             LCMS::log([
