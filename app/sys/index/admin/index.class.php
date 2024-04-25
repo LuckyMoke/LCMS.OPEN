@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-04-17 14:01:57
+ * @LastEditTime: 2024-04-25 11:20:38
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -50,8 +50,13 @@ class index extends adminbase
                 "gitee" => 1,
             ],
         ];
-        if (LCMS::SUPER() && $_L['developer']['appstore'] !== 0) {
-            $update = 1;
+        if (LCMS::SUPER()) {
+            if ($_L['developer']['appstore'] !== 0) {
+                $update = 1;
+            }
+            if (!is_file(PATH_CORE . "asynced")) {
+                $async = 1;
+            }
         } else {
             unset($config['sys']['update']);
         }
@@ -215,6 +220,16 @@ class index extends adminbase
                 ],
             ]);
         }
+        ajaxout(1, "success");
+    }
+    /**
+     * @description:同步完成锁
+     * @return {*}
+     */
+    public function doasynced()
+    {
+        global $_L, $LF, $LC;
+        file_put_contents(PATH_CORE . "asynced", time());
         ajaxout(1, "success");
     }
 };

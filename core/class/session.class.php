@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-11 00:07:56
+ * @LastEditTime: 2024-04-23 18:48:17
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,6 +22,7 @@ class SESSION
         ini_set("session.use_cookies", 0);
         $stime = $_L['config']['admin']['sessiontime'];
         $stime = $stime > "0" ? $stime * 60 : 86400;
+        $stime = time() + $stime;
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
             $userid = $_L['form']['rootsid'];
@@ -31,11 +32,11 @@ class SESSION
             }
         } else {
             if ($_COOKIE['LCMSCID']) {
-                $cookie = ssl_decode(urlsafe_base64_decode($_COOKIE['LCMSCID']), PATH_WEB);
+                $cookie = ssl_decode_gzip($_COOKIE['LCMSCID'], PATH_WEB);
             }
             if (!$cookie) {
                 $cookie = session_create_id();
-                setcookie("LCMSCID", urlsafe_base64_encode(ssl_encode($cookie, PATH_WEB)), 0, "/", "", 0, true);
+                setcookie("LCMSCID", ssl_encode_gzip($cookie, PATH_WEB), 0, "/", "", 0, true);
             }
             $userid = "lcms-{$cookie}";
         }
@@ -63,7 +64,7 @@ class SESSION
             if ($etime && $etime < time()) {
                 $SESSION['redis']->do->hDel($SESSION['id'], "LCMSADMIN");
             }
-            $SESSION['redis']->do->hSet($SESSION['id'], "LCMSSIDTIME", time() + $SESSION['time']);
+            $SESSION['redis']->do->hSet($SESSION['id'], "LCMSSIDTIME", $SESSION['time']);
         } else {
             session_name("LCMSSID");
             session_id($SESSION['id']);
@@ -72,7 +73,7 @@ class SESSION
             if ($etime && $etime < time()) {
                 unset($_SESSION["LCMSADMIN"]);
             }
-            $_SESSION['LCMSSIDTIME'] = time() + $SESSION['time'];
+            $_SESSION['LCMSSIDTIME'] = $SESSION['time'];
         }
         return $SESSION;
     }

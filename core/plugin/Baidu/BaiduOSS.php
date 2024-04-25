@@ -10,10 +10,11 @@ class BaiduOSS
         $this->cfg['Region'] = str_replace([
             "http://", "https://", "/",
         ], "", $this->cfg['Region']);
-        //截取区域参数
-        $this->cfg['Region'] = str_replace("{$this->cfg['Bucket']}.", "", $this->cfg['Region']);
         //拼接接口地址
         $this->api = $this->cfg['Region'];
+        //截取区域参数
+        $this->cfg['Region'] = str_replace("{$this->cfg['Bucket']}.", "", $this->cfg['Region']);
+        $this->cfg['Region'] = explode(".", $this->cfg['Region'])[0];
     }
     /**
      * @description: 获取临时token
@@ -28,7 +29,7 @@ class BaiduOSS
         ]));
         $sign = hash_hmac("sha256", $policy, $this->cfg['SecretKey']);
         return [
-            "api"       => "https://{$this->cfg['Bucket']}.{$this->api}",
+            "api"       => "https://{$this->api}",
             "AccessKey" => $this->cfg['AccessKey'],
             "policy"    => $policy,
             "signature" => $sign,
@@ -43,8 +44,7 @@ class BaiduOSS
      */
     public function upload($file)
     {
-        $this->api = "{$this->cfg['Bucket']}.{$this->api}";
-        $file      = path_absolute($file);
+        $file = path_absolute($file);
         if (!is_file($file)) {
             return [
                 "code" => 0, "msg" => "未找到文件",
@@ -77,7 +77,7 @@ class BaiduOSS
                 "key" => $file,
             ];
         }
-        $sign = $this->sign("POST", "/v1/{$this->cfg['Bucket']}/", "delete=");
+        $sign = $this->sign("POST", "/", "delete=");
         HTTP::post($sign['api'], json_encode([
             "objects" => $files,
         ]), false, [

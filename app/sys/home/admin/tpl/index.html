@@ -1,5 +1,5 @@
 <template "ui/head" />
-<style type="text/css">.app-list{margin-top:-1px;width:calc(100% + 7px)}.app-list .box{border:1px #ebeef5 solid;margin:0 0 -1px -1px}.app-list .li{position:relative;display:block;width:100%;padding:20px 10px;box-sizing:border-box}.app-list .li.active,.app-list .li:hover{background:#edf6ff;color:#000;box-shadow:inset 0 0 10px 5px rgb(64 158 255 / 10%)}.app-list .li.active img,.app-list .li:hover img{mix-blend-mode:darken}.app-list img{display:block;width:80%;max-width:120px;min-height:100px;margin:0 auto;border-radius:5px;border:1px #eeeeee solid}.app-list h3{text-align:center;font-size:14px;height:18px;line-height:18px;word-wrap:normal;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;padding-top:10px}.css3{box-shadow:0 0;width:calc(100% + 2em);font-size:24px}blockquote,body,button,code,dd,div,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,input,legend,li,ol,p,pre,td,textarea,th,ul{margin:0;padding:0}fieldset,img{border:0}:focus{outline:0}address,cite,code,ctoolion,dfn,em,optgroup,strong,th,var{font-style:normal;font-weight:400}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:400}abbr,acronym{border:0;font-variant:normal}button,input,optgroup,option,select,textarea{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit}code,kbd,samp,tt{font-size:100%}body{line-height:1.5}ol,ul{list-style:none}table{border-collapse:collapse;border-spacing:0}ctoolion,th{text-align:left}sub,sup{font-size:100%;vertical-align:baseline}:link,:visited,ins{text-decoration:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}</style>
+<template "ui/css" />
 <div class="layui-fluid" style="padding:0">
     <if LCMS::SUPER()>
         <if $_L['config']['admin']['dir']=="admin">
@@ -7,12 +7,12 @@
                 系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，点击 <a href="?t=sys&n=config&c=admin&a=safe">修改后台目录</a>，以提高安全性！
             </p>
         </if>
-        <if is_dir(PATH_WEB . "install")>
+        <if is_dir(PATH_WEB . "install" )>
             <p class="lcms-form-des">
                 系统提示：检测到您未删除安装目录，请尽快删除<code>/install</code>目录，以提高安全性！
             </p>
         </if>
-        <if is_file(PATH_WEB . "install.php")>
+        <if is_file(PATH_WEB . "install.php" )>
             <p class="lcms-form-des">
                 系统提示：检测到您未删除安装文件，请尽快删除<code>/install.php</code>文件，以提高安全性！
             </p>
@@ -23,12 +23,12 @@
             <i class="layui-icon layui-icon-face-surprised" style="font-weight:700"></i> 友情提示：您的账号将于 {{$_L['LCMSADMIN']['lasttime']}} 到期，为避免影响使用，请及时处理！
         </p>
     </if>
-    <if $open>
-        <div class="layui-tab layui-tab-card">
-            <ul class="layui-tab-title">
-                <li class="layui-this">常用应用</li>
-            </ul>
-            <div class="layui-tab-content" style="padding:0;overflow:hidden">
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">常用应用</li>
+        </ul>
+        <div class="layui-tab-content" style="padding:0;overflow:hidden">
+            <if $open>
                 <div class="layui-row app-list" data-update="{{$update}}">
                     <loop $open,$app,$name>
                         <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
@@ -43,9 +43,15 @@
                         </div>
                     </loop>
                 </div>
-            </div>
+                <elseif LCMS::SUPER() />
+                <div style="padding:80px 0;text-align:center">
+                    <p style="width:330px;margin: 0 auto">友情提示：本系统为SaaS系统，超级管理员账号只用来安装应用、升级系统使用，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
+                    <br>
+                    <a class="layui-btn" href="javascript:setUrl(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
+                </div>
+            </if>
         </div>
-    </if>
+    </div>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md{{$_L['config']['admin']['gonggao']?'6':'12'}} layui-col-xs12">
             <table class="layui-table">
