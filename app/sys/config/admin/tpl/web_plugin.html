@@ -13,4 +13,28 @@
     </div>
     <ui form($sms) />
 </form>
+<script type="text/javascript">
+    $(".plugin-test-btn").on("click", function () {
+        var url = $(this).attr("data-url");
+        layer.prompt({title: "请输入收件地址", formType: 0}, function (email, index) {
+            if (email == "") {
+                LCMS.util.notify({type: "error", content: "请输入收件地址"});
+                return false;
+            }
+            layer.close(index);
+            LCMS.util.ajax({
+                type: "POST",
+                url: url,
+                data: {email: email},
+                success: function (res) {
+                    if (res.code == 1) {
+                        LCMS.util.notify({content: res.msg});
+                    } else {
+                        LCMS.util.notify({type: "error", content: res.msg});
+                    }
+                },
+            });
+        });
+    });
+</script>
 <template "ui/foot" />

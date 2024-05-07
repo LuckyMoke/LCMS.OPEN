@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-04-19 13:18:23
+ * @LastEditTime: 2024-05-03 11:16:49
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -172,7 +172,13 @@ class TABLE
                 $val['url']    = is_url($val['url']) ? $val['url'] : $_L['url']['own_form'] . $val['url'];
                 $val['target'] = $val['target'] ?: "_self";
                 $val['icon']   = $val['icon'] ? "<i class='layui-icon layui-icon-{$val['icon']}'></i>" : $val['title'];
+                if ($val['if']) {
+                    $laytpl .= "{{# if({$val['if']}) { }}";
+                }
                 $laytpl .= "<button class='layui-btn layui-btn-xs layui-btn-{$val['color']}' lay-event='{$val['event']}' data-url='{$val['url']}' data-timeout='{$val['timeout']}' data-tips='{$val['tips']}' data-text='{$val['text']}' data-area='{$val['area']}' data-title='{$val['title']}' data-target='{$val['target']}'>{$val['icon']}</button>";
+                if ($val['if']) {
+                    $laytpl .= "{{# } }}";
+                }
             }
             $laytpl = "<script type='text/html' id='{$colsbarid}'><div class='layui-btn-group'>{$laytpl}</div></script>";
             return [

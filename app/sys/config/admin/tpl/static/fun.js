@@ -1,1 +1,1 @@
-if($(".plugin-test-btn").length>0){$(".plugin-test-btn").on("click",function(){var url=$(this).attr("data-url");layer.prompt({title:"请输入收件地址",formType:0},function(email,index){layer.close(index);LCMS.util.ajax({type:"POST",url:url,data:{email:email,},success:function(res){if(res.code==1){LCMS.util.notify({content:res.msg})}else{LCMS.util.notify({type:"error",content:res.msg})}},})})})}
+//nojs

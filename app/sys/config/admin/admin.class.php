@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-04-15 20:46:18
+ * @LastEditTime: 2024-05-05 17:55:10
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -25,8 +25,8 @@ class admin extends adminbase
             case 'save':
                 if (in_string($LC['domain'], ["http://", "https://"])) {
                     $LC['domain'] = parse_url($LC['domain'])['host'];
-                    $LC['domain'] = realhost($LC['domain']);
                 }
+                $LC['domain']     = realhost($LC['domain']);
                 $LC['oauth_code'] = strtoupper(md5(HTTP_HOST));
                 LCMS::config([
                     "do"   => "save",
@@ -91,26 +91,29 @@ class admin extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'save':
-                $domain = parse_url($LC['domain']);
-                if ($domain['host']) {
-                    $LC['https']  = $domain['scheme'] === "https" ? 1 : 0;
-                    $LC['domain'] = realhost($domain['host']) . ($domain['port'] ? ":{$domain['port']}" : "");
-                } else {
-                    $LC['https'] = "";
+                if (!in_string($LC['domain'], ["http://", "https://"])) {
+                    $LC['domain'] = trim($LC['domain'], "/");
+                    $LC['domain'] = "http://{$LC['domain']}";
                 }
-                $domain = parse_url($LC['domain_api']);
-                if ($domain['host']) {
-                    $LC['domain_api'] = ($domain['scheme'] ?: "http") . "://" . realhost($domain['host']) . "/";
-                } else {
-                    $LC['domain_api'] = "http://{$LC['domain']}/";
+                $domain       = parse_url($LC['domain']);
+                $LC['https']  = $domain['scheme'] === "https" ? 1 : 0;
+                $LC['domain'] = realhost($domain['host']);
+                if ($domain['port']) {
+                    $LC['domain'] .= ":{$domain['port']}";
                 }
+                $LC['domain_api'] = trim($LC['domain_api'], "/");
+                if (!in_string($LC['domain_api'], ["http://", "https://"])) {
+                    $LC['domain_api'] = "http://{$LC['domain_api']}";
+                }
+                $LC['domain_api'] .= "/";
+                $LC['domain_api'] = realhost($LC['domain_api']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "web",
                     "form" => $LC,
                 ]);
-                ajaxout(1, "保存成功");
+                ajaxout(1, "保存成功", "reload");
                 break;
             default:
                 $config = LCMS::config([
@@ -131,13 +134,13 @@ class admin extends adminbase
                         "name"        => "LC[domain]",
                         "value"       => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
                         "placeholder" => "http://www.domain.com/",
-                        "tips"        => "特别注意结尾的 / 斜杠",
+                        "tips"        => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
                         "verify"      => "required"],
                     ["layui"      => "input", "title" => "默认API域名",
                         "name"        => "LC[domain_api]",
                         "value"       => $config['domain_api'],
                         "placeholder" => "http://www.domain.com/",
-                        "tips"        => "特别注意结尾的 / 斜杠",
+                        "tips"        => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
                         "verify"      => "required"],
                     ["layui" => "input", "title" => "默认前端Title",
                         "name"   => "LC[title]",
@@ -195,6 +198,20 @@ class admin extends adminbase
                     ajaxout(1, "保存成功", "reload");
                 }
                 break;
+            case 'reloginkey':
+                $loginkey = randstr(32);
+                LCMS::config([
+                    "do"   => "save",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "form" => [
+                        "loginbytoken" => 1,
+                        "loginkey"     => $loginkey,
+                    ],
+                    "lcms" => true,
+                ]);
+                ajaxout(1, "success", "", $loginkey);
+                break;
             default:
                 $config = LCMS::config(array(
                     "type" => "sys",
@@ -209,14 +226,6 @@ class admin extends adminbase
                         "minlength" => 6,
                         "tips"      => "修改后台目录提高安全性，最少5个字符",
                         "verify"    => "required"],
-                    ["layui"  => "slider", "title" => "自动登出",
-                        "name"    => "LC[sessiontime]",
-                        "value"   => $config['sessiontime'],
-                        "tips"    => "指定时间无操作自动登出，0为不自动登出",
-                        "min"     => "0",
-                        "max"     => "60",
-                        "step"    => "5",
-                        "settips" => "分钟"],
                     ["layui" => "radio", "title" => "登陆限制",
                         "name"   => "LC[login_limit]",
                         "value"  => $config['login_limit'] ?? 1,
@@ -225,6 +234,21 @@ class admin extends adminbase
                             ["title" => "单设备", "value" => 0],
                             ["title" => "多设备", "value" => 1],
                         ]],
+                    ["layui" => "radio", "title" => "网站登录器",
+                        "name"   => "LC[loginbytoken]",
+                        "value"  => $config['loginbytoken'] ?? 0,
+                        "tips"   => "是否开启网站登录器一键登录网站，需配合其它工具使用！",
+                        "radio"  => [
+                            ["title" => "开启", "value" => 1],
+                            ["title" => "关闭", "value" => 0],
+                        ]],
+                    ["layui" => "html", "title" => "登录密钥",
+                        "value"  => '<span class="lcms-form-copy" data-copytext="' . $config['loginkey'] . '" style="margin-right:20px">' . strstar($config['loginkey'], 4) . '</span><a style="margin-right:20px" href="javascript:reLoginKey()">' . ($config['loginkey'] ? "重新生成" : "立即生成") . '</a>' . ($config['loginkey'] ? '</span><a href="javascript:copyLoginKey(\'' . base64_encode(json_encode_ex([
+                            "title" => $config['title'],
+                            "link"  => $_L['url']['admin'],
+                            "name"  => SESSION::get("LCMSADMIN")['name'],
+                            "token" => $config['loginkey'],
+                        ])) . '\')">一键复制</a>' : '')],
                     ["layui" => "title", "title" => "后台水印"],
                     ["layui" => "radio", "title" => "功能开关",
                         "name"   => "LC[admin_water]",

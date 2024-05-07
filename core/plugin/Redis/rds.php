@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2022-08-03 15:50:02
+ * @LastEditTime: 2024-05-04 11:41:14
  * @Description: Redis操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,6 +22,9 @@ class RDS
             try {
                 $this->do = new Redis();
                 $this->do->connect($config['host'], $config['port']);
+                if ($config['index'] > 0) {
+                    $this->do->select($config['index']);
+                }
                 if ($config['pass']) {
                     $this->do->auth($config['pass']);
                 }

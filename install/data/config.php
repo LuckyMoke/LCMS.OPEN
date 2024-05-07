@@ -17,9 +17,10 @@ $_L["mysql"]['slave']["pass"] = "";
 $_L["mysql"]['slave']["name"] = "";
 
 /* Redis配置 */
-$_L['redis']['host'] = "127.0.0.1";
-$_L['redis']['port'] = 6379;
-$_L["redis"]["pass"] = "";
+$_L['redis']['host']  = "127.0.0.1";
+$_L['redis']['port']  = 6379;
+$_L["redis"]["index"] = 0;
+$_L["redis"]["pass"]  = "";
 
 /* Memcached配置 */
 $_L['memcached']['host']     = "127.0.0.1";

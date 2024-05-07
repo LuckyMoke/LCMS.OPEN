@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-03-26 13:29:23
+ * @LastEditTime: 2024-05-05 11:30:23
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -143,74 +143,34 @@ class index extends adminbase
         } elseif ($admin['2fa']) {
             ajaxout(2, "请输入两步验证码", "2fa");
         }
-        //如果无用户数据
-        if (!$admin || md5("{$LF['pass']}{$admin['salt']}") != $admin['pass']) {
-            LCMS::log([
-                "user" => $LF['name'],
-                "type" => "login",
-                "info" => "登陆失败-账号或密码错误",
+        $this->loginCheck($LF, $admin);
+        SESSION::del("LOGINTOKEN");
+        if ($LF['band'] > 0) {
+            $openid = SESSION::get("LOGINOPENID");
+            $openid || LCMS::X(403, "您未登录");
+            //绑定账号
+            $band = sql_get(["admin_band",
+                "openid = :openid AND aid = :aid",
+                "id DESC", [
+                    ":openid" => $openid,
+                    ":aid"    => $admin['id'],
+                ],
             ]);
-            PUB::isLoginAttack("update");
-            ajaxout(0, "账号或密码错误");
-        }
-        //如果有用户数据
-        if ($admin && $admin['status'] == 1) {
-            if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
-                LCMS::log([
-                    "user" => $admin['name'],
-                    "type" => "login",
-                    "info" => "登陆失败-此账号已到期，请联系客服",
-                ]);
-                PUB::isLoginAttack("update");
-                ajaxout(0, "此账号已到期，请联系客服");
-            } else {
-                SESSION::del("LOGINTOKEN");
-                if ($LF['band'] > 0) {
-                    $openid = SESSION::get("LOGINOPENID");
-                    $openid || LCMS::X(403, "您未登录");
-                    //绑定账号
-                    $band = sql_get(["admin_band",
-                        "openid = :openid AND aid = :aid",
-                        "id DESC", [
-                            ":openid" => $openid,
-                            ":aid"    => $admin['id'],
-                        ],
-                    ]);
-                    if (!$band) {
-                        sql_insert(["admin_band", [
-                            "openid" => $openid,
-                            "aid"    => $admin['id'],
-                        ]]);
-                    }
-                    LCMS::log([
-                        "user" => $admin['name'],
-                        "type" => "login",
-                        "info" => "绑定账号-{$openid}",
-                    ]);
-                    ajaxout(1, "绑定成功", "goback");
-                } else {
-                    //登陆账号
-                    $time = datenow();
-                    sql_update(["admin", [
-                        "logintime" => $time,
-                        "ip"        => CLIENT_IP,
-                    ], "id = '{$admin['id']}'"]);
-                    $admin = array_merge($admin, [
-                        "parameter" => sql2arr($admin['parameter']),
-                        "logintime" => $time,
-                    ]);
-                    unset($admin['pass']);
-                    SESSION::set("LCMSADMIN", $admin);
-                    LCMS::log([
-                        "user" => $admin['name'],
-                        "type" => "login",
-                        "info" => "登录成功",
-                    ]);
-                    ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
-                }
+            if (!$band) {
+                sql_insert(["admin_band", [
+                    "openid" => $openid,
+                    "aid"    => $admin['id'],
+                ]]);
             }
+            LCMS::log([
+                "user" => $admin['name'],
+                "type" => "login",
+                "info" => "绑定账号-{$openid}",
+            ]);
+            ajaxout(1, "绑定成功", "goback");
         } else {
-            ajaxout(0, "此账号已禁用，请联系客服");
+            $this->loginSuccess($admin);
+            ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
         }
     }
     /**
@@ -292,6 +252,31 @@ class index extends adminbase
         ajaxout(1, "success", "", html_editor($content));
     }
     /**
+     * @description: 登录byToken
+     * @return {*}
+     */
+    public function dologinbytoken()
+    {
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        $CFG['loginbytoken'] > 0 || LCMS::X(403, "未开启此功能");
+        PUB::isLoginAttack();
+        $LF['token'] || LCMS::X(403, "验证失败");
+        $key  = md5($CFG['loginkey']);
+        $form = openssl_decrypt($LF['token'], "AES-256-CBC", $key, 0, $key);
+        $form || LCMS::X(403, "验证失败");
+        $form = json_decode($form, true);
+        $form || LCMS::X(403, "验证失败");
+        $form['time'] < time() && LCMS::X(403, "验证失败");
+        $islogin = SESSION::get("LCMSADMIN");
+        if ($islogin && $islogin['name'] == $form['name']) {
+            okinfo($_L['url']['admin']);
+        } else {
+            $admin = $this->loginCheck($form);
+            $this->loginSuccess($admin);
+            okinfo($_L['url']['admin']);
+        }
+    }
+    /**
      * @description: 退出登陆
      * @param {*}
      * @return {*}
@@ -315,5 +300,74 @@ class index extends adminbase
         ]);
         SESSION::del("LCMSADMIN");
         okinfo("{$_L['url']['own']}rootid={$RID}&n=login&go=" . urlencode($LF['go']));
+    }
+    /**
+     * @description: 账户状态检测
+     * @param array $form
+     * @return bool
+     */
+    private function loginCheck($form, $admin = [])
+    {
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        $admin = $admin ?: sql_get(["admin",
+            "name = :name OR email = :name OR mobile = :name",
+            "id DESC", [
+                ":name" => $form['name'],
+            ]]);
+        function loginFail($admin, $msg)
+        {
+            LCMS::log([
+                "user" => $admin['name'],
+                "type" => "login",
+                "info" => "登陆失败-{$msg}",
+            ]);
+            PUB::isLoginAttack("update");
+            LCMS::X(403, $msg);
+        }
+        if ($admin) {
+            if (md5("{$form['pass']}{$admin['salt']}") != $admin['pass']) {
+                loginFail($admin, "账号或密码错误");
+            }
+            if ($admin['status'] == 1) {
+                if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
+                    loginFail($admin, "此账号已到期，请联系客服");
+                } else {
+                    return $admin;
+                }
+            } else {
+                loginFail($admin, "此账号已禁用，请联系客服");
+            }
+        } else {
+            loginFail($form, "账号或密码错误");
+        }
+    }
+    /**
+     * @description: 登录成功后操作
+     * @param array $admin
+     * @return {*}
+     */
+    private function loginSuccess($admin)
+    {
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        $time = datenow();
+        sql_update([
+            "table" => "admin",
+            "data"  => [
+                "logintime" => $time,
+                "ip"        => CLIENT_IP,
+            ],
+            "where" => "id = {$admin['id']}",
+        ]);
+        $admin = array_merge($admin, [
+            "parameter" => sql2arr($admin['parameter']),
+            "logintime" => $time,
+        ]);
+        unset($admin['pass']);
+        SESSION::set("LCMSADMIN", $admin);
+        LCMS::log([
+            "user" => $admin['name'],
+            "type" => "login",
+            "info" => "登录成功",
+        ]);
     }
 }

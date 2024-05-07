@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2023-09-16 13:02:53
+ * @LastEditTime: 2024-05-01 11:00:53
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -184,12 +184,18 @@ class web extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'save':
+                $LC['oss']['domain'] = trim($LC['oss']['domain'], "/");
+                if (!in_string($LC['oss']['domain'], ["http://", "https://"])) {
+                    $LC['oss']['domain'] = "http://{$LC['oss']['domain']}";
+                }
+                $LC['oss']['domain'] .= "/";
+                $LC['oss']['domain'] = realhost($LC['oss']['domain']);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "plugin",
                 ]);
-                ajaxout(1, "保存成功");
+                ajaxout(1, "保存成功", "reload");
                 break;
             default:
                 $plugin = LCMS::config([

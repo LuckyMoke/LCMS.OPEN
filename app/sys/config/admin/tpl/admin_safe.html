@@ -1,5 +1,33 @@
-<template "ui/head"/>
+<template "ui/head" />
 <form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}safe&action=save" method="post" target="_self">
-    <ui form($form)/>
+    <ui form($form) />
 </form>
-<template "ui/foot"/>
+<script type="text/javascript">
+    var reLoginKey = function () {
+        layer.confirm('确定生成？如有老的密钥会立即失效！', {
+            btn: ['确定', '取消']
+        }, function (index) {
+            layer.close(index);
+            LCMS.util.ajax({
+                type: "GET",
+                url: `${LCMS.url.own_form}safe&action=reloginkey`,
+                loading: true,
+                success: function (res) {
+                    if (res.code == 1) {
+                        LCMS.util.notify({
+                            type: "success",
+                            content: "新的登录密钥已生成，请同步修改网站登录器中的密钥！"
+                        });
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                }
+            });
+        });
+    }, copyLoginKey = function (data) {
+        data = $.base64.decode(data);
+        LCMS.util.copy(data, "数据已复制到剪贴板，请到网站登录器中一键粘贴导入！");
+    }
+</script>
+<template "ui/foot" />
