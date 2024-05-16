@@ -1,0 +1,16 @@
+<template "ui/head" />
+<template "ui/css" />
+<template "ui/iframe" />
+<div class="lcms-form-upload-crop">
+    <div class="lcms-form-upload-crop-box"></div>
+    <div class="lcms-form-upload-crop-btn layui-btn-group">
+        <button class="layui-btn layui-btn-sm layui-btn-primary" action="rotate" title="旋转">旋转</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary" action="scaleX" option="-1" title="水平翻转">水平</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary" action="scaleY" option="-1" title="垂直翻转">垂直</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary" action="zoomA" title="放大">放大</button>
+        <button class="layui-btn layui-btn-sm layui-btn-primary" action="zoomB" title="缩小">缩小</button>
+        <button class="layui-btn layui-btn-sm layui-btn-warm" action="reset" title="还原">还原</button>
+        <button class="layui-btn layui-btn-sm" action="crop">上传</button>
+    </div>
+</div>
+<template "ui/foot" />

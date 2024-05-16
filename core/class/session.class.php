@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-02 09:51:04
+ * @LastEditTime: 2024-05-08 11:46:53
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,6 +20,7 @@ class SESSION
         ini_set("session.sid_length", 32);
         ini_set("session.sid_bits_per_character", 5);
         ini_set("session.use_cookies", 0);
+        ini_set('session.gc_maxlifetime', 86400);
         $stime = time() + 21600;
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一

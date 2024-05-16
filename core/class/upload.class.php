@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-01-16 10:56:50
+ * @LastEditTime: 2024-05-14 10:42:29
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -216,13 +216,13 @@ class UPLOAD
             $srcwh  = getimagesizefromstring($img);
             $thumbx = $srcwh[0];
             $thumby = $srcwh[1];
-            if ($thumbx > 1920 || $thumby > 1920) {
-                if ($thumbx > 1920) {
-                    $thumby = intval($thumby * 1920 / $thumbx);
-                    $thumbx = 1920;
+            if ($thumbx > 2560 || $thumby > 2560) {
+                if ($thumbx > 2560) {
+                    $thumby = intval($thumby * 2560 / $thumbx);
+                    $thumbx = 2560;
                 } else {
-                    $thumbx = intval($thumbx * 1920 / $thumby);
-                    $thumby = 1920;
+                    $thumbx = intval($thumbx * 2560 / $thumby);
+                    $thumby = 2560;
                 }
             }
             if (self::$SIZE > self::$CFG['attsize']) {

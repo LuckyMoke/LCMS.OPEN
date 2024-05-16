@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-04-19 12:40:09
+ * @LastEditTime: 2024-05-13 21:52:44
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -87,6 +87,7 @@ class admin extends adminbase
                         "type"     => $val['type'] === "lcms" ? "超级权限" : [
                             "type"  => "link",
                             "title" => $val['level'] ? "自定义权限" : "{$level['name']} - [ID:{$level['id']}]",
+                            "icon"  => "set",
                             "url"   => "javascript:setPower('{$token}')",
                         ],
                         "status"   => [
@@ -153,12 +154,11 @@ class admin extends adminbase
                     "id"    => PUB::token2id($LF['token']),
                 ]);
                 $form['base'] = [
-                    ["layui"    => "upload", "title" => "头像",
-                        "name"      => "LC[headimg]",
-                        "value"     => $admin['headimg'],
-                        "maxwidth"  => 200,
-                        "maxheight" => 200,
-                        "tips"      => "请上传200*200尺寸以内正方形图片"],
+                    ["layui" => "upload", "title" => "头像",
+                        "name"   => "LC[headimg]",
+                        "value"  => $admin['headimg'],
+                        "width"  => 200,
+                        "height" => 200],
                     ["layui"      => "input", "title" => "账号",
                         "name"        => "LC[name]",
                         "value"       => $admin['name'],
@@ -421,12 +421,11 @@ class admin extends adminbase
                     "id"    => $_L['LCMSADMIN']['id'],
                 ]);
                 $form['base'] = [
-                    ["layui"    => "upload", "title" => "头像",
-                        "name"      => "LC[headimg]",
-                        "value"     => $admin['headimg'],
-                        "maxwidth"  => 200,
-                        "maxheight" => 200,
-                        "tips"      => "请上传200*200尺寸以内正方形图片"],
+                    ["layui" => "upload", "title" => "头像",
+                        "name"   => "LC[headimg]",
+                        "value"  => $admin['headimg'],
+                        "width"  => 200,
+                        "height" => 200],
                     ["layui" => "html", "title" => "账号",
                         "name"   => "LC[name]",
                         "value"  => $admin['name'],

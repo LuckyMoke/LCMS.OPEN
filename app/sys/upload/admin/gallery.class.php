@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-02-01 13:48:52
+ * @LastEditTime: 2024-05-13 17:58:59
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -35,6 +35,15 @@ class gallery extends adminbase
     {
         global $_L, $LF, $LC;
         require LCMS::template("own/upload");
+    }
+    /**
+     * @description: 图片裁剪
+     * @return {*}
+     */
+    public function docrop()
+    {
+        global $_L, $LF, $LC;
+        require LCMS::template("own/crop");
     }
     /**
      * @description: 第三方视频

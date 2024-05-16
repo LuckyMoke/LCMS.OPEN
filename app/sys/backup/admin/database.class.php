@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-04-19 13:23:46
+ * @LastEditTime: 2024-05-13 16:28:46
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -33,6 +33,7 @@ class database extends adminbase
                             "type"   => "link",
                             "url"    => "{$_L['url']['site']}backup/data/" . urlencode($val['name']),
                             "title"  => $val['name'],
+                            "icon"   => "template-1",
                             "target" => "_blank",
                         ],
                     ]);
