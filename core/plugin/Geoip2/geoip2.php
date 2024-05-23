@@ -5,6 +5,9 @@ use ip2region\XdbSearcher;
 class Geoip2
 {
     private $path = PATH_CORE_PLUGIN . "Geoip2/";
+    public function __construct()
+    {
+    }
     /**
      * @description: 判断ip查询功能是否可用
      * @return bool
