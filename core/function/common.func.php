@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-05 15:25:14
+ * @LastEditTime: 2024-05-19 17:04:41
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -570,6 +570,54 @@ function realhost($host = "")
         $cache    = $Punycode->encode($cache);
     }
     return $domain ? str_replace($domain['host'], $cache, $host) : $cache;
+}
+/**
+ * @description: 获取根域名
+ * @param {*} $domain
+ * @return {*}
+ */
+function roothost($domain = "")
+{
+    if (filter_var($domain, FILTER_VALIDATE_IP)) {
+        // 如果是IP地址，直接输入IP
+        $host = $domain;
+    } elseif ($domain) {
+        switch ($domain) {
+            case 'localhost':
+                $host = $domain;
+                break;
+            default:
+                if (in_string($domain, "://")) {
+                    $domain = parse_url($domain);
+                    $domain = $domain['host'];
+                }
+                $match = explode(".", $domain);
+                $match = array_slice($match, -3);
+                $match = array_reverse($match);
+                switch ($match[0]) {
+                    case 'cn':
+                        if (!in_array($match[1], [
+                            "com", "net", "org", "gov", "edu", "ac", "bj", "sh", "tj", "cq", "he", "sn", "sx", "nm", "ln", "jl", "hl", "js", "zj", "ah", "fj", "jx", "sd", "ha", "hb", "hn", "gd", "gx", "hi", "sc", "gz", "yn", "gs", "qh", "nx", "xj", "tw", "hk", "mo", "xz",
+                        ])) {
+                            unset($match[2]);
+                        }
+                        break;
+                    default:
+                        if (!in_array($match[1], [
+                            "com", "net", "org", "gov", "edu", "ac",
+                        ])) {
+                            unset($match[2]);
+                        }
+                        break;
+                }
+                $match = array_reverse($match);
+                $host  = implode(".", $match);
+                $host  = explode(":", $host);
+                $host  = $host[0];
+                break;
+        }
+    }
+    return $host ? realhost($host) : "";
 }
 /**
  * @description: AES字符串加密

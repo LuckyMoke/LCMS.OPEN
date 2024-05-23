@@ -22,7 +22,7 @@ class TencentApi
     public function getHeader($method = "POST", $PData)
     {
         $time    = time();
-        $utcdate = date("Y-m-d", $time - 28800);
+        $utcdate = gmdate("Y-m-d");
 
         $StringToSign = $method . "\n";
         $StringToSign .= "/" . "\n";

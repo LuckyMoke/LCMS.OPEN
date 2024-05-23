@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-02-28 16:27:05
+ * @LastEditTime: 2024-05-20 09:48:13
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -183,6 +183,7 @@ class THUMB
         }
         imagecopyresampled($thumb, $img, $dstx, $dsty, $srcx, $srcy, $x, $y, $img_info[0], $img_info[1]);
         header("content-type: {$img_info['mime']}");
+        imageinterlace($thumb, true);
         switch ($img_info['mime']) {
             case 'image/gif':
                 imagegif($thumb);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-05 17:55:10
+ * @LastEditTime: 2024-05-22 10:21:54
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -56,13 +56,13 @@ class admin extends adminbase
                             ["title" => "自动判断", "value" => 0],
                             ["title" => "https://", "value" => 1],
                         ],
-                        "tips"   => "如果使用CDN半程加密，需要指定访问协议！",
+                        "tips"   => "一般请选自动判断",
                     ],
-                    ["layui"      => "input", "title" => "强制域名",
+                    ["layui"      => "input", "title" => "后台域名",
                         "name"        => "LC[domain]",
                         "value"       => $config['domain'],
-                        "placeholder" => "不填任意域名可访问后台",
-                        "tips"        => "不填任意域名可打开后台，填写后任意域名访问后台，均自动跳转到填写的域名",
+                        "placeholder" => "不填任意域名可访问后台，填写后仅填写的域名可以打开后台",
+                        "tips"        => "不填任意域名可访问后台，填写后仅填写的域名可以打开后台",
                     ],
                     ["layui" => "input", "title" => "页脚版权",
                         "name"   => "LC[developer]",
@@ -331,11 +331,12 @@ class admin extends adminbase
                     deldir(PATH_CACHE . "tpl");
                     function_exists("opcache_get_status") && opcache_reset();
                 }
+                if ($LF['cfg']) {
+                    delfile(PATH_CORE . "asynced");
+                    sql_query("TRUNCATE {$_L['table']['cache']}");
+                }
                 if ($LF['static']) {
                     deldir(PATH_CACHE . "static");
-                }
-                if ($LF['cfg']) {
-                    sql_query("TRUNCATE {$_L['table']['cache']}");
                 }
                 ajaxout(1, "清除成功", "close");
                 break;
@@ -343,9 +344,9 @@ class admin extends adminbase
                 $form = [
                     ["layui"   => "checkbox", "title" => "缓存类型",
                         "checkbox" => [
-                            ["title" => "模板缓存", "name" => "tpl", "value" => 1],
+                            ["title" => "模板缓存", "name" => "tpl", "value" => 0],
                             ["title" => "配置缓存", "name" => "cfg", "value" => 0],
-                            ["title" => "本地缓存", "name" => "browser", "value" => 0],
+                            ["title" => "本地缓存", "name" => "browser", "value" => 1],
                             ["title" => "CSS/JS缓存", "name" => "static", "value" => 0],
                         ],
                     ],
@@ -359,10 +360,11 @@ class admin extends adminbase
     {
         global $_L, $LF, $LC;
         if ($LF['checked'] == "1") {
-            load::plugin("Redis/rds");
+            $redisid = "lcms-sys-redistest-" . md5($_L['url']['site']);
+            LOAD::plugin("Redis/rds");
             $redis = new RDS();
-            $redis->do->setex("LCMSREDISTEST", 60, "success");
-            if ($redis->do->get('LCMSREDISTEST') === "success") {
+            $redis->do->setex($redisid, 60, "success");
+            if ($redis->do->get($redisid) === "success") {
                 ajaxout(1);
             } else {
                 ajaxout(0, "Redis未成功开启");

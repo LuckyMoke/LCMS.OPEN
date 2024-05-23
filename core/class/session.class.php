@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-08 11:46:53
+ * @LastEditTime: 2024-05-19 02:18:56
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -58,15 +58,20 @@ class SESSION
         global $_L;
         $SESSION = $_L['SESSION'];
         if ($SESSION['type'] == "1") {
-            if (!$SESSION['redis']) {
-                load::plugin("Redis/rds");
-                $SESSION['redis'] = $_L['SESSION']['redis'] = new RDS();
+            if (!$_L['SESSION']['redisid']) {
+                LOAD::plugin("Redis/rds");
+                $_L['SESSION'] = array_merge($_L['SESSION'], [
+                    "redis"   => new RDS(),
+                    "redisid" => "session-{$SESSION['id']}",
+                ]);
+                $SESSION['redis']   = $_L['SESSION']['redis'];
+                $SESSION['redisid'] = $_L['SESSION']['redisid'];
             }
-            $etime = $SESSION['redis']->do->hGet($SESSION['id'], "LCMSSIDTIME");
+            $etime = $SESSION['redis']->do->hGet($SESSION['redisid'], "LCMSSIDTIME");
             if ($etime && $etime < time()) {
-                $SESSION['redis']->do->hDel($SESSION['id'], "LCMSADMIN");
+                $SESSION['redis']->do->hDel($SESSION['redisid'], "LCMSADMIN");
             }
-            $SESSION['redis']->do->hSet($SESSION['id'], "LCMSSIDTIME", $SESSION['time']);
+            $SESSION['redis']->do->hSet($SESSION['redisid'], "LCMSSIDTIME", $SESSION['time']);
         } else {
             session_name("LCMSSID");
             session_id($SESSION['id']);
@@ -92,7 +97,7 @@ class SESSION
             if (is_object($value) || is_array($value)) {
                 $value = arr2sql($value);
             }
-            $SESSION['redis']->do->hSet($SESSION['id'], $name, $value);
+            $SESSION['redis']->do->hSet($SESSION['redisid'], $name, $value);
         } else {
             $_SESSION[$name] = $value;
             session_write_close();
@@ -108,7 +113,7 @@ class SESSION
     {
         $SESSION = self::start();
         if ($SESSION['type'] == "1") {
-            $value = $SESSION['redis']->do->hGet($SESSION['id'], $name);
+            $value = $SESSION['redis']->do->hGet($SESSION['redisid'], $name);
             if (is_serialize($value)) {
                 return sql2arr($value);
             }
@@ -127,7 +132,7 @@ class SESSION
     {
         $SESSION = self::start();
         if ($SESSION['type'] == "1") {
-            $arr = $SESSION['redis']->do->hGetAll($SESSION['id']);
+            $arr = $SESSION['redis']->do->hGetAll($SESSION['redisid']);
             foreach ($arr as $key => $val) {
                 if (is_serialize($val)) {
                     $val = sql2arr($val);
@@ -149,7 +154,7 @@ class SESSION
     {
         $SESSION = self::start();
         if ($SESSION['type'] == "1") {
-            $SESSION['redis']->do->hDel($SESSION['id'], $name);
+            $SESSION['redis']->do->hDel($SESSION['redisid'], $name);
         } else {
             unset($_SESSION[$name]);
             session_write_close();
@@ -164,7 +169,7 @@ class SESSION
     {
         $SESSION = self::start();
         if ($SESSION['type'] == "1") {
-            $SESSION['redis']->do->delete($SESSION['id']);
+            $SESSION['redis']->do->delete($SESSION['redisid']);
         } else {
             session_destroy();
         }

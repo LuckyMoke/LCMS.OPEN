@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-14 10:42:29
+ * @LastEditTime: 2024-05-20 09:50:03
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -249,6 +249,7 @@ class UPLOAD
                 }
                 self::watermark($thumb, $thumbx, $thumby);
             }
+            imageinterlace($thumb, true);
             switch (self::$MIME) {
                 case 'jpg':
                 case 'jpeg':

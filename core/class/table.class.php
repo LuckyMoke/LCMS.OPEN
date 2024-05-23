@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-13 16:22:15
+ * @LastEditTime: 2024-05-20 10:35:10
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -287,14 +287,20 @@ class TABLE
                             $arr[$index][$key] = $val['src'] ? "<img class='lazyload' data-src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='display:block;max-width:none;{$val['style']}'/>" : "";
                             break;
                         case 'link':
-                            if (!in_string($val['url'], "javascript:") && !is_url($val['url'])) {
+                            $val['url'] = $val['url'] ?: $val['href'] ?: "";
+                            if (!$val['url']) {
+                                $val['url'] = "javascript:;";
+                            } elseif (in_string($val['url'], "javascript:")) {
+                                $val['onclick'] = ' onclick="' . str_replace("javascript:", "", $val['url']) . '"';
+                                $val['url']     = "javascript:;";
+                            } elseif (!is_url($val['url'])) {
                                 $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
                             }
                             $val['cname']      = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
                             $val['color']      = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
                             $val['target']     = $val['target'] ? " target={$val['target']}" : "";
                             $val['icon']       = $val['icon'] ?: "edge";
-                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}><i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>{$val['title']}</a>";
+                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}><i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>{$val['title']}</a>";
                             break;
                     }
                 }

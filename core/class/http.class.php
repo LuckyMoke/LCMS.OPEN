@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-12 09:58:25
+ * @LastEditTime: 2024-05-22 17:19:00
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -115,6 +115,33 @@ class HTTP
         return self::$INFO;
     }
     /**
+     * @description: 下载文件
+     * @param string $url
+     * @param string $file
+     * @param array $headers
+     * @return array
+     */
+    public static function download($url, $file, $headers = [])
+    {
+        delfile($file);
+        $cfile        = fopen($file, "w+");
+        self::$CH     = curl_init($url);
+        self::$METHOD = "GET";
+        self::$HEADER = $headers;
+        curl_setopt(self::$CH, CURLOPT_FILE, $cfile);
+        self::setBaseOpt("lcms-http-download");
+        curl_exec(self::$CH);
+        self::$INFO = curl_getinfo(self::$CH);
+        curl_close(self::$CH);
+        fclose($cfile);
+        return [
+            "code"   => self::$INFO['http_code'],
+            "type"   => self::$INFO['content_type'],
+            "length" => self::$INFO['size_download'],
+            "file"   => $file,
+        ];
+    }
+    /**
      * @description: 配置请求信息
      * @param mixed $data
      * @return {*}
@@ -132,12 +159,14 @@ class HTTP
             curl_setopt(self::$CH, CURLOPT_HTTPHEADER, $h);
         }
         curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
-        curl_setopt(self::$CH, CURLOPT_HEADER, true);
-        curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36");
-        curl_setopt(self::$CH, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt(self::$CH, CURLOPT_CUSTOMREQUEST, self::$METHOD);
+        if ($data != "lcms-http-download") {
+            curl_setopt(self::$CH, CURLOPT_HEADER, true);
+            curl_setopt(self::$CH, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt(self::$CH, CURLOPT_CUSTOMREQUEST, self::$METHOD);
+        }
         switch (self::$METHOD) {
             case 'GET':
                 curl_setopt(self::$CH, CURLOPT_FOLLOWLOCATION, true);
