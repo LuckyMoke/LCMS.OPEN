@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-28 16:46:36
+ * @LastEditTime: 2024-05-29 15:17:21
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -151,6 +151,9 @@ class adminbase extends common
             "type" => "sys",
             "cate" => "plugin",
         ]);
+        if (!$_L['plugin']['aimodel']['type'] && $plugin['aimodel']['type']) {
+            $_L['plugin']['aimodel'] = $plugin['aimodel'];
+        }
         $plugin['oss']['type'] = $plugin['oss']['type'] ?: "local";
         if ($plugin['oss']['type'] != "local" && $plugin['oss']['super'] > 0) {
             $_L['plugin']['oss'] = $plugin['oss'];
@@ -161,9 +164,6 @@ class adminbase extends common
             return;
         }
         $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "local";
-        if (!$_L['plugin']['aimodel']['type'] && $plugin['aimodel']['type']) {
-            $_L['plugin']['aimodel'] = $plugin['aimodel'];
-        }
     }
     protected function check_level()
     {
