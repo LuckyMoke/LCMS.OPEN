@@ -64,11 +64,11 @@ switch ($_GET['action']) {
                 "desc" => $_SERVER["SERVER_SOFTWARE"],
             ],
         ];
-        if (version_compare(PHP_VERSION, "7.2", "lt")) {
-            $desc = "<span style='color:#F56C6C'><i class='layui-icon layui-icon-close'></i>请使用7.2.0及以上版本</span>";
+        if (version_compare(PHP_VERSION, "7.3", "lt")) {
+            $desc = "<span style='color:#F56C6C'><i class='layui-icon layui-icon-close'></i>请使用7.3.0及以上版本</span>";
             $code = 0;
         } else {
-            $desc = "<span style='color:#67C23A'><i class='layui-icon layui-icon-ok'></i>版本可用 / 推荐8.0及其以上版本</span>";
+            $desc = "<span style='color:#67C23A'><i class='layui-icon layui-icon-ok'></i>版本可用 / 推荐8.1及其以上版本</span>";
         }
         $serv[] = [
             "name" => "PHP版本",

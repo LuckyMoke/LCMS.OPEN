@@ -1,0 +1,18 @@
+<template "ui/head" />
+<template "ui/css" />
+<template "ui/iframe" />
+<div class="aimodel">
+    <div class="aimodel-chat">
+        <div class="layui-anim layui-anim-upbit aimodel-chat-left">
+            <h3 class="layui-unselect aimodel-chat-name">AI助手</h3>
+            <div class="aimodel-chat-body lcms-editor">有什么可以帮助您的呢？</div>
+        </div>
+    </div>
+    <div class="layui-unselect aimodel-input">
+        <textarea placeholder="说点什么吧？[Enter发送、Shift+Enter换行]"></textarea>
+        <button><i class="layui-icon layui-icon-release"></i> 发送</button>
+        <div class="aimodel-plugins"></div>
+    </div>
+</div>
+<div class="layui-unselect aimodel-top-info"></div>
+<template "ui/foot" />

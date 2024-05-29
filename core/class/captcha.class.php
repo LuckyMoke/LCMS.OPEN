@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-04-02 14:37:20
+ * @LastEditTime: 2024-05-28 10:34:47
  * @Description: 验证码生成类
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -81,7 +81,7 @@ class CAPTCHA
         }
         $pyx = mt_rand(5, 45);
         for ($i = 0; $i < strlen($pin); $i++) {
-            imagettftext($im, 24, mt_rand(-10, 20), $pyx + ($i * 40), mt_rand(45, 55), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($pin, $i, 1));
+            imagettftext($im, mt_rand(20, 24), mt_rand(-10, 20), $pyx + ($i * 40), mt_rand(45, 55), ImageColorAllocate($im, mt_rand(100, 200), 68, 139), $font, substr($pin, $i, 1));
         }
         $rand  = mt_rand(25, 30);
         $rand1 = mt_rand(10, 25);

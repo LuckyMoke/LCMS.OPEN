@@ -1,0 +1,8 @@
+<template "ui/head" />
+<if LCMS::SUPER()>
+    <p class="lcms-form-des">超管开启接口，子用户如果关闭则使用超管接口，子用户如果开启则使用子用户接口！</p>
+</if>
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}aimodel&action=save" method="post" target="_self">
+    <ui form($form) />
+</form>
+<template "ui/foot" />

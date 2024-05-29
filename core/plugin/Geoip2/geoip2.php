@@ -14,6 +14,9 @@ class Geoip2
      */
     public function isready($dbtype = "geoip2")
     {
+        if (version_compare(PHP_VERSION, "8.1", "lt")) {
+            return false;
+        }
         switch ($dbtype) {
             case 'cz88':
                 if (is_file("{$this->path}ipdb/cz88.xdb")) {
@@ -179,6 +182,12 @@ class Geoip2
                     $country = "中国";
                     break;
             }
+            if ($dbtype == "city") {
+                $address = $city ?: $region;
+                $address = $country == $address ? $country : "{$country}{$address}";
+            } else {
+                $address = $country;
+            }
             return [
                 "ip"             => $ip,
                 "intranet"       => false,
@@ -190,7 +199,7 @@ class Geoip2
                 "region"         => $region,
                 "region_code"    => $region_code,
                 "city"           => $city,
-                "address"        => "{$country}" . ($city ?: $region),
+                "address"        => $address,
                 "original"       => $record,
             ];
         } catch (\Throwable $th) {

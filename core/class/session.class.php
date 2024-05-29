@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-19 02:18:56
+ * @LastEditTime: 2024-05-23 18:06:47
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,11 +24,16 @@ class SESSION
         $stime = time() + 21600;
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
-            $userid = $_L['form']['rootsid'];
-            $userid = preg_replace("/[^A-Za-z0-9-]/", "", $userid);
-            if (!in_string($userid, "lcms-") || strlen($userid) > 37) {
-                $userid = "lcms-" . substr(md5($userid . PATH_WEB), 8, 16) . substr($userid, -16);
+            $userid  = strtolower($_L['form']['rootsid']);
+            $userid  = str_replace("lcms-", "", $userid);
+            $userid  = preg_replace("/[^a-z0-9]/", "", $userid);
+            $uidlong = strlen($userid);
+            if ($uidlong < 32) {
+                ajaxout(0, "rootsid仅支持字母、数字，长度不能小于32位，并且每个用户唯一。");
+            } elseif ($uidlong > 32) {
+                $userid = substr(md5($userid . PATH_WEB), 8, 16) . substr($userid, -16);
             }
+            $userid = "lcms-{$userid}";
         } else {
             $ltime = time() + 15552000;
             if ($_COOKIE['LCMSCID']) {

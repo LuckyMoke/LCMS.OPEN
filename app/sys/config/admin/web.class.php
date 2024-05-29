@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-01 11:00:53
+ * @LastEditTime: 2024-05-28 17:35:55
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -429,6 +429,103 @@ class web extends adminbase
                     ["layui" => "btn", "title" => "立即保存"],
                 ]);
                 require LCMS::template("own/web_oss");
+                break;
+        }
+    }
+    public function doaimodel()
+    {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'save':
+                LCMS::config([
+                    "do"   => "save",
+                    "type" => "sys",
+                    "cate" => "plugin",
+                ]);
+                ajaxout(1, "保存成功");
+                break;
+            default:
+                $plugin = LCMS::config([
+                    "type" => "sys",
+                    "cate" => "plugin",
+                ]);
+                $PLG    = $plugin['aimodel'] ?: [];
+                $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
+                $form   = [
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>注：本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
+                    ["layui" => "radio", "title" => "API大模型",
+                        "name"   => "LC[aimodel][type]",
+                        "value"  => $PLG['type'] ?: "",
+                        "radio"  => [
+                            ["title" => "关闭", "value" => "", "tab" => "type_close"],
+                            ["title" => "百度文心", "value" => "wenxin", "tab" => "type_wenxin"],
+                            ["title" => "百川", "value" => "baichuan", "tab" => "type_baichuan"],
+                            ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
+                            ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
+                        ]],
+                    ["layui" => "input_sort", "title" => "最大TOKENS",
+                        "name"   => "LC[aimodel][max_tokens]",
+                        "value"  => $PLG['max_tokens'] ?: 1024,
+                        "type"   => "number",
+                        "min"    => 100,
+                        "max"    => 2048,
+                        "tips"   => "单次请求最大输出tokens数"],
+                    ["layui" => "input", "title" => "API Key",
+                        "name"   => "LC[aimodel][wenxin][api_key]",
+                        "value"  => $PLG['wenxin']['api_key'],
+                        "cname"  => "hidden type_wenxin"],
+                    ["layui" => "input", "title" => "Secret Key",
+                        "name"   => "LC[aimodel][wenxin][secret_key]",
+                        "value"  => $PLG['wenxin']['secret_key'],
+                        "cname"  => "hidden type_wenxin"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[aimodel][wenxin][model]",
+                        "value"  => $PLG['wenxin']['model'] ?: "ernie_speed",
+                        "cname"  => "hidden type_wenxin",
+                        "option" => $models['wenxin']],
+                    ["layui" => "input", "title" => "API Key",
+                        "name"   => "LC[aimodel][baichuan][token]",
+                        "value"  => $PLG['baichuan']['token'],
+                        "cname"  => "hidden type_baichuan"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[aimodel][baichuan][model]",
+                        "value"  => $PLG['baichuan']['model'] ?: "Baichuan2-Turbo",
+                        "cname"  => "hidden type_baichuan",
+                        "option" => $models['baichuan']],
+                    ["layui" => "input", "title" => "TOKEN",
+                        "name"   => "LC[aimodel][kimi][token]",
+                        "value"  => $PLG['kimi']['token'],
+                        "cname"  => "hidden type_kimi"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[aimodel][kimi][model]",
+                        "value"  => $PLG['kimi']['model'] ?: "moonshot-v1-8k",
+                        "cname"  => "hidden type_kimi",
+                        "option" => $models['kimi']],
+                    ["layui" => "radio", "title" => "接口提供商",
+                        "name"   => "LC[aimodel][openai][type]",
+                        "value"  => $PLG['openai']['type'] ?: "api2d",
+                        "radio"  => [
+                            ["title" => "API2D/境内可用", "value" => "api2d"],
+                            ["title" => "OpenAI/官方原接口", "value" => "openai"],
+                        ],
+                        "cname"  => "hidden type_openai"],
+                    ["layui"      => "input", "title" => "自定义接口",
+                        "name"        => "LC[aimodel][openai][api]",
+                        "value"       => $PLG['openai']['api'],
+                        "placeholder" => "不填使用默认接口地址",
+                        "cname"       => "hidden type_openai"],
+                    ["layui" => "input", "title" => "TOKEN",
+                        "name"   => "LC[aimodel][openai][token]",
+                        "value"  => $PLG['openai']['token'],
+                        "cname"  => "hidden type_openai"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[aimodel][openai][model]",
+                        "value"  => $PLG['openai']['model'] ?: "gpt-3.5-turbo",
+                        "cname"  => "hidden type_openai",
+                        "option" => $models['openai']],
+                    ["layui" => "btn", "title" => "立即保存"],
+                ];
+                require LCMS::template("own/web_aimodel");
                 break;
         }
     }

@@ -72,7 +72,7 @@
                     <tr>
                         <td>运行环境</td>
                         <td>
-                            PHP/{{$info['php']}}{{version_compare($info['php'], "8.0", "lt")?" (推荐PHP8.0及以上)":""}}
+                            PHP/{{$info['php']}}{{version_compare($info['php'], "8.1", "lt")?" (推荐PHP8.1及以上)":""}}
                             主数据库/{{$info['mysql']['master']}}
                             <if $info['mysql']['slave']>
                                 从数据库/{{$info['mysql']['slave']}}

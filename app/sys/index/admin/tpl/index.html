@@ -20,7 +20,8 @@
             var LCMS = {
                 url: JSON.parse('{{json_encode($_L["url"])}}'),
                 config: {
-                    ver: "{{$_L['config']['ver']}}"
+                    ver: "{{$_L['config']['ver']}}",
+                    aichat: "{{$_L['plugin']['aimodel']['type']}}"
                 },
                 plugin: {editor:{}, upload:{}}
             };
@@ -91,6 +92,11 @@
                     </ul>
                 </div>
                 <ul class="layui-nav user">
+                    <if $_L['plugin']['aimodel']['type']>
+                        <li class="layui-nav-item sys-aichat">
+                            <a href="javascript:;" title="AI助手" onclick="LCMS.plugin.aimodel.chat({window:`AI助手`})">AI</a>
+                        </li>
+                    </if>
                     <li class="layui-nav-item sys-notify">
                         <a href="javascript:;" title="系统通知">
                             <i class="layui-icon layui-icon-notice"></i>
