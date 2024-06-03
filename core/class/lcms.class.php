@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-04-17 10:50:53
+ * @LastEditTime: 2024-06-02 22:06:52
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -97,7 +97,10 @@ class LCMS
     public static function cache($name, $value = [], $lcms = false)
     {
         global $_L;
-        $name  = substr(md5(L_NAME . $name), 8, 16);
+        if (!in_string($name, "/")) {
+            $name = L_NAME . "/{$name}";
+        }
+        $name  = substr(md5($name), 8, 16);
         $lcms  = $lcms ? 0 : $_L['ROOTID'];
         $cache = sql_get([
             "table" => "cache",
@@ -156,6 +159,9 @@ class LCMS
         global $_L;
         if (!$_L['table']['ram']) {
             return "";
+        }
+        if (!in_string($name, "/")) {
+            $name = L_NAME . "/{$name}";
         }
         $name = substr(md5(L_NAME . $name), 8, 16);
         $lcms = $lcms ? 0 : $_L['ROOTID'];

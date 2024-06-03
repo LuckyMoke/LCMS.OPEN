@@ -2,12 +2,12 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-22 10:21:54
+ * @LastEditTime: 2024-06-03 10:27:14
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
+LOAD::sys_class('adminbase');
 class admin extends adminbase
 {
     public function __construct()
@@ -26,14 +26,14 @@ class admin extends adminbase
                 if (in_string($LC['domain'], ["http://", "https://"])) {
                     $LC['domain'] = parse_url($LC['domain'])['host'];
                 }
-                $LC['domain']     = realhost($LC['domain']);
-                $LC['oauth_code'] = strtoupper(md5(HTTP_HOST));
+                $LC['domain'] = realhost($LC['domain']);
                 LCMS::config([
-                    "do"   => "save",
-                    "type" => "sys",
-                    "cate" => "admin",
-                    "form" => $LC,
-                    "lcms" => true,
+                    "do"    => "save",
+                    "type"  => "sys",
+                    "cate"  => "admin",
+                    "unset" => "app_host",
+                    "form"  => $LC,
+                    "lcms"  => true,
                 ]);
                 ajaxout(1, "保存成功");
                 break;
@@ -186,11 +186,12 @@ class admin extends adminbase
                     $LC['mimelist'] = str_replace([".", ","], "", $LC['mimelist']);
                 }
                 LCMS::config([
-                    "do"   => "save",
-                    "type" => "sys",
-                    "cate" => "admin",
-                    "form" => $LC,
-                    "lcms" => true,
+                    "do"    => "save",
+                    "type"  => "sys",
+                    "cate"  => "admin",
+                    "unset" => "app_host",
+                    "form"  => $LC,
+                    "lcms"  => true,
                 ]);
                 if ($change) {
                     ajaxout(1, "保存成功", "{$_L['url']['own_form']}change&olddir={$_L['config']['admin']['dir']}&newdir={$LC['dir']}");
@@ -277,14 +278,6 @@ class admin extends adminbase
                             ["title" => "关闭", "value" => 0],
                         ],
                         "tips"   => "不知道这是什么不要开，如果开启后无法上传图片，请关掉"],
-                    ["layui"  => "slider", "title" => "图片压缩率",
-                        "name"    => "LC[attquality]",
-                        "value"   => $config['attquality'] ?: 70,
-                        "tips"    => "图片压缩率，100%为不压缩",
-                        "min"     => 10,
-                        "max"     => 100,
-                        "step"    => 10,
-                        "settips" => "%"],
                     ["layui" => "des", "title" => "特别注意：为了后台安全，一些不常见的文件后缀，请在上传完文件后，及时删除白名单。"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",

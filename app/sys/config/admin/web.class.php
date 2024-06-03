@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-28 17:35:55
+ * @LastEditTime: 2024-05-31 18:20:55
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -441,6 +441,9 @@ class web extends adminbase
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "plugin",
+                    "form" => [
+                        "aimodel" => $LC,
+                    ],
                 ]);
                 ajaxout(1, "保存成功");
                 break;
@@ -454,7 +457,7 @@ class web extends adminbase
                 $form   = [
                     ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>注：本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
                     ["layui" => "radio", "title" => "API大模型",
-                        "name"   => "LC[aimodel][type]",
+                        "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
                         "radio"  => [
                             ["title" => "关闭", "value" => "", "tab" => "type_close"],
@@ -463,46 +466,59 @@ class web extends adminbase
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
                             ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
                         ]],
+                ];
+                if (!LCMS::SUPER()) {
+                    $form = array_merge($form, [
+                        ["layui" => "radio", "title" => "子用户AI",
+                            "name"   => "LC[subon]",
+                            "value"  => $PLG['subon'] ?? 1,
+                            "radio"  => [
+                                ["title" => "启用", "value" => 1],
+                                ["title" => "禁用", "value" => 0],
+                            ]],
+                    ]);
+                }
+                $form = array_merge($form, [
                     ["layui" => "input_sort", "title" => "最大TOKENS",
-                        "name"   => "LC[aimodel][max_tokens]",
+                        "name"   => "LC[max_tokens]",
                         "value"  => $PLG['max_tokens'] ?: 1024,
                         "type"   => "number",
                         "min"    => 100,
                         "max"    => 2048,
                         "tips"   => "单次请求最大输出tokens数"],
                     ["layui" => "input", "title" => "API Key",
-                        "name"   => "LC[aimodel][wenxin][api_key]",
+                        "name"   => "LC[wenxin][api_key]",
                         "value"  => $PLG['wenxin']['api_key'],
                         "cname"  => "hidden type_wenxin"],
                     ["layui" => "input", "title" => "Secret Key",
-                        "name"   => "LC[aimodel][wenxin][secret_key]",
+                        "name"   => "LC[wenxin][secret_key]",
                         "value"  => $PLG['wenxin']['secret_key'],
                         "cname"  => "hidden type_wenxin"],
                     ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[aimodel][wenxin][model]",
+                        "name"   => "LC[wenxin][model]",
                         "value"  => $PLG['wenxin']['model'] ?: "ernie_speed",
                         "cname"  => "hidden type_wenxin",
                         "option" => $models['wenxin']],
                     ["layui" => "input", "title" => "API Key",
-                        "name"   => "LC[aimodel][baichuan][token]",
+                        "name"   => "LC[baichuan][token]",
                         "value"  => $PLG['baichuan']['token'],
                         "cname"  => "hidden type_baichuan"],
                     ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[aimodel][baichuan][model]",
+                        "name"   => "LC[baichuan][model]",
                         "value"  => $PLG['baichuan']['model'] ?: "Baichuan2-Turbo",
                         "cname"  => "hidden type_baichuan",
                         "option" => $models['baichuan']],
                     ["layui" => "input", "title" => "TOKEN",
-                        "name"   => "LC[aimodel][kimi][token]",
+                        "name"   => "LC[kimi][token]",
                         "value"  => $PLG['kimi']['token'],
                         "cname"  => "hidden type_kimi"],
                     ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[aimodel][kimi][model]",
+                        "name"   => "LC[kimi][model]",
                         "value"  => $PLG['kimi']['model'] ?: "moonshot-v1-8k",
                         "cname"  => "hidden type_kimi",
                         "option" => $models['kimi']],
                     ["layui" => "radio", "title" => "接口提供商",
-                        "name"   => "LC[aimodel][openai][type]",
+                        "name"   => "LC[openai][type]",
                         "value"  => $PLG['openai']['type'] ?: "api2d",
                         "radio"  => [
                             ["title" => "API2D/境内可用", "value" => "api2d"],
@@ -510,21 +526,21 @@ class web extends adminbase
                         ],
                         "cname"  => "hidden type_openai"],
                     ["layui"      => "input", "title" => "自定义接口",
-                        "name"        => "LC[aimodel][openai][api]",
+                        "name"        => "LC[openai][api]",
                         "value"       => $PLG['openai']['api'],
                         "placeholder" => "不填使用默认接口地址",
                         "cname"       => "hidden type_openai"],
                     ["layui" => "input", "title" => "TOKEN",
-                        "name"   => "LC[aimodel][openai][token]",
+                        "name"   => "LC[openai][token]",
                         "value"  => $PLG['openai']['token'],
                         "cname"  => "hidden type_openai"],
                     ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[aimodel][openai][model]",
+                        "name"   => "LC[openai][model]",
                         "value"  => $PLG['openai']['model'] ?: "gpt-3.5-turbo",
                         "cname"  => "hidden type_openai",
                         "option" => $models['openai']],
                     ["layui" => "btn", "title" => "立即保存"],
-                ];
+                ]);
                 require LCMS::template("own/web_aimodel");
                 break;
         }

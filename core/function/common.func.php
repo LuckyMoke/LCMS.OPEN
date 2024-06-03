@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-19 17:04:41
+ * @LastEditTime: 2024-06-02 13:49:16
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -674,6 +674,72 @@ function ssl_decode_gzip($string, $token = "LCMS")
     }
     $decrypted = openssl_decrypt($decrypted, "AES-256-CBC", $token, OPENSSL_RAW_DATA);
     return $decrypted;
+}
+/**
+ * @description: 生成公钥私钥
+ * @param int $bit
+ * @return array|bool
+ */
+function rsa_create($bit = 2048)
+{
+    $res = openssl_pkey_new([
+        "private_key_bits" => $bit,
+        "private_key_type" => OPENSSL_KEYTYPE_RSA,
+    ]);
+    if ($res === false) {
+        return false;
+    } else {
+        openssl_pkey_export($res, $privKey);
+        $pubKey = openssl_pkey_get_details($res);
+        $pubKey = $pubKey["key"];
+        return [
+            "pubKey"  => $pubKey,
+            "privKey" => $privKey,
+        ];
+    }
+}
+/**
+ * @description: 公钥加密
+ * @param string $string
+ * @param string $pubKey
+ * @return string|bool
+ */
+function rsa_encode($string, $pubKey)
+{
+    $pubKey = str_replace([
+        "-----BEGIN PUBLIC KEY-----",
+        "-----END PUBLIC KEY-----",
+        " ",
+        "\r\n",
+        "\n",
+    ], "", $pubKey);
+    $pubKey = "-----BEGIN PUBLIC KEY-----\n" . wordwrap($pubKey, 64, "\n", true) . "\n-----END PUBLIC KEY-----";
+    if (openssl_public_encrypt($string, $encrypted, $pubKey)) {
+        return base64_encode($encrypted);
+    }
+    return false;
+}
+/**
+ * @description: 私钥解密
+ * @param string $string
+ * @param string $privKey
+ * @return string|bool
+ */
+function rsa_decode($string, $privKey)
+{
+    $string  = base64_decode($string);
+    $privKey = str_replace([
+        "-----BEGIN PRIVATE KEY-----",
+        "-----END PRIVATE KEY-----",
+        " ",
+        "\r\n",
+        "\n",
+    ], "", $privKey);
+    $privKey = "-----BEGIN PRIVATE KEY-----\n" . wordwrap($privKey, 64, "\n", true) . "\n-----END PRIVATE KEY-----";
+    if (openssl_private_decrypt($string, $decrypted, $privKey)) {
+        return $decrypted;
+    }
+    return false;
 }
 /**
  * @description: 替换富文本中图片懒加载

@@ -11,11 +11,9 @@ class oauth extends webbase
     public function docode()
     {
         global $_L;
-        $config = $_L['config']['admin'];
-        if ($config['oauth_code']) {
-            ajaxout(1, "success", "", [
-                "code" => $config['oauth_code'],
-            ]);
+        $code = LCMS::cache("appstore/install_code");
+        if ($code) {
+            ajaxout(1, "success", "", $code[0]);
         }
     }
 }

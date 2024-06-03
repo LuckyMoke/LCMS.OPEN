@@ -55,13 +55,18 @@ switch ($_GET['action']) {
                 break;
             }
         }
+        $desc = $_SERVER["SERVER_SOFTWARE"];
+        if (in_string(strtoupper($desc), "IIS")) {
+            $desc = "<span style='color:#F56C6C'>{$desc} (请使用Apache或Nginx)</span>";
+            $code = 0;
+        }
         $serv = [
             [
                 "name" => "系统信息",
                 "desc" => php_uname('s'),
             ], [
                 "name" => "环境信息",
-                "desc" => $_SERVER["SERVER_SOFTWARE"],
+                "desc" => $desc,
             ],
         ];
         if (version_compare(PHP_VERSION, "7.3", "lt")) {

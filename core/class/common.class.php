@@ -2,17 +2,17 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-04-19 12:31:57
+ * @LastEditTime: 2024-06-03 10:26:04
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_func('file');
-load::sys_class('sqlpdo');
-load::sys_class('mysql');
-load::sys_func('mysql');
-load::sys_class('session');
-load::sys_class('http');
+LOAD::sys_func('file');
+LOAD::sys_class('sqlpdo');
+LOAD::sys_class('mysql');
+LOAD::sys_func('mysql');
+LOAD::sys_class('session');
+LOAD::sys_class('http');
 class common
 {
     /**
@@ -27,7 +27,7 @@ class common
         $this->load_common_form();
         $this->load_common_tables();
         $this->load_common_config();
-        load::sys_class('developer');
+        LOAD::sys_class('developer');
         SESSION::init();
     }
     /**
@@ -116,17 +116,11 @@ class common
                 $_L['config']['ver'] = file_get_contents($version);
             }
         }
-        // 上传文件格式过滤
         $mimelist = strtolower($_L['config']['admin']['mimelist']);
         $mimelist = explode("|", $mimelist);
-        foreach ([
-            "php", "php3", "php4", "php5", "pht", "exe", "cgi",
-        ] as $mime) {
-            $index = array_search($mime, $mimelist);
-            if ($index !== false) {
-                unset($mimelist[$index]);
-            }
-        }
+        $mimelist = array_diff($mimelist, [
+            "php", "php3", "php4", "php5", "pht", "exe", "cgi", "phar",
+        ]);
         $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
     }
 }

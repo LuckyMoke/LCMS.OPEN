@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-07-06 22:20:42
+ * @LastEditTime: 2024-05-31 23:33:15
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -49,6 +49,15 @@ class LOAD
         return self::loadPlugin(PATH_CORE_PLUGIN . $pname);
     }
     /**
+     * @description: 加载系统Phar
+     * @param string $pname
+     * @return {*}
+     */
+    public static function sys_phar($pname)
+    {
+        return self::loadPhar(PATH_CORE_PHAR . $pname);
+    }
+    /**
      * @description: 加载自有类
      * @param string $cname
      * @param string $action
@@ -80,6 +89,23 @@ class LOAD
             $file = PATH_APP_NOW . "include/function/{$fname}";
         }
         return self::loadFun($file);
+    }
+    /**
+     * @description: 加载自有Phar
+     * @param string $pname
+     * @param string $action
+     * @return {*}
+     */
+    public static function own_phar($pname)
+    {
+        if (in_string($pname, PATH_WEB)) {
+            $file = $pname;
+        } elseif (in_string($pname, "/")) {
+            $file = PATH_APP_NOW . $pname;
+        } else {
+            $file = PATH_APP_NOW . "include/phar/{$pname}";
+        }
+        return self::loadPhar($file);
     }
     /**
      * @description: 加载类
@@ -120,6 +146,20 @@ class LOAD
     private static function loadFun($file)
     {
         $file = "{$file}.func.php";
+        if (is_file($file)) {
+            require_once $file;
+        } else {
+            LCMS::X(404, "文件不存在");
+        }
+    }
+    /**
+     * @description: 加载Phar
+     * @param string $file
+     * @return {*}
+     */
+    private static function loadPhar($file)
+    {
+        $file = "{$file}.phar";
         if (is_file($file)) {
             require_once $file;
         } else {
