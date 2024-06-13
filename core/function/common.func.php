@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-02 13:49:16
+ * @LastEditTime: 2024-06-09 22:19:59
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -207,6 +207,16 @@ function randstr($length = 4, $type = "all")
         $result .= $str[$num[$i]];
     }
     return $result;
+}
+/**
+ * @description: 生成随机KEY
+ * @param int $bit
+ * @return string
+ */
+function randkey($bit = 256)
+{
+    $key = random_bytes(intval($bit / 8));
+    return urlsafe_base64_encode($key);
 }
 /**
  * @description: 将字节转换为带单位的字符串
@@ -742,6 +752,37 @@ function rsa_decode($string, $privKey)
     return false;
 }
 /**
+ * @description: 创建JWT
+ * @param array $payload
+ * @param string $key
+ * @return string
+ */
+function jwt_encode($payload, $key = "LCMS")
+{
+    $header = urlsafe_base64_encode(json_encode([
+        "alg" => "HS256",
+        "typ" => "JWT",
+    ]));
+    $payload = $header . "." . urlsafe_base64_encode(json_encode($payload));
+    $sign    = urlsafe_base64_encode(hash_hmac("sha256", $payload, $key, true));
+    return "{$payload}.{$sign}";
+}
+/**
+ * @description: 验证JWT
+ * @param string $jwt
+ * @param string $key
+ * @return array
+ */
+function jwt_decode($jwt, $key = "LCMS")
+{
+    list($header, $paylod, $sign) = explode(".", $jwt);
+    if (hash_equals(hash_hmac("sha256", "{$header}.{$paylod}", $key, true), urlsafe_base64_decode($sign))) {
+        $payload = json_decode(urlsafe_base64_decode($paylod), true);
+        return $payload;
+    }
+    return false;
+}
+/**
  * @description: 替换富文本中图片懒加载
  * @param string $str
  * @return string
@@ -1021,26 +1062,35 @@ function html_editor($body = "", $lazyload = false)
 function oss($url = "", $watermark = true)
 {
     global $_L;
+    if (!$url) {
+        return "";
+    }
     $cfgoss = $_L['plugin']['oss'] ?: [];
-    $cfgwat = $_L['plugin']['watermark'] ?: [];
-    $config = $_L['config']['admin'] ?: [];
-    $webp   = $config['attwebp'] > 0 ? true : false;
-    $cfgwat = array_merge($cfgwat, [
-        "on"   => $cfgwat['on'] > 0 && $watermark && !in_string($url, ".gif") ? true : false,
-        "text" => urlsafe_base64_encode($cfgwat['text']),
-    ]);
-    //如果开启云存储
-    if ($url && $cfgoss['type'] != "local") {
+    $urls   = explode("|", $url);
+    if (count($urls) > 1) {
+        foreach ($urls as $index => $val) {
+            $urls[$index] = oss($val, $watermark);
+        }
+        return implode("|", $urls);
+    } else {
+        $url = $urls[0];
+    }
+    if ($cfgoss['type'] != "local") {
+        $cfgwat = $_L['plugin']['watermark'] ?: [];
+        $config = $_L['config']['admin'] ?: [];
+        $webp   = $config['attwebp'] > 0 ? true : false;
+        $cfgwat = array_merge($cfgwat, [
+            "on"   => $cfgwat['on'] > 0 && $watermark && !in_string($url, ".gif") ? true : false,
+            "text" => urlsafe_base64_encode($cfgwat['text']),
+        ]);
         //删除链接参数
         $url = explode("?", $url)[0];
         //本地链接转远程链接
         if (!is_url($url) && in_string($url, "../upload/")) {
-            $url = str_replace("../", $cfgoss['domain'], $url);
+            $url = $cfgoss['domain'] . ltrim($url, "../");
         }
         //如果是图片进一步处理
-        if (in_string($url, [
-            ".jpg", ".jpeg", ".png", ".gif", ".webp",
-        ]) && in_string($url, $cfgoss['domain'])) {
+        if (preg_match("/[a-zA-Z0-9]\.(jpg|jpeg|png|gif|webp)/i", $url) && in_string($url, $cfgoss['domain'])) {
             switch ($cfgoss['type']) {
                 case 'qiniu':
                     $url .= "?imageMogr2/interlace/1/quality/75";

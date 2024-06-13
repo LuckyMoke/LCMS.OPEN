@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-22 17:19:00
+ * @LastEditTime: 2024-06-07 11:28:29
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -10,6 +10,7 @@ defined('IN_LCMS') or exit('No permission');
 class HTTP
 {
     public static $TIMEOUT = 30;
+    public static $PROXY   = [];
     public static $INFO    = [];
     public static $HEADERS = [];
     private static $HEADER = [];
@@ -35,6 +36,7 @@ class HTTP
             "length" => self::$INFO['size_download'],
             "body"   => $result,
         ] : $result;
+        self::resetOpt();
         return $result;
     }
     /**
@@ -55,8 +57,11 @@ class HTTP
         if (in_array(self::$INFO['http_code'], [
             301, 302, 303, 307, 308,
         ])) {
-            $result = self::post(self::$INFO['redirect_url'], $data, $build, $headers);
+            if (self::$INFO['redirect_url']) {
+                $result = self::post(self::$INFO['redirect_url'], $data, $build, $headers);
+            }
         }
+        self::resetOpt();
         return $result;
     }
     /**
@@ -75,8 +80,11 @@ class HTTP
         if (in_array(self::$INFO['http_code'], [
             301, 302, 303, 307, 308,
         ])) {
-            $result = self::delete(self::$INFO['redirect_url'], $headers);
+            if (self::$INFO['redirect_url']) {
+                $result = self::delete(self::$INFO['redirect_url'], $headers);
+            }
         }
+        self::resetOpt();
         return $result;
     }
     /**
@@ -96,8 +104,11 @@ class HTTP
         if (in_array(self::$INFO['http_code'], [
             301, 302, 303, 307, 308,
         ])) {
-            $result = self::put(self::$INFO['redirect_url'], $data, $headers);
+            if (self::$INFO['redirect_url']) {
+                $result = self::put(self::$INFO['redirect_url'], $data, $headers);
+            }
         }
+        self::resetOpt();
         return $result;
     }
     /**
@@ -112,6 +123,7 @@ class HTTP
         self::$HEADER = [];
         self::setBaseOpt();
         self::getRequest();
+        self::resetOpt();
         return self::$INFO;
     }
     /**
@@ -134,12 +146,16 @@ class HTTP
         self::$INFO = curl_getinfo(self::$CH);
         curl_close(self::$CH);
         fclose($cfile);
-        return [
-            "code"   => self::$INFO['http_code'],
-            "type"   => self::$INFO['content_type'],
-            "length" => self::$INFO['size_download'],
-            "file"   => $file,
-        ];
+        self::resetOpt();
+        if (self::$INFO['http_code'] == 200) {
+            return [
+                "code" => 1,
+                "file" => $file,
+            ];
+        } else {
+            delfile($file);
+            return ["code" => 0];
+        }
     }
     /**
      * @description: 配置请求信息
@@ -157,6 +173,17 @@ class HTTP
                 $v == "gzip" && curl_setopt(self::$CH, CURLOPT_ENCODING, "gzip");
             }
             curl_setopt(self::$CH, CURLOPT_HTTPHEADER, $h);
+        }
+        if (self::$PROXY) {
+            if (!is_array(self::$PROXY)) {
+                self::$PROXY = [
+                    "url" => self::$PROXY,
+                ];
+            }
+            curl_setopt(self::$CH, CURLOPT_PROXY, self::$PROXY['url']);
+            if (self::$PROXY['user'] && self::$PROXY['pass']) {
+                curl_setopt(self::$CH, CURLOPT_PROXYUSERPWD, '"' . self::$PROXY['user'] . ':' . self::$PROXY['user'] . '"');
+            }
         }
         curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
         curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
@@ -203,5 +230,14 @@ class HTTP
             ]);
         }
         return substr($body, self::$INFO['header_size'], strlen($body));
+    }
+    /**
+     * @description: 重置配置信息
+     * @return {*}
+     */
+    private static function resetOpt()
+    {
+        self::$TIMEOUT = 30;
+        self::$PROXY   = [];
     }
 }

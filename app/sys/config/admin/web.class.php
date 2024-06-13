@@ -2,11 +2,10 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-31 18:20:55
+ * @LastEditTime: 2024-06-12 11:13:42
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
-
 defined('IN_LCMS') or exit('No permission');
 load::sys_class('adminbase');
 class web extends adminbase
@@ -455,13 +454,14 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>注：本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>注：本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
                         "radio"  => [
                             ["title" => "关闭", "value" => "", "tab" => "type_close"],
                             ["title" => "百度文心", "value" => "wenxin", "tab" => "type_wenxin"],
+                            ["title" => "讯飞星火", "value" => "spark", "tab" => "type_spark"],
                             ["title" => "百川", "value" => "baichuan", "tab" => "type_baichuan"],
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
                             ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
@@ -499,6 +499,23 @@ class web extends adminbase
                         "value"  => $PLG['wenxin']['model'] ?: "ernie_speed",
                         "cname"  => "hidden type_wenxin",
                         "option" => $models['wenxin']],
+                    ["layui" => "input", "title" => "APPID",
+                        "name"   => "LC[spark][appid]",
+                        "value"  => $PLG['spark']['appid'],
+                        "cname"  => "hidden type_spark"],
+                    ["layui" => "input", "title" => "APISecret",
+                        "name"   => "LC[spark][apisecret]",
+                        "value"  => $PLG['spark']['apisecret'],
+                        "cname"  => "hidden type_spark"],
+                    ["layui" => "input", "title" => "APIKey",
+                        "name"   => "LC[spark][apikey]",
+                        "value"  => $PLG['spark']['apikey'],
+                        "cname"  => "hidden type_spark"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[spark][model]",
+                        "value"  => $PLG['spark']['model'] ?: "general",
+                        "cname"  => "hidden type_spark",
+                        "option" => $models['spark']],
                     ["layui" => "input", "title" => "API Key",
                         "name"   => "LC[baichuan][token]",
                         "value"  => $PLG['baichuan']['token'],

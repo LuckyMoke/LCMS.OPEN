@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-02 22:06:52
+ * @LastEditTime: 2024-06-11 11:20:31
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -471,7 +471,20 @@ class LCMS
                         $html = str_replace($tag, "<?php " . str_replace(["ui table", "ui tree", "ui "], ["TABLE::html", "TABLE::tree", "LAY::"], $tags[1][$index]) . ";?>", $html);
                         break;
                     case 'loop':
-                        $str  = explode(",", str_replace("loop ", "", $tags[1][$index]));
+                        $str = str_replace("loop ", "", $tags[1][$index]);
+                        preg_match("/.*[\(|\[].*[\)|\]]/i", $str, $matchs);
+                        if ($matchs && $matchs[0]) {
+                            $str = str_replace($matchs[0], "", $str);
+                        }
+                        $str = explode(",", $str);
+                        if ($matchs && $matchs[0]) {
+                            $str[0] = $matchs[0];
+                        }
+                        foreach ($str as $i => $v) {
+                            $str[$i] = trim($v);
+                        }
+                        $str  = array_filter($str);
+                        $str  = array_values($str);
                         $str  = $str[2] ? "foreach ({$str[0]} as {$str[2]}=>{$str[1]})" : "foreach ({$str[0]} as {$str[1]})";
                         $html = str_replace($tag, '<?php ' . $str . '{ ?>', $html);
                         break;

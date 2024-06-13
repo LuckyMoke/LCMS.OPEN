@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-03 10:27:14
+ * @LastEditTime: 2024-06-05 19:35:53
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -237,7 +237,7 @@ class admin extends adminbase
                         ]],
                     ["layui" => "radio", "title" => "网站登录器",
                         "name"   => "LC[loginbytoken]",
-                        "value"  => $config['loginbytoken'] ?? 0,
+                        "value"  => $config['loginbytoken'] ?: 0,
                         "tips"   => "是否开启网站登录器一键登录网站，需配合其它工具使用！",
                         "radio"  => [
                             ["title" => "开启", "value" => 1],

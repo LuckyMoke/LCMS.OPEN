@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2024-05-04 16:38:51
+ * @LastEditTime: 2024-06-07 10:27:49
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -151,7 +151,7 @@ class PUB
             default:
                 if ($cip >= 5) {
                     LCMS::notify("登录攻击通知", "<p>疑似遇到登录攻击，已被系统拦截。攻击IP：" . CLIENT_IP . "。</p><p>表单数据：<pre>" . json_encode_ex($_L['form']) . "</pre></p>", 86400);
-                    LCMS::X(403, "请10分钟后再试<br>如遇问题可联系客服处理");
+                    LCMS::X(403, "登录失败次数过多<br>请10分钟后再试");
                 }
                 break;
         }
