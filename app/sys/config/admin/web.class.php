@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-12 11:13:42
+ * @LastEditTime: 2024-06-13 12:40:30
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -294,9 +294,11 @@ class web extends adminbase
                         "value"  => $plugin['oss']['qiniu']['uphost'],
                         "verify" => "required",
                         "radio"  => [
-                            ["title" => "华东", "value" => "hd"],
-                            ["title" => "华北", "value" => "hb"],
-                            ["title" => "华南", "value" => "hn"],
+                            ["title" => "华东-浙江", "value" => "z0"],
+                            ["title" => "华北-河北", "value" => "z1"],
+                            ["title" => "华南-广东", "value" => "z2"],
+                            ["title" => "亚太-新加坡", "value" => "as0"],
+                            ["title" => "北美-洛杉矶", "value" => "na0"],
                         ],
                         "cname"  => "hidden oss-qiniu"],
                     ["layui" => "input", "title" => "SecretId",

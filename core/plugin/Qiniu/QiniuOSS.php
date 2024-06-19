@@ -132,14 +132,20 @@ class QiniuOSS
     private function getHost()
     {
         switch ($this->cfg['uphost']) {
-            case 'hd':
-                return 'up.qiniup.com';
+            case 'z0':
+                return 'up-z0.qiniup.com';
                 break;
-            case 'hb':
+            case 'z1':
                 return 'up-z1.qiniup.com';
                 break;
-            case 'hn':
+            case 'z2':
                 return 'up-z2.qiniup.com';
+                break;
+            case 'as0':
+                return 'up-as0.qiniup.com';
+                break;
+            case 'na0':
+                return 'up-na0.qiniup.com';
                 break;
         }
     }

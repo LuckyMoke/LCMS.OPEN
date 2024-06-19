@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-12 16:34:59
+ * @LastEditTime: 2024-06-19 10:52:26
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -53,7 +53,7 @@ class webbase extends common
             "cache"    => "{$url_site}cache/",
             "app"      => "{$url_site}app/",
             "captcha"  => "{$url_site}quick/captcha.php?{$rootsid}",
-            "qrcode"   => "{$url_site}quick/qrcode.php?text=",
+            "qrcode"   => "{$url_site}quick/qrcode.php?token=" . ssl_encode_gzip(time() + 86400, "qrcode") . "&text=",
             "own"      => "{$url_own}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
             "own_form" => "{$url_own}n=" . L_NAME . "&c=" . L_CLASS . "&a=",

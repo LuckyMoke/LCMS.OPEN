@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-11 11:20:31
+ * @LastEditTime: 2024-06-15 14:27:03
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -17,7 +17,7 @@ class LCMS
     public static function IP()
     {
         $ip      = "";
-        $headers = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
+        $headers = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_EO_CONNECTING_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
         foreach ($headers as $header) {
             if ($_SERVER[$header]) {
                 $ips = explode(',', $_SERVER[$header]);

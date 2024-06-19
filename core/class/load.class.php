@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-31 23:33:15
+ * @LastEditTime: 2024-06-13 11:17:42
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -122,7 +122,8 @@ class LOAD
             LCMS::X(404, "文件不存在");
         }
         if ($action) {
-            $cname = end(explode("/", $file));
+            $cname = explode("/", $file);
+            $cname = end($cname);
             $cname = str_replace(".class.php", "", $cname);
             $class = $cname ? new $cname : null;
             if ($action != "new") {

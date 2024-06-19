@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-20 10:35:10
+ * @LastEditTime: 2024-06-18 13:31:51
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -65,7 +65,11 @@ class TABLE
                 "title"    => "刷新",
                 "layEvent" => "LCMSTABLE_REFRESH",
                 "icon"     => "layui-icon-refresh",
-            ], "filter", "print", "exports"],
+            ], "filter", "print", $table['exports'] ? [
+                "title"   => "导出",
+                "name"    => "exports",
+                "onClick" => $table['exports'],
+            ] : "exports"],
             "toolbar"        => $toolbar,
             "totalRow"       => $totalRow ? true : false,
             "page"           => $table['page'] ? $table['page'] : 1,
@@ -244,7 +248,11 @@ class TABLE
                 "title"    => "刷新",
                 "layEvent" => "LCMSTABLE_REFRESH_TREE",
                 "icon"     => "layui-icon-refresh",
-            ], "filter", "print", "exports"],
+            ], "filter", "print", $tree['exports'] ? [
+                "title"   => "导出",
+                "name"    => "exports",
+                "onClick" => $tree['exports'],
+            ] : "exports"],
             "toolbar"        => $toolbar,
             "cols"           => $tree['cols'],
             "pid"            => $tree['pid'] ?: "pid",

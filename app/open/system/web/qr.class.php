@@ -12,11 +12,15 @@ class qr extends webbase
     public function doindex()
     {
         global $_L;
-        if ($_L['form']['text']) {
-            phpqrcode::png($_L['form']['text'], false, "H", 10, 1);
-        } else {
-            header("HTTP/1.1 404 Not Found");
-            exit;
-        }
+        $_L['form']['token'] || $this->stop();
+        $_L['form']['text'] || $this->stop();
+        $token = ssl_decode_gzip($_L['form']['token'], "qrcode");
+        $token < time() && $this->stop();
+        phpqrcode::png($_L['form']['text'], false, "H", 10, 1);
+    }
+    private function stop()
+    {
+        header("HTTP/1.1 404 Not Found");
+        exit;
     }
 };

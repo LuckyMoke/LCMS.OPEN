@@ -2,7 +2,7 @@
 error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
 date_default_timezone_set("Asia/Shanghai");
 if (version_compare(PHP_VERSION, "7.2", "lt")) {
-    echo "当前PHP版本" . PHP_VERSION . "，版本过低，请使用7.2及以上版本，推荐使用8.0及以上版本！";
+    echo "当前PHP版本" . PHP_VERSION . "，版本过低，请使用7.3及以上版本，推荐使用8.1及以上版本！";
     exit;
 }
 if (!preg_match("/^\w+$/", L_TYPE . L_NAME . L_MODULE . L_CLASS . L_ACTION)) {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-13 20:32:48
+ * @LastEditTime: 2024-06-16 12:20:33
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -331,7 +331,7 @@ class LAY
                 <div class='layui-input-block'>
                     <div class='layui-upload-list lcms-form-upload-img-list'></div>
                     <div class='layui-btn-group lcms-form-upload-btn'>
-                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         {$para['gallery']}
                     </div>
                     {$para['tips']}
@@ -356,7 +356,7 @@ class LAY
                 <div class='layui-input-block'>
                     <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     <div class='layui-btn-group lcms-form-upload-file-btn'>
-                        <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                        <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop'></i></a>
                         {$para['select']}
                     </div>
                     {$para['tips']}
