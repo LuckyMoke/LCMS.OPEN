@@ -13,12 +13,13 @@ class cut extends webbase
     public function doindex()
     {
         global $_L, $LF;
-        if (!$LF['para']) {
+        $style = $LF['para'] ?: $LF['style'];
+        if (!$style) {
             header("HTTP/1.1 403 Forbidden");
             LCMS::X(403, "拒绝访问");
             exit;
         }
-        list($x, $y, $path) = explode(",", $LF['para']);
+        list($x, $y, $path) = explode(",", $style);
         $path               = path_absolute("../{$path}");
         if (!is_file($path)) {
             $path = $_L['config']['web']['image_default'];

@@ -14,7 +14,7 @@
         <if $_L['url']['scheme']=="https://">
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
-        <link rel="icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" rel="shortcut icon" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" />
         <if !$_L['ui']['nocache']>
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::$cname)}}.css?tplver={{TPL::$ver}}&lcmsver={{$_L['config']['ver']}}" />
         </if>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-20 09:48:13
+ * @LastEditTime: 2024-06-21 12:08:20
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -112,12 +112,12 @@ class THUMB
         }
         if ($path && in_string($path, "../")) {
             //本地存储处理
-            $path = str_replace("../", "", $path);
-            $para = "{$x},{$y},{$path}";
+            $path  = str_replace("../", "", $path);
+            $style = "{$x},{$y},{$path}";
             if ($rewrite) {
-                $url = "{$_L['url']['site']}images/{$para}";
+                $url = "{$_L['url']['site']}images/{$style}";
             } else {
-                $url = "{$_L['url']['app']}index.php?n=system&c=cut&para={$para}";
+                $url = "{$_L['url']['app']}index.php?n=system&c=cut&style={$style}";
             }
         }
         return $url ?: $path;

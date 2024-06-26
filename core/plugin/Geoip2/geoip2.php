@@ -49,7 +49,7 @@ class Geoip2
         $iptype = $this->getIPType($ip);
         if ($iptype) {
             //检测是否内网IP
-            if ($this->isIntranet($ip)) {
+            if (is_intranet_ip($ip)) {
                 return [
                     "ip"       => $ip,
                     "intranet" => true,
@@ -85,41 +85,6 @@ class Geoip2
         }
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
             return "ipv6";
-        }
-        return false;
-    }
-    /**
-     * @description: 检测是否为内网IP
-     * @param string $ip
-     * @return bool
-     */
-    private function isIntranet($ip)
-    {
-        if ($ip == "unknown") {
-            return false;
-        }
-        if (strpos($ip, ":") !== false) {
-            return false;
-        }
-        $ipnum = ip2long($ip);
-        if ($ipnum == 0) {
-            return false;
-        }
-        // 172.0.0.1 到 172.0.255.255
-        if ($ipnum >= 2130706433 && $ipnum <= 2130706687) {
-            return true;
-        }
-        // 192.168.0.1 到192.168.255.255
-        if ($ipnum >= 3232235520 && $ipnum <= 3232301055) {
-            return true;
-        }
-        // 172.16.0.0 到172.16.255.255
-        if ($ipnum >= 2886729728 && $ipnum <= 2887843839) {
-            return true;
-        }
-        // 10.0.0.1 到 10.255.255.255
-        if ($ipnum >= 167772161 && $ipnum <= 184549375) {
-            return true;
         }
         return false;
     }

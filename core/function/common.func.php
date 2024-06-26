@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-15 11:00:38
+ * @LastEditTime: 2024-06-22 10:38:57
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -934,15 +934,65 @@ function is_email($str = "")
     }
 }
 /**
- * @description: 验证是否为IP地址
- * @param string $str
+ * @description: 判断是否为IP地址
+ * @param string $ip
+ * @param string $type [ipv4、ipv6]
  * @return bool
  */
-function is_ip($str = "")
+function is_ip($ip = "", $type = "")
 {
-    if (filter_var($str, FILTER_VALIDATE_IP)) {
-        return true;
+    if (!$ip || $ip == "unknown") {
+        return false;
     }
+    switch ($type) {
+        case 'ipv6':
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                return true;
+            }
+            break;
+        case 'ipv4':
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                return true;
+            }
+            break;
+        default:
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return true;
+            }
+            break;
+    }
+    return false;
+}
+/**
+ * @description: 判断是否内网IP
+ * @param string $ip
+ * @return bool
+ */
+function is_intranet_ip($ip = "")
+{
+    if (is_ip($ip, "ipv4")) {
+        $ipnum = ip2long($ip);
+        if ($ipnum == 0) {
+            return false;
+        }
+        if (
+            ($ipnum >= 2130706433 && $ipnum <= 2130706687) ||
+            ($ipnum >= 3232235520 && $ipnum <= 3232301055) ||
+            ($ipnum >= 2886729728 && $ipnum <= 2887778303) ||
+            ($ipnum >= 167772161 && $ipnum <= 184549375)
+        ) {
+            return true;
+        }
+    } elseif (is_ip($ip, "ipv6")) {
+        if (
+            strpos($ip, "fc") === 0 ||
+            strpos($ip, "fd") === 0 ||
+            strpos($ip, "fe80") === 0
+        ) {
+            return true;
+        }
+    }
+    return false;
 }
 /**
  * @description: 判断字符串是否包含

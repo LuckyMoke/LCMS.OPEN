@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-15 14:27:03
+ * @LastEditTime: 2024-06-21 17:42:42
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -11,23 +11,34 @@ class LCMS
 {
     /**
      * @description: 获取客户端真实IP
-     * @param {*}
+     * @param array $args
      * @return string
      */
-    public static function IP()
+    public static function IP($args = [])
     {
-        $ip      = "";
-        $headers = ["HTTP_ALI_CDN_REAL_IP", "HTTP_TRUE_CLIENT_IP", "HTTP_EO_CONNECTING_IP", "HTTP_X_REAL_FORWARDED_FOR", "HTTP_X_CONNECTING_IP", "HTTP_CF_CONNECTING_IP", "HTTP_X_FORWARD_FOR", "HTTP_X_REAL_IP", "HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"];
-        foreach ($headers as $header) {
-            if ($_SERVER[$header]) {
-                $ips = explode(',', $_SERVER[$header]);
-                if ($ips[0] && filter_var($ips[0], FILTER_VALIDATE_IP)) {
+        $ip = "";
+        if (!$args && $_SERVER['HTTP_X_FORWARDED_FOR']) {
+            //如果使用了CDN、负载均衡、代理
+            $args = [
+                "HTTP_ALI_CDN_REAL_IP", //阿里云
+                "HTTP_EO_CONNECTING_IP", //腾讯TEO
+                "HTTP_CF_CONNECTING_IP", //CloudFlare
+                "HTTP_TRUE_CLIENT_IP", //百度云
+                "HTTP_X_REAL_IP", //通用CDN
+                "HTTP_X_FORWARDED_FOR", //通用CDN
+            ];
+        }
+        foreach ($args as $arg) {
+            if ($_SERVER[$arg]) {
+                $ips    = explode(',', $_SERVER[$arg]);
+                $ips[0] = trim($ips[0]);
+                if (!is_intranet_ip($ips[0])) {
                     $ip = $ips[0];
                     break;
                 }
             }
         }
-        return $ip ?: "";
+        return $ip ?: $_SERVER["REMOTE_ADDR"];
     }
     /**
      * @description: 输出错误提示页面

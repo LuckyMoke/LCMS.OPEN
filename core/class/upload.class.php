@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-20 09:50:03
+ * @LastEditTime: 2024-06-26 11:36:04
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -167,27 +167,28 @@ class UPLOAD
     public static function mime($mime = "")
     {
         $allmime = [
-            "image/jpeg"          => "jpeg",
-            "image/png"           => "png",
-            "image/bmp"           => "bmp",
-            "image/gif"           => "gif",
-            "image/webp"          => "webp",
-            "image/vnd.wap.wbmp"  => "wbmp",
-            "image/x-up-wpng"     => "wpng",
-            "image/x-icon"        => "ico",
-            "image/svg+xml"       => "svg",
-            "image/tiff"          => "tiff",
-            "audio/mpeg"          => "mp3",
-            "audio/ogg"           => "ogg",
-            "audio/x-wav"         => "wav",
-            "audio/x-ms-wma"      => "wma",
-            "audio/x-ms-wmv"      => "wmv",
-            "video/mp4"           => "mp4",
-            "video/mpeg"          => "mpeg",
-            "video/quicktime"     => "mov",
-            "application/json"    => "json",
-            "application/pdf"     => "pdf",
-            "binary/octet-stream" => "jpg",
+            "image/jpeg"               => "jpeg",
+            "image/png"                => "png",
+            "image/bmp"                => "bmp",
+            "image/gif"                => "gif",
+            "image/webp"               => "webp",
+            "image/vnd.wap.wbmp"       => "wbmp",
+            "image/x-up-wpng"          => "wpng",
+            "image/x-icon"             => "ico",
+            "image/vnd.microsoft.icon" => "ico",
+            "image/svg+xml"            => "svg",
+            "image/tiff"               => "tiff",
+            "audio/mpeg"               => "mp3",
+            "audio/ogg"                => "ogg",
+            "audio/x-wav"              => "wav",
+            "audio/x-ms-wma"           => "wma",
+            "audio/x-ms-wmv"           => "wmv",
+            "video/mp4"                => "mp4",
+            "video/mpeg"               => "mpeg",
+            "video/quicktime"          => "mov",
+            "application/json"         => "json",
+            "application/pdf"          => "pdf",
+            "binary/octet-stream"      => "jpg",
         ];
         return $allmime[$mime] ?: "";
     }
@@ -370,7 +371,7 @@ class UPLOAD
                 sql_insert(["upload", [
                     "type"    => $info[2],
                     "datey"   => $info[3],
-                    "oname"   => self::$ONAME ?: NULL,
+                    "oname"   => self::$ONAME ?: null,
                     "name"    => $data['filename'],
                     "size"    => $data['size'],
                     "src"     => $data['src'],

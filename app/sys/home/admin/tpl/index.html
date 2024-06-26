@@ -17,6 +17,11 @@
                 系统提示：检测到您未删除安装文件，请尽快删除<code>/install.php</code>文件，以提高安全性！
             </p>
         </if>
+        <if $_L['config']['admin']['development'] gt 0>
+            <p class="lcms-form-des">
+                系统提示：检测到您开启了<code>开发模式</code>，此模式仅在开发阶段使用，会严重降低程序运行性能，还会泄露数据，请勿在正式运行环境中开启！可在“设置->安全性能->开发模式”中关闭。
+            </p>
+        </if>
     </if>
     <if $lasttime && $lasttime lt 15>
         <p class="lcms-form-des">
