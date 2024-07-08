@@ -31,7 +31,7 @@
         </if>
         <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript" src="{{$_L['url']['static']}}layui/layui.js?lcmsver={{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">const LCMSMAINLOAD=layer.msg('<i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中',{skin:"layui-layer-msg layui-layer-hui lcms-layer-loading",shade:[1,"#ffffff"],time:"number"==typeof type?type:0});;localStorage.setItem("LCMS_user","{{$_L['LCMSADMIN']['name']}}")</script>
+        <script type="text/javascript">let LCMSMAINLOAD=layer.msg('<i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中',{skin:"layui-layer-msg layui-layer-hui lcms-layer-loading",shade:[1,"#ffffff"],time:"number"==typeof type?type:0});;localStorage.setItem("LCMS_user","{{$_L['LCMSADMIN']['name']}}")</script>
     </head>
     <body class="lcms-main-index" data-update="{{$update}}" data-async="{{$async}}">
         <div id="LCMS">

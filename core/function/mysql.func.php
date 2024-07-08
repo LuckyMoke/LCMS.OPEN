@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2023-08-05 15:37:31
+ * @LastEditTime: 2024-07-07 15:35:54
  * @Description: Mysql数据库操作方法
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -77,7 +77,7 @@ function sql_insert($sql = [])
 }
 /**
  * @description: 删除表数据
- * @param array $sql [table, where, bind]
+ * @param array $sql [table, where, bind, order, limit]
  * @return {*}
  */
 function sql_delete($sql = [])
@@ -88,6 +88,8 @@ function sql_delete($sql = [])
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
         ->bind($sql['bind'] ?: $sql[2])
+        ->order($sql['order'] ?: $sql[3])
+        ->limit($sql['limit'] ?: $sql[4])
         ->delete();
 }
 /**

@@ -2,20 +2,22 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-07 11:28:29
+ * @LastEditTime: 2024-07-04 13:10:53
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class HTTP
 {
-    public static $TIMEOUT = 30;
-    public static $PROXY   = [];
-    public static $INFO    = [];
-    public static $HEADERS = [];
-    private static $HEADER = [];
-    private static $METHOD = "";
     private static $CH;
+    private static $HEADER    = [];
+    private static $METHOD    = "";
+    private static $USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+    public static $TIMEOUT    = 30;
+    public static $PROXY      = [];
+    public static $INFO       = [];
+    public static $HEADERS    = [];
+    public static $UA         = "";
     /**
      * @description: HTTP GET
      * @param string $url 请求链接
@@ -116,13 +118,16 @@ class HTTP
      * @param string $url
      * @return array
      */
-    public static function head($url)
+    public static function head($url, $headers = [])
     {
-        self::$CH     = curl_init($url);
-        self::$METHOD = "HEAD";
-        self::$HEADER = [];
-        self::setBaseOpt();
-        self::getRequest();
+        self::$INFO = get_headers($url, true, stream_context_create([
+            "http" => array(
+                "method"     => "GET",
+                "header"     => $headers,
+                "user_agent" => self::$UA ?: self::$USERAGENT,
+                "timeout"    => self::$TIMEOUT,
+            ),
+        ]));
         self::resetOpt();
         return self::$INFO;
     }
@@ -186,7 +191,7 @@ class HTTP
             }
         }
         curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
-        curl_setopt(self::$CH, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+        curl_setopt(self::$CH, CURLOPT_USERAGENT, self::$UA ?: self::$USERAGENT);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt(self::$CH, CURLOPT_SSL_VERIFYHOST, false);
         if ($data != "lcms-http-download") {
@@ -239,5 +244,6 @@ class HTTP
     {
         self::$TIMEOUT = 30;
         self::$PROXY   = [];
+        self::$UA      = "";
     }
 }

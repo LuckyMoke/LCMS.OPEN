@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-22 10:38:57
+ * @LastEditTime: 2024-07-07 16:55:56
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -755,11 +755,12 @@ function rsa_decode($string, $privKey)
  * @description: 创建JWT
  * @param array $payload
  * @param string $key
+ * @param array $header
  * @return string
  */
-function jwt_encode($payload, $key = "LCMS")
+function jwt_encode($payload, $key = "LCMS", $header = [])
 {
-    $header = urlsafe_base64_encode(json_encode([
+    $header = urlsafe_base64_encode(json_encode($header ?: [
         "alg" => "HS256",
         "typ" => "JWT",
     ]));
@@ -853,12 +854,8 @@ function is_base64($str = "")
  */
 function is_phone($phone)
 {
-    if (strlen($phone) == 11) {
-        if ($phone && preg_match("/^1[3-9]\d{9}$/", $phone)) {
-            $flag = true;
-        } else {
-            $flag = false;
-        }
+    if (strlen($phone) == 11 && preg_match("/^1[3-9]\d{9}$/", $phone)) {
+        $flag = true;
     } else {
         $flag = false;
     }

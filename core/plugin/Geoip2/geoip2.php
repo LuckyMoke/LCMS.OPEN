@@ -130,14 +130,19 @@ class Geoip2
             }
             if ($dbtype == "city") {
                 if ($record->mostSpecificSubdivision->names['zh-CN']) {
-                    $region      = $record->mostSpecificSubdivision->names['zh-CN'];
-                    $region_code = $record->mostSpecificSubdivision->isoCode;
+                    $province      = $record->mostSpecificSubdivision->names['zh-CN'];
+                    $province_code = $record->mostSpecificSubdivision->isoCode;
                 } elseif ($record->subdivisions[0]->names['zh-CN']) {
-                    $region      = $record->subdivisions[0]->names['zh-CN'];
-                    $region_code = $record->subdivisions[0]->isoCode;
+                    $province      = $record->subdivisions[0]->names['zh-CN'];
+                    $province_code = $record->subdivisions[0]->isoCode;
+                } elseif ($record->mostSpecificSubdivision->names['en']) {
+                    $province      = $record->mostSpecificSubdivision->names['en'];
+                    $province_code = $record->mostSpecificSubdivision->isoCode;
                 }
                 if ($record->city->names['zh-CN']) {
                     $city = $record->city->names['zh-CN'];
+                } elseif ($record->city->names['en']) {
+                    $city = $record->city->names['en'];
                 }
             }
             switch ($country) {
@@ -147,8 +152,10 @@ class Geoip2
                     $country = "中国";
                     break;
             }
+            $province = str_replace(["省", "市"], "", $province);
+            $city     = str_replace("市", "", $city);
             if ($dbtype == "city") {
-                $address = $city ?: $region;
+                $address = $city ?: $province;
                 $address = $country == $address ? $country : "{$country}{$address}";
             } else {
                 $address = $country;
@@ -161,8 +168,8 @@ class Geoip2
                 "continent_code" => $continent_code,
                 "country"        => $country,
                 "country_code"   => $country_code,
-                "region"         => $region,
-                "region_code"    => $region_code,
+                "province"       => $province,
+                "province_code"  => $province_code,
                 "city"           => $city,
                 "address"        => $address,
                 "original"       => $record,
@@ -185,15 +192,25 @@ class Geoip2
         }
         require_once "{$this->path}libs/XdbSearcher.php";
         try {
-            $record = XdbSearcher::newWithFileOnly($xdb)->search($ip);
-            $region = explode("	", $record);
+            $record   = XdbSearcher::newWithFileOnly($xdb)->search($ip);
+            $region   = explode("	", $record);
+            $array    = explode("–", $region[0]);
+            $array[1] = str_replace(["省", "市"], "", $array[1]);
+            $array[2] = str_replace("市", "", $array[2]);
+            $array[3] = str_replace(["市", "区", "县"], "", $array[3]);
+            $addrsss  = "{$array[0]}{$array[2]}{$array[3]}";
             return $region[0] ? [
-                "ip"       => $ip,
-                "intranet" => false,
-                "type"     => $iptype,
-                "address"  => $region[0],
-                "original" => $record,
-            ] : false;
+                "ip"        => $ip,
+                "intranet"  => false,
+                "type"      => $iptype,
+                "country"   => $array[0],
+                "province"  => $array[1],
+                "city"      => $array[2],
+                "districts" => $array[3],
+                "address"   => $addrsss ?: $region[0],
+                "isp"       => $region[1],
+                "original"  => $record,
+            ]: false;
         } catch (\Throwable $th) {
             return false;
         }

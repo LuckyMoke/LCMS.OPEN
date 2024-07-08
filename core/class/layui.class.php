@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-16 12:20:33
+ * @LastEditTime: 2024-06-30 11:38:56
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -73,12 +73,13 @@ class LAY
             $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
             $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         }
-        $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $html          = "
+        $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+        $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+        $html           = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
         echo $html;
@@ -97,14 +98,15 @@ class LAY
             $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
             $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
         }
-        $para['affix'] = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $para['tips']  = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
-        $html          = "
+        $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+        $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+        $para['tips']   = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
+        $html           = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     {$para['tips']}
                 </div>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-06-12 11:13:59
+ * @LastEditTime: 2024-07-07 16:19:57
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -67,6 +67,13 @@ class index extends adminbase
                     "appid"     => $PLG['appid'],
                     "apisecret" => $PLG['apisecret'],
                     "apikey"    => $PLG['apikey'],
+                ];
+                break;
+            case 'siliconcloud':
+                $result = [
+                    "api"   => "https://api.siliconflow.cn/v1/chat/completions",
+                    "model" => $PLG['model'],
+                    "token" => $PLG['token'],
                 ];
                 break;
             case 'openai':

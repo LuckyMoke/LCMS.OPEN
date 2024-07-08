@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-04-12 13:46:19
+ * @LastEditTime: 2024-07-07 13:32:25
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -71,18 +71,31 @@ class MP
     }
     /**
      * @description: 通过登陆code获取用户OPENID
-     * @param string $js_code
+     * @param string $code
      * @return {*}
      */
-    public function openid($js_code)
+    public function openid($code)
     {
         $query = http_build_query([
             "appId"      => $this->CFG['appid'],
             "secret"     => $this->CFG['appsecret'],
-            "js_code"    => $js_code,
+            "js_code"    => $code,
             "grant_type" => "authorization_code",
         ]);
         $result = json_decode(HTTP::get("https://api.weixin.qq.com/sns/jscode2session?{$query}"), true);
+        return $result ?: [];
+    }
+    /**
+     * @description: 获取手机号
+     * @param string $code
+     * @return array
+     */
+    public function get_phone($code)
+    {
+        $result = HTTP::post("https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$this->CFG['access_token']['access_token']}", json_encode([
+            "code" => $code,
+        ]));
+        $result = json_decode($result, true);
         return $result ?: [];
     }
     /**
