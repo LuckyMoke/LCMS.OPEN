@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-07-07 16:19:57
+ * @LastEditTime: 2024-07-10 00:37:09
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -94,7 +94,7 @@ class index extends adminbase
                 ]);
                 break;
             default:
-                ajaxout(0, "AI功能未开启，请到设置->AI接口中配置接口信息！");
+                ajaxout(0, "AI助手未开启，请到设置->接口设置->AI接口中开启！");
                 break;
         }
         $result['max_tokens'] = intval($aicfg['max_tokens']);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-18 13:31:51
+ * @LastEditTime: 2024-07-09 17:47:37
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -142,7 +142,7 @@ class TABLE
                             }
                         }
                         $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-more-vertical"></i></div><select name="LC[' . $val['name'] . ']" lay-verify><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
+                        <i class="layui-icon layui-icon-more-vertical"></i></div><select name="LC[' . $val['name'] . ']" lay-verify lay-append-to="body"><option value="">' . $val['title'] . '</option>' . $options . '</select></div>';
                         break;
                     case 'year':
                     case 'month':
