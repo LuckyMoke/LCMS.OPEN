@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-05 19:35:53
+ * @LastEditTime: 2024-07-17 11:22:56
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -169,8 +169,10 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
-                if (strtolower($LC['dir']) == "admin") {
-                    ajaxout(0, "后台目录不能使用admin");
+                if (in_array(strtolower($LC['dir']), [
+                    "admin", "wp-login", "manage", "manager", "member",
+                ])) {
+                    ajaxout(0, "后台目录不能使用{$LC['dir']}");
                 }
                 if (mb_strlen($LC['dir']) < 5) {
                     ajaxout(0, "后台目录最少需要5个字符");
@@ -270,20 +272,28 @@ class admin extends adminbase
                         "value"  => $config['attsize_file'] ?: 300,
                         "tips"   => "KB，限制上传文件的大小，上传视频等大文件请开启云存储",
                         "verify" => "required"],
-                    ["layui" => "radio", "title" => "图片转WEBP",
-                        "name"   => "LC[attwebp]",
-                        "value"  => $config['attwebp'] ?: 0,
-                        "radio"  => [
-                            ["title" => "打开", "value" => 1],
-                            ["title" => "关闭", "value" => 0],
-                        ],
-                        "tips"   => "不知道这是什么不要开，如果开启后无法上传图片，请关掉"],
-                    ["layui" => "des", "title" => "特别注意：为了后台安全，一些不常见的文件后缀，请在上传完文件后，及时删除白名单。"],
+                    ["layui" => "des", "title" => "特别注意：为了后台安全，请在上传完文件后，及时删除不常用的后缀。"],
                     ["layui" => "tags", "title" => "格式白名单",
                         "name"   => "LC[mimelist]",
                         "value"  => $_L['config']['admin']['mimelist'],
                         "tips"   => "上传格式白名单，例如jpg，不需要加.点",
                         "verify" => "required"],
+                    ["layui" => "title", "title" => "图片转换"],
+                    ["layui" => "des", "title" => "▲ 图片转WEBP：是否将上传图片自动转为webp格式，在保留图片清晰度的前提下，文件可缩小5-10倍。很老的浏览器将无法看到图片内容，如果开启后无法上传图片，请关闭此功能！<br>▲ 缩略图WEBP：可自动判断浏览器是否支持webp格式图片，而输出对应格式缩略图。如开启后网站缩略图无法显示，请关闭此功能！"],
+                    ["layui" => "radio", "title" => "图片转WEBP",
+                        "name"   => "LC[attwebp]",
+                        "value"  => $config['attwebp'] ?: 0,
+                        "radio"  => [
+                            ["title" => "开启", "value" => 1],
+                            ["title" => "关闭", "value" => 0],
+                        ]],
+                    ["layui" => "radio", "title" => "缩略图WEBP",
+                        "name"   => "LC[thumbwebp]",
+                        "value"  => $config['thumbwebp'] ?: 0,
+                        "radio"  => [
+                            ["title" => "自动判断", "value" => 0],
+                            ["title" => "关闭", "value" => 1],
+                        ]],
                     ["layui" => "title", "title" => "性能优化"],
                     ["layui" => "radio", "title" => "开发模式",
                         "name"   => "LC[development]",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-07-07 13:32:25
+ * @LastEditTime: 2024-07-10 14:31:58
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -92,6 +92,7 @@ class MP
      */
     public function get_phone($code)
     {
+        $this->access_token();
         $result = HTTP::post("https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$this->CFG['access_token']['access_token']}", json_encode([
             "code" => $code,
         ]));

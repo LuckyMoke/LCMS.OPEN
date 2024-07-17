@@ -92,10 +92,12 @@
                     </ul>
                 </div>
                 <ul class="layui-nav user">
-                    <li class="layui-nav-item sys-aichat">
-                        <a href="javascript:;" title="AI助手" onclick="LCMS.plugin.aimodel.chat({window:`AI助手`})"><img class="layui-anim layui-anim-rotate layui-anim-loop" src="{{$_L['url']['public']}}static/images/ai.webp"/><text>AI助手</text></a>
-                        <div class="layui-nav-child"></div>
-                    </li>
+                    <if LCMS::SUPER()||$_L['ROOTID']==$_L['LCMSADMIN']['id']||$_L['plugin']['aimodel']['subon']==1>
+                        <li class="layui-nav-item sys-aichat">
+                            <a href="javascript:;" title="AI助手" onclick="LCMS.plugin.aimodel.chat({window:`AI助手`})"><img class="layui-anim layui-anim-rotate layui-anim-loop" src="{{$_L['url']['public']}}static/images/ai.webp"/><text>AI助手</text></a>
+                            <div class="layui-nav-child"></div>
+                        </li>
+                    </if>
                     <li class="layui-nav-item sys-notify">
                         <a href="javascript:;" title="系统通知">
                             <i class="layui-icon layui-icon-notice"></i>

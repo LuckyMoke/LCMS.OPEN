@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-21 12:08:20
+ * @LastEditTime: 2024-07-14 14:15:04
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -182,6 +182,12 @@ class THUMB
             }
         }
         imagecopyresampled($thumb, $img, $dstx, $dsty, $srcx, $srcy, $x, $y, $img_info[0], $img_info[1]);
+        if (
+            in_string($_SERVER['HTTP_ACCEPT'], "image/webp") &&
+            $_L['config']['admin']['thumbwebp'] != 1
+        ) {
+            $img_info['mime'] = "image/webp";
+        }
         header("content-type: {$img_info['mime']}");
         imageinterlace($thumb, true);
         switch ($img_info['mime']) {
@@ -190,7 +196,7 @@ class THUMB
                 break;
             case 'image/pjpeg':
             case 'image/jpeg':
-                imagejpeg($thumb, null, 100);
+                imagejpeg($thumb, null, 90);
                 break;
             case 'image/x-up-wpng':
             case 'image/x-png':

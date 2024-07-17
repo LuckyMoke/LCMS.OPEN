@@ -1,6 +1,5 @@
 <?php
 use GeoIp2\Database\Reader;
-use ip2region\XdbSearcher;
 
 class Geoip2
 {
@@ -19,7 +18,10 @@ class Geoip2
         }
         switch ($dbtype) {
             case 'cz88':
-                if (is_file("{$this->path}ipdb/cz88.xdb")) {
+                if (
+                    is_file("{$this->path}ipdb/cz88.czdb") &&
+                    is_file("{$this->path}ipdb/cz88.crt")
+                ) {
                     return true;
                 }
                 break;
@@ -186,19 +188,26 @@ class Geoip2
      */
     private function cz88($iptype, $ip)
     {
-        $xdb = "{$this->path}ipdb/cz88.xdb";
-        if (!is_file($xdb)) {
+        $db  = "{$this->path}ipdb/cz88.czdb";
+        $key = "{$this->path}ipdb/cz88.crt";
+        if (!is_file($db) || !is_file($key)) {
             return false;
         }
-        require_once "{$this->path}libs/XdbSearcher.php";
+        require_once "{$this->path}libs/czdb.phar";
+        $czdb = new \Czdb\DbSearcher($db, "BTREE", file_get_contents($key));
         try {
-            $record   = XdbSearcher::newWithFileOnly($xdb)->search($ip);
+            $record   = $czdb->search($ip);
             $region   = explode("	", $record);
             $array    = explode("–", $region[0]);
             $array[1] = str_replace(["省", "市"], "", $array[1]);
             $array[2] = str_replace("市", "", $array[2]);
             $array[3] = str_replace(["市", "区", "县"], "", $array[3]);
-            $addrsss  = "{$array[0]}{$array[2]}{$array[3]}";
+            if ($array[2]) {
+                $addrsss = "{$array[0]}{$array[2]}{$array[3]}";
+            } else {
+                $addrsss = "{$array[0]}{$array[1]}";
+            }
+            $czdb->close();
             return $region[0] ? [
                 "ip"        => $ip,
                 "intranet"  => false,
@@ -207,10 +216,10 @@ class Geoip2
                 "province"  => $array[1],
                 "city"      => $array[2],
                 "districts" => $array[3],
-                "address"   => $addrsss ?: $region[0],
+                "address"   => $addrsss,
                 "isp"       => $region[1],
                 "original"  => $record,
-            ]: false;
+            ] : false;
         } catch (\Throwable $th) {
             return false;
         }
