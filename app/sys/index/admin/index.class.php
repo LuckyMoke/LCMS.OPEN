@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-04-25 11:20:38
+ * @LastEditTime: 2024-07-20 23:14:25
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -53,6 +53,8 @@ class index extends adminbase
         if (LCMS::SUPER()) {
             if ($_L['developer']['appstore'] !== 0) {
                 $update = 1;
+            } else {
+                unset($config['sys']['update']);
             }
             if (!is_file(PATH_CORE . "asynced")) {
                 $async = 1;

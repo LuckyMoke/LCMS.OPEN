@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-17 11:22:56
+ * @LastEditTime: 2024-07-20 22:48:19
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -68,6 +68,14 @@ class admin extends adminbase
                         "name"   => "LC[developer]",
                         "value"  => $config['developer'],
                         "verify" => "required"],
+                    ["layui" => "upload", "title" => "浏览器图标",
+                        "name"   => "LC[favicon]",
+                        "value"  => $config['favicon'] ?: "/public/static/images/favicon.ico",
+                        "accept" => ".png",
+                        "local"  => true,
+                        "width"  => 144,
+                        "height" => 144,
+                        "tips"   => "请上传png格式图片"],
                     ["layui" => "upload", "title" => "登录LOGO",
                         "name"   => "LC[login_logo]",
                         "value"  => $config['login_logo'],

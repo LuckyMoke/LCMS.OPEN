@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-12-08 16:02:09
+ * @LastEditTime: 2024-07-20 23:20:59
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -119,6 +119,7 @@ class LEVEL
                         "ver"         => $app['info']['ver'],
                         "description" => $app['info']['description'],
                         "icon"        => $icon,
+                        "uninstall"   => $app['info']['uninstall'] === false ? false : true,
                         "url"         => $app['url']['all'],
                     ];
                     $index++;

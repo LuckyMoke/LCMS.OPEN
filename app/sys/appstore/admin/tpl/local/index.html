@@ -21,11 +21,13 @@
                     </a>
                     <if LCMS::SUPER()>
                         <div class="layui-btn-group">
-                            <if $_L['developer']['appstore'] !== 0>
+                            <if $_L['developer']['appstore'] !==0>
                                 <a class="layui-btn layui-btn-xs layui-btn-normal app-update-btn" style="display:none">更新</a>
                             </if>
                             <a class="layui-btn layui-btn-xs layui-btn-warm app-repair" data-url="{{$_L['url']['own_form']}}&n=backup&c=repair&apptitle=%E4%BF%AE%E5%A4%8D&appname={{$name}}">修复</a>
-                            <a class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$name}}">卸载</a>
+                            <if $app['uninstall']>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger app-uninstall" data-url="{{$_L['url']['own_form']}}uninstall&app={{$name}}">卸载</a>
+                            </if>
                         </div>
                         <else>
                             <div class="layui-btn-group">

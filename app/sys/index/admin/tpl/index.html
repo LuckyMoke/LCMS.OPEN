@@ -12,7 +12,7 @@
         <if $_L['url']['scheme']=="https://">
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         </if>
-        <link rel="shortcut icon" href="{{$_L['url']['site']}}favicon.ico" />
+        <link rel="shortcut icon" href="{{$_L['config']['admin']['favicon']?:($_L['url']['static'].'images/favicon.ico')}}" />
         <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="{{$_L['url']['own_path']}}admin/tpl/static/style.css?lcmsver={{$_L['config']['ver']}}" />

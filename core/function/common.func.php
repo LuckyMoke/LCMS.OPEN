@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-14 14:15:24
+ * @LastEditTime: 2024-07-20 11:38:06
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -153,7 +153,11 @@ function datetime($date, $type = "")
             $type = "Y-m-d H:i:s";
             break;
     }
-    return date($type, $date);
+    try {
+        return date($type, $date);
+    } catch (\Throwable $th) {
+        return $date;
+    }
 }
 /**
  * @description: 正常时间转unix时间戳
