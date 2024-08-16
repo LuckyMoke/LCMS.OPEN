@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-07-14 14:15:04
+ * @LastEditTime: 2024-08-16 10:25:43
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -16,9 +16,10 @@ class THUMB
      * @param int $y
      * @param bool $rewrite
      * @param bool $watermark
+     * @param bool $white
      * @return {*}
      */
-    public static function url($path = "", $x = 0, $y = 0, $rewrite = false, $watermark = true)
+    public static function url($path = "", $x = 0, $y = 0, $rewrite = false, $watermark = true, $white = false)
     {
         global $_L;
         //裁剪计算
@@ -27,6 +28,9 @@ class THUMB
         //云存储配置
         $cfgoss   = $_L['plugin']['oss'] ?: [];
         $cfgthumb = $_L['plugin']['thumb'] ?: [];
+        if (!$white) {
+            $white = $cfgthumb['type'] > 0 ? true : false;
+        }
         //如果是完整链接，返回原图
         if (is_url($path) && (!$cfgoss['domain'] || !in_string($path, $cfgoss['domain']))) {
             return $path;
@@ -53,7 +57,7 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/auto-orient/thumbnail/x{$y}/blur/1x0";
                         } elseif ($x && $y) {
-                            if ($cfgthumb['type'] > 0) {
+                            if ($white) {
                                 $url[0] .= "/auto-orient/thumbnail/{$x}x{$y}/gravity/Center/blur/1x0/background/I0ZGRkZGRg==/extent/!{$x}x{$y}";
                             } else {
                                 $url[0] .= "/auto-orient/thumbnail/!{$x}x{$y}r/gravity/Center/crop/{$x}x{$y}/blur/1x0";
@@ -68,7 +72,7 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/thumbnail/x{$y}/gravity/center/crop/0x{$y}";
                         } elseif ($x && $y) {
-                            if ($cfgthumb['type'] > 0) {
+                            if ($white) {
                                 $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}/pad/1/color/I0ZGRkZGRg";
                             } else {
                                 $url[0] .= "/thumbnail/{$x}x{$y}!/gravity/center/crop/{$x}x{$y}";
@@ -83,7 +87,7 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/resize,m_lfit,h_{$y},limit_0";
                         } elseif ($x && $y) {
-                            if ($cfgthumb['type'] > 0) {
+                            if ($white) {
                                 $url[0] .= "/resize,m_pad,w_{$x},h_{$y},limit_0,color_FFFFFF";
                             } else {
                                 $url[0] .= "/resize,m_fill,w_{$x},h_{$y},limit_0";
@@ -98,7 +102,7 @@ class THUMB
                         } elseif ($x == 0 && $y != 0) {
                             $url[0] .= "/resize,m_lfit,h_{$y},limit_0";
                         } elseif ($x && $y) {
-                            if ($cfgthumb['type'] > 0) {
+                            if ($white) {
                                 $url[0] .= "/resize,m_pad,w_{$x},h_{$y},limit_0,color_FFFFFF";
                             } else {
                                 $url[0] .= "/resize,m_fill,w_{$x},h_{$y},limit_0";
@@ -112,8 +116,12 @@ class THUMB
         }
         if ($path && in_string($path, "../")) {
             //本地存储处理
-            $path  = str_replace("../", "", $path);
-            $style = "{$x},{$y},{$path}";
+            $path = str_replace("../", "", $path);
+            if ($white) {
+                $style = "{$x},{$y},1,{$path}";
+            } else {
+                $style = "{$x},{$y},{$path}";
+            }
             if ($rewrite) {
                 $url = "{$_L['url']['site']}images/{$style}";
             } else {
@@ -127,12 +135,16 @@ class THUMB
      * @param string $path
      * @param int $x
      * @param int $y
+     * @param bool $white
      * @return {*}
      */
-    public static function create($path, $x = 0, $y = 0)
+    public static function create($path, $x = 0, $y = 0, $white = false)
     {
         global $_L;
         $cfgthumb = $_L['plugin']['thumb'] ?: [];
+        if (!$white) {
+            $white = $cfgthumb['type'] > 0 ? true : false;
+        }
         $img_info = getimagesize($path);
         $img_data = file_get_contents($path);
         ob_clean();
@@ -165,7 +177,7 @@ class THUMB
         imagefill($thumb, 0, 0, $bgcolor);
         $dstx = $dsty = $srcx = $srcy = 0;
         if ($img_info[0] / $img_info[1] > $x / $y) {
-            if ($cfgthumb['type'] > 0) {
+            if ($white > 0) {
                 $dsty = (int) ($y - $img_info[1] * $x / $img_info[0]) / 2;
                 $y    = $y - 2 * $dsty;
             } else {
@@ -173,7 +185,7 @@ class THUMB
                 $img_info[0] = $img_info[0] - 2 * $srcx;
             }
         } else {
-            if ($cfgthumb['type'] > 0) {
+            if ($white > 0) {
                 $dstx = (int) ($x - $img_info[0] * $y / $img_info[1]) / 2;
                 $x    = $x - 2 * $dstx;
             } else {

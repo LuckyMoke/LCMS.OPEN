@@ -19,7 +19,8 @@ class Geoip2
         switch ($dbtype) {
             case 'cz88':
                 if (
-                    is_file("{$this->path}ipdb/cz88.czdb") &&
+                    is_file("{$this->path}ipdb/cz88_public_v4.czdb") &&
+                    is_file("{$this->path}ipdb/cz88_public_v6.czdb") &&
                     is_file("{$this->path}ipdb/cz88.crt")
                 ) {
                     return true;
@@ -61,9 +62,7 @@ class Geoip2
             }
             switch ($dbtype) {
                 case 'cz88':
-                    if ($iptype == "ipv4") {
-                        return $this->cz88($iptype, $ip);
-                    }
+                    return $this->cz88($iptype, $ip);
                     break;
                 case 'geoip2-country':
                     return $this->geoip2($iptype, $ip, "country");
@@ -188,7 +187,14 @@ class Geoip2
      */
     private function cz88($iptype, $ip)
     {
-        $db  = "{$this->path}ipdb/cz88.czdb";
+        switch ($iptype) {
+            case 'ipv4':
+                $db = "{$this->path}ipdb/cz88_public_v4.czdb";
+                break;
+            case 'ipv6':
+                $db = "{$this->path}ipdb/cz88_public_v6.czdb";
+                break;
+        }
         $key = "{$this->path}ipdb/cz88.crt";
         if (!is_file($db) || !is_file($key)) {
             return false;

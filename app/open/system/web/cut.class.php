@@ -19,8 +19,13 @@ class cut extends webbase
             LCMS::X(403, "拒绝访问");
             exit;
         }
-        list($x, $y, $path) = explode(",", $style);
-        $path               = path_absolute("../{$path}");
+        list($x, $y, $type, $path) = explode(",", $style);
+        if ($path) {
+            $_L['plugin']['thumb']['type'] = 1;
+        } else {
+            $path = $type;
+        }
+        $path = path_absolute("../{$path}");
         if (!is_file($path)) {
             $path = $_L['config']['web']['image_default'];
         }

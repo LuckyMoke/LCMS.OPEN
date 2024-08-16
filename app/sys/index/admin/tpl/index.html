@@ -94,7 +94,7 @@
                 <ul class="layui-nav user">
                     <if LCMS::SUPER()||$_L['ROOTID']==$_L['LCMSADMIN']['id']||$_L['plugin']['aimodel']['subon']==1>
                         <li class="layui-nav-item sys-aichat">
-                            <a href="javascript:;" title="AI助手" onclick="LCMS.plugin.aimodel.chat({window:`AI助手`})"><img class="layui-anim layui-anim-rotate layui-anim-loop" src="{{$_L['url']['public']}}static/images/ai.webp"/><text>AI助手</text></a>
+                            <a href="javascript:;" title="AI助手" onclick="LCMS.plugin.aimodel.chat({window:`AI助手`,slide:true})"><img class="layui-anim layui-anim-rotate layui-anim-loop" src="{{$_L['url']['public']}}static/images/ai.webp"/><text>AI助手</text></a>
                             <div class="layui-nav-child"></div>
                         </li>
                     </if>
@@ -182,7 +182,7 @@
         <script type="text/javascript" src="{{$_L['url']['public']}}ui/admin/static/ljs.js?lcmsver={{$_L['config']['ver']}}"></script>
         <script type="text/javascript">setTimeout(()=>{layer.close(LCMSMAINLOAD)},1000)</script>
         <if $_L['config']['admin']['development'] != 1 && strtolower($_L['config']['admin']['dir'])=="admin">
-            <script type="text/javascript">let href="?P3Q9c3lzJm49Y29uZmlnJmM9YWRtaW4mYT1zYWZl";if(window.location.search!=href)layer.confirm("检测到您的后台目录为默认的admin，为了后台安全，立即修改以提高安全性！<br><span style='color:red'>不修改100%会被黑客攻击！</span>",{title:"重要提示",area:"300px",btn:"立即修改",closeBtn:0},function(){window.location.href=href});</script>
+            <script type="text/javascript">let href="?P3Q9c3lzJm49Y29uZmlnJmM9YWRtaW4mYT1zYWZl";if(window.location.search!=href)setTimeout(()=>{layer.confirm("检测到您的后台目录为默认的admin，为了后台安全，立即修改以提高安全性！<br><span style='color:red'>不修改100%会被黑客攻击！</span>",{title:"重要提示",area:"300px",btn:"立即修改",closeBtn:0},function(){window.location.href=href})},1000);</script>
         </if>
     </body>
     </html>
