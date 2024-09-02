@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-07-10 00:37:09
+ * @LastEditTime: 2024-08-29 15:37:04
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -49,6 +49,13 @@ class index extends adminbase
             case 'baichuan':
                 $result = [
                     "api"   => "https://api.baichuan-ai.com/v1/chat/completions",
+                    "model" => $PLG['model'],
+                    "token" => $PLG['token'],
+                ];
+                break;
+            case 'zhipu':
+                $result = [
+                    "api"   => "https://open.bigmodel.cn/api/paas/v4/chat/completions",
                     "model" => $PLG['model'],
                     "token" => $PLG['token'],
                 ];

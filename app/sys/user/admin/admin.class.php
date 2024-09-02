@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-05-13 21:52:44
+ * @LastEditTime: 2024-09-01 15:52:54
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,28 +24,46 @@ class admin extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'list':
+                $LC['status'] = $LC['status'] == null ? 1 : $LC['status'];
+                $where        = ["status = :status"];
                 if ($LC['name']) {
                     if (is_email($LC['name'])) {
                         //邮箱
-                        $where = "email = :id";
+                        $where[] = "email = :id";
                     } elseif (is_phone($LC['name'])) {
                         //手机号
-                        $where = "mobile = :id";
+                        $where[] = "mobile = :id";
                     } else {
                         //ID、账号、姓名
-                        $where = "id = :id OR name LIKE :name OR title LIKE :name";
+                        $where[] = "(id = :id OR name LIKE :name OR title LIKE :name)";
                     }
                 }
+                $where = array_filter($where);
                 if (LCMS::SUPER()) {
-                    $data = TABLE::set("admin", $where, "id ASC", [
-                        ":id"   => $LC['name'],
-                        ":name" => "%{$LC['name']}%",
+                    $where = implode(" AND ", $where);
+                    $data  = TABLE::set([
+                        "table" => "admin",
+                        "where" => $where,
+                        "order" => "id ASC",
+                        "bind"  => [
+                            ":id"     => $LC['name'],
+                            ":name"   => "%{$LC['name']}%",
+                            ":status" => $LC['status'],
+                        ],
                     ]);
                 } else {
-                    $data = TABLE::set("admin", "lcms = :lcms" . ($where ? " AND ({$where})" : ""), "id ASC", [
-                        ":id"   => $LC['name'],
-                        ":name" => "%{$LC['name']}%",
-                        ":lcms" => $_L['LCMSADMIN']['id'],
+                    $where[] = "lcms = :lcms";
+                    $where   = implode(" AND ", $where);
+                    $data    = TABLE::set([
+                        "table" => "admin",
+                        "where" => $where,
+                        "order" => "id ASC",
+                        "bind"  => [
+                            ":id"     => $LC['name'],
+                            ":name"   => "%{$LC['name']}%",
+                            ":status" => $LC['status'],
+                            ":lcms"   => $_L['LCMSADMIN']['id'],
+                        ],
                     ]);
                     if (!$where && $LF['page'] == 1) {
                         $data = array_merge([$_L['LCMSADMIN']], $data ?: []);
@@ -90,10 +108,10 @@ class admin extends adminbase
                             "icon"  => "set",
                             "url"   => "javascript:setPower('{$token}')",
                         ],
-                        "status"   => [
+                        "statusT"  => [
                             "type"  => "switch",
                             "url"   => "index&action=list-save&token={$token}",
-                            "text"  => "启用|禁用",
+                            "text"  => "启用|停用",
                             "value" => $val['status'],
                         ],
                         "email"    => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
@@ -130,21 +148,21 @@ class admin extends adminbase
                     $ids[] = PUB::token2id($token);
                 }
                 if (in_array($_L['LCMSADMIN']['id'], $ids)) {
-                    ajaxout(0, "禁止删除自己");
+                    ajaxout(0, "禁止停用自己");
                 }
                 $ids = implode(",", $ids);
-                $ids && sql_delete([
+                if (TABLE::del([
                     "table" => "admin",
-                    "where" => "id IN({$ids})",
-                ]);
-                if (!sql_error()) {
+                    "id"    => $ids,
+                    "fake"  => "status:0",
+                ])) {
                     LCMS::log([
                         "type" => "system",
-                        "info" => "用户管理-删除用户-{$names}",
+                        "info" => "用户管理-停用用户-{$names}",
                     ]);
-                    ajaxout(1, "删除成功", "reload");
+                    ajaxout(1, "停用成功", "reload");
                 } else {
-                    ajaxout(0, "删除失败");
+                    ajaxout(0, "停用失败");
                 }
                 break;
             case 'edit':
@@ -190,7 +208,7 @@ class admin extends adminbase
                         "value"  => $admin['status'] ?? 1,
                         "radio"  => [
                             ["title" => "启用", "value" => 1],
-                            ["title" => "禁用", "value" => 0],
+                            ["title" => "停用", "value" => 0],
                         ]],
                 ];
                 $form['level'] = [
@@ -316,34 +334,43 @@ class admin extends adminbase
                         ["title" => "存储空间", "field" => "storage",
                             "width"  => 150,
                             "align"  => "center"],
-                        ["title" => "状态", "field" => "status",
+                        ["title" => "状态", "field" => "statusT",
                             "width"  => 90,
                             "align"  => "center"],
                         ["title"  => "操作", "field" => "do",
-                            "width"   => 95,
+                            "width"   => 100,
                             "align"   => "center",
                             "fixed"   => "right",
                             "toolbar" => [
                                 ["title" => "编辑", "event" => "iframe",
                                     "url"    => "index&action=edit&token={token}",
                                     "color"  => "default"],
-                                ["title" => "删除", "event" => "ajax",
+                                ["title" => "停用", "event" => "ajax",
                                     "url"    => "index&action=del",
                                     "color"  => "danger",
-                                    "tips"   => "删除用户会导致此用户内的所有数据丢失，一般禁用即可，真的要删除用户[{name}]？"],
+                                    "if"     => "d.status > 0",
+                                    "tips"   => "停用用户不会删除用户信息，只是禁止登录和使用！"],
                             ]],
                     ],
                     "toolbar" => [
                         ["title" => "添加用户", "event" => "iframe",
                             "url"    => "index&action=edit",
                             "color"  => "default"],
-                        ["title" => "批量删除", "event" => "ajax",
+                        ["title" => "批量停用", "event" => "ajax",
                             "url"    => "index&action=del",
                             "color"  => "danger",
-                            "tips"   => "删除用户会导致此用户内的所有数据丢失，一般禁用即可，真的要删除？"],
+                            "tips"   => "停用用户不会删除用户信息，只是禁止登录和使用！"],
                     ],
                     "search"  => [
                         ["title" => "ID/账号/姓名/邮箱/手机", "name" => "name"],
+                        ["title" => "用户状态", "name" => "status",
+                            "type"   => "select",
+                            "value"  => "1",
+                            "option" => [
+                                ["title" => "启用", "value" => 1],
+                                ["title" => "禁用", "value" => 0],
+                            ],
+                        ],
                     ],
                 ];
                 $acount = sql_counter(["admin"]);

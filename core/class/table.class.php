@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-09 17:47:37
+ * @LastEditTime: 2024-09-01 15:12:33
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,30 +12,89 @@ class TABLE
     public static $count;
     /**
      * @description: 获取表格数据
-     * @param string $table
-     * @param string $where
-     * @param string $order
-     * @param array $para
-     * @param string $field
+     * @param array $params [table, where, order, bind, fields]
      * @return array
      */
-    public static function set($table, $where = "", $order = "", $para = [], $field = null)
+    public static function set(...$params)
     {
         global $_L;
-        $page  = $_L['form']['page'] ? intval($_L['form']['page']) : 1;
+        if (is_array($params[0])) {
+            $params = $params[0];
+        } else {
+            $params = [
+                "table"  => $params[0],
+                "where"  => $params[1] ?: "",
+                "order"  => $params[2] ?: "",
+                "bind"   => $params[3] ?: [],
+                "fields" => $params[4] ?: "",
+            ];
+        }
+        $page  = $_L['form']['page'] ?: 1;
+        $page  = intval($page);
         $limit = intval($_L['form']['limit']);
-        $count = sql_counter([$table, $where, $para]);
+        $count = sql_counter([
+            "table" => $params['table'],
+            "where" => $params['where'],
+            "bind"  => $params['bind'],
+        ]);
         if ($limit > 0) {
             $page_max = ceil($count / $limit);
             if ($page <= $page_max) {
-                $min  = ($page - 1) * $limit;
-                $data = sql_getall([$table, $where, $order, $para, "", $field, [$min, $limit]]);
+                $params['limit'] = [($page - 1) * $limit, $limit];
             }
-        } else {
-            $data = sql_getall([$table, $where, $order, $para, "", $field]);
         }
         self::$count = $count;
-        return $data;
+        return sql_getall($params);
+    }
+    /**
+     * @description: 删除表格数据
+     * @param array|string $params [table, form, id, fake]
+     * @return bool
+     */
+    public static function del($params)
+    {
+        global $_L;
+        if ($params && is_array($params)) {
+            $params['form'] = $params['form'] ?: $_L['form']['LC'];
+            if ($params['id']) {
+                unset($params['form']);
+            }
+        } elseif ($params) {
+            $params = [
+                "table" => $params,
+                "form"  => $_L['form']['LC'],
+            ];
+        } else {
+            return false;
+        }
+        if ($params['id'] && (bool) preg_match('/^[0-9,]+$/', $params['id'])) {
+            $ids = $params['id'];
+        } elseif ($params['form']['id']) {
+            $ids = $params['form']['id'];
+        } elseif (is_array($params['form'])) {
+            $ids = implode(",", array_column($params['form'], "id"));
+        } else {
+            return false;
+        }
+        if ($ids) {
+            if ($params['fake'] && is_string($params['fake'])) {
+                list($name, $value) = explode(":", $params['fake']);
+                sql_update([
+                    "table" => $params['table'],
+                    "where" => "id IN ({$ids})",
+                    "data"  => [
+                        $name => $value ?? 1,
+                    ],
+                ]);
+            } else {
+                sql_delete([
+                    "table" => $params['table'],
+                    "where" => "id IN ({$ids})",
+                ]);
+            }
+            return sql_error() ? false : true;
+        }
+        return false;
     }
     /**
      * @description: 生成数据表格
@@ -75,6 +134,7 @@ class TABLE
             "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
+            "done"           => $table['done'] ?: null,
         ];
         if ($search) {
             $data['defaultToolbar'] = array_merge([[
@@ -126,7 +186,11 @@ class TABLE
         global $_L;
         $html = "";
         if ($arr) {
-            foreach ($arr as $key => $val) {
+            if ($arr[0]['type'] == "fixed") {
+                $fixed = " lcms-table-tool-self-fixed";
+                unset($arr[0]);
+            }
+            foreach ($arr as $val) {
                 switch ($val['type']) {
                     case 'select':
                         $options = '';
@@ -158,7 +222,7 @@ class TABLE
                         break;
                 }
             }
-            return '<script type="text/html" class="lcms-table-toolbar-search-tpl"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH" title="搜索"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
+            return '<script type="text/html" class="lcms-table-toolbar-search-tpl' . $fixed . '"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH" title="搜索"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
         }
     }
     /**
@@ -195,27 +259,6 @@ class TABLE
                 "colsbarid" => $colsbar,
             ];
         }
-    }
-    /**
-     * @description: 删除表格数据
-     * @param string $table
-     * @return bool
-     */
-    public static function del($table)
-    {
-        global $_L;
-        $form = $_L['form']['LC'];
-        if ($form['id']) {
-            sql_delete([$table, "id = :id", [
-                ":id" => $form['id'],
-            ]]);
-        } elseif (is_array($form)) {
-            $ids = implode(",", array_column($form, "id"));
-            sql_delete([$table, "id IN ({$ids})"]);
-        } else {
-            return false;
-        }
-        return sql_error() ? false : true;
     }
     /**
      * @description: 新树形表格
@@ -257,6 +300,7 @@ class TABLE
             "cols"           => $tree['cols'],
             "pid"            => $tree['pid'] ?: "pid",
             "show"           => $tree['show'] ?: "title",
+            "done"           => $tree['done'] ?: null,
         ];
         $html = "<div class='lcms-table-box' id='{$tree['id']}'><table class='lcms-table lcms-table-tree' data-exts='treeTable' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$laytpl}</div>";
         echo $html;

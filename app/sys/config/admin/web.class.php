@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-10 00:56:03
+ * @LastEditTime: 2024-08-29 15:36:03
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -456,15 +456,16 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://open.bigmodel.cn/' target='_blank'>智普</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
                         "radio"  => [
                             ["title" => "关闭", "value" => "", "tab" => "type_close"],
-                            ["title" => "百度文心", "value" => "wenxin", "tab" => "type_wenxin"],
-                            ["title" => "讯飞星火", "value" => "spark", "tab" => "type_spark"],
+                            ["title" => "文心", "value" => "wenxin", "tab" => "type_wenxin"],
+                            ["title" => "讯飞", "value" => "spark", "tab" => "type_spark"],
                             ["title" => "百川", "value" => "baichuan", "tab" => "type_baichuan"],
+                            ["title" => "智普", "value" => "zhipu", "tab" => "type_zhipu"],
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
                             ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "type_siliconcloud"],
                             ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
@@ -528,6 +529,15 @@ class web extends adminbase
                         "value"  => $PLG['baichuan']['model'] ?: "Baichuan2-Turbo",
                         "cname"  => "hidden type_baichuan",
                         "option" => $models['baichuan']],
+                    ["layui" => "input", "title" => "API Key",
+                        "name"   => "LC[zhipu][token]",
+                        "value"  => $PLG['zhipu']['token'],
+                        "cname"  => "hidden type_zhipu"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[zhipu][model]",
+                        "value"  => $PLG['zhipu']['model'] ?: "glm-4-flash",
+                        "cname"  => "hidden type_zhipu",
+                        "option" => $models['zhipu']],
                     ["layui" => "input", "title" => "TOKEN",
                         "name"   => "LC[kimi][token]",
                         "value"  => $PLG['kimi']['token'],

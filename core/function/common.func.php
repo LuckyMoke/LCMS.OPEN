@@ -2,26 +2,41 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-20 11:38:06
+ * @LastEditTime: 2024-09-01 14:12:12
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 /**
  * @description: 输出字符串或数组
- * @param mixed $vars
- * @param bool $type
+ * @param array $texts
  * @return string
  */
-function dump($vars, $type = false)
+function dump(...$texts)
 {
-    echo "<pre>\n";
-    if ($type) {
-        var_dump($vars);
-    } else {
-        echo htmlspecialchars(print_r($vars, true), ENT_COMPAT, "ISO-8859-1");
+    $type = array_pop($texts);
+    if (is_bool($type)) {
+        if ($texts) {
+            if ($type) {
+                foreach ($texts as $text) {
+                    echo "<pre>\n";
+                    var_dump($text);
+                    echo "</pre>\n";
+                }
+                return;
+            }
+        } else {
+            $texts[] = $type;
+        }
+    } elseif ($type) {
+        $texts[] = $type;
     }
-    echo "</pre>\n";
+    foreach ($texts as $text) {
+        echo "<pre>\n";
+        echo htmlspecialchars(print_r($text, true), ENT_COMPAT, "ISO-8859-1");
+        echo "</pre>\n";
+    }
+    return;
 }
 /**
  * @description: 数组转换为json，不转义中文
@@ -34,22 +49,23 @@ function json_encode_ex($arr = "")
 }
 /**
  * @description: AJAX输出的标准数据
- * @param int $code 返回状态 1,0
- * @param string|array $msg 返回提示
- * @param string $go 跳转链接,可选
- * @param mixed $data 输出的数据,可选
+ * @param array $params [code, msg, go, data, ...]
  * @return string
  */
-function ajaxout($code = 1, $msg = "", $go = "", $data = "")
+function ajaxout(...$params)
 {
-    $arr = [
-        "code" => $code,
-        "msg"  => $msg,
-        "go"   => $go,
-        "data" => $data,
-    ];
+    if (is_array($params[0])) {
+        $params = $params[0];
+    } else {
+        $params = [
+            "code" => $params[0],
+            "msg"  => $params[1] ?: "",
+            "go"   => $params[2] ?: "",
+            "data" => $params[3] ?: "",
+        ];
+    }
     header("content-type: application/json");
-    echo json_encode_ex($arr);
+    echo json_encode_ex($params);
     exit;
 }
 /**
@@ -264,11 +280,12 @@ function getunit($size, $unit = null)
  * @description: 获取两数之间的随机数，含小数
  * @param int $min
  * @param int $max
+ * @param int $pre
  * @return int
  */
-function randfloat($min = 0, $max = 1)
+function randfloat($min = 0, $max = 1, $pre = 2)
 {
-    return round($min + mt_rand() / mt_getrandmax() * ($max - $min), 2);
+    return round($min + mt_rand() / mt_getrandmax() * ($max - $min), $pre);
 }
 /**
  * @description: 清理URL中的参数

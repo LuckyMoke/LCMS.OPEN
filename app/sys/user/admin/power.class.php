@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2024-01-31 13:53:21
+ * @LastEditTime: 2024-09-01 13:52:45
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -25,9 +25,16 @@ class power extends adminbase
         switch ($LF['action']) {
             case 'list':
                 $where = LCMS::SUPER() ? "" : "uid = :uid";
-                $data  = TABLE::set("admin_level", $where, "id ASC", [
-                    ":uid" => $_L['LCMSADMIN']['id'],
-                ], "id, name, uid");
+                $data  = TABLE::set([
+                    "table"  => "admin_level",
+                    "where"  => $where,
+                    "order"  => "id DESC",
+                    "fields" => "id, name, uid",
+                    "bind"   => [
+                        ":uid" => $_L['LCMSADMIN']['id'],
+                    ],
+
+                ]);
                 $adminlist = [];
                 foreach ($data as $index => $val) {
                     if (!$adminlist[$val['uid']]) {

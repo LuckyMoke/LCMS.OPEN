@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2024-01-12 22:37:15
+ * @LastEditTime: 2024-09-01 23:49:43
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -160,6 +160,9 @@ class optimize extends adminbase
                             "tips"    => "确认清空数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                     ],
                 ];
+                if ($_L['developer']['lite'] === 1) {
+                    unset($table['toolbar']);
+                }
                 require LCMS::template("own/optimize/index");
                 break;
         }

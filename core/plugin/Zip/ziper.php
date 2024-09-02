@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-12-13 17:04:20
- * @LastEditTime: 2024-07-03 20:06:07
+ * @LastEditTime: 2024-08-19 13:31:05
  * @Description:压缩解压文件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -95,7 +95,7 @@ class Ziper
             makedir($dir);
         }
         if (!$this->ziper->extractTo($dir)) {
-            LCMS::X(500, "文件解压失败");
+            LCMS::X(500, "文件解压失败，可能的原因：1、压缩包文件有问题。2、目标目录里有文件权限不是755。");
         }
         return true;
     }

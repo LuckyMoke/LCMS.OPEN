@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-02-26 20:02:30
- * @LastEditTime: 2023-05-25 18:36:31
+ * @LastEditTime: 2024-09-01 23:50:33
  * @Description: 系统日志
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -130,6 +130,9 @@ class logs extends adminbase
                 ["title" => "用户", "name" => "user"],
             ],
         ];
+        if ($_L['developer']['lite'] === 1) {
+            unset($table['toolbar']);
+        }
         require LCMS::template("own/logs/index");
     }
     public function domessage()
@@ -176,6 +179,9 @@ class logs extends adminbase
                     "option" => $this->getMessageType()],
             ],
         ];
+        if ($_L['developer']['lite'] === 1) {
+            unset($table['toolbar']);
+        }
         require LCMS::template("own/logs/index");
     }
     /**
