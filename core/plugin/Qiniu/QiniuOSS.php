@@ -43,7 +43,7 @@ class QiniuOSS
         $data[] = "\"file\"; filename=\"{$name}\"\nContent-Type: " . mime_content_type($file) . "\nContent-Transfer-Encoding: binary\n\n{$body}\n--{$time}--";
         $sepa   = "--{$time}\nContent-Disposition: form-data; name=";
         $data   = $sepa . implode("\n{$sepa}", $data);
-        $result = HTTP::post("https://" . $this->getHost(), $data, false, [
+        $result = HTTP::post("https://up-{$this->cfg['uphost']}.qiniup.com", $data, false, [
             "Content-Type" => "multipart/form-data; boundary={$time}",
         ]);
         $result = json_decode($result, true);
@@ -63,7 +63,7 @@ class QiniuOSS
         foreach ($files as $index => $file) {
             $files[$index] = $this->base64Safe($this->cfg['bucket'] . ":{$file}");
         }
-        return $this->httpPost("https://rs.qiniuapi.com/batch", "op=/delete/" . implode("&op=/delete/", $files));
+        return $this->httpPost("https://rs-{$this->cfg['uphost']}.qiniuapi.com/batch", "op=/delete/" . implode("&op=/delete/", $files));
     }
     /**
      * @description: 签名
@@ -124,29 +124,5 @@ class QiniuOSS
         $hash  = hash('crc32b', $data);
         $array = unpack('N', pack('H*', $hash));
         return sprintf('%u', $array[1]);
-    }
-    /**
-     * @description: 获取上传域名
-     * @return string
-     */
-    private function getHost()
-    {
-        switch ($this->cfg['uphost']) {
-            case 'z0':
-                return 'up-z0.qiniup.com';
-                break;
-            case 'z1':
-                return 'up-z1.qiniup.com';
-                break;
-            case 'z2':
-                return 'up-z2.qiniup.com';
-                break;
-            case 'as0':
-                return 'up-as0.qiniup.com';
-                break;
-            case 'na0':
-                return 'up-na0.qiniup.com';
-                break;
-        }
     }
 }

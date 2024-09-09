@@ -23,7 +23,8 @@
                     ver: "{{$_L['config']['ver']}}",
                     aichat: "{{$_L['plugin']['aimodel']['type']}}"
                 },
-                plugin: {editor:{}, upload:{}}
+                plugin: {editor:{}, upload:{}},
+                app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
             };
         </script>
         <if $_L['developer'] && $_L['developer']['fontfamily']>

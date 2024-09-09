@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-21 17:42:42
+ * @LastEditTime: 2024-09-03 11:54:05
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -467,16 +467,33 @@ class LCMS
             //删除注释内容
             preg_match_all("/<!--(.*?)-->/is", $html, $notes);
             $html = str_replace($notes[0], "", $html);
+            //批量替换固定字符串
+            $html = str_replace([
+                '<script type="text/javascript" onload>',
+                '<script onload>',
+                '</template>',
+            ], [
+                '<script type="text/html" onload>',
+                '<script type="text/html" onload>',
+                '</script>',
+            ], $html);
             //标签替换
             preg_match_all("/{{(.*?)}}/i", $html, $match);
             preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
+            // dump($tags);
             foreach ($tags[0] as $index => $tag) {
                 switch (self::tpltags($tag)) {
                     case 'php':
                         $html = str_replace($tag, "<?php ", $html);
                         break;
                     case 'template':
-                        $html = str_replace($tag, "<?php require " . str_replace("template ", "LCMS::template(", $tags[1][$index]) . ", '" . ($uipath ? $ui : "") . "');?>", $html);
+                        if (in_string($tag, [
+                            'class="', 'id="',
+                        ])) {
+                            $html = str_replace($tag, '<script type="text/html"' . str_replace("template", "", $tags[1][$index]) . ">", $html);
+                        } else {
+                            $html = str_replace($tag, "<?php require " . str_replace("template ", "LCMS::template(", $tags[1][$index]) . ", '" . ($uipath ? $ui : "") . "');?>", $html);
+                        }
                         break;
                     case 'ui':
                         $html = str_replace($tag, "<?php " . str_replace(["ui table", "ui tree", "ui "], ["TABLE::html", "TABLE::tree", "LAY::"], $tags[1][$index]) . ";?>", $html);

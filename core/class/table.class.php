@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-01 15:12:33
+ * @LastEditTime: 2024-09-03 10:46:52
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -134,7 +134,10 @@ class TABLE
             "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
+            "before"         => $table['before'] ?: null,
             "done"           => $table['done'] ?: null,
+            "error"          => $table['error'] ?: null,
+            "complete"       => $table['complete'] ?: null,
         ];
         if ($search) {
             $data['defaultToolbar'] = array_merge([[
@@ -184,14 +187,20 @@ class TABLE
     public static function search($arr)
     {
         global $_L;
-        $html = "";
+        $html   = "";
+        $script = "";
+        $tpls   = "";
         if ($arr) {
-            if ($arr[0]['type'] == "fixed") {
-                $fixed = " lcms-table-tool-self-fixed";
-                unset($arr[0]);
-            }
             foreach ($arr as $val) {
-                switch ($val['type']) {
+                $type = $val['type'] ?: "input";
+                switch ($type) {
+                    case 'fixed':
+                        $fixed = " lcms-table-tool-self-fixed";
+                        break;
+                    case 'input':
+                        $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-search"></i></div><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input"></div>';
+                        break;
                     case 'select':
                         $options = '';
                         foreach ($val['option'] as $option) {
@@ -214,15 +223,15 @@ class TABLE
                     case 'time':
                     case 'datetime':
                         $html .= '<div class="layui-input-inline layui-input-wrap lcms-table-toolbar-date" title="' . $val['title'] . '"><div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" readonly autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $val['type'] . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix"><i class="layui-icon layui-icon-down"></i></div></div>';
+                        <i class="layui-icon layui-icon-date"></i></div><input type="text" name="LC[' . $val['name'] . ']" class="layui-input" readonly autocomplete="off" value="" placeholder="' . $val['title'] . '" data-type="' . $type . '" data-range="' . ($val['range'] === false ? "" : true) . '" data-min="' . $val['min'] . '" data-max="' . $val['max'] . '"/><div class="layui-input-suffix"><i class="layui-icon layui-icon-down"></i></div></div>';
                         break;
                     default:
-                        $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-search"></i></div><input type="text" name="LC[' . $val['name'] . ']" placeholder="' . $val['title'] . '" autocomplete="off" class="layui-input"></div>';
+                        $tpls .= "{$type},";
+                        $html .= '{' . $type . '}';
                         break;
                 }
             }
-            return '<script type="text/html" class="lcms-table-toolbar-search-tpl' . $fixed . '"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH" title="搜索"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
+            return '<script type="text/html" class="lcms-table-toolbar-search-tpl' . $fixed . '" data-tpls="' . $tpls . '"><form class="lcms-table-toolbar-search"><div class="lcms-table-toolbar-search-box">' . $html . '<button class="layui-btn" lay-submit lay-filter="LCMSTABLE_SEARCH" title="搜索"><i class="layui-icon layui-icon-search"></i></button></div></form></script>';
         }
     }
     /**
@@ -300,7 +309,10 @@ class TABLE
             "cols"           => $tree['cols'],
             "pid"            => $tree['pid'] ?: "pid",
             "show"           => $tree['show'] ?: "title",
+            "before"         => $tree['before'] ?: null,
             "done"           => $tree['done'] ?: null,
+            "error"          => $tree['error'] ?: null,
+            "complete"       => $tree['complete'] ?: null,
         ];
         $html = "<div class='lcms-table-box' id='{$tree['id']}'><table class='lcms-table lcms-table-tree' data-exts='treeTable' data='" . htmlspecialchars(json_encode_ex($data)) . "'></table>{$laytpl}</div>";
         echo $html;

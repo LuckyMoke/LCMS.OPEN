@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-01 15:52:54
+ * @LastEditTime: 2024-09-02 13:51:03
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -368,7 +368,7 @@ class admin extends adminbase
                             "value"  => "1",
                             "option" => [
                                 ["title" => "启用", "value" => 1],
-                                ["title" => "禁用", "value" => 0],
+                                ["title" => "停用", "value" => 0],
                             ],
                         ],
                     ],

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2023-11-26 21:26:59
+ * @LastEditTime: 2024-09-02 13:51:21
  * @Description: 扫码登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -131,7 +131,7 @@ class qrcode extends adminbase
                     LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
                 }
             } else {
-                LCMS::X(403, "登陆失败<br/>此账号已禁用，请联系客服");
+                LCMS::X(403, "登陆失败<br/>此账号已停用，请联系客服");
             }
         } else {
             LCMS::X(403, "登陆失败<br/>请先注册账号绑定");

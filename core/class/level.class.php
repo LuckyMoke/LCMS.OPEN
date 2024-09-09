@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-07-20 23:20:59
+ * @LastEditTime: 2024-09-08 11:47:14
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -18,16 +18,24 @@ class LEVEL
     public static function app($name = L_NAME, $type = L_TYPE)
     {
         global $_L;
-        $file = PATH_APP . $type . "/" . $name . "/" . "app.json";
-        if (is_file($file)) {
-            $appinfo = json_decode(file_get_contents($file), true);
+        $appinfo = [];
+        $path    = PATH_APP . $type . "/" . $name . "/";
+        if (is_file("{$path}app.json")) {
+            $appinfo = json_decode(file_get_contents("{$path}app.json"), true);
             if ($name === "appstore" && $_L['developer']['appstore'] === 0) {
                 unset($appinfo['class']['store']);
             }
             $appinfo['menu'] = $appinfo['class'];
-        } else {
-            return false;
         };
+        if (L_MODULE == "admin") {
+            if (is_file("{$path}admin/tpl/static/fun.js")) {
+                $js = "{$_L['url']['own_path']}admin/tpl/static/fun.js";
+            }
+            $appinfo['info']['js'] = $js ?: "";
+        }
+        if (!$appinfo['info']['title']) {
+            return $appinfo;
+        }
         $applevel = $_L['LCMSADMIN']['level'][$type][$name];
         if ($_L['LCMSADMIN']['type'] != "lcms") {
             if (empty($applevel) && !empty($appinfo['class'])) {

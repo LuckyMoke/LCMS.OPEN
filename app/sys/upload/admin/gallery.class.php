@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-19 20:18:44
+ * @LastEditTime: 2024-09-06 11:59:00
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -183,12 +183,11 @@ class gallery extends adminbase
     public function dodirlist()
     {
         global $_L, $LF, $LC;
-        $where = "type = 'image' AND lcms = {$_L['ROOTID']}";
+        $where = "type = 'image' AND cid = 0 AND lcms = {$_L['ROOTID']}";
         $where .= $_L['ROOTID'] != $_L['LCMSADMIN']['id'] ? " AND uid = {$_L['LCMSADMIN']['id']}" : "";
         $where .= " GROUP BY datey";
         if ($LF['page'] <= 1) {
             $total = sql_query("SELECT COUNT(*) FROM (SELECT COUNT(*) FROM {$_L['table']['upload']} WHERE {$where}) AS total")['COUNT(*)'];
-            $total <= 0 && ajaxout(0, "error");
         }
         $list = sql_getall([
             "table"  => "upload",
@@ -212,17 +211,25 @@ class gallery extends adminbase
         global $_L, $LF, $LC;
         $where = "type = 'image' AND lcms = {$_L['ROOTID']}";
         $where .= $_L['ROOTID'] != $_L['LCMSADMIN']['id'] ? " AND uid = {$_L['LCMSADMIN']['id']}" : "";
-        $where .= " AND datey = :datey";
-        $bind = [
-            ":datey" => $LF['dir'],
-        ];
+        if (in_string($LF['dir'], "custom")) {
+            $cid = str_replace("custom_", "", $LF['dir']);
+            $cid = intval($cid);
+            $where .= " AND cid = :cid";
+            $bind = [
+                ":cid" => $cid,
+            ];
+        } else {
+            $where .= " AND cid = 0 AND datey = :datey";
+            $bind = [
+                ":datey" => $LF['dir'],
+            ];
+        }
         if ($LF['page'] <= 1) {
             $total = sql_counter([
                 "table" => "upload",
                 "where" => $where,
                 "bind"  => $bind,
             ]);
-            $total <= 0 && ajaxout(0, "error");
         }
         $image = sql_getall([
             "table" => "upload",
@@ -252,6 +259,107 @@ class gallery extends adminbase
         ajaxout(1, "success", "", [
             "list"  => $list ?: [],
             "total" => $total ? intval($total) : 0,
+        ]);
+    }
+    /**
+     * @description: 图片图库列表
+     * @param {*}
+     * @return {*}
+     */
+    public function doclasslist()
+    {
+        global $_L, $LF, $LC;
+        $list = sql_getall([
+            "table" => "upload_class",
+            "where" => "lcms = :lcms",
+            "order" => "id ASC",
+            "bind"  => [
+                ":lcms" => $_L['ROOTID'],
+            ],
+        ]);
+        foreach ($list as $index => $val) {
+            $list[$index] = [
+                "id"    => $val['id'],
+                "title" => $val['title'],
+                "dir"   => "custom_{$val['id']}",
+                "path"  => "",
+            ];
+        }
+        ajaxout([
+            "code" => 1,
+            "msg"  => "success",
+            "data" => $list,
+        ]);
+    }
+    /**
+     * @description: 删除图库
+     * @param {*}
+     * @return {*}
+     */
+    public function doclassdel()
+    {
+        global $_L, $LF, $LC;
+        sql_update([
+            "table" => "upload",
+            "where" => "cid = :cid",
+            "data"  => [
+                "cid" => 0,
+            ],
+            "bind"  => [
+                ":cid" => $LF['id'],
+            ],
+        ]);
+        sql_delete([
+            "table" => "upload_class",
+            "where" => "id = :id",
+            "bind"  => [
+                ":id" => $LF['id'],
+            ],
+        ]);
+        ajaxout(1, "图库已删除，所有图片已放入默认图库中");
+    }
+    /**
+     * @description: 新增、编辑图库
+     * @param {*}
+     * @return {*}
+     */
+    public function doclassedit()
+    {
+        global $_L, $LF, $LC;
+        if ($LF['id']) {
+            sql_update([
+                "table" => "upload_class",
+                "data"  => [
+                    "title" => $LF['title'],
+                    "lcms"  => $_L['ROOTID'],
+                ],
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => $LF['id'],
+                ],
+            ]);
+            sql_error() && ajaxout(0, "图库修改失败");
+            $msg = "图库修改成功";
+        } else {
+            $LF['id'] = sql_insert([
+                "table" => "upload_class",
+                "data"  => [
+                    "title" => $LF['title'],
+                    "lcms"  => $_L['ROOTID'],
+                ],
+            ]);
+            sql_error() && ajaxout(0, "图库添加失败");
+            $msg = "图库添加成功";
+        }
+        ajaxout([
+            "code" => 1,
+            "msg"  => $msg,
+            "data" => [
+                "id"    => $LF['id'],
+                "title" => $LF['title'],
+                "dir"   => "custom_{$LF['id']}",
+                "path"  => "",
+            ],
         ]);
     }
 }

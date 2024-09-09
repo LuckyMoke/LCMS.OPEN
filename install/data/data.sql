@@ -126,6 +126,14 @@ CREATE TABLE `[_PRE]upload` (
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='上传文件表';
 
+CREATE TABLE `[_PRE]upload_class` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(32) DEFAULT NULL,
+  `lcms` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `lcms` (`lcms`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='上传图库表';
+
 CREATE TABLE `[_PRE]order` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `order_no` varchar(64) DEFAULT NULL COMMENT '订单号',

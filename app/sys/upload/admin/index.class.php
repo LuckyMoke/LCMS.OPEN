@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-02-13 12:48:34
+ * @LastEditTime: 2024-09-03 19:53:56
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -27,9 +27,9 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         if ($_FILES['file']) {
-            $res = UPLOAD::file($LF['type'], "", "", $LF['force'] > 0 ? true : false);
+            $res = UPLOAD::file($LF['type'], "", "", $LF['force'] > 0 ? true : false, $LF['cid']);
         } elseif ($LF['url'] && is_url($LF['url'])) {
-            $res = UPLOAD::file("image", $LF['url'], "", $LF['force'] > 0 ? true : false);
+            $res = UPLOAD::file("image", $LF['url'], "", $LF['force'] > 0 ? true : false, $LF['cid']);
         }
         if ($res && $res['code'] == 1) {
             unset($res['code'], $res['msg']);
@@ -249,6 +249,7 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         $this->sql($LF['type'], $LF['datey'], [
+            "cid"   => $LF['cid'],
             "oname" => $LF['oname'] ?: null,
             "name"  => $LF['name'],
             "size"  => $LF['size'],
@@ -334,6 +335,7 @@ class index extends adminbase
                 if ($data) {
                     sql_insert(["upload", [
                         "type"    => $type,
+                        "cid"     => $data['cid'],
                         "datey"   => $datey,
                         "oname"   => $data['oname'],
                         "name"    => $data['name'],

@@ -64,12 +64,13 @@ class TencentOSS
             "Host"         => $this->api,
             "Content-Type" => mime_content_type($file),
         ];
-        $url    = "https://" . $this->api . "/{$name}";
-        $result = HTTP::put($url, $body, array_merge($headers, [
+        $url = "https://" . $this->api . "/{$name}";
+        HTTP::put($url, $body, array_merge($headers, [
             "Authorization" => $this->sign("put", $name, [], $headers)
         ]));
+        $result = HTTP::$INFO['http_code'] == 200;
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $result ? 1 : 0,
             "msg"  => $result ? "SUCCESS" : "上传失败",
         ];
     }

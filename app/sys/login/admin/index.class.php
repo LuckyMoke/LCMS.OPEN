@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-05-22 10:17:13
+ * @LastEditTime: 2024-09-02 13:51:15
  * @Description: 用户登陆
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -336,7 +336,7 @@ class index extends adminbase
                     return $admin;
                 }
             } else {
-                loginFail($admin, "此账号已禁用，请联系客服");
+                loginFail($admin, "此账号已停用，请联系客服");
             }
         } else {
             loginFail($form, "账号或密码错误");

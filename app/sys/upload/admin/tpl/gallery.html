@@ -3,34 +3,77 @@
 <template "ui/iframe" />
 <div class="lcms-form-upload-gallery" data-many="{{$_L['form']['many']}}" data-id="{{$_L['form']['id']}}">
     <div class="_topbar">
+        <div class="layui-btn-group">
+            <div class="layui-btn layui-btn-sm layui-btn-primary _dir">
+                <span>默认图库</span>
+                <i class="layui-icon layui-icon-down layui-font-12"></i>
+            </div>
+            <button class="layui-btn layui-btn-sm layui-btn-primary _delc">
+                操作
+                <i class="layui-icon layui-icon-down layui-font-12"></i>
+            </button>
+        </div>
         <div class="_pos">upload/{{$_L['ROOTID']}}/image/</div>
-        <div class="_btn">
+        <div class="layui-btn-group _btn">
             <button class="layui-btn layui-btn-sm layui-btn-warm _bak">返回</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal _up">
+                <input type="file" accept="image/*" multiple style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;" title="批量上传" />
+                上传
+            </button>
             <button class="layui-btn layui-btn-sm _ok">确认</button>
         </div>
     </div>
     <div class="layui-row layui-col-space10 _gallery"></div>
+    <div class="_nodata">没有图片</div>
     <div class="clear"></div>
     <div class="_pager" id="lcms-form-upload-gallery-pager"></div>
 </div>
-<script type="text/html" class="tpl-folder">
+<template class="tpl-folder">
     <div class="layui-col-xs{{is_mobile()?'4':'3'}}">
         <div class="_bg _folder" data-dir="{dir}">
-            <img src="{{$_L['url']['static']}}images/folder.png?lcmsver={{$_L['config']['ver']}}"/>
+            <img src="{{$_L['url']['static']}}images/folder.png?lcmsver={{$_L['config']['ver']}}" />
             <div class="_name">{name}</div>
             <div class="_tips">点击打开</div>
         </div>
     </div>
-</script>
-<script type="text/html" class="tpl-file">
+</template>
+<template class="tpl-file">
     <div class="layui-col-xs{{is_mobile()?'4':'3'}}">
         <div class="_bg _img" data-original="{original}" data-src="{src}" data-oname="原始名：{oname}<br>存储名：{name}<br>图占用：{size}">
-            <img class="lazyload" data-src="{src}"/>
+            <img class="lazyload" data-src="{src}" />
             <div class="_name" style="display:none"></div>
             <div class="_tips">点击选择</div>
             <div class="_ok"><i class="layui-icon layui-icon-ok"></i></div>
             <div class="_del" data-original="{original}" data-dir="{dir}"><i class="layui-icon layui-icon-delete"></i></div>
         </div>
     </div>
-</script>
+</template>
+<style>
+    .layui-menu {
+        max-height: calc(100vh - 100px);
+        overflow: auto;
+    }
+
+    .layui-menu li {
+        font-size: 12px;
+    }
+
+    .layui-dropdown {
+        min-width: auto;
+    }
+
+    .layui-menu-body-title {
+        display: flex;
+        align-items: center;
+        padding: 3px 15px;
+    }
+
+    .layui-menu-body-title>.layui-icon {
+        position: relative;
+        right: 0;
+        top: 0;
+        margin: 0 5px 0 0;
+        font-size: 12px;
+    }
+</style>
 <template "ui/foot" />

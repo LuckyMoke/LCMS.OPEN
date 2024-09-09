@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-26 11:36:04
+ * @LastEditTime: 2024-09-03 19:51:37
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class UPLOAD
      * @param bool $force
      * @return array
      */
-    public static function file($dir, $form = "", $mime = "", $force = 0)
+    public static function file($dir, $form = "", $mime = "", $force = 0, $cid = 0)
     {
         global $_L;
         self::$CFG = $_L['config']['admin'];
@@ -135,7 +135,7 @@ class UPLOAD
                 }
             }
         }
-        self::sql_save($dir, $return);
+        self::sql_save($dir, $return, false, $cid);
         return $return;
     }
     /**
@@ -361,7 +361,7 @@ class UPLOAD
      * @param array $data
      * @return {*}
      */
-    private static function sql_save($dir, $data = [], $force = false)
+    private static function sql_save($dir, $data = [], $force = false, $cid = 0)
     {
         global $_L;
         if ($data['code'] == 1) {
@@ -370,6 +370,7 @@ class UPLOAD
             if ($info[2] == "file" || $info[2] == "image" && strlen($info[3]) == 6) {
                 sql_insert(["upload", [
                     "type"    => $info[2],
+                    "cid"     => $cid,
                     "datey"   => $info[3],
                     "oname"   => self::$ONAME ?: null,
                     "name"    => $data['filename'],

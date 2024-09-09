@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-08-29 15:36:03
+ * @LastEditTime: 2024-09-04 10:05:28
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -295,10 +295,13 @@ class web extends adminbase
                         "verify" => "required",
                         "radio"  => [
                             ["title" => "华东-浙江", "value" => "z0"],
+                            ["title" => "华东-浙江2", "value" => "cn-east-2"],
                             ["title" => "华北-河北", "value" => "z1"],
                             ["title" => "华南-广东", "value" => "z2"],
-                            ["title" => "亚太-新加坡", "value" => "as0"],
                             ["title" => "北美-洛杉矶", "value" => "na0"],
+                            ["title" => "亚太-新加坡", "value" => "as0"],
+                            ["title" => "亚太-河内", "value" => "ap-southeast-2"],
+                            ["title" => "亚太-胡志明", "value" => "ap-southeast-3"],
                         ],
                         "cname"  => "hidden oss-qiniu"],
                     ["layui" => "input", "title" => "SecretId",
