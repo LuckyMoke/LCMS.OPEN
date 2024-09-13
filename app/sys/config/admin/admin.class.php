@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-07-20 22:48:19
+ * @LastEditTime: 2024-09-12 20:51:44
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -199,7 +199,6 @@ class admin extends adminbase
                     "do"    => "save",
                     "type"  => "sys",
                     "cate"  => "admin",
-                    "unset" => "app_host",
                     "form"  => $LC,
                     "lcms"  => true,
                 ]);

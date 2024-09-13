@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-06-03 10:26:04
+ * @LastEditTime: 2024-09-13 11:29:35
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -59,6 +59,9 @@ class common
         parse_str(substr(strstr(HTTP_URI, '?'), 1), $QUERY);
         $forms = array_merge($QUERY ?: [], $_COOKIE ?: [], $_POST ?: [], $_GET ?: []);
         foreach ($forms as $key => $val) {
+            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $key)) {
+                continue;
+            }
             if ($val !== "") {
                 if (in_array($key, [
                     "t", "n", "c", "a", "action", "cls", "do",

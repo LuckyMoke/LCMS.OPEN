@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-08 11:47:14
+ * @LastEditTime: 2024-09-12 19:07:08
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -29,7 +29,7 @@ class LEVEL
         };
         if (L_MODULE == "admin") {
             if (is_file("{$path}admin/tpl/static/fun.js")) {
-                $js = "{$_L['url']['own_path']}admin/tpl/static/fun.js";
+                $js = "fun.js";
             }
             $appinfo['info']['js'] = $js ?: "";
         }
