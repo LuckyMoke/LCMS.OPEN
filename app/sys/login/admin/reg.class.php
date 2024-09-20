@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-01-17 21:15:33
+ * @LastEditTime: 2024-09-17 00:28:51
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,7 @@ class reg extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if ($UCFG['reg']['mode'] < 1) {
+        if ($UCFG['login']['mode'] < 1) {
             $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
             $UCFG = $RID > 0 ? LCMS::config([
                 "name" => "user",
@@ -177,7 +177,7 @@ class reg extends adminbase
                 "type" => "login",
                 "info" => "用户注册-注册成功",
             ]);
-            ajaxout(1, "注册成功，请登陆", "{$_L['url']['own']}rootid={$RID}&n=login");
+            ajaxout(1, "注册成功，请登录", "{$_L['url']['own']}rootid={$RID}&n=login");
         }
     }
 }

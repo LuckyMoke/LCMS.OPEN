@@ -2,8 +2,8 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-09-02 13:51:21
- * @Description: 扫码登陆
+ * @LastEditTime: 2024-09-18 10:48:33
+ * @Description: 扫码登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
@@ -23,7 +23,7 @@ class qrcode extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if ($UCFG['reg']['mode'] < 1) {
+        if ($UCFG['login']['mode'] < 1) {
             $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
             $UCFG = $RID > 0 ? LCMS::config([
                 "name" => "user",
@@ -55,6 +55,7 @@ class qrcode extends adminbase
                 load::plugin("Tencent/QQConnect");
                 $QQ = new QQConnect([
                     "appid"   => $UCFG['reg']['qqlogin_appid'],
+                    "domain"  => $UCFG['reg']['qqlogin_domain'],
                     "display" => "pc",
                 ]);
                 $openid = $QQ->openid();
@@ -68,7 +69,7 @@ class qrcode extends adminbase
         SESSION::set("LOGINOPENID", $WUSER['openid']);
     }
     /**
-     * @description: 扫码登陆页面
+     * @description: 扫码登录页面
      * @param {*}
      * @return {*}
      */
@@ -93,7 +94,7 @@ class qrcode extends adminbase
         require LCMS::template("own/{$tplpath}/qrcode");
     }
     /**
-     * @description: 登陆操作
+     * @description: 登录操作
      * @param {*}
      * @return {*}
      */
@@ -110,31 +111,40 @@ class qrcode extends adminbase
             //todo验证账号是否绑定
             if ($admin['status'] == '1') {
                 if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
-                    LCMS::X(403, "登陆失败<br/>此账号已到期，请联系客服");
+                    LCMS::X(403, "登录失败<br/>此账号已到期，请联系客服");
                 } else {
-                    $time = datenow();
-                    sql_update(["admin", [
-                        "logintime" => $time,
-                        "ip"        => CLIENT_IP,
-                    ], "id = '{$admin['id']}'"]);
                     $admin = array_merge($admin, [
+                        "jwt"       => randstr(32),
+                        "logintime" => datenow(),
+                        "ip"        => CLIENT_IP,
                         "parameter" => sql2arr($admin['parameter']),
-                        "logintime" => $time,
+                    ]);
+                    sql_update([
+                        "table" => "admin",
+                        "data"  => [
+                            "logintime" => $admin['logintime'],
+                            "jwt"       => $admin['jwt'],
+                            "ip"        => $admin['ip'],
+                        ],
+                        "where" => "id = :id",
+                        "bind"  => [
+                            ":id" => $admin['id'],
+                        ],
                     ]);
                     unset($admin['pass']);
                     SESSION::set("LCMSADMIN", $admin);
                     LCMS::log([
                         "user" => $admin['name'],
                         "type" => "login",
-                        "info" => "登陆成功-第三方登陆",
+                        "info" => "登录成功-第三方登录",
                     ]);
-                    LCMS::Y(200, "登陆成功<br/>请返回网页端查看", "close");
+                    LCMS::Y(200, "登录成功<br/>请返回网页端查看", "close");
                 }
             } else {
-                LCMS::X(403, "登陆失败<br/>此账号已停用，请联系客服");
+                LCMS::X(403, "登录失败<br/>此账号已停用，请联系客服");
             }
         } else {
-            LCMS::X(403, "登陆失败<br/>请先注册账号绑定");
+            LCMS::X(403, "登录失败<br/>请先注册账号绑定");
         }
     }
     /**

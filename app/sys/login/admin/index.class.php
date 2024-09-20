@@ -2,8 +2,8 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-09-02 13:51:15
- * @Description: 用户登陆
+ * @LastEditTime: 2024-09-19 17:55:08
+ * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
@@ -24,7 +24,7 @@ class index extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if ($UCFG['reg']['mode'] < 1) {
+        if ($UCFG['login']['mode'] < 1) {
             $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
             $UCFG = $RID > 0 ? LCMS::config([
                 "name" => "user",
@@ -37,7 +37,7 @@ class index extends adminbase
         }
     }
     /**
-     * @description: 登陆首页
+     * @description: 登录首页
      * @param {*}
      * @return {*}
      */
@@ -53,7 +53,7 @@ class index extends adminbase
             header("HTTP/1.1 404 Not Found");
             die;
         }
-        //如果已经登陆，跳转到后台首页
+        //如果已经登录，跳转到后台首页
         if ($USER && $USER['id'] && $USER['name']) {
             okinfo($LF['go'] ?: $_L['url']['admin']);
         }
@@ -74,15 +74,15 @@ class index extends adminbase
             }
         } else {
             $page = [
-                "title" => "登陆 - {$CFG['title']}",
+                "title" => "登录 - {$CFG['title']}",
                 "tab"   => [
-                    ["title" => "账号登陆", "name" => "login"],
+                    ["title" => "账号登录", "name" => "login"],
                 ],
-                "btn"   => "登陆",
+                "btn"   => "登录",
             ];
             if ($UCFG['reg']['qrcode'] > 0) {
                 $page['tab'] = array_merge($page['tab'], [[
-                    "title" => "微信登陆",
+                    "title" => "微信登录",
                     "name"  => "qrcode",
                 ]]);
             }
@@ -103,7 +103,7 @@ class index extends adminbase
         require LCMS::template("own/{$tplpath}/index");
     }
     /**
-     * @description: 检测登陆状态
+     * @description: 检测登录状态
      * @param {*}
      * @return {*}
      */
@@ -175,7 +175,7 @@ class index extends adminbase
         }
     }
     /**
-     * @description: 登陆状态检测
+     * @description: 登录状态检测
      * @param {*}
      * @return {*}
      */
@@ -183,7 +183,8 @@ class index extends adminbase
     {
         global $_L, $LF, $CFG, $UCFG, $USER, $RID;
         if ($_L['LCMSADMIN']) {
-            ajaxout(1, "登陆成功", $LF['go'] ?: $_L['url']['admin']);
+            $this->loginJwt($_L['LCMSADMIN']);
+            ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
         } else {
             ajaxout(0, "failed");
         }
@@ -278,7 +279,7 @@ class index extends adminbase
         }
     }
     /**
-     * @description: 退出登陆
+     * @description: 退出登录
      * @param {*}
      * @return {*}
      */
@@ -297,10 +298,62 @@ class index extends adminbase
         $_L['LCMSADMIN'] && LCMS::log([
             "user" => $_L['LCMSADMIN']['name'],
             "type" => "login",
-            "info" => "退出登陆",
+            "info" => "退出登录",
         ]);
+        if ($UCFG['login']['jwt'] == 1) {
+            sql_update([
+                "table" => "admin",
+                "data"  => [
+                    "jwt" => null,
+                ],
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => $_L['LCMSADMIN']['id'],
+                ],
+            ]);
+            setcookie("LCMSJWT_" . urlsafe_base64_encode(HTTP_HOST), "", [
+                "expires"  => time() - 3600,
+                "domain"   => "." . roothost(HTTP_HOST),
+                "path"     => "/",
+                "secure"   => false,
+                "httponly" => true,
+                "samesite" => "Lax",
+            ]);
+        }
         SESSION::del("LCMSADMIN");
         okinfo("{$_L['url']['own']}rootid={$RID}&n=login&go=" . urlencode($LF['go']));
+    }
+    /**
+     * @description: JWT有效性检测
+     * @return {*}
+     */
+    public function docheckjwt()
+    {
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        if ($UCFG['login']['jwt'] == 1) {
+            $LF['token'] || ajaxout(0, "failed");
+            $token = explode(".", $LF['token'])[1];
+            $token = $token ? base64_decode($token) : "";
+            $token = $token ? json_decode($token, true) : [];
+            if ($token['exp'] > time()) {
+                $admin = sql_get([
+                    "table" => "admin",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => $token['id'],
+                    ],
+                ]);
+                if (
+                    $admin['status'] == 1 &&
+                    (!$admin['lasttime'] || $admin['lasttime'] > datenow()) &&
+                    jwt_decode($LF['token'], $admin['jwt'])
+                ) {
+                    unset($admin['pass'], $admin['jwt'], $admin['salt'], $admin['parameter']);
+                    ajaxout(1, "success", "", $admin);
+                }
+            }
+        }
+        ajaxout(0, "failed");
     }
     /**
      * @description: 账户状态检测
@@ -320,7 +373,7 @@ class index extends adminbase
             LCMS::log([
                 "user" => $admin['name'],
                 "type" => "login",
-                "info" => "登陆失败-{$msg}",
+                "info" => "登录失败-{$msg}",
             ]);
             PUB::isLoginAttack("update");
             LCMS::X(403, $msg);
@@ -350,25 +403,56 @@ class index extends adminbase
     private function loginSuccess($admin)
     {
         global $_L, $LF, $CFG, $UCFG, $USER, $RID;
-        $time = datenow();
+        $data = [
+            "logintime" => datenow(),
+            "ip"        => CLIENT_IP,
+        ];
+        if ($UCFG['login']['jwt'] == 1) {
+            $data['jwt'] = randstr(32);
+        }
         sql_update([
             "table" => "admin",
-            "data"  => [
-                "logintime" => $time,
-                "ip"        => CLIENT_IP,
+            "data"  => $data,
+            "where" => "id = :id",
+            "bind"  => [
+                ":id" => $admin['id'],
             ],
-            "where" => "id = {$admin['id']}",
         ]);
-        $admin = array_merge($admin, [
+        $admin = array_merge($admin, $data, [
             "parameter" => sql2arr($admin['parameter']),
-            "logintime" => $time,
         ]);
         unset($admin['pass']);
         SESSION::set("LCMSADMIN", $admin);
+        $this->loginJwt($admin);
         LCMS::log([
             "user" => $admin['name'],
             "type" => "login",
             "info" => "登录成功",
         ]);
+    }
+    /**
+     * @description: 生成单点登录JWT
+     * @param array $admin
+     * @return {*}
+     */
+    private function loginJwt($admin)
+    {
+        global $_L, $LF, $CFG, $UCFG, $USER, $RID;
+        if ($UCFG['login']['jwt'] == 1) {
+            $ltime = time() + 15552000;
+            setcookie("LCMSJWT_" . urlsafe_base64_encode(HTTP_HOST), jwt_encode([
+                "id"    => $admin['id'],
+                "name"  => $admin['name'],
+                "title" => $admin['title'],
+                "exp"   => $ltime,
+            ], $admin['jwt']), [
+                "expires"  => $ltime,
+                "domain"   => "." . roothost(HTTP_HOST),
+                "path"     => "/",
+                "secure"   => false,
+                "httponly" => true,
+                "samesite" => "Lax",
+            ]);
+        }
     }
 }

@@ -15,9 +15,10 @@ CREATE TABLE `[_PRE]admin` (
   `storage` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '存储空间',
   `storage_used` int(11) DEFAULT '0' COMMENT '存储空间已使用',
   `2fa` varchar(32) DEFAULT NULL COMMENT '两步验证密钥',
+  `jwt` varchar(32) DEFAULT NULL COMMENT 'JWT密钥',
   `addtime` datetime DEFAULT NULL COMMENT '添加时间',
   `lasttime` datetime DEFAULT NULL COMMENT '到期时间',
-  `logintime` datetime DEFAULT NULL COMMENT '最后登陆时间',
+  `logintime` datetime DEFAULT NULL COMMENT '最后登录时间',
   `ip` varchar(128) DEFAULT NULL COMMENT '登录IP',
   `parameter` longtext COMMENT '套餐包',
   `lcms` int(11) unsigned NOT NULL DEFAULT '0',
@@ -108,6 +109,7 @@ CREATE TABLE `[_PRE]notify` (
 
 CREATE TABLE `[_PRE]upload` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '图库ID',
   `type` varchar(10) DEFAULT NULL COMMENT '上传类型',
   `datey` varchar(6) DEFAULT NULL COMMENT '上传目录',
   `oname` varchar(64) DEFAULT NULL COMMENT '文件原始名',

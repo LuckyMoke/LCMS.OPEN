@@ -65,10 +65,15 @@ class TencentOSS
             "Content-Type" => mime_content_type($file),
         ];
         $url = "https://" . $this->api . "/{$name}";
-        HTTP::put($url, $body, array_merge($headers, [
-            "Authorization" => $this->sign("put", $name, [], $headers)
-        ]));
-        $result = HTTP::$INFO['http_code'] == 200;
+        HTTP::request([
+            "type"    => "PUT",
+            "url"     => $url,
+            "data"    => $body,
+            "headers" => array_merge($headers, [
+                "Authorization" => $this->sign("put", $name, [], $headers)
+            ])
+        ], $http_info);
+        $result = $http_info['http_code'] == 200;
         return [
             "code" => $result ? 1 : 0,
             "msg"  => $result ? "SUCCESS" : "上传失败",
@@ -94,11 +99,16 @@ class TencentOSS
             "Content-MD5"  => base64_encode(md5($body, true)),
         ];
         $url = "https://" . $this->api . "/?delete";
-        HTTP::post($url, $body, false, array_merge($headers, [
-            "Authorization" => $this->sign("post", "", [], $headers)
-        ]));
+        HTTP::request([
+            "type"    => "POST",
+            "url"     => $url,
+            "data"    => $body,
+            "headers" => array_merge($headers, [
+                "Authorization" => $this->sign("post", "", [], $headers)
+            ])
+        ], $http_info);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => "SUCCESS",
         ];
     }

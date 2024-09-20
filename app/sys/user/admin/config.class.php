@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2023-11-29 11:50:35
+ * @LastEditTime: 2024-09-18 11:18:14
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class config extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if (!LCMS::SUPER() && $CFG['reg']['mode'] == 1) {
+        if (!LCMS::SUPER() && $CFG['login']['mode'] == 1) {
             LCMS::X(403, "此功能仅超级管理员可用");
         }
     }
@@ -60,14 +60,21 @@ class config extends adminbase
                 ]);
                 $form = [
                     "base" => [
-                        ["layui" => "radio", "title" => "注册模式",
-                            "name"   => "LC[reg][mode]",
-                            "value"  => $config['reg']['mode'] ?? 0,
+                        ["layui" => "radio", "title" => "登录模式",
+                            "name"   => "LC[login][mode]",
+                            "value"  => $config['login']['mode'] ?? 1,
                             "radio"  => [
                                 ["title" => "总平台", "value" => 1],
                                 ["title" => "子平台", "value" => 0],
                             ]],
-                        ["layui" => "html", "title" => "登陆地址",
+                        ["layui" => "radio", "title" => "单点登录",
+                            "name"   => "LC[login][jwt]",
+                            "value"  => $config['login']['jwt'] ?? 0,
+                            "radio"  => [
+                                ["title" => "开启", "value" => 1],
+                                ["title" => "关闭", "value" => 0],
+                            ]],
+                        ["layui" => "html", "title" => "登录地址",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
                             "copy"   => true],
@@ -76,7 +83,7 @@ class config extends adminbase
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                             "copy"   => true],
                         ["layui" => "title", "title" => "三方登录"],
-                        ["layui" => "des", "title" => "微信登陆需安装《微信公众号管理》应用才可正常使用！如需关注公众号，需要在应用“扫码事件”中添加一个<code>sys@login</code><br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$_L['url']['web']['api']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
+                        ["layui" => "des", "title" => "微信登录需安装《微信公众号管理》应用才可正常使用！如需关注公众号，需要在应用“扫码事件”中添加一个<code>sys@login</code><br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$config['reg']['qqlogin_domain']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
                         ["layui" => "radio", "title" => "微信登录",
                             "name"   => "LC[reg][qrcode]",
                             "value"  => $config['reg']['qrcode'] ?? 0,
@@ -93,6 +100,11 @@ class config extends adminbase
                                 ["title" => "关闭", "value" => 0, "tab" => "tab_qqlogin0"],
                                 ["title" => "启用", "value" => 1, "tab" => "tab_qqlogin"],
                             ],
+                        ],
+                        ["layui" => "input", "title" => "QQ回调域",
+                            "name"   => "LC[reg][qqlogin_domain]",
+                            "value"  => $config['reg']['qqlogin_domain'] ?: $_L['url']['web']['api'],
+                            "cname"  => "hidden tab_qqlogin",
                         ],
                         ["layui" => "input", "title" => "APPID",
                             "name"   => "LC[reg][qqlogin_appid]",
@@ -174,7 +186,7 @@ class config extends adminbase
                             "value"  => $config['readme']['privacy']],
                     ],
                 ];
-                if (!LCMS::SUPER() && $CFG['reg']['mode'] < 1) {
+                if (!LCMS::SUPER() && $CFG['login']['mode'] < 1) {
                     unset($form['base'][0]);
                 }
                 require LCMS::template("own/config/index");

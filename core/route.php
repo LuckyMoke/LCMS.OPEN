@@ -28,7 +28,6 @@ define("SYS_TIME", time());
 define("HTTP_HOST", isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']);
 define("HTTP_PORT", $_SERVER['SERVER_PORT']);
 define("HTTP_TOP", $_SERVER['HTTP_REFERER']);
-define("HTTP_URI", $_SERVER['REQUEST_URI']);
 define("SERVER_IP", $_SERVER['SERVER_ADDR']);
 define("PAGE_START", microtime(true));
 require_once PATH_CORE_FUNC . "common.func.php";

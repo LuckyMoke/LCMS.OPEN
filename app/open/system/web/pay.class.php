@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:13
- * @LastEditTime: 2024-03-29 11:17:29
+ * @LastEditTime: 2024-09-16 11:44:02
  * @Description: 系统支付操作
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -61,6 +61,7 @@ class pay extends webbase
                 "order_no" => $order['order_no'],
                 "status"   => 1,
             ]);
+            $order['status'] = 1;
             if ($order['callback']) {
                 $app   = explode("|", $order['callback']);
                 $class = PATH_APP . "open/{$app[0]}/include/class/{$app[1]}.class.php";

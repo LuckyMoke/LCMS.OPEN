@@ -43,12 +43,17 @@ class QiniuOSS
         $data[] = "\"file\"; filename=\"{$name}\"\nContent-Type: " . mime_content_type($file) . "\nContent-Transfer-Encoding: binary\n\n{$body}\n--{$time}--";
         $sepa   = "--{$time}\nContent-Disposition: form-data; name=";
         $data   = $sepa . implode("\n{$sepa}", $data);
-        $result = HTTP::post("https://up-{$this->cfg['uphost']}.qiniup.com", $data, false, [
-            "Content-Type" => "multipart/form-data; boundary={$time}",
-        ]);
+        $result = HTTP::request([
+            "type"    => "POST",
+            "url"     => "https://up-{$this->cfg['uphost']}.qiniup.com",
+            "data"    => $data,
+            "headers" => [
+                "Content-Type" => "multipart/form-data; boundary={$time}",
+            ],
+        ], $http_info);
         $result = json_decode($result, true);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => $result ? "SUCCESS" : $result['error'],
         ];
     }
@@ -89,15 +94,19 @@ class QiniuOSS
         $data .= "\nHost: {$urls['host']}";
         $data .= "\nContent-Type: application/x-www-form-urlencoded\n\n";
         $data .= $body ?: "";
-        $headers = [
-            'Host'          => $urls['host'],
-            'Content-Type'  => "application/x-www-form-urlencoded",
-            'Authorization' => "Qiniu " . $this->sign($data),
-        ];
-        $result = HTTP::post($url, $body, false, $headers);
+        $result = HTTP::request([
+            "type"    => "POST",
+            "url"     => $url,
+            "data"    => $body,
+            "headers" => [
+                'Host'          => $urls['host'],
+                'Content-Type'  => "application/x-www-form-urlencoded",
+                'Authorization' => "Qiniu " . $this->sign($data),
+            ],
+        ], $http_info);
         $result = json_decode($result, true);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => $result ? "SUCCESS" : $result['error'],
         ];
     }

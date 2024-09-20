@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-19 10:52:29
+ * @LastEditTime: 2024-09-17 00:14:23
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -67,11 +67,11 @@ class adminbase extends common
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "已在其它地方登陆账号，此设备自动退出", $okinfourl);
+                LCMS::X(403, "已在其它地方登录账号，此设备自动退出", $okinfourl);
             }
             if ($admininfo['type'] != $_L['LCMSADMIN']['type']) {
                 SESSION::del("LCMSADMIN");
-                LCMS::X(403, "系统权限已修改，请重新登陆", $okinfourl);
+                LCMS::X(403, "系统权限已修改，请重新登录", $okinfourl);
             }
             if ($admininfo['status'] != 1) {
                 SESSION::del("LCMSADMIN");

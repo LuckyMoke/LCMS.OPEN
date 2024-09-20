@@ -52,15 +52,20 @@ class BaiduOSS
         }
         $body   = file_get_contents($file);
         $sign   = $this->sign("PUT", "/" . str_replace(PATH_WEB, "", $file));
-        $result = HTTP::put($sign['api'], $body, [
-            "Host"           => $this->api,
-            "Content-Type"   => mime_content_type($file),
-            "Content-Length" => filesize($file),
-            "Authorization"  => $sign['sign'],
-            "x-bce-date"     => $sign['date'],
-        ]);
+        $result = HTTP::request([
+            "type"    => "PUT",
+            "url"     => $sign['api'],
+            "data"    => $body,
+            "headers" => [
+                "Host"           => $this->api,
+                "Content-Type"   => mime_content_type($file),
+                "Content-Length" => filesize($file),
+                "Authorization"  => $sign['sign'],
+                "x-bce-date"     => $sign['date'],
+            ],
+        ], $http_info);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => $result ? "上传失败" : "SUCCESS",
         ];
     }
@@ -78,16 +83,21 @@ class BaiduOSS
             ];
         }
         $sign = $this->sign("POST", "/", "delete=");
-        HTTP::post($sign['api'], json_encode([
-            "objects" => $files,
-        ]), false, [
-            "Host"          => $this->api,
-            "Content-Type"  => "application/json",
-            "Authorization" => $sign['sign'],
-            "x-bce-date"    => $sign['date'],
-        ]);
+        HTTP::request([
+            "type"    => "POST",
+            "url"     => $sign['api'],
+            "data"    => json_encode([
+                "objects" => $files,
+            ]),
+            "headers" => [
+                "Host"          => $this->api,
+                "Content-Type"  => "application/json",
+                "Authorization" => $sign['sign'],
+                "x-bce-date"    => $sign['date'],
+            ],
+        ], $http_info);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => "SUCCESS",
         ];
     }

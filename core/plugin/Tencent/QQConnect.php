@@ -87,7 +87,7 @@ class QQConnect
             if ($openid) {
                 return $openid;
             }
-            $this->oauth2("{$_L['config']['web']['domain_api']}core/plugin/Tencent/tpl/qqlogin.html?ver={$_L["config"]["ver"]}&goback=" . urlencode($_L['url']['now']));
+            $this->oauth2("{$CFG['domain']}core/plugin/Tencent/tpl/qqlogin.html?ver={$_L["config"]["ver"]}&goback=" . urlencode($_L['url']['now']));
         }
     }
 }

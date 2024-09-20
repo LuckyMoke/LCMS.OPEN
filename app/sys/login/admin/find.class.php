@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2023-11-29 17:58:44
+ * @LastEditTime: 2024-09-17 00:28:40
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -23,7 +23,7 @@ class find extends adminbase
             "cate" => "admin",
             "lcms" => true,
         ]);
-        if ($UCFG['reg']['mode'] < 1) {
+        if ($UCFG['login']['mode'] < 1) {
             $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
             $UCFG = $RID > 0 ? LCMS::config([
                 "name" => "user",

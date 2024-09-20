@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-01 14:12:12
+ * @LastEditTime: 2024-09-19 01:04:22
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -458,11 +458,17 @@ function filterform($string = null)
 {
     if (is_array($string)) {
         foreach ($string as $key => $val) {
+            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $key)) {
+                unset($string[$key]);
+                continue;
+            }
             $string[$key] = filterform($val);
         }
-    } else {
+    } elseif ($string !== "") {
         if (L_MODULE != "admin") {
-            $string = sqlinsert($string);
+            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $string)) {
+                $string = sqlinsert($string);
+            }
         } else {
             $string = trim($string);
         }

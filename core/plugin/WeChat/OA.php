@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-01-31 12:14:36
+ * @LastEditTime: 2024-09-17 00:14:38
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -142,7 +142,7 @@ class OA
         return $result ?: [];
     }
     /**
-     * @description: 微信登陆获取openid
+     * @description: 微信登录获取openid
      * @param bool $type
      * @return array
      */

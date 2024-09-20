@@ -2,248 +2,344 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-07-24 13:50:59
+ * @LastEditTime: 2024-09-19 17:30:25
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class HTTP
 {
-    private static $CH;
-    private static $HEADER    = [];
-    private static $METHOD    = "";
-    private static $USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
-    public static $TIMEOUT    = 30;
-    public static $PROXY      = [];
-    public static $INFO       = [];
-    public static $HEADERS    = [];
-    public static $UA         = "";
+    public static $TIMEOUT = 30;
+    public static $HEADERS = [];
     /**
-     * @description: HTTP GET
-     * @param string $url 请求链接
-     * @param bool $out 是否输出头部信息
-     * @param array $headers 携带头部内容
-     * @return string|array|null
+     * @description: 此方法已弃用
      */
     public static function get($url, $out = false, $headers = [])
     {
-        self::$CH     = curl_init($url);
-        self::$METHOD = "GET";
-        self::$HEADER = $headers;
-        self::setBaseOpt();
-        $result = self::getRequest();
+        $result = self::request([
+            "type"    => "GET",
+            "url"     => $url,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info, $header);
         $result = $out ? [
-            "code"   => self::$INFO['http_code'],
-            "type"   => self::$INFO['content_type'],
-            "length" => self::$INFO['size_download'],
+            "code"   => $info['http_code'],
+            "type"   => $info['content_type'],
+            "length" => $info['size_download'],
             "body"   => $result,
         ] : $result;
+        self::$HEADERS = $header;
         self::resetOpt();
         return $result;
     }
     /**
-     * @description: HTTP POST
-     * @param string $url 请求链接
-     * @param mixed $data 请求数据
-     * @param bool $build 是否转换data数组
-     * @param array $headers 携带头部内容
-     * @return string|null
+     * @description: 此方法已弃用
      */
     public static function post($url, $data = [], $build = false, $headers = [])
     {
-        self::$CH     = curl_init($url);
-        self::$METHOD = "POST";
-        self::$HEADER = $headers;
-        self::setBaseOpt($build ? http_build_query($data) : $data);
-        $result = self::getRequest();
-        if (in_array(self::$INFO['http_code'], [
-            301, 302, 303, 307, 308,
-        ])) {
-            if (self::$INFO['redirect_url']) {
-                $result = self::post(self::$INFO['redirect_url'], $data, $build, $headers);
-            }
-        }
+        $result = self::request([
+            "type"    => "POST",
+            "url"     => $url,
+            "data"    => $data,
+            "build"   => $build,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info, $header);
+        self::$HEADERS = $header;
         self::resetOpt();
         return $result;
     }
     /**
-     * @description: HTTP DELETE
-     * @param string $url 请求链接
-     * @param array $headers 携带头部内容
-     * @return {*}
+     * @description: 此方法已弃用
      */
     public static function delete($url, $headers = [])
     {
-        self::$CH     = curl_init($url);
-        self::$METHOD = "DELETE";
-        self::$HEADER = $headers;
-        self::setBaseOpt();
-        $result = self::getRequest();
-        if (in_array(self::$INFO['http_code'], [
-            301, 302, 303, 307, 308,
-        ])) {
-            if (self::$INFO['redirect_url']) {
-                $result = self::delete(self::$INFO['redirect_url'], $headers);
-            }
-        }
+        $result = self::request([
+            "type"    => "DELETE",
+            "url"     => $url,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info, $header);
+        self::$HEADERS = $header;
         self::resetOpt();
         return $result;
     }
     /**
-     * @description: HTTP PUT
-     * @param string $url 请求链接
-     * @param mixed $data 请求数据
-     * @param array $headers 携带头部内容
-     * @return {*}
+     * @description: 此方法已弃用
      */
     public static function put($url, $data = false, $headers = [])
     {
-        self::$CH     = curl_init($url);
-        self::$METHOD = "PUT";
-        self::$HEADER = $headers;
-        self::setBaseOpt($data);
-        $result = self::getRequest();
-        if (in_array(self::$INFO['http_code'], [
-            301, 302, 303, 307, 308,
-        ])) {
-            if (self::$INFO['redirect_url']) {
-                $result = self::put(self::$INFO['redirect_url'], $data, $headers);
-            }
-        }
+
+        $result = self::request([
+            "type"    => "PUT",
+            "url"     => $url,
+            "data"    => $data,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info, $header);
+        self::$HEADERS = $header;
         self::resetOpt();
         return $result;
     }
     /**
-     * @description: HTTP HEAD
-     * @param string $url
-     * @return array
+     * @description: 此方法已弃用
      */
     public static function head($url, $headers = [])
     {
-        self::$INFO = get_headers($url, true, stream_context_create([
-            "http" => array(
-                "method"     => "GET",
-                "header"     => $headers,
-                "user_agent" => self::$UA ?: self::$USERAGENT,
-                "timeout"    => self::$TIMEOUT,
-            ),
-        ]));
+        self::request([
+            "type"    => "HEAD",
+            "url"     => $url,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info);
         self::resetOpt();
-        return self::$INFO;
+        return $info;
     }
     /**
-     * @description: 下载文件
-     * @param string $url
-     * @param string $file
-     * @param array $headers
-     * @return array
+     * @description: 此方法已弃用
      */
     public static function download($url, $file, $headers = [])
     {
-        delfile($file);
-        $cfile        = fopen($file, "w+");
-        self::$CH     = curl_init($url);
-        self::$METHOD = "GET";
-        self::$HEADER = $headers;
-        curl_setopt(self::$CH, CURLOPT_FILE, $cfile);
-        self::setBaseOpt("lcms-http-download");
-        curl_exec(self::$CH);
-        self::$INFO = curl_getinfo(self::$CH);
-        curl_close(self::$CH);
-        fclose($cfile);
+        $result = self::request([
+            "type"    => "DOWNLOAD",
+            "url"     => $url,
+            "file"    => $file,
+            "timeout" => self::$TIMEOUT,
+            "headers" => $headers,
+        ], $info);
         self::resetOpt();
-        if (self::$INFO['http_code'] == 200) {
-            return [
-                "code" => 1,
-                "file" => $file,
-            ];
-        } else {
-            delfile($file);
-            return ["code" => 0];
-        }
+        return $result;
     }
     /**
-     * @description: 配置请求信息
-     * @param mixed $data
-     * @return {*}
-     */
-    private static function setBaseOpt($data = "")
-    {
-        if (!is_array($data) && !is_null(json_decode($data)) && !self::$HEADER['Content-Type']) {
-            self::$HEADER['Content-Type'] = "application/json; charset=utf-8";
-        }
-        if (self::$HEADER) {
-            foreach (self::$HEADER as $k => $v) {
-                $h[] = "{$k}: {$v}";
-                $v == "gzip" && curl_setopt(self::$CH, CURLOPT_ENCODING, "gzip");
-            }
-            curl_setopt(self::$CH, CURLOPT_HTTPHEADER, $h);
-        }
-        if (self::$PROXY) {
-            if (!is_array(self::$PROXY)) {
-                self::$PROXY = [
-                    "url" => self::$PROXY,
-                ];
-            }
-            curl_setopt(self::$CH, CURLOPT_PROXY, self::$PROXY['url']);
-            if (self::$PROXY['user'] && self::$PROXY['pass']) {
-                curl_setopt(self::$CH, CURLOPT_PROXYUSERPWD, '"' . self::$PROXY['user'] . ':' . self::$PROXY['user'] . '"');
-            }
-        }
-        curl_setopt(self::$CH, CURLOPT_TIMEOUT, self::$TIMEOUT);
-        curl_setopt(self::$CH, CURLOPT_USERAGENT, self::$UA ?: self::$USERAGENT);
-        curl_setopt(self::$CH, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt(self::$CH, CURLOPT_SSL_VERIFYHOST, false);
-        if ($data != "lcms-http-download") {
-            curl_setopt(self::$CH, CURLOPT_HEADER, true);
-            curl_setopt(self::$CH, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt(self::$CH, CURLOPT_CUSTOMREQUEST, self::$METHOD);
-        }
-        switch (self::$METHOD) {
-            case 'GET':
-                curl_setopt(self::$CH, CURLOPT_FOLLOWLOCATION, true);
-                break;
-            case 'POST':
-                curl_setopt(self::$CH, CURLOPT_POST, true);
-                curl_setopt(self::$CH, CURLOPT_POSTFIELDS, $data);
-                break;
-            case 'PUT':
-                curl_setopt(self::$CH, CURLOPT_POSTFIELDS, $data);
-                break;
-        }
-    }
-    /**
-     * @description: 获取请求结果
-     * @return mixed
-     */
-    private static function getRequest()
-    {
-        $body       = curl_exec(self::$CH);
-        self::$INFO = curl_getinfo(self::$CH);
-        curl_close(self::$CH);
-        $hInfo = substr($body, 0, self::$INFO['header_size']);
-        $hInfo = str_replace("\r\n", "\n", $hInfo);
-        $hInfo = explode("\n", trim($hInfo));
-        unset($hInfo[0]);
-        self::$HEADERS = [
-            "code" => self::$INFO['http_code'],
-        ];
-        foreach ($hInfo as $info) {
-            $infoArr       = explode(':', $info, 2);
-            self::$HEADERS = array_merge(self::$HEADERS, [
-                trim($infoArr[0]) => trim($infoArr[1]),
-            ]);
-        }
-        return substr($body, self::$INFO['header_size'], strlen($body));
-    }
-    /**
-     * @description: 重置配置信息
-     * @return {*}
+     * @description: 此方法已弃用
      */
     private static function resetOpt()
     {
         self::$TIMEOUT = 30;
-        self::$PROXY   = [];
-        self::$UA      = "";
+    }
+    /**
+     * @description: HTTP请求方法
+     * @param array $args [type、url、data、timeout、headers、proxy、ua、cache、setopt、success、error、complete]
+     * @param array $curl_info
+     * @param array $curl_header
+     * @return mixed
+     */
+    public static function request($args = [], &$curl_info = [], &$curl_header = [])
+    {
+        if (!$args['url']) {
+            return false;
+        }
+        $args = array_merge([
+            "type"     => "GET",
+            "url"      => "",
+            "data"     => "",
+            "build"    => false,
+            "timeout"  => 30,
+            "headers"  => [],
+            "proxy"    => [],
+            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+            "setopt"   => null,
+            "success"  => null,
+            "error"    => null,
+            "complete" => null,
+        ], $args);
+        $args['type'] = strtoupper($args['type'] ?: "GET");
+        switch ($args['type']) {
+            case 'GET':
+            case 'DELETE':
+                if (is_array($args['data'])) {
+                    $query = http_build_query($args['data']);
+                    if (in_string($args['url'], "?")) {
+                        $args['url'] = trim($args['url'], "&");
+                        $args['url'] .= "&{$query}";
+                    } else {
+                        $args['url'] .= "?{$query}";
+                    }
+                    unset($args['data']);
+                }
+                break;
+            case 'POST':
+            case 'PUT':
+                if ($args['data']) {
+                    if ($args['build'] && is_array($args['data'])) {
+                        $args['data'] = http_build_query($args['data']);
+                    }
+                    if (
+                        !is_array($args['data']) &&
+                        !is_null(json_decode($args['data'])) &&
+                        !$args['headers']['Content-Type']
+                    ) {
+                        $args['headers']['Content-Type'] = "application/json; charset=utf-8";
+                    }
+                }
+                break;
+            case 'HEAD':
+                if (is_array($args['data'])) {
+                    $query = http_build_query($args['data']);
+                    if (in_string($args['url'], "?")) {
+                        $args['url'] = trim($args['url'], "&");
+                        $args['url'] .= "&{$query}";
+                    } else {
+                        $args['url'] .= "?{$query}";
+                    }
+                    unset($args['data']);
+                }
+                $reinfo = get_headers($args['url'], true, stream_context_create([
+                    "http" => [
+                        "method"     => "GET",
+                        "header"     => $args['headers'],
+                        "user_agent" => $args['ua'],
+                        "timeout"    => $args['timeout'],
+                    ],
+                ]));
+                if ($reinfo) {
+                    $args['success'] && $args['success']($reinfo, $reinfo, []);
+                } else {
+                    $args['error'] && $args['error']($reinfo);
+                }
+                $args['complete'] && $args['complete']($reinfo);
+                $curl_info = $reinfo;
+                return $reinfo;
+                break;
+        }
+        $CURL = curl_init($args['url']);
+        if ($args['header']) {
+            $args['headers'] = array_merge($args['headers'] || [], $args['header'] || []);
+            unset($args['header']);
+        }
+        if ($args['headers'] && is_array($args['headers'])) {
+            foreach ($args['headers'] as $k => $v) {
+                $headers[] = "{$k}: {$v}";
+                $v == "gzip" && curl_setopt($CURL, CURLOPT_ENCODING, "gzip");
+            }
+            curl_setopt($CURL, CURLOPT_HTTPHEADER, $headers);
+        }
+        if ($args['proxy']) {
+            if (!is_array($args['proxy'])) {
+                $args['proxy'] = [
+                    "url" => $args['proxy'],
+                ];
+            }
+            curl_setopt($CURL, CURLOPT_PROXY, $args['proxy']['url']);
+            if ($args['proxy']['user'] && $args['proxy']['pass']) {
+                curl_setopt($CURL, CURLOPT_PROXYUSERPWD, "{$args['proxy']['user']}:{$args['proxy']['pass']}");
+            }
+        }
+        if ($args['cookie']) {
+            curl_setopt($CURL, CURLOPT_COOKIE, $args['cookie']);
+        }
+        curl_setopt($CURL, CURLOPT_TIMEOUT, $args['timeout']);
+        curl_setopt($CURL, CURLOPT_USERAGENT, $args['ua']);
+        curl_setopt($CURL, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($CURL, CURLOPT_SSL_VERIFYHOST, false);
+        switch ($args['type']) {
+            case 'GET':
+                curl_setopt($CURL, CURLOPT_HEADER, true);
+                curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "GET");
+                curl_setopt($CURL, CURLOPT_FOLLOWLOCATION, true);
+                $return = true;
+                break;
+            case 'POST':
+                curl_setopt($CURL, CURLOPT_HEADER, true);
+                curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($CURL, CURLOPT_POST, true);
+                curl_setopt($CURL, CURLOPT_POSTFIELDS, $args['data']);
+                $return = true;
+                break;
+            case 'PUT':
+                curl_setopt($CURL, CURLOPT_HEADER, true);
+                curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($CURL, CURLOPT_POSTFIELDS, $args['data']);
+                $return = true;
+                break;
+            case 'DELETE':
+                curl_setopt($CURL, CURLOPT_HEADER, true);
+                curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "DELETE");
+                $return = true;
+                break;
+            case 'DOWNLOAD':
+                if (!$args['file']) {
+                    return "";
+                }
+                delfile($args['file']);
+                $downfile = fopen($args['file'], "w+");
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "GET");
+                curl_setopt($CURL, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($CURL, CURLOPT_FILE, $downfile);
+                $return = false;
+                break;
+        }
+        $args['setopt'] && $args['setopt']($CURL);
+        if ($return) {
+            $body   = curl_exec($CURL);
+            $reinfo = curl_getinfo($CURL);
+            curl_close($CURL);
+            if ($body) {
+                $hinfo = substr($body, 0, $reinfo['header_size']);
+                $hinfo = str_replace("\r\n", "\n", $hinfo);
+                $hinfo = explode("\n", trim($hinfo));
+                unset($hinfo[0]);
+                $rehead = [
+                    "code" => $reinfo['http_code'],
+                ];
+                foreach ($hinfo as $info) {
+                    $infos    = explode(':', $info, 2);
+                    $infos[1] = trim($infos[1]);
+                    if ($infos[1]) {
+                        $rehead = array_merge($rehead, [
+                            trim($infos[0]) => $infos[1],
+                        ]);
+                    }
+                }
+                switch ($args['type']) {
+                    case 'POST':
+                    case 'PUT':
+                    case 'DELETE':
+                        if (in_array($reinfo['http_code'], [
+                            301, 302, 303, 307, 308,
+                        ])) {
+                            if ($reinfo['redirect_url']) {
+                                return self::request(array_merge($args, [
+                                    "url" => $reinfo['redirect_url'],
+                                ]), $curl_info, $curl_header);
+                            }
+                        }
+                        break;
+                }
+                $result = substr($body, $reinfo['header_size'], strlen($body));
+                $args['success'] && $args['success']($result, $reinfo, $rehead);
+                $curl_header = $rehead;
+            } else {
+                $args['error'] && $args['error']($reinfo);
+            }
+
+        } else {
+            curl_exec($CURL);
+            $reinfo = curl_getinfo($CURL);
+            curl_close($CURL);
+            switch ($args['type']) {
+                case 'DOWNLOAD':
+                    fclose($downfile);
+                    if ($reinfo['http_code'] == 200) {
+                        $result = [
+                            "code" => 1,
+                            "file" => $args['file'],
+                        ];
+                        $args['success'] && $args['success']($result, $reinfo, []);
+                    } else {
+                        delfile($args['file']);
+                        $args['error'] && $args['error']($reinfo);
+                        $result = "";
+                    }
+                    break;
+            }
+        }
+        $args['complete'] && $args['complete']($reinfo);
+        $curl_info = $reinfo;
+        return $result ?: "";
     }
 }

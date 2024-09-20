@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-03 10:46:52
+ * @LastEditTime: 2024-09-14 11:38:02
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -114,7 +114,7 @@ class TABLE
                 $laytpl .= $colsbar['laytpl'];
                 $table['cols'][$key]['toolbar'] = $colsbar['colsbarid'];
             }
-            if ($val['totalRowText'] || $val['totalRow'] == true) {
+            if ($val['totalRowText'] || $val['totalRow']) {
                 $totalRow = true;
             }
         }
@@ -130,7 +130,7 @@ class TABLE
                 "onClick" => $table['exports'],
             ] : "exports"],
             "toolbar"        => $toolbar,
-            "totalRow"       => $totalRow ? true : false,
+            "totalRow"       => $table['totalRow'] ? true : ($totalRow ? true : false),
             "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
@@ -293,6 +293,9 @@ class TABLE
                 $laytpl .= $colsbar['laytpl'];
                 $tree['cols'][$key]['toolbar'] = $colsbar['colsbarid'];
             }
+            if ($val['totalRowText'] || $val['totalRow']) {
+                $totalRow = true;
+            }
         }
         $data = [
             "url"            => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
@@ -306,6 +309,7 @@ class TABLE
                 "onClick" => $tree['exports'],
             ] : "exports"],
             "toolbar"        => $toolbar,
+            "totalRow"       => $tree['totalRow'] ? true : ($totalRow ? true : false),
             "cols"           => $tree['cols'],
             "pid"            => $tree['pid'] ?: "pid",
             "show"           => $tree['show'] ?: "title",
@@ -319,16 +323,20 @@ class TABLE
     }
     /**
      * @description: 输出表格数据
-     * @param array $arr
+     * @param array $data
+     * @param array $args
      * @return array
      */
-    public static function out($arr)
+    public static function out($data, $args = [])
     {
         global $_L;
-        $arr = $arr['data'] ? $arr['data'] : $arr;
-        unset($arr['data']);
+        $echo = array_merge([
+            "count" => self::$count,
+            "code"  => 0,
+            "msg"   => self::$count > 0 ? "success" : "无数据",
+        ], $args);
         // 处理数据表格中的操作组件
-        foreach ($arr as $index => $list) {
+        foreach ($data as $index => $list) {
             foreach ($list as $key => $val) {
                 if (is_array($val)) {
                     switch ($val['type']) {
@@ -339,16 +347,16 @@ class TABLE
                             if (strpos($val['url'], "name=") === false) {
                                 $val['url'] .= "&name={$key}";
                             }
-                            $val['text']       = $val['text'] ?: "启用|关闭";
-                            $checked           = $val['value'] > 0 ? "checked" : "";
-                            $arr[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' title='{$val['text']}' {$checked}>";
+                            $val['text']        = $val['text'] ?: "启用|关闭";
+                            $checked            = $val['value'] > 0 ? "checked" : "";
+                            $data[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' title='{$val['text']}' {$checked}>";
                             break;
                         case 'image':
-                            $val['src']        = $val['src'] ? explode("|", $val['src'])[0] : "";
-                            $val['src']        = in_string($val['src'], "../upload/") ? oss($val['src']) : $val['src'];
-                            $val['width']      = $val['width'] ?: "auto";
-                            $val['height']     = $val['height'] ?: "100%";
-                            $arr[$index][$key] = $val['src'] ? "<img class='lazyload' data-src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='display:block;max-width:none;{$val['style']}'/>" : "";
+                            $val['src']         = $val['src'] ? explode("|", $val['src'])[0] : "";
+                            $val['src']         = in_string($val['src'], "../upload/") ? oss($val['src']) : $val['src'];
+                            $val['width']       = $val['width'] ?: "auto";
+                            $val['height']      = $val['height'] ?: "100%";
+                            $data[$index][$key] = $val['src'] ? "<img class='lazyload' data-src='{$val['src']}' width='{$val['width']}' height='{$val['height']}' style='display:block;max-width:none;{$val['style']}'/>" : "";
                             break;
                         case 'link':
                             $val['url'] = $val['url'] ?: $val['href'] ?: "";
@@ -360,22 +368,18 @@ class TABLE
                             } elseif (!is_url($val['url'])) {
                                 $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
                             }
-                            $val['cname']      = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
-                            $val['color']      = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
-                            $val['target']     = $val['target'] ? " target={$val['target']}" : "";
-                            $val['icon']       = $val['icon'] ?: "edge";
-                            $arr[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}><i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>{$val['title']}</a>";
+                            $val['cname']       = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
+                            $val['color']       = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
+                            $val['target']      = $val['target'] ? " target={$val['target']}" : "";
+                            $val['icon']        = $val['icon'] ?: "edge";
+                            $data[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}><i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>{$val['title']}</a>";
                             break;
                     }
                 }
             }
         }
-        echo json_encode_ex([
-            "count" => self::$count,
-            "data"  => $arr,
-            "code"  => 0,
-            "msg"   => self::$count > 0 ? "success" : "无数据",
-        ]);
+        $echo['data'] = $data;
+        echo json_encode_ex($echo);
         exit;
     }
 }

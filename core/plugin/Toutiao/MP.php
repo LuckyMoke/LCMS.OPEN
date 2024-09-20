@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-04-12 13:27:47
+ * @LastEditTime: 2024-09-17 00:14:29
  * @Description: 头条小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -74,7 +74,7 @@ class MP
         return $this->CFG['access_token'] ?: [];
     }
     /**
-     * @description: 通过登陆code获取用户OPENID
+     * @description: 通过登录code获取用户OPENID
      * @param string $type
      * @param string $code
      * @return {*}

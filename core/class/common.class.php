@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-09-13 11:29:35
+ * @LastEditTime: 2024-09-19 18:02:06
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -56,26 +56,41 @@ class common
     {
         global $_L;
         isset($_REQUEST['GLOBALS']) && exit('Access Error');
-        parse_str(substr(strstr(HTTP_URI, '?'), 1), $QUERY);
-        $forms = array_merge($QUERY ?: [], $_COOKIE ?: [], $_POST ?: [], $_GET ?: []);
-        foreach ($forms as $key => $val) {
-            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $key)) {
-                continue;
-            }
-            if ($val !== "") {
-                if (in_array($key, [
-                    "t", "n", "c", "a", "action", "cls", "do",
-                ])) {
-                    if (preg_match("/^[a-zA-Z0-9_-]+$/", $val)) {
-                        $_L['form'][$key] = $val;
-                    } else {
-                        LCMS::X(403, "参数不合法");
+        $uris = explode("?", $_SERVER['REQUEST_URI']);
+        $uris = array_values(array_filter($uris ?: ["/"]));
+        $uriq = [];
+        if ($uris[1]) {
+            parse_str($uris[1], $querys);
+            $querys = $querys ?: [];
+            $querys = filterform($querys);
+            foreach ($querys as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $k => $v) {
+                        $uriq[] = "{$key}[{$k}]=" . urlencode($v);
                     }
                 } else {
-                    $_L['form'][$key] = filterform($val);
+                    $uriq[] = "{$key}=" . urlencode($val);
                 }
+                $_L['form'][$key] = $val;
             }
         }
+        $uris = $uriq ? "{$uris[0]}?" . implode("&", $uriq) : $uris[0];
+        define("HTTP_URI", $uris);
+        $forms = array_merge($_POST ?: [], $_GET ?: []);
+        $forms = filterform($forms);
+        $_GET  = [];
+        foreach ($forms as $key => $val) {
+            if (
+                in_array($key, ["t", "n", "c", "a", "action", "cls", "do"]) &&
+                ($val !== "" && !preg_match("/^[a-zA-Z0-9_-]+$/", $val))
+            ) {
+                LCMS::X(403, "参数不合法");
+            }
+            $_L['form'][$key] = $val;
+        }
+        $cookies      = $_COOKIE ?: [];
+        $cookies      = filterform($cookies);
+        $_L['cookie'] = $_COOKIE = $cookies;
     }
     /**
      * @description: 加载数据表

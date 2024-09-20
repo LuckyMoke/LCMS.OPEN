@@ -58,11 +58,16 @@ class AliyunOSS
             "Host"         => $this->api,
         ];
         $url    = "https://" . $this->api . "/{$file}";
-        $result = HTTP::put($url, $body, array_merge($headers, [
-            "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("PUT", $path, $headers),
-        ]));
+        $result = HTTP::request([
+            "type"    => "PUT",
+            "url"     => $url,
+            "data"    => $body,
+            "headers" => array_merge($headers, [
+                "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("PUT", $path, $headers),
+            ]),
+        ], $http_info);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => $result ? "SUCCESS" : "上传失败",
         ];
     }
@@ -87,11 +92,16 @@ class AliyunOSS
             "Content-MD5"  => base64_encode(md5($body, true)),
         ];
         $url = "https://" . $this->api . "/?delete";
-        HTTP::post($url, $body, false, array_merge($headers, [
-            "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("POST", "/" . $this->cfg['Bucket'] . "/?delete", $headers),
-        ]));
+        HTTP::request([
+            "type"    => "POST",
+            "url"     => $url,
+            "data"    => $body,
+            "headers" => array_merge($headers, [
+                "Authorization" => "OSS " . $this->cfg['AccessKeyId'] . ":" . $this->sign("POST", "/" . $this->cfg['Bucket'] . "/?delete", $headers),
+            ]),
+        ], $http_info);
         return [
-            "code" => HTTP::$INFO['http_code'] == 200 ? 1 : 0,
+            "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => "SUCCESS",
         ];
     }

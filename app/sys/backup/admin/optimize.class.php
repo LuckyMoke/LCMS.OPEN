@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2024-09-01 23:49:43
+ * @LastEditTime: 2024-09-14 00:35:22
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -102,7 +102,7 @@ class optimize extends adminbase
             default:
                 $table = [
                     "url"     => "index&action=list",
-                    "limit"   => count($_L['table']),
+                    "limit"   => 500,
                     "cols"    => [
                         ["checkbox" => "checkbox", "width" => 50],
                         ["title" => "表名", "field" => "Name",
