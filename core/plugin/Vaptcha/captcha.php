@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-04-25 14:38:33
- * @LastEditTime: 2023-06-03 17:49:27
+ * @LastEditTime: 2024-09-21 23:23:21
  * @Description: Vaptcha验证码
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -37,14 +37,19 @@ class CAPTCHA
         ])) {
             return false;
         }
-        $result = json_decode(HTTP::post($form['vaptcha_server'], json_encode([
-            "id"        => $YZCFG['site_key'],
-            "secretkey" => $YZCFG['secret'],
-            "scene"     => 0,
-            "token"     => $form['response_token'],
-            "ip"        => CLIENT_IP,
-        ]), false, [
-            "Content-Type" => "application/json",
+        $result = json_decode(HTTP::request([
+            "type"    => "POST",
+            "url"     => $form['vaptcha_server'],
+            "data"    => json_encode([
+                "id"        => $YZCFG['site_key'],
+                "secretkey" => $YZCFG['secret'],
+                "scene"     => 0,
+                "token"     => $form['response_token'],
+                "ip"        => CLIENT_IP,
+            ]),
+            "headers" => [
+                "Content-Type" => "application/json",
+            ],
         ]), true);
         if ($result['success'] === 1 && $result['score'] > 50) {
             return true;

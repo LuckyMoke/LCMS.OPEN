@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-08-29 15:37:04
+ * @LastEditTime: 2024-09-21 22:26:24
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -32,7 +32,10 @@ class index extends adminbase
                 $cname = md5(json_encode($PLG));
                 $token = LCMS::cache($cname);
                 if ($token['expires_in'] < time()) {
-                    $result = HTTP::get("https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={$PLG['api_key']}&client_secret={$PLG['secret_key']}");
+                    $result = HTTP::request([
+                        "type" => "GET",
+                        "url"  => "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={$PLG['api_key']}&client_secret={$PLG['secret_key']}",
+                    ]);
                     $result = json_decode($result, true);
                     if ($result['access_token']) {
                         $token = [

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2024-09-01 13:52:45
+ * @LastEditTime: 2024-09-21 22:22:42
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -176,6 +176,9 @@ class power extends adminbase
                             "color"  => "default"],
                     ],
                 ];
+                if (LCMS::SUPER() && $_L['developer']['lite'] === 1) {
+                    unset($table['cols'][3]['toolbar'][1], $table['cols'][3]['toolbar'][2], $table['toolbar']);
+                }
                 require LCMS::template("own/power/list");
                 break;
         }

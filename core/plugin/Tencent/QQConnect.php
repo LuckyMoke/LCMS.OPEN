@@ -58,11 +58,14 @@ class QQConnect
         global $_L, $CFG, $SID;
         $state = ssl_decode($state, "QQConnect");
         if ($state > time()) {
-            $url    = "https://graph.qq.com/oauth2.0/me?";
-            $result = HTTP::get($url . http_build_query([
-                "access_token" => $token,
-                "fmt"          => "json",
-            ]));
+            $result = HTTP::request([
+                "type" => "GET",
+                "url"  => "https://graph.qq.com/oauth2.0/me?",
+                "data" => [
+                    "access_token" => $token,
+                    "fmt"          => "json",
+                ],
+            ]);
             $result = json_decode($result, true);
             if ($result['openid']) {
                 SESSION::set("{$SID}openid", $result['openid']);

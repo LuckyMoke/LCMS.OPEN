@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-17 00:14:34
+ * @LastEditTime: 2024-09-21 23:26:01
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -56,7 +56,10 @@ class MP
                 "secret"     => $this->CFG['appsecret'],
                 "grant_type" => "client_credential",
             ));
-            $token = json_decode(HTTP::get("https://api.weixin.qq.com/cgi-bin/token?{$query}"), true);
+            $token = json_decode(HTTP::request([
+                "type" => "GET",
+                "url"  => "https://api.weixin.qq.com/cgi-bin/token?{$query}",
+            ]), true);
             if ($token['access_token']) {
                 $this->CFG['access_token'] = [
                     "access_token" => $token['access_token'],
@@ -82,7 +85,10 @@ class MP
             "js_code"    => $code,
             "grant_type" => "authorization_code",
         ]);
-        $result = json_decode(HTTP::get("https://api.weixin.qq.com/sns/jscode2session?{$query}"), true);
+        $result = json_decode(HTTP::request([
+            "type" => "GET",
+            "url"  => "https://api.weixin.qq.com/sns/jscode2session?{$query}",
+        ]), true);
         return $result ?: [];
     }
     /**
@@ -93,9 +99,13 @@ class MP
     public function get_phone($code)
     {
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$this->CFG['access_token']['access_token']}", json_encode([
-            "code" => $code,
-        ]));
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode([
+                "code" => $code,
+            ]),
+        ]);
         $result = json_decode($result, true);
         return $result ?: [];
     }
@@ -108,12 +118,16 @@ class MP
     public function get_qrcode($page, $scene = "", $env = "release")
     {
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->CFG['access_token']['access_token']}", json_encode([
-            "scene"       => $scene ?: "&",
-            "page"        => $page,
-            "env_version" => $env,
-        ]));
-        if (in_string(HTTP::$HEADERS['Content-Type'], "application/json")) {
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode([
+                "scene"       => $scene ?: "&",
+                "page"        => $page,
+                "env_version" => $env,
+            ]),
+        ], $curl_info, $curl_head);
+        if (in_string($curl_head['Content-Type'], "application/json")) {
             $result = json_decode($result, true);
             return $result ?: [];
         } else {
@@ -129,11 +143,15 @@ class MP
     public function get_urllink($path, $query = "", $env = "release")
     {
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/wxa/generate_urllink?access_token={$this->CFG['access_token']['access_token']}", json_encode([
-            "path"        => $path,
-            "query"       => $query,
-            "env_version" => $env,
-        ]));
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/wxa/generate_urllink?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode([
+                "path"        => $path,
+                "query"       => $query,
+                "env_version" => $env,
+            ]),
+        ]);
         $result = json_decode($result, true);
         return $result ?: [];
     }
@@ -145,7 +163,11 @@ class MP
     public function send_unitpl($para = [])
     {
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->CFG['access_token']['access_token']}", json_encode($para));
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode($para),
+        ]);
         $result = json_decode($result, true);
         return $result ?: [];
     }
@@ -157,7 +179,11 @@ class MP
     public function send_subscribe($para = [])
     {
         $this->access_token();
-        $result = HTTP::post("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={$this->CFG['access_token']['access_token']}", json_encode($para));
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode($para),
+        ]);
         return json_decode($result, true);
     }
     /**

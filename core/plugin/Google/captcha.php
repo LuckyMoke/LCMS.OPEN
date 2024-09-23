@@ -32,10 +32,14 @@ class CAPTCHA
     public function check($form)
     {
         global $YZCFG;
-        $result = json_decode(HTTP::post("https://www.recaptcha.net/recaptcha/api/siteverify", [
-            "secret"   => $YZCFG['secret'],
-            "response" => $form['response_token'],
-            "remoteip" => CLIENT_IP,
+        $result = json_decode(HTTP::request([
+            "type" => "POST",
+            "url"  => "https://www.recaptcha.net/recaptcha/api/siteverify",
+            "data" => [
+                "secret"   => $YZCFG['secret'],
+                "response" => $form['response_token'],
+                "remoteip" => CLIENT_IP,
+            ],
         ]), true);
         if ($result['success'] == true && $result['score'] > 0.5) {
             return true;

@@ -64,15 +64,24 @@ class WxPayApi
         ]);
         switch ($method) {
             case 'POST':
-                return json_decode(HTTP::post($url, $body, false, [
-                    "Authorization" => $Authorization,
-                    "Content-Type"  => "application/json; charset=utf-8",
-                    "Accept"        => "application/json",
+                return json_decode(HTTP::request([
+                    "type"    => "POST",
+                    "url"     => $url,
+                    "data"    => $body,
+                    "headers" => [
+                        "Authorization" => $Authorization,
+                        "Content-Type"  => "application/json; charset=utf-8",
+                        "Accept"        => "application/json",
+                    ],
                 ]), true);
                 break;
             case 'GET':
-                return json_decode(HTTP::get($url, false, [
-                    "Authorization" => $Authorization,
+                return json_decode(HTTP::request([
+                    "type"    => "GET",
+                    "url"     => $url,
+                    "headers" => [
+                        "Authorization" => $Authorization,
+                    ],
                 ]), true);
                 break;
         }

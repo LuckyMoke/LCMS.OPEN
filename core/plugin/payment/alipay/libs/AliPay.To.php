@@ -31,8 +31,14 @@ class AliPayTo
             'biz_content' => json_encode($this->order),
         ];
         $input  = AliPayApi::Sign($this->cfg, $input);
-        $result = json_decode(HTTP::post($this->api, $input, true, [
-            "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+        $result = json_decode(HTTP::request([
+            "type"    => "POST",
+            "url"     => $this->api,
+            "data"    => $input,
+            "build"   => true,
+            "headers" => [
+                "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+            ],
         ]), true);
         if ($result && $result['alipay_fund_trans_uni_transfer_response']) {
             return $result['alipay_fund_trans_uni_transfer_response'];
@@ -58,8 +64,14 @@ class AliPayTo
             'biz_content' => json_encode($this->order),
         ];
         $input  = AliPayApi::Sign($this->cfg, $input);
-        $result = json_decode(HTTP::post($this->api, $input, true, [
-            "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+        $result = json_decode(HTTP::request([
+            "type"    => "POST",
+            "url"     => $this->api,
+            "data"    => $input,
+            "build"   => true,
+            "headers" => [
+                "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+            ],
         ]), true);
         if ($result && $result['alipay_fund_trans_common_query_response']) {
             return $result['alipay_fund_trans_common_query_response'];

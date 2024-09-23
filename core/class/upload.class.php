@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-03 19:51:37
+ * @LastEditTime: 2024-09-21 22:58:05
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -34,11 +34,16 @@ class UPLOAD
         }
         if (makedir($dir)) {
             if (!is_array($form) && is_url($form)) {
-                $result = HTTP::get($form, true);
-                if ($result['code'] == 200 && $result['length'] > 0) {
-                    $file       = $result['body'];
-                    self::$MIME = $mime ?: self::mime($result['type']);
-                    self::$SIZE = $result['length'];
+                $file = HTTP::request([
+                    "type" => "GET",
+                    "url"  => $form,
+                ], $curl_info);
+                if (
+                    $curl_info['http_code'] == 200 &&
+                    $curl_info['size_download'] > 0
+                ) {
+                    self::$MIME = $mime ?: self::mime($curl_info['content_type']);
+                    self::$SIZE = $curl_info['size_download'];
                     $file       = self::img2watermark($file);
                 } else {
                     return self::out(0, "远程文件下载失败");

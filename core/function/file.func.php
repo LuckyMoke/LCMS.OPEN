@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-03-16 13:07:56
+ * @LastEditTime: 2024-09-21 19:58:57
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -471,7 +471,8 @@ function read_csv($file, $callback = false)
                 $list[$index] = gbk2utf8($li);
             }
             if ($i == 0) {
-                $keys = $list;
+                $list[0] = ltrim($list[0], "\XEF\XBB\XBF");
+                $keys    = $list;
             } else {
                 $csv = array_combine($keys, $list);
                 if ($callback) {

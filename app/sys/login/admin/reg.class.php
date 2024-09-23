@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-09-17 00:28:51
+ * @LastEditTime: 2024-09-23 12:13:58
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -129,8 +129,7 @@ class reg extends adminbase
         //检测账号是否合规
         PUB::ishave("name", $LF['name']);
         //检测密码是否合规
-        is_numeric($LF['pass']) && ajaxout(0, "不能使用纯数字密码");
-        strlen($LF['pass']) < 10 && ajaxout(0, "密码长度不能少于10位");
+        preg_match($_L['developer']['rules']['password']['pattern'], $LF['pass']) || ajaxout(0, $_L['developer']['rules']['password']['tips']);
         //生成盐
         $salt  = randstr(8);
         $admin = [

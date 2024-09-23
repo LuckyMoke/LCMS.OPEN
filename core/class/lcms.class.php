@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-12 18:58:51
+ * @LastEditTime: 2024-09-21 21:22:39
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -395,6 +395,13 @@ class LCMS
     public static function log($paran = [])
     {
         global $_L;
+        sql_delete([
+            "table" => "log",
+            "where" => "addtime < :addtime",
+            "bind"  => [
+                ":addtime" => datetime(time() - 31536000),
+            ],
+        ]);
         $para = [
             "user"      => $paran['user'] ?: ($_L['LCMSADMIN'] ? $_L['LCMSADMIN']['name'] : ""),
             "type"      => $paran['type'] ?: "",

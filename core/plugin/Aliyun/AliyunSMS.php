@@ -49,7 +49,12 @@ class AliyunSMS
                 "TemplateCode"  => $this->cfg['TemplateCode'],
                 "TemplateParam" => $Param ? json_encode_ex($Param) : "",
             ]);
-            $result = json_decode(HTTP::post($this->api, $this->sign(), true), true);
+            $result = json_decode(HTTP::request([
+                "type"  => "POST",
+                "url"   => $this->api,
+                "data"  => $this->sign(),
+                "build" => true,
+            ]), true);
             if ($result['Code'] === "OK") {
                 $result = [
                     "code" => 1,

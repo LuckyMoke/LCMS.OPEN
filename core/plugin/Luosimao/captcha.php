@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-06-03 17:32:24
+ * @LastEditTime: 2024-09-21 23:13:19
  * @Description: Luosimao验证码
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -31,11 +31,15 @@ class CAPTCHA
     public function check($form)
     {
         global $YZCFG;
-        $url    = "https://captcha.luosimao.com/api/site_verify";
-        $result = json_decode(http::post($url, [
-            "api_key"  => $YZCFG['secret'],
-            "response" => $form['response_token'],
-        ], true), true);
+        $result = json_decode(HTTP::request([
+            "type"  => "POST",
+            "url"   => "https://captcha.luosimao.com/api/site_verify",
+            "data"  => [
+                "api_key"  => $YZCFG['secret'],
+                "response" => $form['response_token'],
+            ],
+            "build" => true,
+        ]), true);
         if ($result['error'] == "0" && $result['res'] === "success") {
             return true;
         } else {

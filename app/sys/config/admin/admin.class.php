@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-17 00:13:13
+ * @LastEditTime: 2024-09-21 22:20:36
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -196,11 +196,11 @@ class admin extends adminbase
                     $LC['mimelist'] = str_replace([".", ","], "", $LC['mimelist']);
                 }
                 LCMS::config([
-                    "do"    => "save",
-                    "type"  => "sys",
-                    "cate"  => "admin",
-                    "form"  => $LC,
-                    "lcms"  => true,
+                    "do"   => "save",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "form" => $LC,
+                    "lcms" => true,
                 ]);
                 if ($change) {
                     ajaxout(1, "保存成功", "{$_L['url']['own_form']}change&olddir={$_L['config']['admin']['dir']}&newdir={$LC['dir']}");
@@ -229,7 +229,7 @@ class admin extends adminbase
                     "lcms" => true,
                 ));
                 $form = [
-                    ["layui" => "title", "title" => "登录安全"],
+                    ["layui" => "title", "title" => "后台安全"],
                     ["layui"    => "input_sort", "title" => "后台目录",
                         "name"      => "LC[dir]",
                         "value"     => $config['dir'] ?: "admin",
@@ -239,11 +239,19 @@ class admin extends adminbase
                     ["layui" => "radio", "title" => "登录限制",
                         "name"   => "LC[login_limit]",
                         "value"  => $config['login_limit'] ?? 1,
-                        "tips"   => "是否限制一个账号可同时在多个设备登录",
+                        "tips"   => "一个账号可否同时在多个设备登录",
                         "radio"  => [
                             ["title" => "单设备", "value" => 0],
                             ["title" => "多设备", "value" => 1],
                         ]],
+                    ["layui"  => "slider", "title" => "自动登出",
+                        "name"    => "LC[sessiontime]",
+                        "value"   => $config['sessiontime'] ?: 0,
+                        "min"     => 0,
+                        "max"     => 120,
+                        "step"    => 10,
+                        "settips" => "分钟",
+                        "tips"    => "超时无操作自动登出，0为不自动登出"],
                     ["layui" => "radio", "title" => "网站登录器",
                         "name"   => "LC[loginbytoken]",
                         "value"  => $config['loginbytoken'] ?: 0,

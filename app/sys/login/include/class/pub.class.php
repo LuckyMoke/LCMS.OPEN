@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2024-06-07 10:27:49
+ * @LastEditTime: 2024-09-21 22:16:08
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -141,17 +141,19 @@ class PUB
      */
     public static function isLoginAttack($type = "")
     {
-        global $_L;
-        $cip = LCMS::ram("login_check" . CLIENT_IP);
+        global $_L, $UCFG;
+        $try_count = LCMS::ram("login_check" . CLIENT_IP);
+        $ban_time  = $UCFG['login']['ban_time'] > 0 ? $UCFG['login']['ban_time'] : 10;
         switch ($type) {
             case 'update':
-                $cip = $cip ? $cip * 1 + 1 : 1;
-                LCMS::ram("login_check" . CLIENT_IP, $cip, 600);
+                $try_count = $try_count ? $try_count * 1 + 1 : 1;
+                LCMS::ram("login_check" . CLIENT_IP, $try_count, $ban_time * 60);
                 break;
             default:
-                if ($cip >= 5) {
+                $ban_count = $UCFG['login']['ban_count'] > 0 ? $UCFG['login']['ban_count'] : 5;
+                if ($try_count >= $ban_count) {
                     LCMS::notify("登录攻击通知", "<p>疑似遇到登录攻击，已被系统拦截。攻击IP：" . CLIENT_IP . "。</p><p>表单数据：<pre>" . json_encode_ex($_L['form']) . "</pre></p>", 86400);
-                    LCMS::X(403, "登录失败次数过多<br>请10分钟后再试");
+                    LCMS::X(403, "登录失败次数过多<br>请{$ban_time}分钟后再试");
                 }
                 break;
         }

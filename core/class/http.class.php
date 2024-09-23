@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-19 17:30:25
+ * @LastEditTime: 2024-09-21 23:54:11
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -46,67 +46,6 @@ class HTTP
             "headers" => $headers,
         ], $info, $header);
         self::$HEADERS = $header;
-        self::resetOpt();
-        return $result;
-    }
-    /**
-     * @description: 此方法已弃用
-     */
-    public static function delete($url, $headers = [])
-    {
-        $result = self::request([
-            "type"    => "DELETE",
-            "url"     => $url,
-            "timeout" => self::$TIMEOUT,
-            "headers" => $headers,
-        ], $info, $header);
-        self::$HEADERS = $header;
-        self::resetOpt();
-        return $result;
-    }
-    /**
-     * @description: 此方法已弃用
-     */
-    public static function put($url, $data = false, $headers = [])
-    {
-
-        $result = self::request([
-            "type"    => "PUT",
-            "url"     => $url,
-            "data"    => $data,
-            "timeout" => self::$TIMEOUT,
-            "headers" => $headers,
-        ], $info, $header);
-        self::$HEADERS = $header;
-        self::resetOpt();
-        return $result;
-    }
-    /**
-     * @description: 此方法已弃用
-     */
-    public static function head($url, $headers = [])
-    {
-        self::request([
-            "type"    => "HEAD",
-            "url"     => $url,
-            "timeout" => self::$TIMEOUT,
-            "headers" => $headers,
-        ], $info);
-        self::resetOpt();
-        return $info;
-    }
-    /**
-     * @description: 此方法已弃用
-     */
-    public static function download($url, $file, $headers = [])
-    {
-        $result = self::request([
-            "type"    => "DOWNLOAD",
-            "url"     => $url,
-            "file"    => $file,
-            "timeout" => self::$TIMEOUT,
-            "headers" => $headers,
-        ], $info);
         self::resetOpt();
         return $result;
     }

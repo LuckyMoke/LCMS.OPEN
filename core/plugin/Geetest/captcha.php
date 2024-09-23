@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-04-25 14:38:33
- * @LastEditTime: 2023-06-03 18:12:15
+ * @LastEditTime: 2024-09-21 23:14:59
  * @Description: 极验行为验
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -33,17 +33,21 @@ class CAPTCHA
     {
         global $YZCFG;
         $post       = json_decode($form['response_token'], true);
-        $url        = "http://gcaptcha4.geetest.com/validate";
         $sign_token = hash_hmac('sha256', $post['lot_number'], $YZCFG['secret']);
-        $result     = json_decode(http::post($url, [
-            "captcha_id"     => $YZCFG['site_key'],
-            "lot_number"     => $post['lot_number'],
-            "captcha_output" => $post['captcha_output'],
-            "lot_number"     => $post['lot_number'],
-            "pass_token"     => $post['pass_token'],
-            "gen_time"       => $post['gen_time'],
-            "sign_token"     => $sign_token,
-        ], true), true);
+        $result     = json_decode(HTTP::request([
+            "type"  => "POST",
+            "url"   => "http://gcaptcha4.geetest.com/validate",
+            "data"  => [
+                "captcha_id"     => $YZCFG['site_key'],
+                "lot_number"     => $post['lot_number'],
+                "captcha_output" => $post['captcha_output'],
+                "lot_number"     => $post['lot_number'],
+                "pass_token"     => $post['pass_token'],
+                "gen_time"       => $post['gen_time'],
+                "sign_token"     => $sign_token,
+            ],
+            "build" => true,
+        ]), true);
         if ($result['result'] === "success") {
             return true;
         } else {

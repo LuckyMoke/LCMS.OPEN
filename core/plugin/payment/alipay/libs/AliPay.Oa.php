@@ -31,8 +31,14 @@ class AliPayOa
             "code"       => $this->order['auth_code'],
         ];
         $input  = AliPayApi::Sign($this->cfg, $input);
-        $result = json_decode(HTTP::post($this->api, $input, true, [
-            "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+        $result = json_decode(HTTP::request([
+            "type"    => "POST",
+            "url"     => $this->api,
+            "data"    => $input,
+            "build"   => true,
+            "headers" => [
+                "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+            ],
         ]), true);
         if ($result && $result['alipay_system_oauth_token_response']) {
             return $result['alipay_system_oauth_token_response'];

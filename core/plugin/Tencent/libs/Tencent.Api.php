@@ -63,7 +63,12 @@ class TencentApi
     {
         if ($method === "POST") {
             $PData  = json_encode($PData, JSON_UNESCAPED_UNICODE);
-            $result = json_decode(HTTP::post("https://{$this->cfg['Host']}/", $PData, false, $this->getHeader($method, $PData)), true);
+            $result = json_decode(HTTP::request([
+                "type"    => "POST",
+                "url"     => "https://{$this->cfg['Host']}/",
+                "data"    => $PData,
+                "headers" => $this->getHeader($method, $PData),
+            ]), true);
         }
         if ($result['Response']) {
             $result = $result['Response'];

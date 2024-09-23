@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-08-26 19:23:39
+ * @LastEditTime: 2024-09-22 12:01:29
  * @Description: Mysql数据库操作类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -119,10 +119,21 @@ class MYSQL
             $vals  = [];
             foreach ($datas as $index => $data) {
                 foreach ($data as $key => $val) {
-                    $nval               = ":_val{$i}";
-                    $vals[$index][]     = $nval;
-                    $this->_bind[$nval] = $val;
-                    $i++;
+                    if (is_array($val)) {
+                        $func = $val[0];
+                        unset($val[0]);
+                        $vals[$index][] = "{$func}(" . implode(", ", $val) . ")";
+                        foreach ($val as $nval) {
+                            if (substr($nval, 0, 1) == ":") {
+                                $this->_bind[$nval] = "[LCMS_CHECK_BIND]";
+                            }
+                        }
+                    } else {
+                        $nval               = ":_val{$i}";
+                        $vals[$index][]     = $nval;
+                        $this->_bind[$nval] = $val;
+                        $i++;
+                    }
                 }
             }
             $this->_data = [
@@ -388,9 +399,38 @@ class MYSQL
      */
     private function bindFilter($bind = [])
     {
+        $i     = 0;
         $para  = [];
         $match = [];
-        preg_match_all("/[\"|'|`|=| ](\:\w+)([\"|'|`| |)]|$)/i", $this->_where, $match);
+        preg_match_all("/[\"|'|`|=| |](\:\w+)([\"|'|`| ||)]|$)/i", $this->_where, $match);
+        if ($bind && is_array($bind)) {
+            foreach ($this->_bind as $key => $val) {
+                if ($val === "[LCMS_CHECK_BIND]") {
+                    if (array_key_exists($key, $bind)) {
+                        $this->_bind[$key] = $bind[$key];
+                    } else {
+                        unset($this->_bind[$key]);
+                    }
+                }
+            }
+            foreach ($bind as $key => $vals) {
+                if (is_array($vals)) {
+                    $reval = [];
+                    foreach ($vals as $v) {
+                        $nval               = ":_where{$i}";
+                        $reval[]            = $nval;
+                        $this->_bind[$nval] = $v;
+                        $i++;
+                    }
+                    if ($reval) {
+                        $rearr[$key] = implode(", ", $reval);
+                    }
+                }
+            }
+            if ($rearr) {
+                $this->_where = str_ireplace(array_keys($rearr), array_values($rearr), $this->_where);
+            }
+        }
         if ($match && $match[0]) {
             foreach ($match[0] as $index => $name) {
                 $name = str_replace(")", "", trim($name));

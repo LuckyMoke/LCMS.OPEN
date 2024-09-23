@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-02 16:08:15
- * @LastEditTime: 2024-06-14 13:52:16
+ * @LastEditTime: 2024-09-21 23:12:00
  * @Description: Turnstile验证
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -32,10 +32,14 @@ class CAPTCHA
     public function check($form)
     {
         global $YZCFG;
-        $result = json_decode(HTTP::post("https://challenges.cloudflare.com/turnstile/v0/siteverify", [
-            "secret"   => $YZCFG['secret'],
-            "response" => $form['response_token'],
-            "remoteip" => CLIENT_IP,
+        $result = json_decode(HTTP::request([
+            "type" => "POST",
+            "url"  => "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            "data" => [
+                "secret"   => $YZCFG['secret'],
+                "response" => $form['response_token'],
+                "remoteip" => CLIENT_IP,
+            ],
         ]), true);
         if ($result['success'] == true) {
             return true;

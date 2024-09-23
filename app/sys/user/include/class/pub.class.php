@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2024-04-19 16:30:11
+ * @LastEditTime: 2024-09-23 12:13:28
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -26,8 +26,7 @@ class PUB
             unset($LC['status']);
         }
         if ($LC['pass']) {
-            is_numeric($LC['pass']) && ajaxout(0, "不能使用纯数字密码");
-            strlen($LC['pass']) < 10 && ajaxout(0, "密码长度不能少于10位");
+            preg_match($_L['developer']['rules']['password']['pattern'], $LC['pass']) || ajaxout(0, $_L['developer']['rules']['password']['tips']);
             $LC['salt'] = randstr(8);
             $LC['pass'] = md5("{$LC['pass']}{$LC['salt']}");
         } else {

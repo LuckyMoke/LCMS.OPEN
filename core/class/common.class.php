@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-09-19 18:02:06
+ * @LastEditTime: 2024-09-23 12:05:42
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -27,6 +27,7 @@ class common
         $this->load_common_form();
         $this->load_common_tables();
         $this->load_common_config();
+        $this->load_common_rules();
         LOAD::sys_class('developer');
         SESSION::init();
     }
@@ -63,16 +64,19 @@ class common
             parse_str($uris[1], $querys);
             $querys = $querys ?: [];
             $querys = filterform($querys);
-            foreach ($querys as $key => $val) {
-                if (is_array($val)) {
-                    foreach ($val as $k => $v) {
-                        $uriq[] = "{$key}[{$k}]=" . urlencode($v);
+            $getUrl = function ($querys, $name = "") use (&$getUrl) {
+                $uriq = [];
+                if (is_array($querys)) {
+                    foreach ($querys as $n => $q) {
+                        $uriq = array_merge($uriq, $getUrl($q, $name ? "{$name}[{$n}]" : $n));
                     }
                 } else {
-                    $uriq[] = "{$key}=" . urlencode($val);
+                    $uriq[] = "{$name}=" . urlencode($querys);
                 }
-                $_L['form'][$key] = $val;
-            }
+                return $uriq ?: [];
+            };
+            $_L['form'] = array_merge($_L['form'] ?: [], $querys);
+            $uriq       = $getUrl($querys);
         }
         $uris = $uriq ? "{$uris[0]}?" . implode("&", $uriq) : $uris[0];
         define("HTTP_URI", $uris);
@@ -140,5 +144,19 @@ class common
             "php", "php3", "php4", "php5", "pht", "exe", "cgi", "phar",
         ]);
         $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
+    }
+    /**
+     * @description: 获取网站开发配置
+     * @return {*}
+     */
+    protected function load_common_rules()
+    {
+        global $_L;
+        $_L['developer']['rules'] = array_merge([
+            "password" => [
+                "pattern" => "/^(?=.*[a-zA-Z])(?=.*\d).{10,}$/",
+                "tips"    => "密码必需包含字母+数字，长度不少于10位",
+            ],
+        ], $_L['developer']['rules'] ?: []);
     }
 }

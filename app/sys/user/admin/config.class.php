@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2024-09-18 11:18:14
+ * @LastEditTime: 2024-09-21 22:12:56
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -60,6 +60,7 @@ class config extends adminbase
                 ]);
                 $form = [
                     "base" => [
+                        ["layui" => "title", "title" => "登录设置"],
                         ["layui" => "radio", "title" => "登录模式",
                             "name"   => "LC[login][mode]",
                             "value"  => $config['login']['mode'] ?? 1,
@@ -82,6 +83,23 @@ class config extends adminbase
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                             "copy"   => true],
+                        ["layui" => "title", "title" => "登录封禁"],
+                        ["layui"  => "slider", "title" => "错误次数",
+                            "name"    => "LC[login][ban_count]",
+                            "value"   => $config['login']['ban_count'] ?: 5,
+                            "min"     => 1,
+                            "max"     => 10,
+                            "step"    => 1,
+                            "settips" => "次",
+                            "tips"    => "登录错误超过多少次封禁IP"],
+                        ["layui"  => "slider", "title" => "封禁时长",
+                            "name"    => "LC[login][ban_time]",
+                            "value"   => $config['login']['ban_time'] ?: 10,
+                            "min"     => 10,
+                            "max"     => 360,
+                            "step"    => 10,
+                            "settips" => "分钟",
+                            "tips"    => "封禁持续时间，单位分钟"],
                         ["layui" => "title", "title" => "三方登录"],
                         ["layui" => "des", "title" => "微信登录需安装《微信公众号管理》应用才可正常使用！如需关注公众号，需要在应用“扫码事件”中添加一个<code>sys@login</code><br/>QQ登录需申请接口 <a href='https://connect.qq.com/' target='_blank'>https://connect.qq.com/</a>。网站回调域填：<a class='lcms-form-copy'>{$config['reg']['qqlogin_domain']}core/plugin/Tencent/tpl/qqlogin.html</a>"],
                         ["layui" => "radio", "title" => "微信登录",

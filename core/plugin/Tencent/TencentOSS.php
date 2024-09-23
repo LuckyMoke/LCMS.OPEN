@@ -154,8 +154,11 @@ class TencentOSS
             'Policy'          => urlencode($policy),
         ];
         $params['Signature'] = $this->getSignature($params, $config['secretKey'], "POST", $config);
-
-        $result = HTTP::post($config['url'], $this->json2str($params));
+        $result              = HTTP::request([
+            "type" => "POST",
+            "url"  => $config['url'],
+            "data" => $this->json2str($params),
+        ]);
         $result = $result ? json_decode($result, true) : "";
         if ($result) {
             if ($result['Response']['Error']) {
