@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-06 11:59:00
+ * @LastEditTime: 2024-09-24 18:25:56
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -185,10 +185,15 @@ class gallery extends adminbase
         global $_L, $LF, $LC;
         $where = "type = 'image' AND cid = 0 AND lcms = {$_L['ROOTID']}";
         $where .= $_L['ROOTID'] != $_L['LCMSADMIN']['id'] ? " AND uid = {$_L['LCMSADMIN']['id']}" : "";
-        $where .= " GROUP BY datey";
         if ($LF['page'] <= 1) {
-            $total = sql_query("SELECT COUNT(*) FROM (SELECT COUNT(*) FROM {$_L['table']['upload']} WHERE {$where}) AS total")['COUNT(*)'];
+            $total = sql_get([
+                "table"  => "upload",
+                "where"  => $where,
+                "fields" => "COUNT(DISTINCT datey) AS total",
+            ]);
+            $total = $total['total'] ?: 0;
         }
+        $where .= " GROUP BY datey";
         $list = sql_getall([
             "table"  => "upload",
             "where"  => $where,

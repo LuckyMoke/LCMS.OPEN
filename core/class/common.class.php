@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-09-23 12:05:42
+ * @LastEditTime: 2024-09-24 17:39:20
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -85,7 +85,7 @@ class common
         $_GET  = [];
         foreach ($forms as $key => $val) {
             if (
-                in_array($key, ["t", "n", "c", "a", "action", "cls", "do"]) &&
+                in_array($key, ["rootid", "t", "n", "c", "a", "action", "cls", "do"]) &&
                 ($val !== "" && !preg_match("/^[a-zA-Z0-9_-]+$/", $val))
             ) {
                 LCMS::X(403, "参数不合法");

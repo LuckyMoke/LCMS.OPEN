@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-09-21 22:26:24
+ * @LastEditTime: 2024-09-25 15:51:16
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -49,6 +49,15 @@ class index extends adminbase
                     "api" => "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/{$PLG['model']}?access_token={$token['access_token']}",
                 ];
                 break;
+            case 'spark':
+                $result = [
+                    "api"       => "wss://spark-api.xf-yun.com",
+                    "model"     => $PLG['model'],
+                    "appid"     => $PLG['appid'],
+                    "apisecret" => $PLG['apisecret'],
+                    "apikey"    => $PLG['apikey'],
+                ];
+                break;
             case 'baichuan':
                 $result = [
                     "api"   => "https://api.baichuan-ai.com/v1/chat/completions",
@@ -68,15 +77,6 @@ class index extends adminbase
                     "api"   => "https://api.moonshot.cn/v1/chat/completions",
                     "model" => $PLG['model'],
                     "token" => $PLG['token'],
-                ];
-                break;
-            case 'spark':
-                $result = [
-                    "api"       => "wss://spark-api.xf-yun.com",
-                    "model"     => $PLG['model'],
-                    "appid"     => $PLG['appid'],
-                    "apisecret" => $PLG['apisecret'],
-                    "apikey"    => $PLG['apikey'],
                 ];
                 break;
             case 'siliconcloud':
