@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-08-30 16:44:27
+ * @LastEditTime: 2024-10-10 21:56:41
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,10 +24,9 @@ class SQLPDO
     {
         try {
             $this->pdo = new PDO($sqlinfo, $user, $pass);
-        } catch (Exception $e) {
-            LCMS::X(500, "数据库-" . iconv('gbk', 'utf-8', $e->getMessage()));
+        } catch (\Throwable $th) {
+            LCMS::X(500, "数据库连接失败-" . gbk2utf8($th->getMessage()));
         }
-
     }
     /**
      * @description: 获取数据库版本
@@ -66,7 +65,7 @@ class SQLPDO
                 }
             }
         }
-        LCMS::X(500, "出现了一些问题");
+        LCMS::X(500, "数据库出现了一些问题");
     }
     /**
      * @description: 从结果集中获取下一行

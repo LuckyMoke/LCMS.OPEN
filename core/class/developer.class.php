@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2023-07-07 12:05:00
+ * @LastEditTime: 2024-10-10 10:19:44
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -90,9 +90,12 @@ class DEVELOPER
         }
         return $result;
     }
-    private function getLine($filename, $line)
+    private function getLine($filename = "", $line = 0)
     {
         global $_L;
+        if (!$filename || is_file($filename)) {
+            return [];
+        }
         $file  = new SplFileObject($filename, "r+");
         $start = $line - 10;
         $start = $start >= 0 ? $start : $line;
@@ -106,7 +109,6 @@ class DEVELOPER
             "start"   => $start,
             "content" => rtrim($result, "\n"),
         ];
-
     }
 }
 new DEVELOPER();

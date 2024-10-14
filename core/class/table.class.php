@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-14 11:38:02
+ * @LastEditTime: 2024-10-10 11:01:59
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -134,6 +134,7 @@ class TABLE
             "page"           => $table['page'] ? $table['page'] : 1,
             "limit"          => $table['limit'] ? $table['limit'] : 20,
             "cols"           => $table['cols'],
+            "autoSort"       => $table['autoSort'] ?? true,
             "before"         => $table['before'] ?: null,
             "done"           => $table['done'] ?: null,
             "error"          => $table['error'] ?: null,
@@ -313,6 +314,7 @@ class TABLE
             "cols"           => $tree['cols'],
             "pid"            => $tree['pid'] ?: "pid",
             "show"           => $tree['show'] ?: "title",
+            "autoSort"       => $tree['autoSort'] ?? true,
             "before"         => $tree['before'] ?: null,
             "done"           => $tree['done'] ?: null,
             "error"          => $tree['error'] ?: null,

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 23:54:11
+ * @LastEditTime: 2024-10-09 18:07:50
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -76,12 +76,13 @@ class HTTP
             "timeout"  => 30,
             "headers"  => [],
             "proxy"    => [],
-            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
             "setopt"   => null,
             "success"  => null,
             "error"    => null,
             "complete" => null,
         ], $args);
+        $args['type'] = $args['method'] ?: $args['type'];
         $args['type'] = strtoupper($args['type'] ?: "GET");
         switch ($args['type']) {
             case 'GET':

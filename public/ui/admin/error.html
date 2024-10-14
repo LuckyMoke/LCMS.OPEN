@@ -14,14 +14,21 @@
 </head>
 <body>
     <div style="border:1px #DCDFE6 solid;margin:20px 10px;">
-        <h2 title="{{$error['this']['path']}}">
-            <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com/s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}} in </a>
-            <span style="color:#909399">{{$error['this']['file']}} line {{$error['this']['line']}}</span>
-        </h2>
-        <h1 style="margin:0;padding:0 10px 10px 10px;font-size:24px;font-weight:normal;word-break:break-word;">{{$error['this']['fanyi']}}</h1>
-        <div style="border-top:1px #DCDFE6 solid;border-bottom:1px #DCDFE6 solid;">
-            <pre class="prettyprint linenums" style="margin:0">{{$error['this']['content']}}</pre>
-        </div>
+        <if $error['this']['path']>
+            <h2 title="{{$error['this']['path']}}">
+                <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com/s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}} in </a>
+                <span style="color:#909399">{{$error['this']['file']}} line {{$error['this']['line']}}</span>
+            </h2>
+            <h1 style="margin:0;padding:0 10px 10px 10px;font-size:24px;font-weight:normal;word-break:break-word;">{{$error['this']['fanyi']}}</h1>
+            <div style="border-top:1px #DCDFE6 solid;border-bottom:1px #DCDFE6 solid;">
+                <pre class="prettyprint linenums" style="margin:0">{{$error['this']['content']}}</pre>
+            </div>
+            <else/>
+            <h2>
+                <a style="border-bottom:1px #409EFF dashed;color:inherit;text-decoration:none;" href="https://www.baidu.com/s?ie=UTF-8&wd={{$error['this']['message']}}" target="_blank" title="点击百度搜索">[{{$error['this']['code']}}] {{$error['this']['message']}}</a>
+            </h2>
+            <h1 style="margin:0;padding:0 10px 10px 10px;font-size:24px;font-weight:normal;word-break:break-word;">{{$error['this']['fanyi']}}</h1>
+        </if>
         <h2>调用栈：</h2>
         <ul style="list-style-type:decimal;padding-left:60px;">
             <loop $error['trace'],$val,$index>

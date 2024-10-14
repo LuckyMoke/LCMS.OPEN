@@ -1,6 +1,6 @@
 <template "ui/head" />
 <template "ui/css" />
-<if $isindex>
+<if $isindex && $_L['developer']['lite']!==1>
     <p class="lcms-form-des">
         拖动左上角可排序，点击应用LOGO可直接打开应用。
         <if LCMS::SUPER()>

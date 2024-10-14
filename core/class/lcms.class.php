@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 21:22:39
+ * @LastEditTime: 2024-10-13 13:09:46
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -478,16 +478,13 @@ class LCMS
             $html = str_replace([
                 '<script type="text/javascript" onload>',
                 '<script onload>',
-                '</template>',
             ], [
                 '<script type="text/html" onload>',
                 '<script type="text/html" onload>',
-                '</script>',
             ], $html);
             //标签替换
             preg_match_all("/{{(.*?)}}/i", $html, $match);
             preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
-            // dump($tags);
             foreach ($tags[0] as $index => $tag) {
                 switch (self::tpltags($tag)) {
                     case 'php':
@@ -495,7 +492,7 @@ class LCMS
                         break;
                     case 'template':
                         if (in_string($tag, [
-                            'class="', 'id="',
+                            'class="', 'id="', 'tplx="'
                         ])) {
                             $html = str_replace($tag, '<script type="text/html"' . str_replace("template", "", $tags[1][$index]) . ">", $html);
                         } else {
@@ -551,6 +548,8 @@ class LCMS
                         $html = str_replace($tag, "<?php }?>", $html);
                         break;
                     case '/template':
+                        $html = str_replace($tag, "</script>", $html);
+                        break;
                     case '/ui':
                     case '/else':
                     case '/elseif':
@@ -584,6 +583,13 @@ class LCMS
                     $html = str_replace($val, $rval, $html);
                 }
             }
+            $html = str_replace([
+                '<block x-',
+                '</block>',
+            ], [
+                '<template x-',
+                '</template>',
+            ], $html);
             $html = str_replace(["<%", "%>"], ["{{", "}}"], $html);
             $html = "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html;
             mkdir(PATH_CACHE . "tpl/");

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-06-13 11:17:42
+ * @LastEditTime: 2024-10-10 21:52:28
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -125,18 +125,22 @@ class LOAD
             $cname = explode("/", $file);
             $cname = end($cname);
             $cname = str_replace(".class.php", "", $cname);
-            $class = $cname ? new $cname : null;
-            if ($action != "new") {
-                if (substr($action, 0, 2) != 'do') {
-                    LCMS::X(403, "方法禁止访问");
+            try {
+                $class = $cname ? new $cname : null;
+                if ($action != "new") {
+                    if (substr($action, 0, 2) != 'do') {
+                        LCMS::X(403, "方法禁止访问");
+                    }
+                    if (method_exists($class, $action)) {
+                        call_user_func([$class, $action]);
+                    } else {
+                        LCMS::X(404, "方法未找到");
+                    }
                 }
-                if (method_exists($class, $action)) {
-                    call_user_func([$class, $action]);
-                } else {
-                    LCMS::X(404, "方法未找到");
-                }
+                return $class;
+            } catch (\Throwable $th) {
+                LCMS::X(500, $th->getMessage());
             }
-            return $class;
         }
     }
     /**

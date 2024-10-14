@@ -62,9 +62,9 @@
                             <loop $_L['APP']['menu'],$val,$cname>
                                 <li class="{{$_L['form']['c']==$cname?'active':''}}">
                                     <if $val['href']>
-                                        <a href="{{$val['href']}}" target="{{$val['target']?:'_self'}}">{{$val['title']}}</a>
+                                        <a href="{{$val['href']}}" target="{{$val['target']?:'_self'}}" title="{{$val['title']}}">{{$val['title']}}</a>
                                         <else/>
-                                        <a href="{{$_L['APP']['url'][$cname]}}">{{$val['title']}}</a>
+                                        <a href="{{$_L['APP']['url'][$cname]}}" title="{{$val['title']}}">{{$val['title']}}</a>
                                     </if>
                                 </li>
                             </loop>
