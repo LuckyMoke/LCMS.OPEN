@@ -1,6 +1,6 @@
 <template "own/default/public/head" />
 <div class="login-body">
-    <form action="{{$_L['url']['own']}}n=login&c=index&a=check" token="{{$logintoken}}">
+    <form action="{{$_L['url']['own']}}n=login&c=index&a=check" istoken="true">
         <if $LF['action']=="band">
             <input type="hidden" name="band" value="1" />
         </if>

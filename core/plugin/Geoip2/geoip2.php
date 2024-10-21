@@ -207,7 +207,7 @@ class Geoip2
             $array    = explode("–", $region[0]);
             $array[1] = str_replace(["省", "市"], "", $array[1]);
             $array[2] = str_replace("市", "", $array[2]);
-            $array[3] = str_replace(["市", "区", "县"], "", $array[3]);
+            $array[3] = str_replace("市", "", $array[3]);
             if ($array[2]) {
                 $addrsss = "{$array[0]}{$array[2]}{$array[3]}";
             } else {

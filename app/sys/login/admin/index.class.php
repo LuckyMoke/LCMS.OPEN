@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-09-19 17:55:08
+ * @LastEditTime: 2024-10-14 16:47:51
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -95,11 +95,12 @@ class index extends adminbase
         }
         $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
         //设置登录TOKEN
-        $logintoken = randstr(32);
-        SESSION::set("LOGINTOKEN", [
-            "token"      => $logintoken,
-            "expires_in" => time() + 300,
-        ]);
+        $logincrt = [
+            "token"   => randstr(32),
+            "expires" => time() + 300,
+        ];
+        SESSION::set("LOGINTOKEN", $logincrt);
+        setcookie("LCMSLOGINTOKEN", $logincrt['token'], $logincrt['expires']);
         require LCMS::template("own/{$tplpath}/index");
     }
     /**
@@ -119,7 +120,7 @@ class index extends adminbase
         }
         //解密数据
         $token = SESSION::get("LOGINTOKEN");
-        if ($token['expires_in'] > time()) {
+        if ($token['expires'] > time()) {
             $token = md5($token['token']);
         } else {
             ajaxout(0, "登录超时/请重试", "reload");
@@ -146,6 +147,7 @@ class index extends adminbase
         }
         $this->loginCheck($LF, $admin);
         SESSION::del("LOGINTOKEN");
+        setcookie("LCMSLOGINTOKEN", "", time());
         if ($LF['band'] > 0) {
             $openid = SESSION::get("LOGINOPENID");
             $openid || LCMS::X(403, "您未登录");

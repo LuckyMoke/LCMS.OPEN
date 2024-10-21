@@ -10,7 +10,11 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <if $_L['url']['scheme']=="https://">
-            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            <if in_string($_SERVER['HTTP_USER_AGENT'], "firefox")>
+                <meta http-equiv="X-Content-Security-Policy" content="upgrade-insecure-requests" />
+                <else/>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            </if>
         </if>
         <link rel="shortcut icon" href="{{$_L['config']['admin']['favicon']?:($_L['url']['static'].'images/favicon.ico')}}" />
         <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />

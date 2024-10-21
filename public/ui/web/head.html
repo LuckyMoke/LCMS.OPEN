@@ -12,7 +12,11 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
         <if $_L['url']['scheme']=="https://">
-            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            <if in_string($_SERVER['HTTP_USER_AGENT'], "firefox")>
+                <meta http-equiv="X-Content-Security-Policy" content="upgrade-insecure-requests" />
+                <else/>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            </if>
         </if>
         <link rel="shortcut icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" />
         <if !$_L['ui']['nocache']>
@@ -39,7 +43,7 @@
             {{implode(PHP_EOL, $_L['ui']['htmlhead'])}}
         </if>
         <script type="text/javascript">
-            var LCMS = {"url":JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}')};
+            var LCMS = {url:JSON.parse(`{{json_encode($_L['url'],JSON_HEX_APOS)}}`),config:{ver:`{{$_L['config']['ver']}}`}};
         </script>
     </head>
     <body>
