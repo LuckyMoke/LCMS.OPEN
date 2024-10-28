@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-10-19 14:32:24
+ * @LastEditTime: 2024-10-24 11:53:06
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -88,7 +88,7 @@ class reg extends adminbase
         if ($time > time()) {
             ajaxout(0, "请 " . ($time - time()) . " 秒后再试");
         }
-        //判断账号是否存在
+        //判断邮箱或手机号是否存在
         PUB::ishave($LF['action'], $number);
         $text = randstr(6, "num");
         switch ($LF['action']) {

@@ -1,39 +1,30 @@
 <template "ui/head" />
 <template "ui/iframe" />
 <template "ui/css" />
-<link rel="stylesheet" href="{{$_L['url']['static']}}fontawesome/css/fontawesome.min.css?{{$_L['config']['ver']}}" />
-<div class="layui-input-wrap">
-    <div class="layui-input-prefix">
-        <i class="layui-icon layui-icon-search"></i>
+<template tplx="icon_index" data-id="{{$_L['form']['id']}}">
+    <div class="layui-form layui-input-wrap">
+        <div class="layui-input-prefix">
+            <i class="layui-icon layui-icon-search"></i>
+        </div>
+        <input type="text" placeholder="请输入关键词搜索图标" class="layui-input" x-model="keyword" @input.debounce.500ms="onSearch">
     </div>
-    <input type="text" placeholder="请输入关键词搜索图标" class="layui-input" lay-affix="clear">
-</div>
-<div class="layui-tab layui-tab-card icon" data-id="{{$_L['form']['id']}}">
-    <ul class="layui-tab-title">
-        <li class="layui-this" type="fas">实心图标<i></i></li>
-        <li type="far">常规图标<i></i></li>
-        <li type="fab">品牌图标<i></i></li>
-    </ul>
-    <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
-            <ul class="list fas"></ul>
+    <div class="layui-tab layui-tab-card icon">
+        <ul class="layui-tab-title">
+            <li @click="changeTab('fas')" :class="active.type=='fas'?'layui-this':''">实心图标<i></i></li>
+            <li @click="changeTab('far')" :class="active.type=='far'?'layui-this':''">常规图标<i></i></li>
+            <li @click="changeTab('fab')" :class="active.type=='fab'?'layui-this':''">品牌图标<i></i></li>
+        </ul>
+        <div class="layui-tab-content" x-show="active.list.length>0">
+            <ul class="list">
+                <block x-for="icon in active.list" :key="`${active.type}-${icon}`">
+                    <li @click="onClick(icon)" :title="icon">
+                        <i :class="`${active.type} fa-${icon} fa-fw`"></i>
+                        <text x-text="icon"></text>
+                    </li>
+                </block>
+            </ul>
         </div>
-        <div class="layui-tab-item">
-            <ul class="list far"></ul>
-        </div>
-        <div class="layui-tab-item">
-            <ul class="list fab"></ul>
-        </div>
+        <div class="tplx-loading-own" x-show="active.list.length<=0" style="height:50vh">未找到相关图标</div>
     </div>
-</div>
-<script type="text/html" class="tpl">
-    <li data-value="{class} fa-{name}" title="{name}">
-        <i class="{class} fa-fw fa-{name}"></i>{name}
-    </li>
-</script>
-<script type="text/javascript">
-    LCMS.onload.push(function () {
-        LCMS.util.loading("start");
-    });
-</script>
+</template>
 <template "ui/foot" />

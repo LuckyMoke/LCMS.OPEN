@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:13:51
- * @LastEditTime: 2024-09-21 22:16:08
+ * @LastEditTime: 2024-10-24 11:47:17
  * @Description: PUB公共类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -27,6 +27,9 @@ class PUB
                 if (strlen($name) < 6) {
                     ajaxout(0, "账号不能少于6位");
                 }
+                if (!preg_match("/^[a-zA-Z0-9_]+$/", $name)) {
+                    ajaxout(0, "账号只能是字母数字下划线");
+                }
                 break;
             case 'mobile':
                 $text = "手机号";
@@ -35,6 +38,9 @@ class PUB
             case 'email':
                 $text = "邮箱账号";
                 is_email($name) || ajaxout(0, "邮箱地址错误");
+                break;
+            default:
+                ajaxout(0, "禁止访问");
                 break;
         }
         $admin = sql_get(["admin",

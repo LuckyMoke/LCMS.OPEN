@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2024-10-21 14:48:17
+ * @LastEditTime: 2024-10-25 14:42:19
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -99,7 +99,7 @@ class index extends adminbase
             LCMS::SUPER() &&
             $_L['developer']['appstore'] !== 0
         ) {
-            $update = 1;
+            $update = true;
         }
         ajaxout(1, "success", "", [
             "tips"    => $tips ?: [],
@@ -112,7 +112,7 @@ class index extends adminbase
                 "PHP扩展"   => $this->getComs(),
                 "开源组件"    => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari",
             ],
-            "update"  => $update ?: null,
+            "update"  => $update ? true : false,
             "gonggao" => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,
         ]);
     }

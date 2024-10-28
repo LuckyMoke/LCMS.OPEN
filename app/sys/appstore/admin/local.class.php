@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-04-07 00:52:04
+ * @LastEditTime: 2024-10-25 14:46:26
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -19,18 +19,33 @@ class local extends adminbase
     }
     public function doindex()
     {
-        global $_L;
-        $open = LEVEL::applist("open", true);
-        $open || LCMS::X(404, "您未安装任何应用", LCMS::SUPER() ? [[
-            "title" => "应用商店",
-            "url"   => "{$_L['url']['own_form']}index&c=store",
-        ]] : "");
-        if (LCMS::SUPER() || $_L['LCMSADMIN']['id'] == $_L['ROOTID']) {
-            $isindex = true;
-        } else {
-            $isindex = false;
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'data':
+                $power = false;
+                $super = LCMS::SUPER();
+                if ($super || $_L['LCMSADMIN']['id'] == $_L['ROOTID']) {
+                    $power = true;
+                }
+                if ($power && $_L['developer']['lite'] !== 1) {
+                    $tips = "拖动左上角可排序，点击应用LOGO可直接打开应用。";
+                    if ($super) {
+                        $tips .= "<code>修复:</code>应用数据表有问题可点击修复。<code>卸载:</code>卸载应用会删除应用文件和应用所有数据。";
+                    }
+                }
+                ajaxout(1, "success", "", [
+                    "tips"     => $tips,
+                    "power"    => $power,
+                    "super"    => $super,
+                    "appstore" => $_L['developer']['appstore'] !== 0 ? true : false,
+                    "lite"     => $_L['developer']['lite'] !== 1 ? false : true,
+                    "apps"     => LEVEL::applist("open", true),
+                ]);
+                break;
+            default:
+                require LCMS::template("own/local/index");
+                break;
         }
-        require LCMS::template("own/local/index");
     }
     /**
      * @description: 保存应用排序
@@ -122,9 +137,12 @@ class local extends adminbase
      */
     public function douninstall()
     {
-        global $_L;
-        LCMS::SUPER() || LCMS::X(403, "无操作权限");
-        $app = str_replace(["../", "./", "..\\", ".\\", "/", "\\"], "", $_L['form']['app']);
+        global $_L, $LF, $LC;
+        LCMS::SUPER() || ajaxout(0, '无操作权限');
+        $app = $LF['app'];
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $app)) {
+            ajaxout(0, '未找到应用信息');
+        }
         $dir = PATH_APP . "open/{$app}/";
         if (is_file($dir . "uninstall.sql")) {
             $this->updatesql(str_replace("[TABLE_PRE]", $_L['mysql']['pre'], file_get_contents($dir . "uninstall.sql")));

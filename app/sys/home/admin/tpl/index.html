@@ -10,7 +10,8 @@
                 <li class="layui-this">常用应用</li>
             </ul>
             <div class="layui-tab-content" style="padding:0;overflow:hidden">
-                <div class="layui-row app-list" data-update="{{$update}}" x-show="appshow">
+                <div class="tplx-loading" x-show="loading" style="height:382px"></div>
+                <div class="layui-row app-list" x-show="appshow">
                     <block x-for="(app, name) in data.apps">
                         <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
                             <div class="li" x-on:mouseenter="onHover(`enter`,app)" x-on:mouseleave="onHover(`leave`,app)">
@@ -22,11 +23,12 @@
                         </div>
                     </block>
                 </div>
-                <div x-show="!appshow" style="padding:80px 0;text-align:center">
-                    <p style="width:330px;margin: 0 auto">友情提示：本系统为SaaS系统，超级管理员账号只用来安装应用、升级系统使用，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
-                    <br>
-                    <a class="layui-btn" href="javascript:setUrl(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
-                </div>
+                <block x-if="!appshow">
+                    <div class="no-app">
+                        <p>友情提示：本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
+                        <a class="layui-btn" href="javascript:setUrl(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
+                    </div>
+                </block>
             </div>
         </div>
         <div class="layui-row layui-col-space15">
