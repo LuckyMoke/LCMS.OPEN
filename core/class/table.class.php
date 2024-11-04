@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-10-10 11:01:59
+ * @LastEditTime: 2024-10-29 12:20:58
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -370,11 +370,16 @@ class TABLE
                             } elseif (!is_url($val['url'])) {
                                 $val['url'] = "{$_L['url']['own_form']}{$val['url']}";
                             }
-                            $val['cname']       = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
-                            $val['color']       = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
-                            $val['target']      = $val['target'] ? " target={$val['target']}" : "";
-                            $val['icon']        = $val['icon'] ?: "edge";
-                            $data[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}><i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>{$val['title']}</a>";
+                            $val['cname']  = $val['cname'] ? ' class="' . $val['cname'] . '"' : "";
+                            $val['color']  = $val['color'] ? ' style="color:' . $val['color'] . '"' : "";
+                            $val['target'] = $val['target'] ? " target={$val['target']}" : "";
+                            $val['icon']   = $val['icon'] ?: "edge";
+                            if (preg_match("/^[a-zA-Z0-9-_]+$/", $val['icon'])) {
+                                $val['icon'] = "<i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>";
+                            } else {
+                                $val['icon'] = "<text class='layui-font-14'>{$val['icon']}</text>";
+                            }
+                            $data[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}>{$val['icon']}{$val['title']}</a>";
                             break;
                     }
                 }

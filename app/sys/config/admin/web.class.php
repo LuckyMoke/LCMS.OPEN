@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-04 10:05:28
+ * @LastEditTime: 2024-11-02 12:36:33
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -194,7 +194,7 @@ class web extends adminbase
                     "type" => "sys",
                     "cate" => "plugin",
                 ]);
-                ajaxout(1, "保存成功", "reload");
+                ajaxout(1, "保存成功");
                 break;
             default:
                 $plugin = LCMS::config([

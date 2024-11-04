@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2024-09-14 00:35:22
+ * @LastEditTime: 2024-11-03 15:37:05
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -44,7 +44,6 @@ class optimize extends adminbase
             case 'optimize':
             case 'check':
             case 'repair':
-            case 'truncate':
                 set_time_limit(300);
                 $LC || ajaxout(0, "请选择需要操作的表");
                 $names = [];
@@ -153,11 +152,6 @@ class optimize extends adminbase
                             "color"   => "warm",
                             "timeout" => 0,
                             "tips"    => "确认修复数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "清空", "event" => "ajax",
-                            "url"     => "index&action=truncate",
-                            "color"   => "danger",
-                            "timeout" => 0,
-                            "tips"    => "确认清空数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                     ],
                 ];
                 if ($_L['developer']['lite'] === 1) {

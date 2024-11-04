@@ -15,7 +15,7 @@
                     <block x-for="(app, name) in data.apps">
                         <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
                             <div class="li" x-on:mouseenter="onHover(`enter`,app)" x-on:mouseleave="onHover(`leave`,app)">
-                                <a href="javascript:;" x-on:click="onClick(app.url)">
+                                <a :href="app.url" @click.prevent="onClick(app.url)">
                                     <img :src="app.icon" />
                                     <h3 :title="app.title" x-text="app.title"></h3>
                                 </a>
@@ -26,7 +26,7 @@
                 <block x-if="!appshow">
                     <div class="no-app">
                         <p>友情提示：本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
-                        <a class="layui-btn" href="javascript:setUrl(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
+                        <a class="layui-btn" href="javascript:;" @click.prevent="onClick(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
                     </div>
                 </block>
             </div>

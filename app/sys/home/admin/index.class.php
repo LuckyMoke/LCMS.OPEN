@@ -56,7 +56,7 @@ class index extends adminbase
         global $_L, $ACFG;
         if (LCMS::SUPER()) {
             if ($ACFG['dir'] == "admin") {
-                $tips[] = "系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，点击 <a href=\"javascript:setUrl(LCMS.url.admin+`index.php?t=sys&n=config&c=admin&a=safe`)\">修改后台目录</a>，以提高安全性！";
+                $tips[] = "系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，点击 <a href=\"javascript:LCMS.plugin.router(LCMS.url.admin+`index.php?t=sys&n=config&c=admin&a=safe`)\">修改后台目录</a>，以提高安全性！";
             }
             if (is_dir(PATH_WEB . "install")) {
                 $tips[] = "系统提示：检测到您未删除安装目录，请尽快删除<code>/install</code>目录，以提高安全性！";

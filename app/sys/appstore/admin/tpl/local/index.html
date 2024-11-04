@@ -5,7 +5,7 @@
     <block x-if="!appshow">
         <div class="no-app">
             <p>您还未安装应用</p>
-            <a class="layui-btn" href="javascript:setUrl(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
+            <a class="layui-btn" href="javascript:LCMS.plugin.router(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
         </div>
     </block>
     <form x-ref="appform" x-show="!loading && appshow">
@@ -17,7 +17,7 @@
                 <div class="li-box" x-on:mouseenter="onHover('enter',app)" x-on:mouseleave="onHover('leave',app)">
                     <input type="hidden" :name="`LC[${name}]`" value="1" />
                     <div class="li" :class="app.update?'active':''">
-                        <a href="javascript:;" @click="onClick('open',app)">
+                        <a :href="app.url" @click.prevent="onClick('open',app)">
                             <img :src="app.icon" />
                             <h3 :title="app.title" x-text="app.title"></h3>
                             <span x-text="app.description"></span>

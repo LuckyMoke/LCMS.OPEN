@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>{{$_L['config']['admin']['title']}}</title>
+        <meta name="renderer" content="webkit" />
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
+        <if $_L['url']['scheme']=="https://">
+            <if in_string($_SERVER['HTTP_USER_AGENT'], "firefox")>
+                <meta http-equiv="X-Content-Security-Policy" content="upgrade-insecure-requests" />
+                <else/>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            </if>
+        </if>
+        <link rel="shortcut icon" href="{{$_L['config']['admin']['favicon']?:($_L['url']['static'].'images/favicon.ico')}}" />
+        <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
+        <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
+        <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?lcmsver={{$_L['config']['ver']}}"></script>
+        <script type="text/javascript">
+            var LCMS = {
+                url: JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}'),
+                config: {
+                    oss: '{{$_L["plugin"]["oss"]["type"]}}',
+                    cdn: '{{$_L["plugin"]["oss"]["domain"]}}',
+                    isupload: {
+                        img: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["img"]??1}}'),
+                        file: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["file"]??1}}'),
+                    },
+                    attwebp: '{{$_L["config"]["admin"]["attwebp"]}}',
+                    attsize: '{{$_L["config"]["admin"]["attsize"]?:300}}',
+                    attsize_file: '{{$_L["config"]["admin"]["attsize_file"]?:300}}',
+                    mimelist: '{{$_L["config"]["admin"]["mimelist"]}}',
+                    aichat: '{{$_L["plugin"]["aimodel"]["type"]}}',
+                    ver: '{{$_L["config"]["ver"]}}'
+                },
+                plugin: {editor:{}, upload:{}},
+                app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
+                ROOTID: parseInt('{{$_L["ROOTID"]}}'),
+                onload : []
+            };
+        </script>
+        <if $_L['developer'] && $_L['developer']['fontfamily']>
+            <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}"}</style>
+        </if>
+    </head>
+    <body>
