@@ -8,10 +8,19 @@
             <a class="layui-btn" href="javascript:LCMS.plugin.router(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
         </div>
     </block>
-    <form x-ref="appform" x-show="!loading && appshow">
+    <div x-show="!loading && appshow">
         <block x-if="data.tips">
             <p class="lcms-form-des" x-html="data.tips"></p>
         </block>
+        <div class="layui-form layui-input-wrap" style="margin-bottom:15px">
+            <div class="layui-input-prefix">
+                <i class="layui-icon layui-icon-search"></i>
+            </div>
+            <input type="text" placeholder="输入关键词搜索应用" class="layui-input" x-model.debounce.500ms="keyword" @input.debounce.500ms="onSearch">
+        </div>
+        <div class="tplx-loading-own" style="height:130px" x-show="Object.keys(data.apps).length==0">未找到相关应用</div>
+    </div>
+    <form x-ref="appform" x-show="!loading && appshow">
         <div class="layui-row app-local" x-ref="appbox">
             <block x-for="(app,name) in data.apps">
                 <div class="li-box" x-on:mouseenter="onHover('enter',app)" x-on:mouseleave="onHover('leave',app)">
@@ -39,7 +48,7 @@
                             </div>
                             </else>
                         </block>
-                        <block x-if="data.power">
+                        <block x-if="data.power&&keyword==''">
                             <div class="move"><i class="layui-icon layui-icon-slider"></i></div>
                         </block>
                         <div class="version" x-text="`V${app.ver}`"></div>

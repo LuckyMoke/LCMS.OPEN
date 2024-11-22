@@ -1,4 +1,5 @@
 <template "ui/head" />
 <p class="lcms-form-des">▲ 备份数据在<code>/backup/data/</code>目录下，请勿修改文件名称！<br />▲ 恢复数据，请在对应版本的框架下操作！<br />▲ 如果数据量很大，此功能可能无法正常恢复备份，请将备份文件后缀改为.zip，解压后使用数据库软件进行恢复！</p>
 <ui table($table) />
+<script type="text/javascript">let openExport=function(){LCMS.util.iframe({title:"立即备份",url:`${LCMS.url.own_form}index&action=backup`,area:["500px","500px"],end:function(){LCMS.plugin.router(LCMS.url.now)}})};</script>
 <template "ui/foot" />

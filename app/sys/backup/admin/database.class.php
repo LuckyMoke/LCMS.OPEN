@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-05-13 16:28:46
+ * @LastEditTime: 2024-11-08 19:32:06
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -29,13 +29,7 @@ class database extends adminbase
                 $data   = array_slice($bklist, ($LF['page'] - 1) * $LF['limit'], $LF['limit']);
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [
-                        "link" => [
-                            "type"   => "link",
-                            "url"    => "{$_L['url']['site']}backup/data/" . urlencode($val['name']),
-                            "title"  => $val['name'],
-                            "icon"   => "template-1",
-                            "target" => "_blank",
-                        ],
+                        "link" => '<text class="lcms-table-td-icon"><img src="/public/static/images/icons/zip.svg"/></text> ' . $val['name'],
                     ]);
                 }
                 TABLE::$count = count($bklist);
@@ -44,7 +38,7 @@ class database extends adminbase
             case 'backup':
                 makedir("{$PATH}data/");
                 delfile("{$PATH}backup.sql");
-                $modules = $_L['table'];
+                $tables = array_keys($_L['table']);
                 require LCMS::template("own/database/backup");
                 break;
             case 'backup-ok':
@@ -150,10 +144,7 @@ class database extends adminbase
                             ]],
                     ],
                     "toolbar" => [
-                        ["title" => "立即备份", "event" => "iframe",
-                            "url"    => "index&action=backup",
-                            "color"  => "default",
-                            "area"   => "400px,500px"],
+                        ["title" => "立即备份", "event" => "openExport"],
                         ["title" => "同步数据结构", "event" => "ajax",
                             "url"    => "&c=repair",
                             "color"  => "warm",
@@ -168,7 +159,7 @@ class database extends adminbase
     {
         global $_L, $LF, $LC, $PATH;
         $cache = "{$PATH}backup.sql";
-        $table = $LF['module'];
+        $table = $LF['table'];
         if ($LF['page'] == 1) {
             $create = sql_query("SHOW CREATE TABLE {$_L['table'][$table]}");
             if ($create['Create Table']) {

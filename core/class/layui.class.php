@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-06-30 11:38:56
+ * @LastEditTime: 2024-11-21 01:50:45
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -402,7 +402,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
-                    <div class='_change'>选择</div>
+                    <div class=\"_change\"><i class=\"layui-icon layui-icon-search\"></i></div>
                     {$para['tips']}
                 </div>
             </div>";

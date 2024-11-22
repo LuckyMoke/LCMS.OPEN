@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2024-11-03 15:37:05
+ * @LastEditTime: 2024-11-15 11:47:30
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -145,13 +145,9 @@ class optimize extends adminbase
                             "tips"    => "确认检查数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                         ["title"  => "转换", "event" => "ajax",
                             "url"     => "index&action=alter",
+                            "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认转换数据表？表类型会在InnoDB与MyISAM之间互相转换！<span style=\"color:red\">请先做好数据库备份！！！</span>"],
-                        ["title"  => "修复", "event" => "ajax",
-                            "url"     => "index&action=repair",
-                            "color"   => "warm",
-                            "timeout" => 0,
-                            "tips"    => "确认修复数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                     ],
                 ];
                 if ($_L['developer']['lite'] === 1) {

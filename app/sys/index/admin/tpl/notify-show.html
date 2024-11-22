@@ -1,18 +1,10 @@
 <template "ui/head" />
 <template "ui/iframe" />
-<link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/editor.css?lcmsver={{$_L['config']['ver']}}" />
-<style>#LCONTENT{padding:0}.box{padding:20px}.title{font-size:20px}.time{color:#888;margin-top:10px;padding-bottom:10px;border-bottom:1px #ccc dashed}.lcms-editor{margin-top:15px}pre{white-space:normal !important}</style>
+<style>#LCONTENT{padding:0}.box{padding:20px}.title{font-size:20px}.time{color:#888;margin-top:10px;padding-bottom:10px;border-bottom:1px #ccc dashed}.lcms-editor{margin-top:15px}pre{display:none}</style>
 <div class="box">
     <h1 class="title">{{$data['title']}}</h1>
     <div class="time">{{$data['addtime']}}</div>
     <div class="lcms-editor">{{$data['content']}}</div>
 </div>
-<script>
-    var setUrl = function(url) {
-        top.layer.closeAll();
-        top.LCMS.plugin.router(url, {
-            loading: 500
-        });
-    }
-</script>
+<script type="text/javascript" onload>var setUrl=function(url){top.layer.closeAll();top.LCMS.plugin.router(url,{loading:500})};LCMS.util.load({src:`${LCMS.url.public}ui/admin/static/editor.css`});$("pre").each((function(){let pretext=$(this).html();try{pretext=JSON.parse(pretext);pretext=JSON.stringify(pretext,null,4)}catch(error){}$(this).replaceWith(`<div class="lcms-pre-box" style="margin-bottom:16px">${pretext}</div>`)}));layui.code({elem:".lcms-pre-box",theme:"dark"});</script>
 <template "ui/foot" />

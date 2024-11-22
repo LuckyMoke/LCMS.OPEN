@@ -1,12 +1,10 @@
-<template "ui/head"/>
-<template "ui/iframe"/>
-<template "ui/css"/>
+<template "ui/head" />
+<template "ui/iframe" />
+<template "ui/css" />
 <div class="install-bg">
-    <div class="install-progress" data-id="{{ $app['id'] }}" data-ver="{{ $app['ver'] }}" data-type="{{ $_L['form']['type'] }}">
-        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="download">
-            <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
-        </div>
+    <div class="index-terminal">
+        <template "ui/terminal"/>
     </div>
-    <div class="install-tips"></div>
 </div>
-<template "ui/foot"/>
+<script class="appinfo" data-id="{{$app['id']}}" data-ver="{{$app['ver']}}" data-installtype="{{$_L['form']['type']}}"></script>
+<template "ui/foot" />

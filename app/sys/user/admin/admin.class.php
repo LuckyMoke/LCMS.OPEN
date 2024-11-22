@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-09-21 22:23:48
+ * @LastEditTime: 2024-11-07 13:02:06
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -105,7 +105,7 @@ class admin extends adminbase
                         "type"     => $val['type'] === "lcms" ? "超级权限" : [
                             "type"  => "link",
                             "title" => $val['level'] ? "自定义权限" : "{$level['name']} - [ID:{$level['id']}]",
-                            "icon"  => "set",
+                            "icon"  => '<img src="/public/static/images/icons/power.svg"/>',
                             "url"   => "javascript:setPower('{$token}')",
                         ],
                         "statusT"  => [
@@ -118,7 +118,7 @@ class admin extends adminbase
                         "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                         "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
                         "storage"  => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
-                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')"><i class="layui-icon layui-icon-template-1 layui-font-14"></i> ' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
+                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
                     ]);
                     unset($val['pass'], $val['salt'], $val['parameter'], $val['level']);
                 }

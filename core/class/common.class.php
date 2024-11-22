@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-10-18 11:44:07
+ * @LastEditTime: 2024-11-20 16:24:43
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -141,7 +141,7 @@ class common
         $mimelist = strtolower($_L['config']['admin']['mimelist']);
         $mimelist = explode("|", $mimelist);
         $mimelist = array_diff($mimelist, [
-            "php", "php3", "php4", "php5", "pht", "exe", "cgi", "phar",
+            "exe", "bat", "cmd", "sh", "com", "scr", "pif", "cpl", "msi", "msp", "reg", "php", "php3", "php4", "php5", "php6", "php7", "phps", "phar", "pht", "phtm", "phtml", "asp", "aspx", "jsp", "cfm", "cgi", "pl", "py", "rb", "htacess", "ini",
         ]);
         $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
     }

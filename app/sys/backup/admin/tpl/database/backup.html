@@ -1,17 +1,6 @@
 <template "ui/head" />
 <template "ui/iframe" />
-<style type="text/css">.layui-progress-big{width:calc(100% + 1px)}.layui-progress-big,.layui-progress-big .layui-progress-bar{height:36px;line-height:36px;border-radius:0}.layui-form-pane .layui-form-item[pane]{margin-bottom:5px!important}.layui-progress-big .layui-progress-text{filter:contrast(.5)}button{margin-top:10px}</style>
-<div class="layui-form layui-form-pane">
-    <loop $modules,$module,$title>
-        <div class="layui-form-item" pane>
-            <label class="layui-form-label">{{$title}}</label>
-            <div class="layui-input-block">
-                <div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="{{$title}}">
-                    <div class="layui-progress-bar layui-bg-black" lay-percent="0%"></div>
-                </div>
-            </div>
-        </div>
-    </loop>
-</div>
-<script>var index=0,module=[];$(".layui-progress").each(function(i){module[i]=$(this).attr("lay-filter")});var exportData=function(page){LCMS.util.ajax({type:"POST",url:LCMS.url.own_form+"export",data:{module:module[index],page:page?page:1},success:function(res){if(res.code==1){layui.element.progress(module[index],Math.round((page/res.data.total)*100*100)/100+"%");setTimeout(function(){if(res.data.next>0){exportData(res.data.next)}else if(index<module.length-1){index++;$("html, body").animate({scrollTop:(index-3)*80},0);exportData(1)}else if(index>=module.length-1){LCMS.util.ajax({type:"GET",url:LCMS.url.own_form+"index&action=backup-ok",loading:true,timeout:60*1000,success:function(res){if(res.code==1){LCMS.util.notify({content:res.msg});setTimeout(()=>{parent.layer.alert(res.msg,{title:"提示",area:"120px",closeBtn:false},function(){parent.location.reload()})},500)}else{LCMS.util.notify({type:"error",content:res.msg})}},})}},500)}else{LCMS.util.notify({type:"error",content:res.msg})}},})};LCMS.onload.push(function(){layer.alert("确认开始备份数据？",{title:"提示",area:"120px",closeBtn:false},function(index){layer.close(index);exportData(1)})});</script>
+<template "ui/terminal" />
+<style>#APPIFRAME{background:#303133}#LCONTENT{padding:0;height:100vh}</style>
+<script type="text/javascript" onload>let tables=JSON.parse(`{{json_encode($tables)}}`),tblong=tables.length,tbindex=0;LCMS.util.tplx("terminal",{mounted(){this.$terminal=this.$store.terminal;layer.alert("确定开始备份数据？",{title:"提示",area:"120px",closeBtn:false},(layidx=>{layer.close(layidx);this.$terminal.addText({text:"即将开始数据备份",info:LCMS.util.getDate("Y-m-d H:i:s")});setTimeout((()=>{this.onExport()}),500)}))},onExport(){const table=tables[tbindex];this.$terminal.addText({text:`[${tbindex+1}/${tblong}] ${table}`,progress:true});this.onEach(table)},onEach(table,page){page=page||1;LCMS.util.ajax({type:"POST",url:`${LCMS.url.own_form}export`,data:{table:table,page:page},loading:false,success:res=>{if(1!=res.code){this.$terminal.addText({text:res.msg,info:LCMS.util.getDate("Y-m-d H:i:s")});return}const data=res.data;this.$terminal.setProgress(page/data.total*100);setTimeout((()=>{if(data.next>0){this.onEach(table,data.next);return}if(tbindex<tblong-1){tbindex++;this.onExport()}else{this.onDone()}}),500)}})},onDone(){this.$terminal.addText({text:"压缩备份数据",progress:true});LCMS.util.ajax({type:"GET",url:`${LCMS.url.own_form}index&action=backup-ok`,timeout:60*1000,success:res=>{this.$terminal.setProgress(100);this.$terminal.addText({text:res.msg,info:LCMS.util.getDate("Y-m-d H:i:s")})}})}});</script>
 <template "ui/foot" />

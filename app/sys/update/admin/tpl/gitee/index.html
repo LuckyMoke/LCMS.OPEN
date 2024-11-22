@@ -1,117 +1,43 @@
 <template "ui/head" />
 <template "ui/css" />
-<style type="text/css">
-    #LCONTENT {
-        min-height: calc(100vh - 200px);
-    }
-
-    #APPIFRAME {
-        padding-left: 0 !important;
-    }
-
-    #APPNAV {
-        display: none;
-    }
-</style>
-<if $_L['developer']['lite']!==1>
-    <p class="lcms-form-des">特别说明：更新失败、出现任何问题、跨版本太多，都可以到<a href="https://ourcms.cn/" target="_blank">官网</a>、<a href="https://gitee.com/luckymoke/LCMS.OPEN" target="_blank">Gitee</a>下载完整安装包，进行一次手动更新后再继续使用在线更新，查看 <a href="https://ourcms.cn/show/news-66.html" target="_blank">如何手动更新程序？</a></p>
-</if>
-<div class="layui-row layui-col-space20 update-gitee" data-power="{{$powertest}}">
-    <div class="layui-col-xs12 layui-col-sm12 layui-col-md6">
-        <div class="update-gitee-version" data-version="{{$version}}">
-            <p>当前版本：V{{$version}}{{$CFG['gitee_ref']=='beta'?'-内测版<i style="font-size:12px;color:#F56C6C">（点击更新设置可切换更新通道）</i>':''}}</p>
-            <p>最新版本：<span>
-                    <font color="#f56c6c"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>&nbsp;正在检测更新</font>
-                </span></p>
-            <if $_L['developer']['lite']!==1>
-                <button class="layui-btn layui-btn-normal layui-btn-sm update-gitee-setting">
-                    更新设置
-                </button>
-            </if>
-            <a class="layui-btn layui-btn-warm layui-btn-sm" href="https://gitee.com/luckymoke/LCMS.OPEN/releases" target="_blank">
-                历史日志
-            </a>
-            <button class="layui-btn layui-btn-sm update-gitee-button">
-                立即更新
-            </button>
-        </div>
-        <div class="update-gitee-files">
-            <table class="layui-table" lay-even>
-                <thead>
-                    <tr>
-                        <th>文件</th>
-                        <th width="80" style="text-align:center">
-                            操作
-                        </th>
-                        <th width="80" style="text-align:center">
-                            状态
-                        </th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+<style type="text/css">#LCONTENT{min-height:calc(100vh - 200px)}#APPIFRAME{padding-left:0!important}#APPNAV{display:none}</style>
+<div class="update-gitee">
+    <div class="update-gitee-item">
+        <template tplx="update_index">
+            <div class="update-gitee-version">
+                <div class="tplx-loading" style="height:117px" x-show="loading"></div>
+                <div x-show="!loading">
+                    <p>
+                        当前版本：<text x-text="`V${sysdata.version}`"></text>
+                        <i style="font-size:12px;color:#F56C6C" x-show="sysdata.ref=='beta'">（点击更新设置可切换正式版）</i>
+                    </p>
+                    <p>最新版本：<text x-text="lastdata.version"></text></p>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" @click="openSetting">更新设置</button>
+                    <a class="layui-btn layui-btn-warm layui-btn-sm" href="https://gitee.com/luckymoke/LCMS.OPEN/releases" target="_blank">历史日志</a>
+                    <button class="layui-btn layui-btn-sm" x-show="lastdata.logs.length>0" @click="startUpdate">立即更新</button>
+                </div>
+            </div>
+            <div class="update-gitee-logs">
+                <div class="tplx-loading" style="height:100%" x-show="loading"></div>
+                <div class="tplx-loading-own" style="height:100%" x-show="noupdate" x-text="noupdate"></div>
+                <ul class="layui-timeline" x-show="!loading">
+                    <block x-for="item in lastdata.logs" :key="item.sha">
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis layui-icon-radio"></i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title" x-html="`V${item.title}<span>${item.date}</span>`"></h3>
+                                <p x-html="item.message"></p>
+                            </div>
+                        </li>
+                    </block>
+                </ul>
+            </div>
+        </template>
     </div>
-    <div class="layui-col-xs12 layui-col-sm12 layui-col-md6 layui-hide-xs">
-        <div class="update-gitee-power">
-            <table class="layui-table" lay-even>
-                <thead>
-                    <tr>
-                        <th width="80" style="text-align:center">
-                            目录
-                        </th>
-                        <th>读写权限</th>
-                        <th width="80" style="text-align:center">
-                            目录
-                        </th>
-                        <th>读写权限</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>/app/open</td>
-                        <td>{{$powers['app']}}</td>
-                        <td>/cache</td>
-                        <td>{{$powers['cache']}}</td>
-                    </tr>
-                    <tr>
-                        <td>/core</td>
-                        <td>{{$powers['core']}}</td>
-                        <td>/upload</td>
-                        <td>{{$powers['upload']}}</td>
-                    </tr>
-                    <tr>
-                        <td>/quick</td>
-                        <td>{{$powers['quick']}}</td>
-                        <td>/public</td>
-                        <td>{{$powers['public']}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="update-gitee-logs">
-            <h1>更新日志：</h1>
-            <ul class="layui-timeline"></ul>
+    <div class="update-gitee-item">
+        <div class="update-terminal">
+            <template "ui/terminal" />
         </div>
     </div>
 </div>
-<div class="update-gitee-bg"></div>
-<script type="text/template" class="update-gitee-tpl-log">
-    <li class="layui-timeline-item">
-        <i class="layui-icon layui-timeline-axis layui-icon-radio"></i>
-        <div class="layui-timeline-content layui-text">
-            <h3 class="layui-timeline-title">V{title}<span>{date}</span></h3>
-            <p>{message}</p>
-        </div>
-    </li>
-</script>
-<script type="text/template" class="update-gitee-tpl-file">
-    <tr>
-        <td>{file}</td>
-        <td style="text-align:center">{info}</td>
-        <td style="text-align:center" class="update-gitee-file-status {class}">
-            <font color="#CCCCCC">待更新</font>
-        </td>
-    </tr>
-</script>
 <template "ui/foot" />

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-17 00:14:23
+ * @LastEditTime: 2024-11-07 12:15:12
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -135,7 +135,7 @@ class adminbase extends common
     protected function load_app_info()
     {
         global $_L;
-        $_L['APP'] = LEVEL::app();
+        $_L['APP'] = LEVEL::app("", "", true);
     }
     protected function load_plugin_info()
     {

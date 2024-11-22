@@ -137,8 +137,12 @@
     <section class="tplx-loading" style="height:calc(100% - 60px)"></section>
     <template tplx="lcms_main_index">
         <section id="LBOX">
-            <iframe id="LBOX-IFRAME0" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto" :class="iframes.hide==0?'layui-anim layui-anim-fadeout':''" :src="iframes[0]" :style="iframes.index==0?'z-index:1':''" x-ref="iframe0"></iframe>
-            <iframe id="LBOX-IFRAME1" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto" :class="iframes.hide==1?'layui-anim layui-anim-fadeout':''" :src="iframes[1]" :style="iframes.index==1?'z-index:1':''" x-ref="iframe1"></iframe>
+            <block x-if="iframes[0]">
+                <iframe id="LBOX-IFRAME0" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto" :class="iframes.hide==0?'layui-anim layui-anim-fadeout':''" :src="iframes[0]" :style="iframes.index==0?'z-index:1':''" x-ref="iframe0"></iframe>
+            </block>
+            <block x-if="iframes[1]">
+                <iframe id="LBOX-IFRAME1" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="auto" :class="iframes.hide==1?'layui-anim layui-anim-fadeout':''" :src="iframes[1]" :style="iframes.index==1?'z-index:1':''" x-ref="iframe1"></iframe>
+            </block>
         </section>
     </template>
 </div>

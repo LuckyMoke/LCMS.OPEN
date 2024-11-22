@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-02-26 20:02:30
- * @LastEditTime: 2024-09-01 23:50:33
+ * @LastEditTime: 2024-11-21 00:37:20
  * @Description: 系统日志
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -87,7 +87,7 @@ class logs extends adminbase
                     ["layui" => "html", "title" => "操作时间",
                         "value"  => $show['addtime']],
                     ["layui" => "html", "title" => "发送数据",
-                        "value"  => '<pre class="layui-code" style="margin:0">' . json_encode_ex($show['postdata']) . '</pre>'],
+                        "value"  => '<pre class="layui-code" style="margin:0">' . json_encode($show['postdata'], JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>'],
                 ];
                 require LCMS::template("own/logs/show");
                 break;

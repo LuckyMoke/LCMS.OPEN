@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 19:58:57
+ * @LastEditTime: 2024-11-10 20:17:08
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -321,11 +321,10 @@ function getdirpower($dir)
 {
     $dir = path_absolute($dir);
     clearstatcache();
-    if (is_dir($dir)) {
-        $flag = file_put_contents("{$dir}/lcms-power-test.txt", "test");
-        unlink("{$dir}/lcms-power-test.txt");
-        return $flag ? true : false;
+    if (is_dir($dir) && is_writable($dir)) {
+        return true;
     }
+    return false;
 }
 /**
  * @description: 验证文件是否有写权限
