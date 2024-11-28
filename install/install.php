@@ -81,14 +81,15 @@ switch ($_GET['action']) {
         ];
         $desc = "";
         foreach ([
-            "cURL"       => function_exists("curl_init"),
-            "GD"         => function_exists("imagecreate"),
-            "ZipArchive" => class_exists("ZipArchive"),
-            "gzinflate"  => function_exists("gzinflate"),
-            "PDO"        => class_exists("PDO"),
-            "MySQLi"     => extension_loaded("mysqli"),
-            "PDO_MySQL"  => extension_loaded("pdo_mysql"),
-            "PDO_SQLite" => extension_loaded("pdo_sqlite"),
+            "curl"       => extension_loaded("curl"),
+            "gd"         => extension_loaded("gd"),
+            "zip"        => extension_loaded("zip"),
+            "mbstring"   => extension_loaded("mbstring"),
+            "zlib"       => extension_loaded("zlib"),
+            "PDO"        => extension_loaded("PDO"),
+            "mysqli"     => extension_loaded("mysqli"),
+            "pdo_mysql"  => extension_loaded("pdo_mysql"),
+            "pdo_sqlite" => extension_loaded("pdo_sqlite"),
         ] as $name => $type) {
             if ($type) {
                 $desc .= "<span style='color:#67C23A'>[<i class='layui-icon layui-icon-ok'></i>{$name}]</span>";

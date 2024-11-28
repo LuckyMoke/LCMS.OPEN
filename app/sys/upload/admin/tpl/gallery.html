@@ -1,79 +1,48 @@
 <template "ui/head" />
 <template "ui/css" />
 <template "ui/iframe" />
-<div class="lcms-form-upload-gallery" data-many="{{$_L['form']['many']}}" data-id="{{$_L['form']['id']}}">
-    <div class="_topbar">
-        <div class="layui-btn-group">
-            <div class="layui-btn layui-btn-sm layui-btn-primary _dir">
-                <span>默认图库</span>
-                <i class="layui-icon layui-icon-down layui-font-12"></i>
+<template "ui/background-none" />
+<template tplx="upload_gallery">
+    <div class="upload-gallery">
+        <div class="_topbar">
+            <div class="layui-btn-group">
+                <div class="layui-btn layui-btn-sm layui-btn-primary _dir" x-show="showDrop">
+                    <span x-text="className"></span>
+                    <i class="layui-icon layui-icon-down layui-font-12"></i>
+                </div>
+                <button class="layui-btn layui-btn-sm layui-btn-primary _edit" x-show="showEdit">
+                    操作
+                    <i class="layui-icon layui-icon-down layui-font-12"></i>
+                </button>
             </div>
-            <button class="layui-btn layui-btn-sm layui-btn-primary _delc">
-                操作
-                <i class="layui-icon layui-icon-down layui-font-12"></i>
-            </button>
+            <div class="_pos" x-html="textPos"></div>
+            <div class="layui-btn-group _btn">
+                <button class="layui-btn layui-btn-sm layui-btn-warm" x-show="showBack" @click="onBack">返回</button>
+                <block x-if="!showBack">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal"><input type="file" accept="image/*" multiple title="批量上传" @change="chooseImg" />上传</button>
+                </block>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" title="删除所选图片" x-show="showDel" @click="onDel">删除</button>
+                <button class="layui-btn layui-btn-sm" @click="onOk">确认</button>
+            </div>
         </div>
-        <div class="_pos">upload/{{$_L['ROOTID']}}/image/</div>
-        <div class="layui-btn-group _btn">
-            <button class="layui-btn layui-btn-sm layui-btn-warm _bak">返回</button>
-            <button class="layui-btn layui-btn-sm layui-btn-normal _up">
-                <input type="file" accept="image/*" multiple style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;" title="批量上传" />
-                上传
-            </button>
-            <button class="layui-btn layui-btn-sm _ok">确认</button>
-        </div>
-    </div>
-    <div class="layui-row layui-col-space10 _gallery"></div>
-    <div class="_nodata">没有图片</div>
-    <div class="clear"></div>
-    <div class="_pager" id="lcms-form-upload-gallery-pager"></div>
-</div>
-<template class="tpl-folder">
-    <div class="layui-col-xs{{is_mobile()?'4':'3'}}">
-        <div class="_bg _folder" data-dir="{dir}">
-            <img src="{{$_L['url']['static']}}images/folder.png?lcmsver={{$_L['config']['ver']}}" />
-            <div class="_name">{name}</div>
-            <div class="_tips">点击打开</div>
-        </div>
-    </div>
-</template>
-<template class="tpl-file">
-    <div class="layui-col-xs{{is_mobile()?'4':'3'}}">
-        <div class="_bg _img" data-original="{original}" data-src="{src}" data-oname="原始名：{oname}<br>存储名：{name}<br>图占用：{size}">
-            <img class="lazyload" data-src="{src}" />
-            <div class="_name" style="display:none"></div>
-            <div class="_tips">点击选择</div>
-            <div class="_ok"><i class="layui-icon layui-icon-ok"></i></div>
-            <div class="_del" data-original="{original}" data-dir="{dir}"><i class="layui-icon layui-icon-delete"></i></div>
+        <ul class="_gallery">
+            <block x-for="(item,index) in listData" :key="item.name">
+                <li :class="listActive[`_${item.id}`]?'active':''" @click="onClick(item,index)" @mouseenter="onHover(`enter`,item)" @mouseleave="onHover(`leave`,item)">
+                    <img :src="item.plcae||item.src" :class="item.cname" @load="onImgload(index)" @error="onImgError(index)" />
+                    <text x-text="getName(item)"></text>
+                    <div class="_checked">
+                        <i class="layui-icon layui-icon-ok"></i>
+                    </div>
+                </li>
+            </block>
+        </ul>
+        <div class="_nodata" x-show="showNodata">没有图片</div>
+        <div class="clear"></div>
+        <div class="_pager" x-show="!showNodata">
+            <div class="upload-gallery-pager"></div>
         </div>
     </div>
 </template>
-<style>
-    .layui-menu {
-        max-height: calc(100vh - 100px);
-        overflow: auto;
-    }
-
-    .layui-menu li {
-        font-size: 12px;
-    }
-
-    .layui-dropdown {
-        min-width: auto;
-    }
-
-    .layui-menu-body-title {
-        display: flex;
-        align-items: center;
-        padding: 3px 15px;
-    }
-
-    .layui-menu-body-title>.layui-icon {
-        position: relative;
-        right: 0;
-        top: 0;
-        margin: 0 5px 0 0;
-        font-size: 12px;
-    }
-</style>
+<script type="text/javascript">let config={id:`{{$LF['id']}}`,many:`{{$LF['many']}}`,pos:`upload/{{$_L['ROOTID']}}/image/`};</script>
+<style>html,body{width:100%;height:100%;overflow:hidden}.layui-menu{max-height:calc(100vh - 100px);overflow:auto}.layui-menu li{font-size:12px}.layui-dropdown{min-width:auto}.layui-menu-body-title{display:flex;align-items:center;padding:3px 15px}.layui-menu-body-title>.layui-icon{position:relative;right:0;top:0;margin:0 5px 0 0;font-size:12px}</style>
 <template "ui/foot" />

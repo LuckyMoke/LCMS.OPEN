@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-03 19:53:56
+ * @LastEditTime: 2024-11-24 23:35:20
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -47,16 +47,17 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         if ($LC && $LC['src']) {
-            $files = [$LC['src']];
+            $files = is_array($LC['src']) ? $LC['src'] : [$LC['src']];
         } elseif ($LC && $LC[0] && $LC[0]['src']) {
             $ids   = implode(",", array_column($LC, "id"));
             $files = array_column($LC, "src");
         } else {
-            $files = [$LF['dir']];
+            $files = is_array($LF['dir']) ? $LF['dir'] : [$LF['dir']];
         }
         foreach ($files as $index => $file) {
+            $file = path_relative($file);
             if (in_string($file, "upload/{$_L['ROOTID']}/")) {
-                $files[$index] = str_replace(["../", "./"], "", $file);
+                $files[$index] = $file;
             } else {
                 unset($files[$index]);
             }
@@ -89,11 +90,10 @@ class index extends adminbase
         }
         foreach ($files as $file) {
             delfile("../{$file}");
+            $ids || $this->sql("delete", $file);
         }
         if ($ids) {
             $this->sql("deletebyid", $ids);
-        } else {
-            $this->sql("delete", $files[0]);
         }
         sql_error() && ajaxout(0, "删除失败");
         LCMS::log([

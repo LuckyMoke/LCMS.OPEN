@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 22:58:05
+ * @LastEditTime: 2024-11-26 16:38:59
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -134,7 +134,7 @@ class UPLOAD
             if ($rst) {
                 delfile($return['src']);
                 if ($rst['code'] == 1) {
-                    $return['url'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
+                    $return['src'] = $osscfg['domain'] . str_replace("../", "", $return['src']);
                 } else {
                     return self::out(0, "云存储上传失败");
                 }
@@ -380,7 +380,7 @@ class UPLOAD
                     "oname"   => self::$ONAME ?: null,
                     "name"    => $data['filename'],
                     "size"    => $data['size'],
-                    "src"     => $data['src'],
+                    "src"     => $data['original'],
                     "local"   => $force ? 1 : 0,
                     "addtime" => datenow(),
                     "uid"     => $_L['LCMSADMIN']['id'] ?: ($_L['ROOTID'] > 0 ?: 1),

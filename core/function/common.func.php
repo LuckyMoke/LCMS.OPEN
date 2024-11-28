@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-07 14:38:42
+ * @LastEditTime: 2024-11-27 14:58:14
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -933,6 +933,7 @@ function is_https($url = "")
     if (stripos($url, "https://") !== false) {
         return true;
     }
+    return false;
 }
 /**
  * @description: 验证是否为URL
@@ -944,6 +945,7 @@ function is_url($url = "")
     if (parse_url($url, PHP_URL_HOST) !== null) {
         return true;
     }
+    return false;
 }
 /**
  * @description: 验证是否为邮箱
@@ -955,6 +957,7 @@ function is_email($str = "")
     if (filter_var($str, FILTER_VALIDATE_EMAIL)) {
         return true;
     }
+    return false;
 }
 /**
  * @description: 判断是否为IP地址
@@ -1254,7 +1257,7 @@ function server_info()
     $serverinfo['os']  = php_uname('s');
     $serverinfo['sys'] = $_SERVER["SERVER_SOFTWARE"];
     $serverinfo['php'] = PHP_VERSION;
-    if (function_exists("opcache_get_status")) {
+    if (extension_loaded("Zend OPcache")) {
         $opcache = opcache_get_status();
         if ($opcache['memory_usage']) {
             $serverinfo['opcache'] = "内存用量/" . sprintf("%.2f", $opcache['memory_usage']['used_memory'] / 1048576) . "M 缓存命中率/" . sprintf("%.2f", $opcache['opcache_statistics']['opcache_hit_rate']) . "%";

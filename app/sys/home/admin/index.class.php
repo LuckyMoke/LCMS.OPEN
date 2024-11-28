@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2024-10-25 14:42:19
+ * @LastEditTime: 2024-11-23 18:07:54
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -118,20 +118,27 @@ class index extends adminbase
     }
     private function getComs()
     {
-        $coms  = "[必要：";
-        $color = function_exists('curl_init') ? "green" : "red";
-        $coms .= "<span style=\"padding-right:2px;color:{$color}\">cURL</span>";
-        $color = function_exists('imagecreate') ? "green" : "red";
-        $coms .= "/<span style=\"padding-right:2px;color:{$color}\">GD</span>";
-        $color = class_exists('ZipArchive') ? "green" : "red";
-        $coms .= "/<span style=\"padding-right:2px;color:{$color}\">ZipArchive</span>";
-        $color = function_exists('gzinflate') ? "green" : "red";
-        $coms .= "/<span style=\"padding-right:2px;color:{$color}\">gzinflate</span>";
-        $coms .= "] [必要：";
-        $color = extension_loaded('fileinfo') ? "green" : "red";
-        $coms .= "<span style=\"padding-right:2px;color:{$color}\">fileinfo</span>";
-        $color = class_exists('Redis') ? "green" : "red";
-        $coms .= "/<span style=\"padding-right:2px;color:{$color}\">Redis</span>";
+        $coms = "";
+        foreach ([
+            "curl"       => extension_loaded("curl"),
+            "gd"         => extension_loaded("gd"),
+            "zip"        => extension_loaded("zip"),
+            "mbstring"   => extension_loaded("mbstring"),
+            "zlib"       => extension_loaded("zlib"),
+            "pdo_mysql"  => extension_loaded("pdo_mysql"),
+            "pdo_sqlite" => extension_loaded("pdo_sqlite"),
+        ] as $name => $on) {
+            $color = $on ? "green" : "red";
+            $coms .= ($name != "curl" ? "/" : "") . "<span style=\"padding-right:2px;color:{$color}\">{$name}</span>";
+        }
+        $coms .= " [可选:";
+        foreach ([
+            "fileinfo" => extension_loaded("fileinfo"),
+            "redis"    => extension_loaded("redis"),
+        ] as $name => $on) {
+            $color = $on ? "green" : "red";
+            $coms .= ($name != "fileinfo" ? "/" : "") . "<span style=\"padding-right:2px;color:{$color}\">{$name}</span>";
+        }
         $coms .= "]";
         return $coms;
     }

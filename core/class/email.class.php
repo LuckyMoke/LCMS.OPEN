@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2023-10-25 10:08:22
+ * @LastEditTime: 2024-11-27 15:06:10
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -44,9 +44,9 @@ class EMAIL
         $cfg  = array_merge($init['cfg'], $Param);
         switch ($init['type']) {
             case 'smtp':
-                load::plugin("PHPMailer/Exception");
-                load::plugin("PHPMailer/PHPMailer");
-                load::plugin("PHPMailer/SMTP");
+                LOAD::plugin("PHPMailer/Exception");
+                LOAD::plugin("PHPMailer/PHPMailer");
+                LOAD::plugin("PHPMailer/SMTP");
                 $EMAIL = new PHPMailer(true);
                 $EMAIL->setLanguage("zh_cn", PATH_CORE_PLUGIN . "PHPMailer/language/");
                 $EMAIL->SMTPDebug = 0;
@@ -62,12 +62,16 @@ class EMAIL
                 $EM                = [];
                 if (is_array($Param['TO'])) {
                     foreach ($Param['TO'] as $val) {
+                        $val = trim($val);
                         if ($val && is_email($val)) {
                             $PN[] = $val;
                         }
                     }
-                } elseif (is_email($Param['TO'])) {
-                    $EM[] = $Param['TO'];
+                } else {
+                    $Param['TO'] = trim($Param['TO']);
+                    if (is_email($Param['TO'])) {
+                        $EM[] = $Param['TO'];
+                    }
                 }
                 if ($EM) {
                     $EMAIL->setFrom($cfg['From'], $cfg['Alias']);
@@ -86,16 +90,16 @@ class EMAIL
                     $EMAIL->Subject = $Param['Title'];
                     $EMAIL->Body    = $Param['Body'];
                     try {
-
                         $EMAIL->send();
                         $result = [
                             "code" => 1,
                             "msg"  => "发送成功",
                         ];
                     } catch (Exception $e) {
+                        $errmsg = mb_convert_encoding($EMAIL->ErrorInfo, "UTF-8");
                         $result = [
                             "code" => 0,
-                            "msg"  => $EMAIL->ErrorInfo,
+                            "msg"  => $errmsg,
                         ];
                     }
                 } else {
@@ -106,7 +110,7 @@ class EMAIL
                 }
                 break;
             case 'aliyun':
-                load::plugin('Aliyun/AliyunEMAIL');
+                LOAD::plugin('Aliyun/AliyunEMAIL');
                 $EMAIL = new AliyunEMAIL([
                     "AccessKeyId"     => $cfg['AccessKeyId'],
                     "AccessKeySecret" => $cfg['AccessKeySecret'],
@@ -117,7 +121,7 @@ class EMAIL
                 $result = $EMAIL->send($Param['TO'], $Param['Title'], $Param['Body']);
                 break;
             case 'tencent':
-                load::plugin('Tencent/TencentEMAIL');
+                LOAD::plugin('Tencent/TencentEMAIL');
                 $EMAIL = new TencentEMAIL([
                     "secretId"  => $cfg['secretId'],
                     "secretkey" => $cfg['secretkey'],

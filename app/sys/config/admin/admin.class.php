@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-13 11:39:41
+ * @LastEditTime: 2024-11-23 18:14:09
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -347,7 +347,7 @@ class admin extends adminbase
             case 'save':
                 if ($LF['tpl']) {
                     deldir(PATH_CACHE . "tpl");
-                    function_exists("opcache_get_status") && opcache_reset();
+                    extension_loaded("Zend OPcache") && opcache_reset();
                 }
                 if ($LF['cfg']) {
                     delfile(PATH_CORE . "asynced");

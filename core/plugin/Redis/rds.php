@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-05-04 11:41:14
+ * @LastEditTime: 2024-11-23 21:01:51
  * @Description: Redis操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -18,7 +18,7 @@ class RDS
     {
         global $_L;
         $config = $config ? $config : $_L["redis"];
-        if (class_exists("Redis")) {
+        if (extension_loaded("redis")) {
             try {
                 $this->do = new Redis();
                 $this->do->connect($config['host'], $config['port']);
@@ -32,7 +32,7 @@ class RDS
                 LCMS::X($e->getCode(), iconv('gbk', 'utf-8', $e->getMessage()));
             }
         } else {
-            LCMS::X(500, "Redis组件未开启");
+            LCMS::X(500, "redis扩展未开启");
         }
     }
     /**

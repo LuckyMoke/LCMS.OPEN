@@ -1,5 +1,5 @@
 <?php
-class Volcengine
+class VolcengineApi
 {
     public $cfg = [];
     /**

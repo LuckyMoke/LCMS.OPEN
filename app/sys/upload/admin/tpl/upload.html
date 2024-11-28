@@ -1,48 +1,52 @@
 <template "ui/head" />
 <template "ui/css" />
 <template "ui/iframe" />
-<div class="lcms-form-upload">
-    <div class="_topbar">
-        <div class="_choose">
-            <button class="layui-btn layui-btn-sm layui-btn-normal">
-                <i class='layui-icon layui-icon-upload-drag'></i>选择图片
-            </button>
-            <input type="file" multiple="multiple" accept="image/*" name="_lcmsfileinput" />
+<template "ui/background-none" />
+<template tplx="upload_editor">
+    <div class="upload-editor">
+        <div class="_topbar">
+            <div class="_choose">
+                <button class="layui-btn layui-btn-sm layui-btn-normal">
+                    <i class='layui-icon layui-icon-upload-drag'></i>选择图片
+                </button>
+                <block x-if="inputShow">
+                    <input type="file" multiple="multiple" accept="image/*" @change="chooseImg" />
+                </block>
+            </div>
+            <div class="_btn">
+                <button class="layui-btn layui-btn-sm" @click="onOk">插入图片</button>
+            </div>
         </div>
-        <div class="_btn">
-            <!-- <button class="layui-btn layui-btn-sm layui-btn-warm _gallery">
-                打开图库
-            </button> -->
-            <button class="layui-btn layui-btn-sm _ok">插入图片</button>
+        <div class="_list" @dragover="onDragover" @drop="onDrop">
+            <table class="layui-table" lay-size="sm" lay-even x-show="!tipsShow">
+                <thead>
+                    <td>图片名称</td>
+                    <td width="80" align="center">大小</td>
+                    <td width="130" align="center">状态</td>
+                    <td width="42" align="center">删除</td>
+                </thead>
+                <tbody>
+                    <block x-for="(item,index) in upList">
+                        <tr>
+                            <td class="text-cut" x-text="item.name"></td>
+                            <td align="center" x-text="`${Math.round(item.size/1000)}KB`"></td>
+                            <td align="center" x-text="imgList[index].status"></td>
+                            <td align="center" x-><button class="layui-btn layui-btn-xs layui-btn-danger" @click="onDel(index)">删除</button></td>
+                        </tr>
+                    </block>
+                </tbody>
+            </table>
+            <div class="_drop" x-show="tipsShow">↑点击“选择图片”或拖动文件到此上传</div>
+            <div class="_tips" x-show="tipsShow">
+                <h3>友情提示：<span>编辑器支持以下方式快捷上传图片</span></h3>
+                <p>1、从其它网站复制整篇文章，直接粘贴进编辑器</p>
+                <p>2、使用QQ、微信等截图，直接粘贴进编辑器</p>
+                <p>3、从QQ、微信等聊天中复制一张图，直接粘贴进编辑器</p>
+                <p>4、从电脑桌面或文件夹内复制多张图，直接粘贴进编辑器</p>
+                <p>5、从Word等文档中复制一张图，直接粘贴进编辑器</p>
+                <p style="color:#ff9a9a">注意：如果你发现某些图片没有上传，请检查上传“格式白名单”和“大小”限制</p>
+            </div>
         </div>
     </div>
-    <div class="_list">
-        <table class="layui-table" lay-size="sm" lay-even>
-            <thead>
-                <td>图片名称</td>
-                <td width="80" align="center">大小</td>
-                <td width="130" align="center">状态</td>
-                <td width="42" align="center">删除</td>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <div class="_tips">
-            <h3>友情提示：<span>编辑器支持以下方式快捷上传图片</span></h3>
-            <p>1、从其它网站复制整篇文章，直接粘贴进编辑器</p>
-            <p>2、使用QQ、微信等截图，直接粘贴进编辑器</p>
-            <p>3、从QQ、微信等聊天中复制一张图，直接粘贴进编辑器</p>
-            <p>4、从电脑桌面或文件夹内复制多张图，直接粘贴进编辑器</p>
-            <p>5、从Word等文档中复制一张图，直接粘贴进编辑器</p>
-            <p style="color:#ff9a9a">注意：如果你发现某些图片没有上传，请检查上传“格式白名单”和“大小”限制</p>
-        </div>
-    </div>
-    <template class="tpl-li">
-        <tr class="_tr-index{index}">
-            <td class="text-cut">{name}</td>
-            <td align="center">{size}</td>
-            <td align="center" class="_status">等待上传</td>
-            <td align="center"><button class="layui-btn layui-btn-xs layui-btn-danger _del">删除</button></td>
-        </tr>
-    </template>
-</div>
+</template>
 <template "ui/foot" />

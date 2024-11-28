@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-09-25 15:51:16
+ * @LastEditTime: 2024-11-26 15:33:51
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -51,7 +51,7 @@ class index extends adminbase
                 break;
             case 'spark':
                 $result = [
-                    "api"       => "wss://spark-api.xf-yun.com",
+                    "api"       => "spark-api.xf-yun.com",
                     "model"     => $PLG['model'],
                     "appid"     => $PLG['appid'],
                     "apisecret" => $PLG['apisecret'],

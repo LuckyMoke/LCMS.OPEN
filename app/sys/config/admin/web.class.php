@@ -2,12 +2,12 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-02 12:36:33
+ * @LastEditTime: 2024-11-27 13:11:42
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
+LOAD::sys_class('adminbase');
 class web extends adminbase
 {
     public function __construct()
@@ -32,14 +32,14 @@ class web extends adminbase
             case 'test_eamil':
                 $email = $LF['email'];
                 if (is_email($email)) {
-                    load::sys_class("email");
+                    LOAD::sys_class("email");
                     $result = EMAIL::send([
                         "TO"    => $email,
                         "Title" => "邮件发送测试",
                         "Body"  => "恭喜您，邮件服务配置成功！",
                     ]);
                 }
-                if ($result['code'] == "1") {
+                if ($result['code'] == 1) {
                     ajaxout(1, "邮件服务配置成功");
                 } else {
                     ajaxout(0, "邮件服务配置失败！{$result['msg']}");
@@ -590,8 +590,8 @@ class web extends adminbase
     public function dopayment()
     {
         global $_L, $LF, $LC;
-        load::sys_class('table');
-        load::sys_class('pays');
+        LOAD::sys_class('table');
+        LOAD::sys_class('pays');
         switch ($LF['action']) {
             case 'payment-list':
                 TABLE::out(TABLE::set("payment", "lcms = '{$_L['ROOTID']}'", "id DESC"));

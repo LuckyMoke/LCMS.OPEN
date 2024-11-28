@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-24 18:25:56
+ * @LastEditTime: 2024-11-26 17:16:03
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -201,8 +201,15 @@ class gallery extends adminbase
             "fields" => "datey",
             "limit"  => [($LF['page'] - 1) * $LF['limit'], $LF['limit']],
         ]);
+        foreach ($list as $index => $li) {
+            $list[$index] = [
+                "isdir" => true,
+                "name"  => $li['datey'],
+                "src"   => "{$_L['url']['static']}images/folder.png?lcmsver={$_L['config']['ver']}",
+            ];
+        }
         ajaxout(1, "success", "", [
-            "list"  => $list ? array_column($list, "datey") : [],
+            "list"  => $list ?: [],
             "total" => $total ? intval($total) : 0,
         ]);
     }
@@ -254,6 +261,7 @@ class gallery extends adminbase
                     break;
             }
             $list[] = [
+                "id"       => $val['id'],
                 "oname"    => $val['oname'] ?: "无",
                 "name"     => $val['name'],
                 "src"      => $src,

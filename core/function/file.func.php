@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-11-10 20:17:08
+ * @LastEditTime: 2024-11-23 15:07:20
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -64,7 +64,6 @@ function path_standard($path)
 function makedir($dir)
 {
     $dir = path_absolute($dir);
-    clearstatcache();
     if (is_dir($dir)) {
         return true;
     } else {
@@ -84,145 +83,126 @@ function makedir($dir)
 }
 /**
  * @description: 复制文件夹
- * @param string $oldDir 原文件夹
- * @param string $targetDir 复制后的文件夹名
- * @param boolean $overWrite 是否覆盖原文件夹 默认覆盖
+ * @param string $olddir 原文件夹
+ * @param string $newdir 复制到的文件夹
+ * @param boolean $over 是否覆盖
  * @return boolean
  */
-function copydir($oldDir, $targetDir, $overWrite = true)
+function copydir($olddir, $newdir, $over = true)
 {
-    $oldDir = path_absolute($oldDir);
-    clearstatcache();
-    if (is_dir($oldDir)) {
-        makedir($targetDir);
-        $targetDir = path_absolute($targetDir);
-        if ($resource = opendir($oldDir)) {
-            while (($filename = readdir($resource)) !== false) {
-                $filename = gbk2utf8($filename);
-                if ($filename === '.' || $filename === '..') {
-                    continue;
-                } elseif (!is_dir($oldDir . $filename)) {
-                    copyfile($oldDir . $filename, $targetDir . $filename, $overWrite);
-                } else {
-                    copydir($oldDir . $filename, $targetDir . $filename, $overWrite);
-                }
-            }
-            closedir($resource);
-            clearstatcache();
-            return is_dir($targetDir);
-        }
+    $olddir = path_absolute($olddir);
+    $newdir = path_absolute($newdir);
+    $newdir = path_standard($newdir);
+    if (!is_dir($olddir)) {
+        return false;
     }
+    $files = traversal_one($olddir);
+    foreach ($files['file'] as $file) {
+        copyfile("{$olddir}{$file}", "{$newdir}{$file}", $over);
+    }
+    foreach ($files['dir'] as $dir) {
+        copydir("{$olddir}{$dir}", "{$newdir}{$dir}", $over);
+    }
+    return is_dir($newdir);
 }
 /**
  * @description: 复制文件
- * @param string $oldFile 原文件
- * @param string $targetFile 复制后的文件名
- * @param boolean $overWrite 是否覆盖原文件 默认覆盖
+ * @param string $oldfile 原文件
+ * @param string $newfile 复制后的文件
+ * @param boolean $over 是否覆盖
  * @return boolean
  */
-function copyfile($oldFile, $targetFile, $overWrite = true)
+function copyfile($oldfile, $newfile, $over = true)
 {
-    $oldFile    = path_absolute($oldFile);
-    $targetFile = path_absolute($targetFile);
-    clearstatcache();
-    if (is_file($oldFile)) {
-        if (!is_file($targetFile) || $overWrite) {
-            makedir(dirname($targetFile));
-            return copy($oldFile, $targetFile);
-        }
+    $oldfile = path_absolute($oldfile);
+    $newfile = path_absolute($newfile);
+    if (!is_file($oldfile)) {
+        return false;
     }
+    if (is_file($newfile) && !$over) {
+        return false;
+    }
+    makedir(dirname($newfile));
+    return copy($oldfile, $newfile);
 }
 /**
  * @description: 移动文件夹
- * @param string $oldDir 原文件夹
- * @param string $targetDir 移动后的文件夹名
- * @param boolean $overWrite 是否覆盖已有文件夹 默认覆盖
+ * @param string $olddir 原文件夹
+ * @param string $newdir 移动到文件夹
+ * @param boolean $over 是否覆盖
  * @return boolean
  */
-function movedir($oldDir, $targetDir, $overWrite = true)
+function movedir($olddir, $newdir, $over = true)
 {
-    $oldDir = path_absolute($oldDir);
-    clearstatcache();
-    if (is_dir($oldDir)) {
-        makedir($targetDir);
-        $targetDir = path_absolute($targetDir);
-        if ($resource = opendir($oldDir)) {
-            while (($filename = readdir($resource)) !== false) {
-                $filename = gbk2utf8($filename);
-                if ($filename === '.' || $filename === '..') {
-                    continue;
-                } elseif (!is_dir($oldDir . $filename)) {
-                    movefile($oldDir . $filename, $targetDir . $filename, $overWrite);
-                } else {
-                    movedir($oldDir . $filename, $targetDir . $filename, $overWrite);
-                }
-            }
-            closedir($resource);
-            return rmdir($oldDir);
-        }
+    $olddir = path_absolute($olddir);
+    $newdir = path_absolute($newdir);
+    $newdir = path_standard($newdir);
+    if (!is_dir($olddir)) {
+        return false;
     }
+    $files = traversal_one($olddir);
+    foreach ($files['file'] as $file) {
+        movefile("{$olddir}{$file}", "{$newdir}{$file}", $over);
+    }
+    foreach ($files['dir'] as $dir) {
+        movedir("{$olddir}{$dir}", "{$newdir}{$dir}", $over);
+    }
+    return rmdir($olddir);
 }
 /**
  * @description: 移动文件
  * @param string $oldFile 原文件
- * @param string $targetFile 移动后的文件名
- * @param boolean $overWrite 是否覆盖已有文件 默认覆盖
+ * @param string $newfile 移动后的文件
+ * @param boolean $over 是否覆盖
  * @return boolean
  */
-function movefile($oldFile, $targetFile, $overWrite = true)
+function movefile($oldfile, $newfile, $over = true)
 {
-    $oldFile    = path_absolute($oldFile);
-    $targetFile = path_absolute($targetFile);
-    clearstatcache();
-    if (is_file($oldFile)) {
-        if (is_file($targetFile) && $overWrite == false) {
-            return false;
-        } else if (is_file($targetFile) && $overWrite == true) {
-            delfile($targetFile);
-        }
-        makedir(dirname($targetFile));
-        return rename($oldFile, $targetFile);
+    $oldfile = path_absolute($oldfile);
+    $newfile = path_absolute($newfile);
+    if (!is_file($oldfile)) {
+        return false;
     }
+    if (is_file($newfile)) {
+        if ($over) {
+            delfile($newfile);
+        } else {
+            return false;
+        }
+    }
+    makedir(dirname($newfile));
+    return rename($oldfile, $newfile);
 }
 /**
  * @description: 删除文件夹
- * @param string $fileDir 要删除的文件夹
- * @param boolean $type false：全删，true：只删一层
+ * @param string $olddir 要删除的文件夹
  * @return boolean
  */
-function deldir($fileDir, $type = false)
+function deldir($olddir)
 {
-    $fileDir = path_absolute($fileDir);
-    clearstatcache();
-    if (is_dir($fileDir)) {
-        if ($resource = opendir($fileDir)) {
-            while (($filename = readdir($resource)) !== false) {
-                $filename = gbk2utf8($filename);
-                if ($filename === '.' || $filename === '..') {
-                    continue;
-                } elseif (!is_dir($fileDir . $filename)) {
-                    delfile($fileDir . $filename);
-                } else {
-                    deldir($fileDir . $filename);
-                }
-            }
-            closedir($resource);
-        }
-        clearstatcache();
-        return !$type ? rmdir($fileDir) : true;
+    $olddir = path_absolute($olddir);
+    if (!is_dir($olddir)) {
+        return false;
     }
+    $files = traversal_one($olddir);
+    foreach ($files['file'] as $file) {
+        delfile("{$olddir}{$file}");
+    }
+    foreach ($files['dir'] as $dir) {
+        deldir("{$olddir}{$dir}");
+    }
+    return rmdir($olddir);
 }
 /**
  * @description: 删除文件
- * @param string $fileUrl 要删除的文件
+ * @param string $file 要删除的文件
  * @return boolean
  */
-function delfile($fileUrl)
+function delfile($file)
 {
-    $fileUrl = path_absolute($fileUrl);
-    $fileUrl = stristr(PHP_OS, "WIN") ? utf82gbk($fileUrl) : $fileUrl;
-    clearstatcache();
-    return is_file($fileUrl) ? unlink($fileUrl) : false;
+    $file = path_absolute($file);
+    $file = stristr(PHP_OS, "WIN") ? utf82gbk($file) : $file;
+    return is_file($file) ? unlink($file) : false;
 }
 /**
  * @description: 获取文件的大小
@@ -233,7 +213,6 @@ function delfile($fileUrl)
 function getfilesize($filename, $unit = null)
 {
     $filename = path_absolute($filename);
-    clearstatcache();
     if (is_file($filename)) {
         $filesize = filesize($filename);
         if (!$unit) {
@@ -298,13 +277,13 @@ function unzipfile($zipname, $dir = "")
  * @param array $fromfile 要压缩的文件夹和文件
  * @param string $zipname 压缩后的文件路径需要有后缀
  * @param string $jump 去除的目录名
- * @param boolean $overWrite 是否覆盖（true：覆盖，false：不覆盖）默认覆盖
+ * @param boolean $over 是否覆盖（true：覆盖，false：不覆盖）默认覆盖
  * @return boolean
  */
-function zipfile($fromfile, $zipname, $jump = "", $overWrite = true)
+function zipfile($fromfile, $zipname, $jump = "", $over = true)
 {
     $zipname = path_absolute($zipname);
-    if ($overWrite) {
+    if ($over) {
         delfile($zipname);
     }
     require_once PATH_CORE_PLUGIN . "Zip/ziper.php";
@@ -320,7 +299,6 @@ function zipfile($fromfile, $zipname, $jump = "", $overWrite = true)
 function getdirpower($dir)
 {
     $dir = path_absolute($dir);
-    clearstatcache();
     if (is_dir($dir) && is_writable($dir)) {
         return true;
     }
@@ -334,38 +312,32 @@ function getdirpower($dir)
 function getfilepower($file)
 {
     $file = path_absolute($file);
-    clearstatcache();
     if (is_file($file) && is_writable($file)) {
         return true;
     }
 }
 /**
  * @description: 修改文件夹权限
- * @param string $dir 要修改的文件夹
+ * @param string $chdir 要修改的文件夹
  * @param int $power 修改后的文件权限 777、555
  * @return boolean
  */
-function modifydirpower($dir, $power)
+function chmoddir($chdir, $power)
 {
-    $dir = path_absolute($dir);
-    $dir = path_standard($dir);
-    clearstatcache();
-    if (is_dir($dir) && chmod($dir, $power)) {
-        if ($resource = opendir($dir)) {
-            while (($filename = readdir($resource)) !== false) {
-                $filename = gbk2utf8($filename);
-                if ($filename === '.' || $filename === '..') {
-                    continue;
-                } elseif (!is_dir($dir . $filename)) {
-                    modifyfilepower($dir . $filename, $power);
-                } else {
-                    modifydirpower($dir . $filename, $power);
-                }
-            }
-            closedir($resource);
-        }
-        return true;
+    $chdir = path_absolute($chdir);
+    if (!is_dir($chdir) || !chmod($chdir, $power)) {
+        return false;
     }
+    $files = traversal_one($chdir);
+    foreach ($files['file'] as $file) {
+        if (!chmodfile("{$chdir}{$file}", $power)) {
+            return false;
+        }
+    }
+    foreach ($files['dir'] as $dir) {
+        chmoddir("{$chdir}{$dir}", $power);
+    }
+    return true;
 }
 /**
  * @description: 修改文件权限
@@ -373,84 +345,88 @@ function modifydirpower($dir, $power)
  * @param int $power 修改后的文件权限 777、555
  * @return boolean
  */
-function modifyfilepower($file, $power)
+function chmodfile($file, $power)
 {
     $file = path_absolute($file);
-    clearstatcache();
     if (is_file($file)) {
         return chmod($file, $power);
     }
 }
 /**
- * @description: 遍历指定文件夹下文件，只遍历一层
- * @param string $jkdir
- * @param string $suffix
- * @param string|null $jump
+ * @description: 遍历指定文件夹下文件和目录，只遍历一层
+ * @param string $dir 遍历路径
+ * @param string $mime 筛选文件后缀 - 正则 例如：\.(jpg|png)
+ * @param string $jump 跳过文件 - 正则
  * @return array
  */
-function traversal_one($jkdir, $suffix = '[A-Za-z]*', $jump = null)
+function traversal_one($dir, $mime = null, $jump = null)
 {
-    $jkdir = $jkdir === '.' || $jkdir === './' ? "" : $jkdir;
-    $jkdir = path_absolute($jkdir);
-    if ($resource = opendir($jkdir)) {
-        while (($file = readdir($resource)) !== false) {
-            $file     = gbk2utf8($file);
-            $filename = $jkdir . $file;
-            if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
-                if ($jump != null) {
-                    if (preg_match_all("/{$jump}/", str_replace($jkdir, '', $filename), $out)) {
-                        continue;
-                    }
-                }
-                $filenamearray['dir'][] = str_replace($jkdir, '', $filename);
-            } else {
-                if ($file != '.' && $file != '..' && $file != './..' && preg_match_all("/\.({$suffix})/i", $filename, $out)) {
-                    if (stristr(PHP_OS, "WIN")) {
-                        $file = gbk2utf8($file);
-                    }
-                    $filenamearray['file'][] = $file;
-                }
-            }
-        }
-        @closedir($resource);
-        return $filenamearray;
+    $dir = path_absolute($dir);
+    if (!is_dir($dir)) {
+        return [];
     }
+    $iterator = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+    foreach ($iterator as $finfo) {
+        $file = $finfo->getFileName();
+        if (stristr(PHP_OS, "WIN")) {
+            $file = gbk2utf8($file);
+        }
+        if ($jump && preg_match("/{$jump}/", $file)) {
+            continue;
+        }
+        if ($finfo->isFile()) {
+            if ($mime === null) {
+                $files['file'][]  = $file;
+                $files['orgin'][] = $finfo;
+                continue;
+            }
+            if (preg_match("/{$mime}$/i", $file)) {
+                $files['file'][]  = $file;
+                $files['orgin'][] = $finfo;
+            }
+        } else {
+            $files['dir'][]   = $file;
+            $files['orgin'][] = $finfo;
+        }
+    }
+    return $files ?: [];
 }
 /**
  * @description: 遍历文件夹下所有文件，多层遍历
- * @param string $jkdir
- * @param string $suffix
- * @param string $jump
- * @param array $filenamearray
+ * @param string $dir 遍历路径
+ * @param string $mime 筛选文件后缀 - 正则 例如：\.(jpg|png)
+ * @param string $jump 跳过文件 - 正则
  * @return array
  */
-function traversal_all($jkdir, $suffix = '[A-Za-z]*', $jump = null, &$filenamearray = array())
+function traversal_all($dir, $mime = null, $jump = null)
 {
-    $jkdir = $jkdir === '.' || $jkdir === './' ? "" : $jkdir;
-    $jkdir = path_absolute($jkdir);
-    if ($resource = opendir($jkdir)) {
-        while (($file = readdir($resource)) !== false) {
-            $file     = gbk2utf8($file);
-            $filename = $jkdir . $file;
-            if (is_dir($filename) && $file != '.' && $file != '..' && $file != './..') {
-                if ($jump != null) {
-                    if (preg_match_all("/{$jump}/", str_replace(PATH_WEB, '', $filename), $out)) {
-                        continue;
-                    }
-                }
-                traversal_all($filename, $suffix, $jump, $filenamearray);
-            } else {
-                if ($file != '.' && $file != '..' && $file != './..' && preg_match_all("/\.({$suffix})/i", $filename, $out)) {
-                    if (stristr(PHP_OS, "WIN")) {
-                        $filename = gbk2utf8($filename);
-                    }
-                    $filenamearray[] = str_replace(PATH_WEB, '', $filename);
-                }
+
+    $dir = path_absolute($dir);
+    if (!is_dir($dir)) {
+        return [];
+    }
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+    foreach ($iterator as $finfo) {
+        if ($finfo->isFile()) {
+            $file = $finfo->getPathname();
+            $file = path_relative($file);
+            $file = str_replace("\\", "/", $file);
+            if (stristr(PHP_OS, "WIN")) {
+                $file = gbk2utf8($file);
+            }
+            if ($jump && preg_match("/{$jump}/", $file)) {
+                continue;
+            }
+            if ($mime === null) {
+                $files[] = $file;
+                continue;
+            }
+            if (preg_match("/{$mime}$/i", $file)) {
+                $files[] = $file;
             }
         }
-        @closedir($resource);
-        return $filenamearray;
     }
+    return $files ?: [];
 }
 /**
  * @description: 读取csv文件

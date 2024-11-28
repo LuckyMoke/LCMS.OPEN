@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-11-08 19:32:06
+ * @LastEditTime: 2024-11-23 13:44:47
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -222,7 +222,7 @@ class database extends adminbase
         if ($bklist && $bklist['time'] == $dtime) {
             $bklist = $bklist['list'];
         } else {
-            $bklist = traversal_one($bkpath, "LCMS");
+            $bklist = traversal_one($bkpath, "\.LCMS");
             $bklist = $bklist['file'] ?: [];
             foreach ($bklist as $index => $li) {
                 $info = str_replace([

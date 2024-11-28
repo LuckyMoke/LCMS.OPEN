@@ -1,17 +1,23 @@
 <?php
+require "libs/Baidu.Api.php";
 class BaiduOSS
 {
     public $cfg = [];
-    public $api = "";
+    public $Api;
+    public $host;
     public function __construct($config)
     {
         $this->cfg = $config;
+        $this->Api = new BaiduApi([
+            "AccessKey" => $this->cfg['AccessKey'],
+            "SecretKey" => $this->cfg['SecretKey'],
+        ]);
         //Region清理
         $this->cfg['Region'] = str_replace([
             "http://", "https://", "/",
         ], "", $this->cfg['Region']);
         //拼接接口地址
-        $this->api = $this->cfg['Region'];
+        $this->host = $this->cfg['Region'];
         //截取区域参数
         $this->cfg['Region'] = str_replace("{$this->cfg['Bucket']}.", "", $this->cfg['Region']);
         $this->cfg['Region'] = explode(".", $this->cfg['Region'])[0];
@@ -29,7 +35,7 @@ class BaiduOSS
         ]));
         $sign = hash_hmac("sha256", $policy, $this->cfg['SecretKey']);
         return [
-            "api"       => "https://{$this->api}",
+            "api"       => "https://{$this->host}",
             "AccessKey" => $this->cfg['AccessKey'],
             "policy"    => $policy,
             "signature" => $sign,
@@ -51,13 +57,13 @@ class BaiduOSS
             ];
         }
         $body   = file_get_contents($file);
-        $sign   = $this->sign("PUT", "/" . str_replace(PATH_WEB, "", $file));
+        $sign   = $this->Api->sign("PUT", "https://{$this->host}/" . str_replace(PATH_WEB, "", $file));
         $result = HTTP::request([
             "type"    => "PUT",
             "url"     => $sign['api'],
             "data"    => $body,
             "headers" => [
-                "Host"           => $this->api,
+                "Host"           => $this->host,
                 "Content-Type"   => mime_content_type($file),
                 "Content-Length" => filesize($file),
                 "Authorization"  => $sign['sign'],
@@ -82,7 +88,7 @@ class BaiduOSS
                 "key" => $file,
             ];
         }
-        $sign = $this->sign("POST", "/", "delete=");
+        $sign = $this->Api->sign("POST", "https://{$this->host}/?delete=");
         HTTP::request([
             "type"    => "POST",
             "url"     => $sign['api'],
@@ -90,7 +96,7 @@ class BaiduOSS
                 "objects" => $files,
             ]),
             "headers" => [
-                "Host"          => $this->api,
+                "Host"          => $this->host,
                 "Content-Type"  => "application/json",
                 "Authorization" => $sign['sign'],
                 "x-bce-date"    => $sign['date'],
@@ -99,26 +105,6 @@ class BaiduOSS
         return [
             "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => "SUCCESS",
-        ];
-    }
-    /**
-     * @description: 签名
-     * @param string $method
-     * @param string $path
-     * @param string $query
-     * @return string
-     */
-    public function sign($method, $path, $query = "")
-    {
-        $date    = gmdate("Y-m-d\TH:i:s\Z");
-        $ipnut   = "{$method}\n{$path}\n{$query}\nhost:{$this->api}";
-        $signPre = "bce-auth-v1/{$this->cfg['AccessKey']}/{$date}/1800";
-        $signKey = hash_hmac("sha256", $signPre, $this->cfg['SecretKey']);
-        $query   = $query ? "?{$query}" : "";
-        return [
-            "api"  => "https://{$this->api}{$path}{$query}",
-            "date" => $date,
-            "sign" => "{$signPre}/host/" . hash_hmac("sha256", $ipnut, $signKey),
         ];
     }
 }

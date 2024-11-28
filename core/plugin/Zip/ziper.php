@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-12-13 17:04:20
- * @LastEditTime: 2024-08-19 13:31:05
+ * @LastEditTime: 2024-11-23 20:59:36
  * @Description:压缩解压文件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,10 +17,10 @@ class Ziper
      */
     public function __construct()
     {
-        if (class_exists("ZipArchive")) {
+        if (extension_loaded("zip")) {
             $this->ziper = new ZipArchive();
         } else {
-            LCMS::X(500, "ZipArchive组件未开启");
+            LCMS::X(500, "zip扩展未开启");
         }
     }
     /**
@@ -55,16 +55,12 @@ class Ziper
                     $fromfile[1] = ltrim($fromfile[1], '/');
                     $this->ziper->addFile($fromfile[0], $fromfile[1]);
                 } elseif (is_dir($fromfile[0])) {
-                    $list = traversal_all($fromfile[0], "", $jump);
+                    $list = traversal_all($fromfile[0], null, $jump);
                     $pre  = str_replace(PATH_WEB, "", $fromfile[0]);
                     $npre = $fromfile[1] ?: $pre;
                     $npre = rtrim(ltrim($npre, '/'), "/");
                     $npre = $npre ? $npre . "/" : "";
                     foreach ($list as $file) {
-                        preg_match_all("/^({$jump})/", $file, $match);
-                        if ($match && $match[0][0]) {
-                            continue;
-                        }
                         $nfile = str_replace($pre, "", $file);
                         $this->ziper->addFile(PATH_WEB . $file, $npre . $nfile);
                     }
