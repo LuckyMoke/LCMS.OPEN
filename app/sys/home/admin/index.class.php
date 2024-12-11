@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2024-11-23 18:07:54
+ * @LastEditTime: 2024-12-07 21:00:54
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -110,7 +110,7 @@ class index extends adminbase
                 "运行环境"    => $info['php'],
                 "Opcache" => $info['opcache'] ?? "未开启opcache扩展，开启有助于降低CPU使用率，但会增加内存使用量",
                 "PHP扩展"   => $this->getComs(),
-                "开源组件"    => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari",
+                "开源组件"    => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari、Alpine.js",
             ],
             "update"  => $update ? true : false,
             "gonggao" => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,

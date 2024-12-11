@@ -2,7 +2,10 @@
 	</div>
 	<div id="LFOOT">&copy;{{date("Y")}} {{$_L['config']['admin']['developer']}} V{{$_L['config']['ver']}} 页面加载{{round(microtime(true)-PAGE_START, 5)}}秒 使用内存{{(!function_exists('memory_get_usage')) ? "0" : round(memory_get_usage() / 1024 / 1024, 2)}}MB</div>
 </div>
-<if $_L['config']['admin']['admin_water'] gt 0>
+<if $_L['config']['admin']['admin_water']==1>
 	<script type="text/javascript" onload>LCMS.util.load({src:`${LCMS.url.static}plugin/watermark.min.js`,onload:function(){const watermark=new WatermarkPlus.Watermark({contentType:"multi-line-text",content:`{{$_L['LCMSADMIN']['name']}}\n{{$_L['LCMSADMIN']['title']}}\n{{CLIENT_IP}}\n{{datenow()}}`,width:200,height:200,fontSize:"14px",lineHeight:18,globalAlpha:0.1});watermark.create()}});</script>
+</if>
+<if $_L['config']['admin']['admin_water']==2>
+	<script type="text/javascript" onload>LCMS.util.load({src:`${LCMS.url.static}plugin/watermark.min.js`,onload:function(){const watermark=new WatermarkPlus.BlindWatermark({contentType:"multi-line-text",content:`{{$_L['LCMSADMIN']['name']}}\n{{$_L['LCMSADMIN']['title']}}\n{{CLIENT_IP}}\n{{datenow()}}`,width:200,height:200,fontSize:"14px",lineHeight:18});watermark.create()}});</script>
 </if>
 <template "ui/foot_base" />

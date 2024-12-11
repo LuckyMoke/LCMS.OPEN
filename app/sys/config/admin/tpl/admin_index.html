@@ -1,5 +1,6 @@
 <template "ui/head"/>
-<form class="layui-form layui-form-pane" action="{{ $_L['url']['own_form'] }}index&action=save" method="post" target="_self">
+<form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
+    <input type="hidden" name="LC[domain]" value="{{$config['domain']}}"/>
     <ui form($form)/>
 </form>
 <template "ui/foot"/>

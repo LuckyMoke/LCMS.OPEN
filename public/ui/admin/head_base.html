@@ -20,29 +20,7 @@
         <link rel="stylesheet" href="{{$_L['url']['static']}}layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="{{$_L['url']['public']}}ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
         <script type="text/javascript" src="{{$_L['url']['static']}}jquery.min.js?lcmsver={{$_L['config']['ver']}}"></script>
-        <script type="text/javascript">
-            var LCMS = {
-                url: JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}'),
-                config: {
-                    oss: '{{$_L["plugin"]["oss"]["type"]}}',
-                    cdn: '{{$_L["plugin"]["oss"]["domain"]}}',
-                    isupload: {
-                        img: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["img"]??1}}'),
-                        file: parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["file"]??1}}'),
-                    },
-                    attwebp: '{{$_L["config"]["admin"]["attwebp"]}}',
-                    attsize: '{{$_L["config"]["admin"]["attsize"]?:300}}',
-                    attsize_file: '{{$_L["config"]["admin"]["attsize_file"]?:300}}',
-                    mimelist: '{{$_L["config"]["admin"]["mimelist"]}}',
-                    aichat: '{{$_L["plugin"]["aimodel"]["type"]}}',
-                    ver: '{{$_L["config"]["ver"]}}'
-                },
-                plugin: {editor:{}, upload:{}},
-                app: JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),
-                ROOTID: parseInt('{{$_L["ROOTID"]}}'),
-                onload : []
-            };
-        </script>
+        <script type="text/javascript">var LCMS={url:JSON.parse('{{json_encode($_L["url"],JSON_HEX_APOS)}}'),config:{oss:'{{$_L["plugin"]["oss"]["type"]}}',cdn:'{{$_L["plugin"]["oss"]["domain"]}}',isupload:{img:parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["img"]??1}}'),file:parseInt('{{$_L["LCMSADMIN"]["level"]["sys"]["upload"]["index"]["file"]??1}}')},attwebp:'{{$_L["config"]["admin"]["attwebp"]}}',attsize:'{{$_L["config"]["admin"]["attsize"]?:300}}',attsize_file:'{{$_L["config"]["admin"]["attsize_file"]?:300}}',mimelist:'{{$_L["config"]["admin"]["mimelist"]}}',aichat:'{{$_L["plugin"]["aimodel"]["type"]}}',ver:'{{$_L["config"]["ver"]}}'},plugin:{editor:{},upload:{}},app:JSON.parse('{{json_encode($_L["APP"]["info"],JSON_HEX_APOS)}}'),ROOTID:parseInt('{{$_L["ROOTID"]}}'),onload:[]};</script>
         <if $_L['developer'] && $_L['developer']['fontfamily']>
             <style type="text/css">:root{--main-font-family:"{{$_L['developer']['fontfamily']}}"}</style>
         </if>

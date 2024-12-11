@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-27 13:11:42
+ * @LastEditTime: 2024-12-03 11:28:55
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -255,16 +255,16 @@ class web extends adminbase
                             "name"   => "LC[oss][must]",
                             "value"  => $plugin['oss']['must'] ?? 0,
                             "radio"  => [
-                                ["title" => "子账号可使用本地存储", "value" => 0],
-                                ["title" => "子账号必须配置云存储", "value" => 1],
+                                ["title" => "用户账号可使用本地存储", "value" => 0],
+                                ["title" => "用户账号必须配置云存储", "value" => 1],
                             ]],
                         ["layui" => "radio", "title" => "云存储权限",
                             "name"   => "LC[oss][super]",
                             "value"  => $plugin['oss']['super'] ?? 0,
                             "cname"  => "hidden oss-qiniu oss-tencent oss-aliyun oss-baidu",
                             "radio"  => [
-                                ["title" => "子账号独立设置", "value" => 0],
-                                ["title" => "子账号使用此设置", "value" => 1],
+                                ["title" => "用户账号独立设置", "value" => 0],
+                                ["title" => "用户账号使用此设置", "value" => 1],
                             ]],
                     ]);
                 }
@@ -459,7 +459,7 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://open.bigmodel.cn/' target='_blank'>智普</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://bailian.console.aliyun.com/?apiKey=1#/api-key' target='_blank'>通义千问</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://open.bigmodel.cn/' target='_blank'>智普</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
@@ -467,6 +467,7 @@ class web extends adminbase
                             ["title" => "关闭", "value" => "", "tab" => "type_close"],
                             ["title" => "文心", "value" => "wenxin", "tab" => "type_wenxin"],
                             ["title" => "讯飞", "value" => "spark", "tab" => "type_spark"],
+                            ["title" => "千问", "value" => "qianwen", "tab" => "type_qianwen"],
                             ["title" => "百川", "value" => "baichuan", "tab" => "type_baichuan"],
                             ["title" => "智普", "value" => "zhipu", "tab" => "type_zhipu"],
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
@@ -520,9 +521,18 @@ class web extends adminbase
                         "cname"  => "hidden type_spark"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[spark][model]",
-                        "value"  => $PLG['spark']['model'] ?: "general",
+                        "value"  => $PLG['spark']['model'] ?: "lite",
                         "cname"  => "hidden type_spark",
                         "option" => $models['spark']],
+                    ["layui" => "input", "title" => "API-KEY",
+                        "name"   => "LC[qianwen][token]",
+                        "value"  => $PLG['qianwen']['token'],
+                        "cname"  => "hidden type_qianwen"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[qianwen][model]",
+                        "value"  => $PLG['qianwen']['model'] ?: "qwen-turbo",
+                        "cname"  => "hidden type_qianwen",
+                        "option" => $models['qianwen']],
                     ["layui" => "input", "title" => "API Key",
                         "name"   => "LC[baichuan][token]",
                         "value"  => $PLG['baichuan']['token'],

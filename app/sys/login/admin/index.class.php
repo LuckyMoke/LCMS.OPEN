@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2024-10-14 16:47:51
+ * @LastEditTime: 2024-12-10 14:24:21
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -50,7 +50,7 @@ class index extends adminbase
         }
         //如果域名不正确，禁止访问
         if ($CFG['domain'] && $CFG['domain'] != HTTP_HOST) {
-            header("HTTP/1.1 404 Not Found");
+            LCMS::X(404, "请使用正确域名访问");
             die;
         }
         //如果已经登录，跳转到后台首页
@@ -70,6 +70,7 @@ class index extends adminbase
                 ];
             } else {
                 header("HTTP/1.1 404 Not Found");
+                LCMS::X(404, "未找到第三方用户信息");
                 exit;
             }
         } else {

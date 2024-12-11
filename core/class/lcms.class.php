@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-10-13 13:09:46
+ * @LastEditTime: 2024-12-07 22:26:47
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -395,6 +395,9 @@ class LCMS
     public static function log($paran = [])
     {
         global $_L;
+        if (!$_L['table']['log']) {
+            return "";
+        }
         sql_delete([
             "table" => "log",
             "where" => "addtime < :addtime",
@@ -492,7 +495,7 @@ class LCMS
                         break;
                     case 'template':
                         if (in_string($tag, [
-                            'class="', 'id="', 'tplx="'
+                            'class="', 'id="', 'tplx="',
                         ])) {
                             $html = str_replace($tag, '<script type="text/html"' . str_replace("template", "", $tags[1][$index]) . ">", $html);
                         } else {

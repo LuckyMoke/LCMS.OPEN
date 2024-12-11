@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-23 18:14:09
+ * @LastEditTime: 2024-11-29 10:56:17
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -57,12 +57,6 @@ class admin extends adminbase
                             ["title" => "https://", "value" => 1],
                         ],
                         "tips"   => "一般请选自动判断",
-                    ],
-                    ["layui"      => "input", "title" => "后台域名",
-                        "name"        => "LC[domain]",
-                        "value"       => $config['domain'],
-                        "placeholder" => "不填任意域名可访问后台，填写后仅填写的域名可以打开后台",
-                        "tips"        => "不填任意域名可访问后台，填写后仅填写的域名可以打开后台",
                     ],
                     ["layui" => "input", "title" => "页脚版权",
                         "name"   => "LC[developer]",
@@ -272,8 +266,9 @@ class admin extends adminbase
                         "name"   => "LC[admin_water]",
                         "value"  => $config['admin_water'] ?: 0,
                         "radio"  => [
-                            ["title" => "开启", "value" => 1],
                             ["title" => "关闭", "value" => 0],
+                            ["title" => "普通水印", "value" => 1],
+                            ["title" => "盲水印", "value" => 2],
                         ],
                         "tips"   => "后台界面显示用户名等水印"],
                     ["layui" => "title", "title" => "上传安全"],

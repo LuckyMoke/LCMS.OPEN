@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-11-26 15:33:51
+ * @LastEditTime: 2024-11-28 15:41:27
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -56,6 +56,13 @@ class index extends adminbase
                     "appid"     => $PLG['appid'],
                     "apisecret" => $PLG['apisecret'],
                     "apikey"    => $PLG['apikey'],
+                ];
+                break;
+            case 'qianwen':
+                $result = [
+                    "api"   => "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+                    "model" => $PLG['model'],
+                    "token" => $PLG['token'],
                 ];
                 break;
             case 'baichuan':
