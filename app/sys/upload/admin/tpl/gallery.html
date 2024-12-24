@@ -28,7 +28,7 @@
         <ul class="_gallery">
             <block x-for="(item,index) in listData" :key="item.name">
                 <li :class="listActive[`_${item.id}`]?'active':''" @click="onClick(item,index)" @mouseenter="onHover(`enter`,item)" @mouseleave="onHover(`leave`,item)">
-                    <img :src="item.plcae||item.src" :class="item.cname" @load="onImgload(index)" @error="onImgError(index)" />
+                    <img :data-lazy="item.src" :src="item.isdir||item.isload?item.src:false" :class="item.isdir?'_bf':item.isload?'':'lazyload'" @load="onImgload(index)" />
                     <text x-text="getName(item)"></text>
                     <div class="_checked">
                         <i class="layui-icon layui-icon-ok"></i>

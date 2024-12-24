@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-11-20 16:24:43
+ * @LastEditTime: 2024-12-18 19:48:37
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -104,8 +104,12 @@ class common
     {
         global $_L;
         $table = $_L['DB']->get_tables();
+        $pre   = $_L['mysql']['pre'];
         foreach ($table as $val) {
-            $name          = str_replace($_L['mysql']['pre'], "", $val);
+            if (!$val || !preg_match("/^$pre/", $val)) {
+                continue;
+            }
+            $name          = preg_replace("/^$pre/", "", $val);
             $tables[$name] = $val;
         }
         $_L['table'] = $tables;

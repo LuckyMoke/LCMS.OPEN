@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-21 01:50:45
+ * @LastEditTime: 2024-12-16 16:23:32
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,8 +21,9 @@ class LAY
             "tipsbox"   => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
         ]);
     }
-    public static function form($list = [])
+    public static function form($list = "")
     {
+        $list = is_array($list) ? $list : ($list ? json_decode($list, true) : []);
         foreach ($list as $para) {
             if ($para) {
                 $type = $para['layui'];
@@ -176,7 +177,7 @@ class LAY
             <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-tags'>
-                    <input type='hidden' name='{$para['name']}' value='{$para['value']}'/>
+                    <input type='hidden' name='{$para['name']}' value='{$para['value']}'{$para['verifybox']}/>
                     <div class='lcms-form-tags-box'></div>
                     <textarea class='hide{$para['tipsbox']}' placeholder='{$para['placeholder']}'/></textarea>
                     <div class='hide layui-btn-group lcms-form-tags-button'>
@@ -237,7 +238,7 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-date' data-value='{$para['value']}' data-type='{$para['type']}' data-range='{$para['range']}' data-min='{$para['min']}' data-max='{$para['max']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verify']}{$para['disabled']}/>
+                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     {$para['tips']}
                 </div>
@@ -323,17 +324,25 @@ class LAY
         if ($para['local'] || $para['gallery'] === false) {
             $para['gallery'] = "";
         } else {
-            $para['gallery'] = "<a class='layui-btn layui-btn-warm layui-btn-sm _box' data-many='{$para['many']}'>图库</a><a class='layui-btn layui-btn-primary layui-btn-sm _other'>粘贴</a>";
+            $para['gallery'] = "<a class='layui-btn layui-btn-warm layui-btn-sm' @click='openGallery'>图库</a><a class='layui-btn layui-btn-primary layui-btn-sm' @click='openPaste'>粘贴</a>";
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane>
-                <input type='hidden' name='{$para['name']}' value='{$para['value']}' data-many='{$para['many']}'>
+            <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}' data-value='{$para['value']}' :id='id'>
+                <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']}/>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <div class='layui-upload-list lcms-form-upload-img-list'></div>
-                    <div class='layui-btn-group lcms-form-upload-btn'>
-                        <a class='layui-btn layui-btn-sm _up' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='_loading layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                    <div class='layui-upload-list lcms-form-upload-img-list' x-ref='imglist'>
+                        <template x-for='(item,index) in imgList' :key='item.original'>
+                            <div class='_li'><a :href='item.src' target='_blank'><img class='layui-upload-img' :src='item.isload?item.src:``' :data-lazy='item.src' :class='item.isload?``:`lazyload`' @load='onImgload(index)' /></a><div class='_icon'><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div></div>
+                        </template>
+                    </div>
+                    <div class='layui-btn-group lcms-form-upload-btn' x-cloak>
+                        <a class='layui-btn layui-btn-sm'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop' x-show='loading'></i>
+                            <template x-if='!loading'>
+                                <input type='file' :multiple='config.many' :accept='config.accept' @change='chooseImg' />
+                            </template>
+                        </a>
                         {$para['gallery']}
                     </div>
                     {$para['tips']}
@@ -346,23 +355,32 @@ class LAY
         $para          = self::start($para);
         $para['local'] = $para['local'] ? true : false;
         $para['mime']  = $para['mime'] ? $para['mime'] : "file";
-        if ($para['local'] || $para['select'] === false) {
+        $para['many']  = $para['many'] ? true : false;
+        if ($para['select'] === false) {
             $para['select'] = "";
         } else {
-            $para['select'] = "<a class='layui-btn layui-btn-warm layui-btn-xl _box' onclick='javascript:;'>文库</a>";
+            $para['select'] = "<a class='layui-btn layui-btn-warm layui-btn-sm' @click='openFilebox'>文库</a><a class='layui-btn layui-btn-primary layui-btn-sm' @click='openLink'>外链</a>";
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-file{$para['cname']}'>
+            <div class='layui-form-item lcms-form-upload-file{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' data-value='{$para['value']}' :id='id'>
+                <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']} />
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='text' name='{$para['name']}' class='layui-input{$para['tipsbox']}' autocomplete='off' placeholder='请选择文件上传' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
-                    <div class='layui-btn-group lcms-form-upload-file-btn'>
-                        <a class='layui-btn layui-btn-xl _up' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' onclick='javascript:;'>上传<i class='_loading layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop'></i></a>
+                    <div class='lcms-form-upload-file-list' x-ref='filelist'>
+                        <template x-for='(item,index) in fileList' :key='item.original'>
+                            <div class='_li'><a :href='item.src' target='_blank' :title='item.original' x-text='item.original'></a><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div>
+                        </template>
+                    </div>
+                    <div class='layui-btn-group lcms-form-upload-file-btn' x-cloak>
+                        <a class='layui-btn layui-btn-sm'><i class='layui-icon layui-icon-upload-drag'></i>上传<i class='layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop' x-show='loading'></i>
+                            <template x-if='!loading'>
+                                <input type='file' :multiple='config.many' :accept='config.accept' @change='chooseFile' />
+                            </template>
+                        </a>
                         {$para['select']}
                     </div>
                     {$para['tips']}
-                    <div class='clear'></div>
                 </div>
             </div>";
         echo $html;
@@ -402,7 +420,7 @@ class LAY
                     <div class='layui-input-inline'>
                         <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
-                    <div class=\"_change\"><i class=\"layui-icon layui-icon-search\"></i></div>
+                    <div class='_change'><i class='layui-icon layui-icon-search'></i></div>
                     {$para['tips']}
                 </div>
             </div>";

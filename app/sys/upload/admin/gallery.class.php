@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-11-26 17:16:03
+ * @LastEditTime: 2024-12-18 20:41:22
  * @Description:图库与编辑器上传组件
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -122,11 +122,16 @@ class gallery extends adminbase
             case 'list':
                 $doamin = $_L['plugin']['oss']['type'] != "local" ? $_L['plugin']['oss']['domain'] : $_L['url']['site'];
                 $where  = $LC['name'] ? " AND name LIKE :name" : "";
-                $data   = TABLE::set("upload", "lcms = :lcms AND type = 'file' AND local = 0 AND uid = :uid{$where}", "id DESC", [
-                    ":lcms" => $_L['ROOTID'],
-                    ":uid"  => $_L['LCMSADMIN']['id'],
-                    ":name" => "%{$LC['name']}%",
-                ]);
+                $data   = TABLE::set([
+                    "table" => "upload",
+                    "where" => "lcms = :lcms AND type = 'file' AND local = :local AND uid = :uid{$where}",
+                    "order" => "id DESC",
+                    "bind"  => [
+                        ":lcms"  => $_L['ROOTID'],
+                        ":uid"   => $_L['LCMSADMIN']['id'],
+                        ":name"  => "%{$LC['name']}%",
+                        ":local" => $LF['local'],
+                    ]]);
                 foreach ($data as $index => $val) {
                     $src          = str_replace("../", "", $val['src']);
                     $data[$index] = array_merge($val, [
@@ -144,8 +149,9 @@ class gallery extends adminbase
                 break;
             default:
                 $table = [
-                    "url"    => "attachmentlist&action=list",
-                    "cols"   => [
+                    "url"     => "attachmentlist&local={$LF['local']}&action=list",
+                    "cols"    => [
+                        ["checkbox" => true, "width" => 50],
                         ["title" => "存储文件名", "field" => "name",
                             "width"  => 180],
                         ["title"   => "原始文件名", "field" => "oname",
@@ -167,10 +173,17 @@ class gallery extends adminbase
                                 ["title" => "选择", "event" => "choice"],
                             ]],
                     ],
-                    "search" => [
+                    "toolbar" => [
+                        ["title" => "批量选择", "event" => "choice",
+                            "color"  => "default"],
+                    ],
+                    "search"  => [
                         ["title" => "存储文件名", "name" => "name"],
                     ],
                 ];
+                if ($LF['many'] <= 0) {
+                    unset($table['cols'][0], $table['toolbar']);
+                }
                 require LCMS::template("own/attachmentlist");
                 break;
         }

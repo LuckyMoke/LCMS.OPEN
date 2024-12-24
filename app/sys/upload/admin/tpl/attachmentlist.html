@@ -13,7 +13,17 @@
 </if>
 <script type="text/javascript">
     var choice = function (obj) {
-        $("#{{$LF['id']}}", parent.document).parent("div").siblings("input").val(obj.data.src);
+        let data = obj.data, list = [];
+        if (!data.length) {
+            data = [data];
+        }
+        data.map((item) => {
+            list.push({
+                src: item.src,
+                original: item.src
+            });
+        });
+        parent.LCMS.plugin.file.add(`{{$LF['id']}}`, list);
         LCMS.util.iframe({do: "close"});
         player();
     }

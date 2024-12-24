@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-11-23 13:44:47
+ * @LastEditTime: 2024-12-18 20:28:36
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -65,7 +65,7 @@ class database extends adminbase
                     "type" => "system",
                     "info" => "数据备份-备份失败",
                 ]);
-                ajaxout(0, "备份失败");
+                ajaxout(0, "压缩失败");
                 break;
             case 'restore':
                 ini_set("memory_limit", -1);
