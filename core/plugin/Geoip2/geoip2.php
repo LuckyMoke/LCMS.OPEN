@@ -157,6 +157,9 @@ class Geoip2
             $city     = str_replace("市", "", $city);
             if ($dbtype == "city") {
                 $address = $city ?: $province;
+                if (!preg_match("/[\x{4e00}-\x{9fff}\x{3400}-\x{4dbf}]/u", $city)) {
+                    $address = $province;
+                }
                 $address = $country == $address ? $country : "{$country}{$address}";
             } else {
                 $address = $country;

@@ -33,7 +33,7 @@
         </div>
         <div class="layui-row layui-col-space15">
             <div :class="`layui-col-md${data.gonggao?'6':'12'} layui-col-xs12`">
-                <table class="layui-table">
+                <table class="layui-table home-info">
                     <thead>
                         <tr>
                             <th colspan="2">环境信息</th>
@@ -42,7 +42,7 @@
                     <tbody>
                         <block x-for="(info, title) in data.info">
                             <tr>
-                                <td width="100px" x-text="title"></td>
+                                <td width="80px" x-text="title"></td>
                                 <td x-html="info"></td>
                             </tr>
                         </block>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-10-09 18:07:50
+ * @LastEditTime: 2025-01-07 10:25:44
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -58,12 +58,12 @@ class HTTP
     }
     /**
      * @description: HTTP请求方法
-     * @param array $args [type、url、data、timeout、headers、proxy、ua、cache、setopt、success、error、complete]
-     * @param array $curl_info
-     * @param array $curl_header
+     * @param array $args [type、url、ip、data、timeout、headers、proxy、ua、cache、setopt、success、error、complete]
+     * @param array $curl_info curl信息
+     * @param array $response_headers 响应标头
      * @return mixed
      */
-    public static function request($args = [], &$curl_info = [], &$curl_header = [])
+    public static function request($args = [], &$curl_info = [], &$response_headers = [])
     {
         if (!$args['url']) {
             return false;
@@ -76,7 +76,7 @@ class HTTP
             "timeout"  => 30,
             "headers"  => [],
             "proxy"    => [],
-            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
             "setopt"   => null,
             "success"  => null,
             "error"    => null,
@@ -138,7 +138,7 @@ class HTTP
                     $args['error'] && $args['error']($reinfo);
                 }
                 $args['complete'] && $args['complete']($reinfo);
-                $curl_info = $reinfo;
+                $response_headers = $reinfo;
                 return $reinfo;
                 break;
         }
@@ -167,6 +167,19 @@ class HTTP
         }
         if ($args['cookie']) {
             curl_setopt($CURL, CURLOPT_COOKIE, $args['cookie']);
+        }
+        if ($args['ip']) {
+            $urls    = parse_url($args['url']);
+            $resolve = "{$urls['host']}:";
+            if ($urls['port']) {
+                $resolve .= $urls['port'];
+            } elseif ($urls['scheme'] == "https") {
+                $resolve .= 443;
+            } else {
+                $resolve .= 80;
+            }
+            $resolve .= ":{$args['ip']}";
+            curl_setopt($CURL, CURLOPT_RESOLVE, [$resolve]);
         }
         curl_setopt($CURL, CURLOPT_TIMEOUT, $args['timeout']);
         curl_setopt($CURL, CURLOPT_USERAGENT, $args['ua']);
@@ -245,14 +258,14 @@ class HTTP
                             if ($reinfo['redirect_url']) {
                                 return self::request(array_merge($args, [
                                     "url" => $reinfo['redirect_url'],
-                                ]), $curl_info, $curl_header);
+                                ]), $curl_info, $response_headers);
                             }
                         }
                         break;
                 }
                 $result = substr($body, $reinfo['header_size'], strlen($body));
                 $args['success'] && $args['success']($result, $reinfo, $rehead);
-                $curl_header = $rehead;
+                $response_headers = $rehead;
             } else {
                 $args['error'] && $args['error']($reinfo);
             }

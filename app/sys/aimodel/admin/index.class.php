@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2024-11-28 15:41:27
+ * @LastEditTime: 2025-01-06 18:13:06
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -31,22 +31,37 @@ class index extends adminbase
             case 'wenxin':
                 $cname = md5(json_encode($PLG));
                 $token = LCMS::cache($cname);
-                if ($token['expires_in'] < time()) {
+                if ($token['expires'] < time()) {
+                    LOAD::plugin("Baidu/libs/Baidu.Api");
+                    $BD = new BaiduApi([
+                        "AccessKey" => $PLG['access_key'],
+                        "SecretKey" => $PLG['secret_key'],
+                    ]);
+                    $iam    = "https://iam.bj.baidubce.com/v1/BCE-BEARER/token?expireInSeconds=86400";
+                    $sign   = $BD->sign("GET", $iam);
                     $result = HTTP::request([
-                        "type" => "GET",
-                        "url"  => "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={$PLG['api_key']}&client_secret={$PLG['secret_key']}",
+                        "type"    => "GET",
+                        "url"     => $iam,
+                        "headers" => [
+                            "Content-Type"  => "application/json",
+                            "Authorization" => $sign['sign'],
+                        ],
                     ]);
                     $result = json_decode($result, true);
-                    if ($result['access_token']) {
+                    if ($result['token']) {
                         $token = [
-                            "access_token" => $result['access_token'],
-                            "expires_in"   => time() + intval($result['expires_in']),
+                            "token"   => $result['token'],
+                            "expires" => time() + 86000,
                         ];
                         LCMS::cache($cname, $token);
+                    } else {
+                        ajaxout(0, "获取BearerToken失败");
                     }
                 }
                 $result = [
-                    "api" => "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/{$PLG['model']}?access_token={$token['access_token']}",
+                    "api"   => "https://qianfan.baidubce.com/v2/chat/completions",
+                    "model" => "ernie-speed-8k",
+                    "token" => $token['token'],
                 ];
                 break;
             case 'spark':
@@ -89,6 +104,13 @@ class index extends adminbase
             case 'siliconcloud':
                 $result = [
                     "api"   => "https://api.siliconflow.cn/v1/chat/completions",
+                    "model" => $PLG['model'],
+                    "token" => $PLG['token'],
+                ];
+                break;
+            case 'deepseek':
+                $result = [
+                    "api"   => "https://api.deepseek.com/chat/completions",
                     "model" => $PLG['model'],
                     "token" => $PLG['token'],
                 ];

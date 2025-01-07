@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-12-16 16:23:32
+ * @LastEditTime: 2025-01-07 10:50:11
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,7 +17,7 @@ class LAY
             "cname"     => $para['cname'] ? " {$para['cname']}" : "",
             "disabled"  => $para['disabled'] ? " disabled" : "",
             "disclass"  => $para['disabled'] ? " layui-disabled" : "",
-            "verifybox" => $para['verify'] ? " required lay-verify='{$para['verify']}'" : "",
+            "verifybox" => $para['verify'] ? " required lay-verify='{$para['verify']}' lay-reqtext='{$para['title']}为必填项'" : "",
             "tipsbox"   => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
         ]);
     }
@@ -52,7 +52,7 @@ class LAY
             $para['copytext'] = $para['copytext'] ?: $para['value'];
         }
         $html = "
-            <div class='layui-form-item{$para['cname']}' pane>
+            <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='lcms-form-html{$para['nodrop']}{$para['copy']}' data-copytext='{$para['copytext']}'>{$para['value']}</div>
@@ -165,7 +165,7 @@ class LAY
         $html = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='lcms-form-selectN{$para['tipsbox']}' data-name='{$para['name']}' data-val='{$para['value']}' data-url='{$para['url']}' data-default='{$para['default']}' data-verify='{$para['verify']}'></div>
+                <div class='lcms-form-selectN{$para['tipsbox']}' data-name='{$para['name']}' data-val='{$para['value']}' data-url='{$para['url']}' data-default='{$para['default']}' data-verify='{$para['verify']}' data-reqtext='{$para['title']}为必填项'></div>
             </div>";
         echo $html;
     }
@@ -328,7 +328,7 @@ class LAY
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}' data-value='{$para['value']}' :id='id'>
+            <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}' data-value='{$para['value']}'>
                 <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']}/>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
@@ -363,7 +363,7 @@ class LAY
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-file{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' data-value='{$para['value']}' :id='id'>
+            <div class='layui-form-item lcms-form-upload-file{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' data-value='{$para['value']}'>
                 <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']} />
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>

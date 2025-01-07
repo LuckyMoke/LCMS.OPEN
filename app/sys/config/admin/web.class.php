@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-12-03 11:28:55
+ * @LastEditTime: 2025-01-06 18:15:38
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -449,7 +449,7 @@ class web extends adminbase
                         "aimodel" => $LC,
                     ],
                 ]);
-                ajaxout(1, "保存成功");
+                ajaxout(1, "保存成功", "reload-top");
                 break;
             default:
                 $plugin = LCMS::config([
@@ -459,7 +459,7 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://bailian.console.aliyun.com/?apiKey=1#/api-key' target='_blank'>通义千问</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://open.bigmodel.cn/' target='_blank'>智普</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度文心</a>、<a href='https://xinghuo.xfyun.cn/sparkapi' target='_blank'>讯飞星火</a>、<a href='https://bailian.console.aliyun.com/?apiKey=1#/api-key' target='_blank'>通义千问</a>、<a href='https://platform.baichuan-ai.com/' target='_blank'>百川</a>、<a href='https://open.bigmodel.cn/' target='_blank'>智普</a>、<a href='https://www.moonshot.cn/' target='_blank'>Kimi</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
@@ -472,6 +472,7 @@ class web extends adminbase
                             ["title" => "智普", "value" => "zhipu", "tab" => "type_zhipu"],
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
                             ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "type_siliconcloud"],
+                            ["title" => "DeepSeek", "value" => "kimi", "tab" => "type_deepseek"],
                             ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
                         ]],
                 ];
@@ -494,9 +495,9 @@ class web extends adminbase
                         "min"    => 100,
                         "max"    => 2048,
                         "tips"   => "单次请求最大输出tokens数"],
-                    ["layui" => "input", "title" => "API Key",
-                        "name"   => "LC[wenxin][api_key]",
-                        "value"  => $PLG['wenxin']['api_key'],
+                    ["layui" => "input", "title" => "Access Key",
+                        "name"   => "LC[wenxin][access_key]",
+                        "value"  => $PLG['wenxin']['access_key'],
                         "cname"  => "hidden type_wenxin"],
                     ["layui" => "input", "title" => "Secret Key",
                         "name"   => "LC[wenxin][secret_key]",
@@ -569,6 +570,15 @@ class web extends adminbase
                         "value"  => $PLG['siliconcloud']['model'] ?: "Qwen/Qwen2-7B-Instruct",
                         "cname"  => "hidden type_siliconcloud",
                         "option" => $models['siliconcloud']],
+                    ["layui" => "input", "title" => "API key",
+                        "name"   => "LC[deepseek][token]",
+                        "value"  => $PLG['deepseek']['token'],
+                        "cname"  => "hidden type_deepseek"],
+                    ["layui" => "select", "title" => "AI模型",
+                        "name"   => "LC[deepseek][model]",
+                        "value"  => $PLG['deepseek']['model'] ?: "deepseek-chat",
+                        "cname"  => "hidden type_deepseek",
+                        "option" => $models['deepseek']],
                     ["layui" => "radio", "title" => "接口提供商",
                         "name"   => "LC[openai][type]",
                         "value"  => $PLG['openai']['type'] ?: "api2d",
