@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-11-27 15:06:10
+ * @LastEditTime: 2025-01-12 16:51:41
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,6 +26,12 @@ class EMAIL
             "cate" => "plugin",
         ])['email'];
         $type = $config['type'];
+        if (!$type) {
+            return [
+                "code" => 0,
+                "msg"  => "未配置邮箱接口",
+            ];
+        }
         return [
             "type" => $type,
             "cfg"  => $config[$type],

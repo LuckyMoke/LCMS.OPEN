@@ -19,6 +19,9 @@
             </if>
         </if>
         <link rel="shortcut icon" href="{{$page['favicon']?:'data:image/ico;base64,aWNv'}}" />
+        <script type="text/javascript">
+            var LCMS = {url:JSON.parse(`{{json_encode($_L['url'],JSON_HEX_APOS)}}`),config:{ver:`{{$_L['config']['ver']}}`,oss:`{{$_L['plugin']['oss']['type']}}`,cdn:`{{$_L['plugin']['oss']['domain']}}`}};
+        </script>
         <if !$_L['ui']['nocache']>
             <link rel="stylesheet" href="{{str_replace(PATH_WEB,$_L['url']['site'],TPL::$cname)}}.css?tplver={{TPL::$ver}}&lcmsver={{$_L['config']['ver']}}" />
         </if>
@@ -42,8 +45,5 @@
         <if $_L['ui']['htmlhead']>
             {{implode(PHP_EOL, $_L['ui']['htmlhead'])}}
         </if>
-        <script type="text/javascript">
-            var LCMS = {url:JSON.parse(`{{json_encode($_L['url'],JSON_HEX_APOS)}}`),config:{ver:`{{$_L['config']['ver']}}`}};
-        </script>
     </head>
     <body>

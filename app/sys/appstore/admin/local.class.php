@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-12-03 11:28:23
+ * @LastEditTime: 2025-01-12 18:06:02
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -82,14 +82,21 @@ class local extends adminbase
     public function dosetdefault()
     {
         global $_L, $LF, $LC;
-        LCMS::SUPER() && LCMS::X(403, "请在用户账号下设置<br/>需要给用户账号添加“本地应用”权限");
         switch ($LF['action']) {
             case 'save':
+                if ($LC['token']) {
+                    $lcms = ssl_decode($LC['token']);
+                } else {
+                    $lcms = $_L['ROOTID'];
+                }
+                $lcms = intval($lcms);
+                $lcms <= 0 && LCMS::X(404, "参数错误");
                 LCMS::config([
                     "do"   => "save",
                     "name" => "menu",
                     "type" => "sys",
                     "cate" => "admin",
+                    "lcms" => $lcms,
                     "form" => [
                         "default" => $LC,
                     ],
@@ -97,12 +104,20 @@ class local extends adminbase
                 ajaxout(1, "保存成功", "close");
                 break;
             default:
+                if ($LF['token']) {
+                    $lcms = ssl_decode($LF['token']);
+                } else {
+                    $lcms = $_L['ROOTID'];
+                }
+                $lcms = intval($lcms);
+                $lcms <= 0 && LCMS::X(404, "参数错误");
                 $open = LEVEL::applist("open", true);
                 $open || LCMS::X(404, "您未安装任何应用");
                 $config = LCMS::config([
                     "name" => "menu",
                     "type" => "sys",
                     "cate" => "admin",
+                    "lcms" => $lcms,
                 ]);
                 foreach ($open as $name => $app) {
                     $applist[] = [
@@ -111,14 +126,20 @@ class local extends adminbase
                     ];
                 }
                 $form = [
-                    ["layui" => "radio", "title" => "功能状态",
+                    ["layui" => "input", "type" => "hidden",
+                        "name"   => "LC[token]",
+                        "value"  => $LF['token']],
+                    ["layui" => "radio", "title" => "默认应用",
                         "name"   => "LC[on]",
                         "value"  => $config['default']['on'] ?: 0,
                         "radio"  => [
-                            ["title" => "关闭", "value" => 0, "tab" => "tab0"],
-                            ["title" => "打开第一个应用", "value" => 1, "tab" => "tab1"],
-                            ["title" => "打开指定应用", "value" => 2, "tab" => "tab2"],
+                            ["title" => "欢迎页", "value" => 0, "tab" => "tab0"],
+                            ["title" => "第一个应用", "value" => 1, "tab" => "tab1"],
+                            ["title" => "指定应用", "value" => 2, "tab" => "tab2"],
                         ]],
+                    ["layui" => "des", "title" => "登录后台默认打开欢迎页", "cname" => "hidden tab0"],
+                    ["layui" => "des", "title" => "登录后台默认打开本地应用列表里的第一个应用", "cname" => "hidden tab1"],
+                    ["layui" => "des", "title" => "登录后台默认打开下方选择的应用", "cname" => "hidden tab2"],
                     ["layui" => "select", "title" => "指定应用",
                         "name"   => "LC[name]",
                         "value"  => $config['default']['name'],

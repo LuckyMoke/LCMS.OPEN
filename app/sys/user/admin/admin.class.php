@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-07 13:02:06
+ * @LastEditTime: 2025-01-12 18:03:03
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -93,6 +93,23 @@ class admin extends adminbase
                     } else {
                         $storage = null;
                     }
+                    $appcfg = LCMS::config([
+                        "name" => "menu",
+                        "type" => "sys",
+                        "cate" => "admin",
+                        "lcms" => $val['id'],
+                    ]);
+                    switch ($appcfg['default']['on']) {
+                        case '1':
+                            $appdef = "第一个应用";
+                            break;
+                        case '2':
+                            $appdef = "指定应用";
+                            break;
+                        default:
+                            $appdef = "欢迎页";
+                            break;
+                    }
                     $data[$index] = array_merge($val, [
                         "token"    => $token,
                         "headimg"  => [
@@ -118,7 +135,13 @@ class admin extends adminbase
                         "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                         "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
                         "storage"  => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
-                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级用户</span>',
+                        <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级</span>',
+                        "defapp"   => $val['type'] === "lcms" ? '<span style="color:#cccccc">欢迎页</span>' : ($val['lcms'] == 0 ? [
+                            "type"  => "link",
+                            "title" => $appdef,
+                            "icon"  => '<img src="/public/static/images/icons/config.svg"/>',
+                            "url"   => "javascript:setDefapp('" . ssl_encode($val['id']) . "')",
+                        ] : '<span style="color:#cccccc">同上级</span>'),
                     ]);
                     unset($val['pass'], $val['salt'], $val['parameter'], $val['level']);
                 }
@@ -309,9 +332,9 @@ class admin extends adminbase
                 $table = [
                     "url"     => "index&action=list",
                     "cols"    => [
-                        ["checkbox" => "checkbox", "width" => 50],
+                        ["checkbox" => "checkbox", "width" => 40],
                         ["title" => "ID", "field" => "id",
-                            "width"  => 70,
+                            "width"  => 60,
                             "align"  => "center"],
                         ["title" => "头像", "field" => "headimg",
                             "width"  => 50,
@@ -325,15 +348,20 @@ class admin extends adminbase
                         ["title" => "手机", "field" => "mobile",
                             "width"  => 120],
                         ["title" => "用户权限", "field" => "type",
-                            "width"  => 200],
+                            "width"  => 180],
                         ["title" => "上级用户", "field" => "lcms",
                             "width"  => 160],
                         ["title" => "到期时间", "field" => "lasttime",
                             "width"  => 170,
                             "align"  => "center"],
-                        ["title" => "存储空间", "field" => "storage",
-                            "width"  => 150,
-                            "align"  => "center"],
+                        ["title"  => "存储空间", "field" => "storage",
+                            "width"   => 150,
+                            "issuper" => true,
+                            "align"   => "center"],
+                        ["title"  => "默认应用", "field" => "defapp",
+                            "width"   => 120,
+                            "issuper" => true,
+                            "align"   => "center"],
                         ["title" => "状态", "field" => "statusT",
                             "width"  => 90,
                             "align"  => "center"],
@@ -374,7 +402,7 @@ class admin extends adminbase
                     ],
                 ];
                 $acount = sql_counter(["admin"]);
-                if (LCMS::SUPER() && $_L['developer']['lite'] === 1) {
+                if ($_L['developer']['lite'] === 1) {
                     unset($table['toolbar']);
                 }
                 require LCMS::template("own/admin/list");

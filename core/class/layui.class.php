@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-01-07 10:50:11
+ * @LastEditTime: 2025-01-14 16:29:10
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,7 +13,7 @@ class LAY
     {
         $para = is_array($para) ? $para : [];
         return array_merge($para, [
-            "title"     => $para['title'] ?: "小标题",
+            "title"     => $para['title'] ?: "&nbsp;",
             "cname"     => $para['cname'] ? " {$para['cname']}" : "",
             "disabled"  => $para['disabled'] ? " disabled" : "",
             "disclass"  => $para['disabled'] ? " layui-disabled" : "",
@@ -21,29 +21,42 @@ class LAY
             "tipsbox"   => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
         ]);
     }
-    public static function form($list = "")
+    public static function form($list = "", $return = false)
     {
         $list = is_array($list) ? $list : ($list ? json_decode($list, true) : []);
+        $html = "";
         foreach ($list as $para) {
             if ($para) {
                 $type = $para['layui'];
-                self::$type($para);
+                $html .= self::$type($para, true);
             }
         }
+        if ($return) {
+            return $html;
+        }
+        echo $html;
     }
-    public static function title($para)
+    public static function title($para, $return = false)
     {
         $para          = self::start($para);
         $para['title'] = $para['title'] ? $para['title'] : "标题栏";
-        echo "<h3 class='lcms-form-title{$para['cname']}'>{$para['title']}</h3>";
+        $html          = "<h3 class='lcms-form-title{$para['cname']}'>{$para['title']}</h3>";
+        if ($return) {
+            return $html;
+        }
+        echo $html;
     }
-    public static function des($para)
+    public static function des($para, $return = false)
     {
         $para          = self::start($para);
         $para['title'] = $para['title'] ? $para['title'] : "标题栏";
-        echo "<p class='lcms-form-des{$para['cname']}'>{$para['title']}</p>";
+        $html          = "<p class='lcms-form-des{$para['cname']}'>{$para['title']}</p>";
+        if ($return) {
+            return $html;
+        }
+        echo $html;
     }
-    public static function html($para)
+    public static function html($para, $return = false)
     {
         $para           = self::start($para);
         $para['nodrop'] = $para['nodrop'] ? " lcms-form-html-nodrop" : "";
@@ -58,51 +71,64 @@ class LAY
                     <div class='lcms-form-html{$para['nodrop']}{$para['copy']}' data-copytext='{$para['copytext']}'>{$para['value']}</div>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function input($para)
+    public static function input($para, $return = false)
     {
-        $para                = self::start($para);
-        $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
-        $para['disabled']    = $para['disabled'] ? " readonly" : "";
-        $para['type']        = $para['type'] ? $para['type'] : "text";
-        if ($para['type'] == "number") {
-            $para['affix']     = "number";
-            $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
-            $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
-            $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
-            $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
-        }
-        $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
-        $html           = "
+        $para = self::start($para);
+        if ($para['type'] == "hidden") {
+            echo "<input type='hidden' name='{$para['name']}' value='{$para['value']}' />";
+        } else {
+            $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
+            $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
+            $para['disabled']    = $para['disabled'] ? " readonly" : "";
+            $para['type']        = $para['type'] ? $para['type'] : "text";
+            if ($para['type'] == "number") {
+                $para['affix']     = "number";
+                $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+                $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
+                $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+                $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
+            }
+            $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+            $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+            $html           = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
-        echo $html;
-    }
-    public static function input_sort($para)
-    {
-        $para                = self::start($para);
-        $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
-        $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
-        $para['disabled']    = $para['disabled'] ? " readonly" : "";
-        $para['type']        = $para['type'] ? $para['type'] : "text";
-        if ($para['type'] == "number") {
-            $para['affix']     = "number";
-            $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
-            $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
-            $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
-            $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
+            if ($return) {
+                return $html;
+            }
+            echo $html;
         }
-        $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-        $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
-        $para['tips']   = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
-        $html           = "
+    }
+    public static function input_sort($para, $return = false)
+    {
+        $para = self::start($para);
+        if ($para['type'] == "hidden") {
+            echo "<input type='hidden' name='{$para['name']}' value='{$para['value']}' />";
+        } else {
+            $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
+            $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
+            $para['disabled']    = $para['disabled'] ? " readonly" : "";
+            $para['type']        = $para['type'] ? $para['type'] : "text";
+            if ($para['type'] == "number") {
+                $para['affix']     = "number";
+                $para['step']      = $para['step'] > 0 ? " step='{$para['step']}'" : "";
+                $para['min']       = isset($para['min']) ? " min='{$para['min']}'" : "";
+                $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
+                $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
+            }
+            $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+            $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+            $para['tips']   = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
+            $html           = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
@@ -112,9 +138,13 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
-        echo $html;
+            if ($return) {
+                return $html;
+            }
+            echo $html;
+        }
     }
-    public static function textarea($para)
+    public static function textarea($para, $return = false)
     {
         $para                = self::start($para);
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
@@ -126,9 +156,12 @@ class LAY
                     <textarea name='{$para['name']}' placeholder='{$para['placeholder']}' class='layui-textarea{$para['disclass']}{$para['tipsbox']}'{$para['maxlength']}{$para['verifybox']}{$para['disabled']}>{$para['value']}</textarea>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function select($para)
+    public static function select($para, $return = false)
     {
         global $_L;
         $para            = self::start($para);
@@ -153,9 +186,12 @@ class LAY
                     </select>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function selectN($para)
+    public static function selectN($para, $return = false)
     {
         global $_L;
         $para = self::start($para);
@@ -167,9 +203,12 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='lcms-form-selectN{$para['tipsbox']}' data-name='{$para['name']}' data-val='{$para['value']}' data-url='{$para['url']}' data-default='{$para['default']}' data-verify='{$para['verify']}' data-reqtext='{$para['title']}为必填项'></div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function tags($para)
+    public static function tags($para, $return = false)
     {
         $para                = self::start($para);
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "回车添加，拖动排序";
@@ -187,9 +226,12 @@ class LAY
                     </div>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function color($para)
+    public static function color($para, $return = false)
     {
         $para                = self::start($para);
         $para['format']      = $para['format'] ?: "rgb";
@@ -206,9 +248,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function slider($para)
+    public static function slider($para, $return = false)
     {
         $para         = self::start($para);
         $para['min']  = $para['min'] ? $para['min'] : 0;
@@ -225,9 +270,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function date($para)
+    public static function date($para, $return = false)
     {
         $para          = self::start($para);
         $para['type']  = $para['type'] ? $para['type'] : "datetime";
@@ -243,9 +291,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function on($para)
+    public static function on($para, $return = false)
     {
         global $_L;
         $para            = self::start($para);
@@ -268,9 +319,12 @@ class LAY
                     <input type='checkbox' name='{$para['name']}' value='{$para['value']}' lay-skin='switch' lay-filter='lcms-form-switch' title='{$para['text']}'{$para['url']}{$para['timeout']}{$para['disabled']}{$para['checked']}>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function radio($para)
+    public static function radio($para, $return = false)
     {
         $para  = self::start($para);
         $radio = "";
@@ -289,9 +343,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function checkbox($para)
+    public static function checkbox($para, $return = false)
     {
         $para         = self::start($para);
         $para['skin'] = $para['skin'] ?: "primary";
@@ -312,9 +369,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function upload($para)
+    public static function upload($para, $return = false)
     {
         $para              = self::start($para);
         $para['local']     = $para['local'] ? true : false;
@@ -348,9 +408,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function file($para)
+    public static function file($para, $return = false)
     {
         $para          = self::start($para);
         $para['local'] = $para['local'] ? true : false;
@@ -383,9 +446,12 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function editor($para)
+    public static function editor($para, $return = false)
     {
         $para = self::start($para);
         if ($para['value'] && !in_string($para['value'], "<")) {
@@ -400,16 +466,21 @@ class LAY
                 $para['simple'] = " data-simple='1'";
             }
         }
-        $html = "
+        $para['tips']  = $para['tips'] ? " - {$para['tips']}" : "";
+        $para['title'] = $para['title'] == "&nbsp;" ? "" : "<label class='layui-form-label' title='{$para['title']}'>{$para['title']}{$para['tips']}</label>";
+        $html          = "
             <div class='layui-form-item layui-form-text{$para['cname']}'>
-                <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
+                {$para['title']}
                 <div class='layui-input-block lcms-form-editor' data-name='{$para['name']}'{$para['simple']}>
                     <script name='{$para['name']}' type='text/plain'>{$para['value']}</script>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function icon($para)
+    public static function icon($para, $return = false)
     {
         $para         = self::start($para);
         $para['tips'] = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
@@ -424,34 +495,103 @@ class LAY
                     {$para['tips']}
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function spec($para)
+    public static function spec($para, $return = false)
     {
         $para = self::start($para);
         if ($para['value']) {
-            $para['value'] = json_encode_ex($para['value']);
-            $para['value'] = base64_encode($para['value']);
+            $para['value'] = " data-value='" . base64_encode(json_encode($para['value'])) . "'";
         }
-        if ($para['specs']) {
-            $para['specs'] = json_encode_ex($para['specs']);
-            $para['specs'] = base64_encode($para['specs']);
+        if ($para['fields']) {
+            $para['fields'] = " data-fields='" . base64_encode(json_encode($para['fields'])) . "'";
         }
-        $html = "
-            <div class='layui-form-item layui-form-text lcms-form-spec{$para['cname']}' data-name='{$para['name']}' data-value='{$para['value']}' data-specs='{$para['specs']}'>
-                <label class='layui-form-label' title='{$para['title']}'>{$para['title']}<span style='font-size:12px;color:#ff5722;padding-left:10px;'>标签可拖动排序</span></label>
+        if ($para['max']) {
+            $para['max'] = " data-max='{$para['max']}'";
+        }
+        if ($para['maxattr']) {
+            $para['maxattr'] = " data-maxattr='{$para['maxattr']}'";
+        }
+        $para['tips']  = $para['tips'] ? " - {$para['tips']}" : "";
+        $para['title'] = $para['title'] == "&nbsp;" ? "" : "<label class='layui-form-label' title='{$para['title']}'>{$para['title']}{$para['tips']}</label>";
+        $html          = "
+            <div class='layui-form-item layui-form-text lcms-form-spec{$para['cname']}' data-name='{$para['name']}'{$para['value']}{$para['fields']}{$para['max']}{$para['maxattr']}>
+                {$para['title']}
                 <div class='layui-input-block'>
-                    <div class='lcms-form-spec-box'></div>
-                    <a class='layui-btn layui-btn-sm lcms-form-spec-btn'>
-                        <i class='layui-icon layui-icon-add-1'></i>
-                        添加标签
-                    </a>
-                    <div class='lcms-form-spec-table'></div>
+                    <div class='lcms-form-spec-box'>
+                        <div class='lcms-form-spec-title'>
+                            <table class='layui-table' lay-size='sm' x-show='specData.spec.length>0' x-cloak>
+                                <tbody x-ref='speclist'>
+                                    <template x-for='(tr, tridx) in specData.spec' :key='tr.title+tridx'>
+                                        <tr>
+                                            <td align='center' width='40'>
+                                                <i class='layui-icon layui-icon-slider lcms-form-spec-trhandle'></i>
+                                            </td>
+                                            <td class='lcms-form-spec-truncate' align='center'>
+                                                <input type='hidden' :name='name+`[spec][`+tridx+`][title]`' :value='tr.title' />
+                                                <text x-text='tr.title' @click='specChange(tridx)' pointer></text>
+                                            </td>
+                                            <td class='lcms-form-spec-td'>
+                                                <template x-for='(td, tdidx) in tr.list' :key='td.title+tdidx'>
+                                                    <span @click.stop='specChange2(tridx,tdidx)'><input type='hidden' :name='name+`[spec][`+tridx+`][list][`+tdidx+`][title]`' :value='td.title' /><input type='hidden' :name='name+`[spec][`+tridx+`][list][`+tdidx+`][id]`' :value='tridx+`_`+tdidx' /><em x-text='td.title'></em><i @click.stop='specDel2(tridx,tdidx)'>&times;</i></span>
+                                                </template>
+                                                <a @click='specAdd2(tridx)'>+ 新增</a>
+                                            </td>
+                                            <td class='lcms-form-spec-del'>
+                                                <a @click='specDel(tridx)'>删除</a>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                            <div class='layui-btn-group'>
+                                <a class='layui-btn layui-btn-sm' @click='specAdd'><i class='layui-icon layui-icon-add-1'></i>新增</a>
+                                <a class='layui-btn layui-btn-sm layui-btn-danger' @click='specClear'>清空</a>
+                            </div>
+                        </div>
+                        <div class='lcms-form-spec-table'>
+                            <table class='layui-table' lay-size='sm' x-show='tables.length>0' x-cloak>
+                                <thead>
+                                    <tr>
+                                        <template x-for='(tr, tridx) in specData.spec' :key='tr.title+tridx'>
+                                            <th x-text='tr.title'></th>
+                                        </template>
+                                        <template x-for='(field, fieidx) in fields' :key='field.title+fieidx'>
+                                            <th>
+                                                <span x-text='field.title'></span>
+                                                <i class='layui-icon layui-icon-form' title='批量填写' x-show='field.type!=`image`' @click='allInput(field)'></i>
+                                            </th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for='(tr, tridx) in tables'>
+                                        <tr>
+                                            <template x-for='(td, tdidx) in tr'>
+                                                <td class='lcms-form-spec-truncate' align='center' :rowspan='td.rowspan' x-show='td.rowspan>0'>
+                                                    <text x-text='td.value'></text>
+                                                </td>
+                                            </template>
+                                            <template x-for='(field, fieidx) in fields'>
+                                                <td :width='field.width||``' x-html='getInput(field,tridx)'></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>";
+        if ($return) {
+            return $html;
+        }
         echo $html;
     }
-    public static function btn($para = [])
+    public static function btn($para = [], $return = false)
     {
         $para = is_array($para) ? $para : [];
         $para = array_merge($para, [
@@ -466,13 +606,16 @@ class LAY
                 </div>";
         } else {
             $display = $para['fixed'] ? " style='height:0;min-height:0;margin:0;'" : "";
-            $fixed   = $para['fixed'] ? " style='position:fixed;bottom:20px;width:96%;left:2%;margin-left:0;z-index:2'" : "";
+            $fixed   = $para['fixed'] ? " style='position:fixed;bottom:20px;width:96%;left:2%;margin-left:0;z-index:99'" : "";
             $html    = "
                 <div class='layui-form-item{$para['cname']}'{$display}>
                     <div class='layui-input-block'{$display}>
                         <button class='layui-btn' lay-submit lay-filter='lcmsformsubmit'{$fixed}>{$para['title']}</button>
                     </div>
                 </div>";
+        }
+        if ($return) {
+            return $html;
         }
         echo $html;
     }

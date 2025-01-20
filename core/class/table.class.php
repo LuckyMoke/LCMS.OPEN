@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-07 12:57:17
+ * @LastEditTime: 2025-01-12 17:35:03
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -109,6 +109,10 @@ class TABLE
         $toolbar = $toolbar['toolbar'];
         $search  = self::search($table['search']);
         foreach ($table['cols'] as $key => $val) {
+            if (!LCMS::SUPER() && $val['issuper']) {
+                unset($table['cols'][$key]);
+                continue;
+            }
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
@@ -118,7 +122,8 @@ class TABLE
                 $totalRow = true;
             }
         }
-        $data = [
+        $table['cols'] = array_values($table['cols'] ?: []);
+        $data          = [
             "url"            => is_url($table['url']) ? $table['url'] : $_L['url']['own_form'] . $table['url'],
             "defaultToolbar" => [[
                 "title"    => "刷新",
@@ -289,6 +294,10 @@ class TABLE
         $laytpl  = $toolbar['laytpl'];
         $toolbar = $toolbar['toolbar'];
         foreach ($tree['cols'] as $key => $val) {
+            if (!LCMS::SUPER() && $val['issuper']) {
+                unset($tree['cols'][$key]);
+                continue;
+            }
             if ($val['toolbar']) {
                 $colsbar = self::colsbar($val['toolbar']);
                 $laytpl .= $colsbar['laytpl'];
@@ -298,7 +307,8 @@ class TABLE
                 $totalRow = true;
             }
         }
-        $data = [
+        $tree['cols'] = array_values($tree['cols'] ?: []);
+        $data         = [
             "url"            => is_url($tree['url']) ? $tree['url'] : $_L['url']['own_form'] . $tree['url'],
             "defaultToolbar" => [[
                 "title"    => "刷新",

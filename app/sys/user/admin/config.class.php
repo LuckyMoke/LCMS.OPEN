@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2024-09-21 22:12:56
+ * @LastEditTime: 2025-01-13 12:52:16
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -194,12 +194,12 @@ class config extends adminbase
                 ];
                 $readme = [
                     "user"    => [
-                        ["layui" => "editor", "title" => "内容",
+                        ["layui" => "editor",
                             "name"   => "LC[readme][user]",
                             "value"  => $config['readme']['user']],
                     ],
                     "privacy" => [
-                        ["layui" => "editor", "title" => "内容",
+                        ["layui" => "editor",
                             "name"   => "LC[readme][privacy]",
                             "value"  => $config['readme']['privacy']],
                     ],

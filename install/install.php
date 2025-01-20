@@ -26,10 +26,10 @@ require_once PATH_CORE_CLASS . "sqlpdo.class.php";
 is_file(PATH_CORE . "install.lock") && ajaxout(404, "此框架已经安装过了，如需重新安装，请手动删除 /core/install.lock 文件");
 PHP_SELF != "/install/install.php" && ajaxout(404, "本程序无法在二级目录下安装");
 switch ($_GET['action']) {
-    case 'readme':
+    case 'step1':
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));
         break;
-    case 'dirs':
+    case 'step2':
         $code = 1;
         $dirs = [
             [
@@ -107,13 +107,13 @@ switch ($_GET['action']) {
             "dirs"   => $dirs,
         ]);
         break;
-    case 'mysql-check':
+    case 'step3':
         $db   = $_POST['db'];
         $mydb = new SQLPDO("mysql:host={$db['host']};port={$db['port']};charset=utf8mb4", $db['user'], $db['pass']);
         $ver  = $mydb->version();
         $ver && ajaxout(1, "success", "", $mydb->version());
         break;
-    case 'mysql':
+    case 'step4':
         $db   = $_POST['db'];
         $mydb = new SQLPDO("mysql:host={$db['host']};port={$db['port']};charset=utf8mb4", $db['user'], $db['pass']);
         //创建数据库
