@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-29 10:56:17
+ * @LastEditTime: 2025-02-05 16:36:40
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -43,7 +43,7 @@ class admin extends adminbase
                     "cate" => "admin",
                     "lcms" => true,
                 ]);
-                $form = array(
+                $form = [
                     ["layui" => "input", "title" => "系统名称",
                         "name"   => "LC[title]",
                         "value"  => $config['title'],
@@ -83,7 +83,7 @@ class admin extends adminbase
                         "name"   => "LC[gonggao]",
                         "value"  => $config['gonggao']],
                     ["layui" => "btn", "title" => "立即保存"],
-                );
+                ];
                 require LCMS::template("own/admin_index");
                 break;
         }
@@ -217,11 +217,11 @@ class admin extends adminbase
                 ajaxout(1, "success", "", $loginkey);
                 break;
             default:
-                $config = LCMS::config(array(
+                $config = LCMS::config([
                     "type" => "sys",
                     "cate" => "admin",
                     "lcms" => true,
-                ));
+                ]);
                 $form = [
                     ["layui" => "title", "title" => "后台安全"],
                     ["layui"    => "input_sort", "title" => "后台目录",

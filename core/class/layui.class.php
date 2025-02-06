@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-01-14 16:29:10
+ * @LastEditTime: 2025-01-23 18:10:26
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -388,10 +388,10 @@ class LAY
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-img{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}' data-value='{$para['value']}'>
-                <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']}/>
+            <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block'>
+                <div class='layui-input-block lcms-form-upload-img' data-many='{$para['many']}' data-local='{$para['local']}' data-accept='{$para['accept']}' data-width='{$para['width']}' data-height='{$para['height']}' data-maxwidth='{$para['maxwidth']}' data-maxheight='{$para['maxheight']}' data-value='{$para['value']}'>
+                    <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']}/>
                     <div class='layui-upload-list lcms-form-upload-img-list' x-ref='imglist'>
                         <template x-for='(item,index) in imgList' :key='item.original'>
                             <div class='_li'><a :href='item.src' target='_blank'><img class='layui-upload-img' :src='item.isload?item.src:``' :data-lazy='item.src' :class='item.isload?``:`lazyload`' @load='onImgload(index)' /></a><div class='_icon'><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div></div>
@@ -426,10 +426,10 @@ class LAY
         }
         $para['tips'] = $para['tips'] ? "<div class='lcms-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-upload-file{$para['cname']}' pane data-many='{$para['many']}' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' data-value='{$para['value']}'>
-                <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']} />
+            <div class='layui-form-item{$para['cname']}' pane>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block'>
+                <div class='layui-input-block lcms-form-upload-file' data-many='{$para['many']}' data-local='{$para['local']}' data-mime='{$para['mime']}' data-accept='{$para['accept']}' data-value='{$para['value']}'>
+                    <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']} />
                     <div class='lcms-form-upload-file-list' x-ref='filelist'>
                         <template x-for='(item,index) in fileList' :key='item.original'>
                             <div class='_li'><a :href='item.src' target='_blank' :title='item.original' x-text='item.original'></a><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div>
@@ -485,9 +485,9 @@ class LAY
         $para         = self::start($para);
         $para['tips'] = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
         $html         = "
-            <div class='layui-form-item lcms-form-icon{$para['cname']}'>
+            <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
-                <div class='layui-input-block'>
+                <div class='layui-input-block lcms-form-icon'>
                     <div class='layui-input-inline'>
                         <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
@@ -518,9 +518,9 @@ class LAY
         $para['tips']  = $para['tips'] ? " - {$para['tips']}" : "";
         $para['title'] = $para['title'] == "&nbsp;" ? "" : "<label class='layui-form-label' title='{$para['title']}'>{$para['title']}{$para['tips']}</label>";
         $html          = "
-            <div class='layui-form-item layui-form-text lcms-form-spec{$para['cname']}' data-name='{$para['name']}'{$para['value']}{$para['fields']}{$para['max']}{$para['maxattr']}>
+            <div class='layui-form-item layui-form-text{$para['cname']}'>
                 {$para['title']}
-                <div class='layui-input-block'>
+                <div class='layui-input-block lcms-form-spec' data-name='{$para['name']}'{$para['value']}{$para['fields']}{$para['max']}{$para['maxattr']}>
                     <div class='lcms-form-spec-box'>
                         <div class='lcms-form-spec-title'>
                             <table class='layui-table' lay-size='sm' x-show='specData.spec.length>0' x-cloak>

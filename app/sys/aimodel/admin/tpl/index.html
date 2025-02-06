@@ -2,13 +2,38 @@
 <template "ui/css" />
 <template "ui/iframe" />
 <template "ui/background-none" />
-<div class="aimodel">
-    <div class="aimodel-chat"></div>
-    <div class="layui-unselect aimodel-input">
-        <textarea placeholder="说点什么吧？[Enter发送、Shift+Enter换行]"></textarea>
-        <button><i class="layui-icon layui-icon-release"></i> 发送</button>
-        <div class="aimodel-plugins"></div>
+<template tplx="aimodel">
+    <div class="aimodel-html">
+        <div class="aimodel">
+            <div class="aimodel-chat">
+                <block x-for="chat in chatList" :key="`ID:${chat.id}`">
+                    <div class="layui-anim layui-anim-upbit" :class="chat.role=='user'?'aimodel-chat-right':'aimodel-chat-left'">
+                        <div class="aimodel-chat-reason" x-show="chat.reasoning_content?true:false">
+                            <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">深度思考<i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i></div>
+                            <div class="aimodel-chat-reason-body" x-html="chat.reasoning_content" x-show="chat.reasoning?false:true"></div>
+                        </div>
+                        <div class="aimodel-chat-body lcms-editor">
+                            <article x-html="chat.html"></article>
+                            <div class="aimodel-chatbtns" x-show="chat.btns?true:false">
+                                <block x-for="btn in chat.btns">
+                                    <span class="tips" :class="btn.class" :style="btn.style" x-text="btn.title" @click="clickChat(chat.id, btn)" @mouseenter="onHover(`enter`,btn)" @mouseleave="onHover(`leave`,btn)"></span>
+                                </block>
+                            </div>
+                        </div>
+                    </div>
+                </block>
+            </div>
+            <div class="layui-unselect aimodel-input">
+                <textarea placeholder="说点什么吧？[Enter发送、Shift+Enter换行]" x-model="askText" @keydown.prevent.enter="askGo"></textarea>
+                <button @click="askGo"><i class="layui-icon layui-icon-release"></i> 发送</button>
+                <div class="aimodel-plugins" x-show="pluList.length>0?true:false">
+                    <block x-for="plu in pluList">
+                        <span class="layui-unselect tips" x-text="plu.title" @click="clickPlu(plu)" @mouseenter="onHover(`enter`,plu)" @mouseleave="onHover(`leave`,plu)"></span>
+                    </block>
+                </div>
+            </div>
+        </div>
+        <div class="layui-unselect aimodel-top-info" x-show="topInfo?true:false" x-html="topInfo"></div>
     </div>
-</div>
-<div class="layui-unselect aimodel-top-info"></div>
+</template>
 <template "ui/foot" />

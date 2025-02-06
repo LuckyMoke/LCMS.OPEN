@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-01-06 18:15:38
+ * @LastEditTime: 2025-02-05 17:50:11
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -472,7 +472,7 @@ class web extends adminbase
                             ["title" => "智普", "value" => "zhipu", "tab" => "type_zhipu"],
                             ["title" => "Kimi", "value" => "kimi", "tab" => "type_kimi"],
                             ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "type_siliconcloud"],
-                            ["title" => "DeepSeek", "value" => "kimi", "tab" => "type_deepseek"],
+                            ["title" => "DeepSeek", "value" => "deepseek", "tab" => "type_deepseek"],
                             ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
                         ]],
                 ];
