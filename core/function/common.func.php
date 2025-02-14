@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-11-27 14:58:14
+ * @LastEditTime: 2025-02-12 12:20:13
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -496,19 +496,19 @@ function filterEmoji($str)
  */
 function rmb($rmb)
 {
-    $cnums           = array("零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖");
-    $cnyunits        = array("圆", "角", "分");
-    $grees           = array("拾", "佰", "仟", "万", "拾", "佰", "仟", "亿");
+    $cnums           = ["零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"];
+    $cnyunits        = ["圆", "角", "分"];
+    $grees           = ["拾", "佰", "仟", "万", "拾", "佰", "仟", "亿"];
     list($ns1, $ns2) = explode(".", $rmb, 2);
-    $ns2             = array_filter(array($ns2[1], $ns2[0]));
-    $ret             = array_merge($ns2, array(implode("", _cny_map_unit(str_split($ns1), $grees)), ""));
+    $ns2             = array_filter([$ns2[1], $ns2[0]]);
+    $ret             = array_merge($ns2, [implode("", _cny_map_unit(str_split($ns1), $grees)), ""]);
     $ret             = implode("", array_reverse(_cny_map_unit($ret, $cnyunits)));
     return str_replace(array_keys($cnums), $cnums, $ret);
 }
 function _cny_map_unit($list, $units)
 {
     $ul = count($units);
-    $xs = array();
+    $xs = [];
     foreach (array_reverse($list) as $x) {
         $l = count($xs);
         if ($x != "0" || !($l % 4)) {
@@ -615,6 +615,10 @@ function realhost($host = "")
  */
 function roothost($domain = "")
 {
+    if (in_string($domain, "://")) {
+        $domain = parse_url($domain);
+        $domain = $domain['host'];
+    }
     if (is_ip($domain)) {
         $host = $domain;
     } elseif ($domain) {
@@ -623,10 +627,6 @@ function roothost($domain = "")
                 $host = $domain;
                 break;
             default:
-                if (in_string($domain, "://")) {
-                    $domain = parse_url($domain);
-                    $domain = $domain['host'];
-                }
                 $match = explode(".", $domain);
                 $match = array_slice($match, -3);
                 $match = array_reverse($match);
@@ -1274,7 +1274,7 @@ if (!function_exists('array_key_first')) {
      * @param array $array
      * @return string|null
      */
-    function array_key_first($array = array())
+    function array_key_first($array = [])
     {
         if (count($array)) {
             reset($array);

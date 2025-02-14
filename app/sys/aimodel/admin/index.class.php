@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2025-01-06 18:13:06
+ * @LastEditTime: 2025-02-12 16:58:38
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -60,7 +60,7 @@ class index extends adminbase
                 }
                 $result = [
                     "api"   => "https://qianfan.baidubce.com/v2/chat/completions",
-                    "model" => "ernie-speed-8k",
+                    "model" => $PLG['model'],
                     "token" => $token['token'],
                 ];
                 break;

@@ -2,6 +2,7 @@
     <template "ui/head" />
     <script type="text/javascript">if(self!=top&&parent.document.getElementById("APPNAV")){document.write('<style>#APPNAV,#APPTAB,#LFOOT {display:none !important;}#APPIFRAME{margin:0;padding:0 !important;height:100%;background:#ffffff;}</style>')};</script>
     <else />
+    <php>ob_clean();</php>
     <!DOCTYPE html>
     <html>
     <head>
@@ -18,7 +19,7 @@
     </head>
     <body style="background:#ffffff;">
 </if>
-<style type="text/css">@font-face {font-family:LCMSX-FONT;src:url(/public/static/fonts/X.woff2?lcmsver={{$_L['config']['ver']}})format('woff2')}.LCMSX-FONT{font-family:LCMSX-FONT;user-select:none}body,html{overflow:hidden!important}.LCMSX{display:flex;align-items:center;justify-content:center;text-align:center;position:relative;box-sizing:border-box;opacity:0}.LCMSX .icon{margin:0 auto;width:150px;height:150px}.LCMSX .icon img{display:block;width:100%;height:100%}.LCMSX .icon sup{position:absolute;height:24px;line-height:24px;padding:0 5px;top:auto;bottom:0;left:80%;font-size:16px;background:#606266;word-break:keep-all;color:#fff;border-radius:5px;cursor:default}.LCMSX .title{box-sizing:border-box;color:#303133;font-size:30px;line-height:36px;padding-top:10px}.LCMSX .msg{color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;word-break:break-all}.LCMSX .msg a{color:#f56c6c;text-decoration:underline}.LCMSX .msg a:hover{color:#d62020}.LCMSX .msg img{max-width:100%}.layui-btn-group{margin:50px 0 30px 0}@media screen and (max-width:768px){.LCMSX .icon{width:100px;height:100px}.LCMSX .title{line-height:28px;font-size:24px}.LCMSX .icon sup{height:20px;line-height:20px;font-size:12px}.layui-btn-group{margin:20px 0 20px 0}}</style>
+<style type="text/css">@font-face {font-family:LCMSX-FONT;src:url(/public/static/fonts/X.woff2?lcmsver={{$_L['config']['ver']}})format('woff2')}.LCMSX-FONT{font-family:LCMSX-FONT;user-select:none}body,html{overflow:hidden!important}.LCMSX{display:flex;align-items:center;justify-content:center;text-align:center;position:relative;box-sizing:border-box;opacity:0}.LCMSX .icon{margin:0 auto;width:150px;height:150px}.LCMSX .icon img{display:block;width:100%;height:100%;user-select:none}.LCMSX .icon sup{position:absolute;height:24px;line-height:24px;padding:0 5px;top:auto;bottom:0;left:80%;font-size:16px;background:#606266;word-break:keep-all;color:#fff;border-radius:5px;cursor:default}.LCMSX .title{box-sizing:border-box;color:#303133;font-size:30px;line-height:36px;padding-top:10px}.LCMSX .msg{color:#909399;font-size:14px;line-height:1.5;padding:10px 20px;max-width:400px;margin:0 auto;word-break:break-all}.LCMSX .msg a{color:#f56c6c;text-decoration:underline}.LCMSX .msg a:hover{color:#d62020}.LCMSX .msg img{max-width:100%}.layui-btn-group{margin:50px 0 30px 0}@media screen and (max-width:768px){.LCMSX .icon{width:100px;height:100px}.LCMSX .title{line-height:28px;font-size:24px}.LCMSX .icon sup{height:20px;line-height:20px;font-size:12px}.layui-btn-group{margin:20px 0 20px 0}}</style>
 <div class="LCMSX">
     <div>
         <div class="icon">
