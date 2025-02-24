@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2025-02-12 16:58:38
+ * @LastEditTime: 2025-02-21 18:04:04
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -64,39 +64,9 @@ class index extends adminbase
                     "token" => $token['token'],
                 ];
                 break;
-            case 'spark':
-                $result = [
-                    "api"       => "spark-api.xf-yun.com",
-                    "model"     => $PLG['model'],
-                    "appid"     => $PLG['appid'],
-                    "apisecret" => $PLG['apisecret'],
-                    "apikey"    => $PLG['apikey'],
-                ];
-                break;
-            case 'qianwen':
+            case 'aliyun':
                 $result = [
                     "api"   => "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-                    "model" => $PLG['model'],
-                    "token" => $PLG['token'],
-                ];
-                break;
-            case 'baichuan':
-                $result = [
-                    "api"   => "https://api.baichuan-ai.com/v1/chat/completions",
-                    "model" => $PLG['model'],
-                    "token" => $PLG['token'],
-                ];
-                break;
-            case 'zhipu':
-                $result = [
-                    "api"   => "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-                    "model" => $PLG['model'],
-                    "token" => $PLG['token'],
-                ];
-                break;
-            case 'kimi':
-                $result = [
-                    "api"   => "https://api.moonshot.cn/v1/chat/completions",
                     "model" => $PLG['model'],
                     "token" => $PLG['token'],
                 ];

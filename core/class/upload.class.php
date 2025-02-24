@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-11-26 16:38:59
+ * @LastEditTime: 2025-02-22 18:40:19
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,6 +13,7 @@ class UPLOAD
     private static $ONAME;
     private static $MIME;
     private static $SIZE;
+    private static $TYPE;
     /**
      * @description: 文件上传操作
      * @param string $dir
@@ -31,6 +32,16 @@ class UPLOAD
         ]);
         if ($dir == "image" || $dir == "file" || $dir == "user") {
             $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
+        }
+        $osscfg = $_L['plugin']['oss'];
+        if (in_array($osscfg['type'], [
+            "qiniu", "tencent", "aliyun", "baidu",
+        ])) {
+            self::$TYPE = $osscfg['type'];
+        } elseif ($force || $force > 0) {
+            self::$TYPE = "local";
+        } else {
+            self::$TYPE = "local";
         }
         if (makedir($dir)) {
             if (!is_array($form) && is_url($form)) {
@@ -107,9 +118,8 @@ class UPLOAD
             return $return;
         }
         //云存储处理
-        $osscfg = $_L['plugin']['oss'];
         if ($return['src']) {
-            switch ($osscfg['type']) {
+            switch (self::$TYPE) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
                     $OSS = new QiniuOSS($osscfg['qiniu']);
@@ -246,7 +256,7 @@ class UPLOAD
                 imagefill($thumb, 0, 0, $bgcolor);
                 imagecopyresampled($thumb, $src, 0, 0, 0, 0, $thumbx, $thumby, $srcwh[0], $srcwh[1]);
             }
-            if ($cfgwat['on'] > 0) {
+            if ($cfgwat['on'] > 0 && self::$TYPE == "local") {
                 //如果要加水印
                 if (!$thumb) {
                     $thumb = $src;

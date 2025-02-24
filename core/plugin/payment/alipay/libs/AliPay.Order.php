@@ -95,6 +95,46 @@ class AliPayOrder
         }
     }
     /**
+     * @description: 小程序下单
+     * @param {*}
+     * @return string
+     */
+    public function Mini()
+    {
+        $input = [
+            'method'      => 'alipay.trade.create',
+            'app_id'      => $this->cfg['appid'],
+            'format'      => $this->cfg['format'],
+            'charset'     => $this->cfg['charset'],
+            'sign_type'   => $this->cfg['sign_type'],
+            'timestamp'   => $this->cfg['timestamp'],
+            'version'     => $this->cfg['version'],
+            'notify_url'  => $this->cfg['notify_url'],
+            'biz_content' => json_encode([
+                'out_trade_no' => $this->order['order_no'],
+                'total_amount' => $this->order['pay'],
+                'subject'      => $this->order['body'],
+                'product_code' => "JSAPI_PAY",
+                "op_app_id"    => $this->cfg['appid'],
+            ] + ($this->order['biz_content'] ?: [])),
+        ];
+        $input  = AliPayApi::Sign($this->cfg, $input);
+        $result = json_decode(HTTP::request([
+            "type"    => "POST",
+            "url"     => $this->api,
+            "data"    => $input,
+            "build"   => true,
+            "headers" => [
+                "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+            ],
+        ]), true);
+        if ($result && $result['alipay_trade_create_response']) {
+            return $result['alipay_trade_create_response'];
+        } else {
+            LCMS::X(401, "请求失败");
+        }
+    }
+    /**
      * @description: App下单
      * @param {*}
      * @return string

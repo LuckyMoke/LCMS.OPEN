@@ -84,6 +84,9 @@ class AutoPay
             case 'app':
                 return $AliPay->App();
                 break;
+            case 'mini':
+                return $AliPay->Mini();
+                break;
             case 'pc':
                 $result = $AliPay->Jsapi("pc");
                 require LCMS::template(self::$tpl . "pc");
