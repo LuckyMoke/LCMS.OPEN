@@ -64,8 +64,7 @@ class AutoPay
         $huabei = $huabei[0];
         switch ($order['paytype']) {
             case 'h5':
-            case 'jsapi':
-                $result = $AliPay->Jsapi();
+                $result = $AliPay->Pc();
                 $UA     = $_SERVER['HTTP_USER_AGENT'];
                 if (strpos($UA, 'MicroMessenger') !== false || strpos($UA, 'QQ/') !== false) {
                     $openInBrowser = true;
@@ -84,11 +83,12 @@ class AutoPay
             case 'app':
                 return $AliPay->App();
                 break;
+            case 'jsapi':
             case 'mini':
-                return $AliPay->Mini();
+                return $AliPay->Jsapi();
                 break;
             case 'pc':
-                $result = $AliPay->Jsapi("pc");
+                $result = $AliPay->Pc("pc");
                 require LCMS::template(self::$tpl . "pc");
                 break;
         }

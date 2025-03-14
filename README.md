@@ -48,8 +48,6 @@
 
 盘企CMS-SaaS建站系统官网 [https://ourcms.cn/](https://ourcms.cn/)
 
-运城盘石科技官网 [https://www.panshi18.com/](https://www.panshi18.com/)
-
 盘企®是运城市盘石网络科技有限公司的注册商标
 
 盘企LCMS WEB应用开发系统著作权 2020SR0315108

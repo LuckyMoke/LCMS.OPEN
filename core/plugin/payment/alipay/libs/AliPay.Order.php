@@ -18,7 +18,7 @@ class AliPayOrder
      * @param string $paytype
      * @return {*}
      */
-    public function Jsapi($paytype = "h5")
+    public function Pc($paytype = "h5")
     {
         if ($paytype === "pc") {
             $method       = "alipay.trade.page.pay";
@@ -99,7 +99,7 @@ class AliPayOrder
      * @param {*}
      * @return string
      */
-    public function Mini()
+    public function Jsapi()
     {
         $input = [
             'method'      => 'alipay.trade.create',

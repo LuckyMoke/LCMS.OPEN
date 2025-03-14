@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-12-07 22:26:47
+ * @LastEditTime: 2025-02-27 12:09:58
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -49,7 +49,13 @@ class LCMS
      */
     public static function X($code = 403, $msg = "拒绝访问", $go = "")
     {
-        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+        if (
+            $_SERVER['HTTP_X_LCMS_KEY'] ||
+            $_SERVER['HTTP_X_LCMS_TOKEN'] ||
+            $_SERVER['HTTP_X_LCMS_FORMAT'] == "json" ||
+            $_SERVER['CONTENT_TYPE'] == "application/json" ||
+            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+        ) {
             ajaxout(0, $msg);
         } else {
             global $_L;
@@ -73,7 +79,13 @@ class LCMS
      */
     public static function Y($code = 200, $msg = "处理完成", $go = "")
     {
-        if ($_SERVER['CONTENT_TYPE'] === "application/json" || (strcasecmp($_SERVER["HTTP_X_REQUESTED_WITH"], "xmlhttprequest") === 0)) {
+        if (
+            $_SERVER['HTTP_X_LCMS_KEY'] ||
+            $_SERVER['HTTP_X_LCMS_TOKEN'] ||
+            $_SERVER['HTTP_X_LCMS_FORMAT'] == "json" ||
+            $_SERVER['CONTENT_TYPE'] == "application/json" ||
+            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+        ) {
             ajaxout(1, $msg);
         } else {
             global $_L;

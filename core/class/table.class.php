@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-01-12 17:35:03
+ * @LastEditTime: 2025-02-27 13:50:06
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -109,6 +109,9 @@ class TABLE
         $toolbar = $toolbar['toolbar'];
         $search  = self::search($table['search']);
         foreach ($table['cols'] as $key => $val) {
+            if ($val['field'] == "do") {
+                $table['cols'][$key]['field'] = "";
+            }
             if (!LCMS::SUPER() && $val['issuper']) {
                 unset($table['cols'][$key]);
                 continue;
@@ -294,6 +297,9 @@ class TABLE
         $laytpl  = $toolbar['laytpl'];
         $toolbar = $toolbar['toolbar'];
         foreach ($tree['cols'] as $key => $val) {
+            if ($val['field'] == "do") {
+                $tree['cols'][$key]['field'] = "";
+            }
             if (!LCMS::SUPER() && $val['issuper']) {
                 unset($tree['cols'][$key]);
                 continue;
@@ -361,7 +367,7 @@ class TABLE
                             }
                             $val['text']        = $val['text'] ?: "启用|关闭";
                             $checked            = $val['value'] > 0 ? "checked" : "";
-                            $data[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' title='{$val['text']}' {$checked}>";
+                            $data[$index][$key] = "<input type='checkbox' data-url='{$val['url']}&id={$list['id']}' data-timeout='{$val['timeout']}' lay-skin='switch' lay-filter='LCMSTABLE_SWITCH' title='{$val['text']}' {$checked} />";
                             break;
                         case 'image':
                             $val['src']         = $val['src'] ? explode("|", $val['src'])[0] : "";
@@ -387,7 +393,7 @@ class TABLE
                             if (preg_match("/^[a-zA-Z0-9-_]+$/", $val['icon'])) {
                                 $val['icon'] = "<i class='layui-icon layui-icon-{$val['icon']} layui-font-14'> </i>";
                             } else {
-                                $val['icon'] = "<text class='layui-font-14 lcms-table-td-icon'>{$val['icon']}</text>";
+                                $val['icon'] = "<text class='layui-font-14 lcms-table-td-icon' style='display:none'>{$val['icon']}</text>";
                             }
                             $data[$index][$key] = "<a{$val['cname']} href=\"{$val['url']}\"{$val['target']}{$val['color']}{$val['onclick']}>{$val['icon']}{$val['title']}</a>";
                             break;
