@@ -1,31 +1,30 @@
 <template "ui/head_base" />
 <if $_L['APP']['menu']>
     <div id="APPIFRAME" style="padding-left:150px">
-        <div id="APPNAV">
-            <div class="mobile">
-                <div class="background"></div>
-                <div class="button">
-                    <i class="layui-icon layui-icon-right"></i>
+        <template tplx="lcms_head_appnav" data-app="{{htmlspecialchars(json_encode($_L['APP']))}}">
+            <div id="APPNAV">
+                <div class="mobile">
+                    <div class="background" :style="css.background" @click="onBgClick"></div>
+                    <div class="button" :class="css.button" @click="onBtnClick">
+                        <i class="layui-icon layui-icon-right"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="menu">
-                <div class="title">
-                    <i class="layui-icon layui-icon-spread-left"></i>
-                    {{$_L['APP']['info']['title_sort']?:"子菜单"}}
+                <div class="menu" :style="css.menu">
+                    <div class="title">
+                        <i class="layui-icon layui-icon-spread-left"></i>
+                        <span x-text="title"></span>
+                    </div>
+                    <ul>
+                        <block x-for="menu in menus" :key="menu.cname">
+                            <li :class="c==menu.cname?`active`:``">
+                                <a :href="menu.href" :target="menu.target||`_self`" :title="menu.title" x-html="`${menu.title}${menu.children.length>0&&css.button!='active'?'<i class=\'layui-icon layui-icon-right\'></i>':''}`" @click.prevent="onAClick(menu)" x-on:mouseenter="onAHover(`enter`,menu)" x-on:mouseleave="onAHover(`leave`,menu)"></a>
+                            </li>
+                        </block>
+                    </ul>
                 </div>
-                <ul>
-                    <loop $_L['APP']['menu'],$val,$cname>
-                        <li class="{{$_L['form']['c']==$cname?'active':''}}">
-                            <if $val['href']>
-                                <a href="{{$val['href']}}" target="{{$val['target']?:'_self'}}" title="{{$val['title']}}">{{$val['title']}}</a>
-                                <else/>
-                                <a href="{{$_L['APP']['url'][$cname]}}" title="{{$val['title']}}">{{$val['title']}}</a>
-                            </if>
-                        </li>
-                    </loop>
-                </ul>
+                <dl class="menu2"></dl>
             </div>
-        </div>
+        </template>
         <else />
         <div id="APPIFRAME" style="padding-left:0">
 </if>

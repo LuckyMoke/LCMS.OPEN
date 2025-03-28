@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2024-11-15 11:47:30
+ * @LastEditTime: 2025-03-22 18:03:20
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -28,12 +28,12 @@ class optimize extends adminbase
                 $data = array_map(function ($table) {
                     return [
                         "Name"         => $table['Name'],
-                        "Engine"       => $table['Engine'],
-                        "Collation"    => $table['Collation'],
-                        "Rows"         => $table['Rows'],
+                        "Engine"       => $this->checkRepair($table['Engine']),
+                        "Collation"    => $this->checkRepair($table['Collation']),
+                        "Rows"         => $this->checkRepair($table['Rows']),
                         "Data_length"  => getunit($table['Data_length']),
                         "Index_length" => getunit($table['Index_length']),
-                        "Data_free"    => $table['Data_free'],
+                        "Data_free"    => $table['Data_free'] ?: 0,
                         "Comment"      => $table['Comment'],
                     ];
                 }, $data);
@@ -48,8 +48,11 @@ class optimize extends adminbase
                 $LC || ajaxout(0, "请选择需要操作的表");
                 $names = [];
                 foreach ($LC as $table) {
-                    if ($table['Engine'] == "MyISAM" || $LF['action'] == "truncate") {
-                        $info     = sql_query(strtoupper($LF['action']) . " TABLE `{$table['Name']}`");
+                    if (
+                        $table['Engine'] == "MyISAM" ||
+                        $LF['action'] == "repair"
+                    ) {
+                        $info     = sql_query(strtoupper($LF['action']) . " TABLE `{$table['Name']}`;");
                         $result[] = array_merge([
                             "Msg_type" => "status",
                             "Msg_text" => "OK",
@@ -143,12 +146,18 @@ class optimize extends adminbase
                             "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认检查数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
+                        ["title"  => "修复", "event" => "ajax",
+                            "url"     => "index&action=repair",
+                            "color"   => "primary",
+                            "timeout" => 0,
+                            "tips"    => "确认修复数据表？<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                         ["title"  => "转换", "event" => "ajax",
                             "url"     => "index&action=alter",
                             "color"   => "primary",
                             "timeout" => 0,
                             "tips"    => "确认转换数据表？表类型会在InnoDB与MyISAM之间互相转换！<span style=\"color:red\">请先做好数据库备份！！！</span>"],
                     ],
+                    "done"    => "checkRepair",
                 ];
                 if ($_L['developer']['lite'] === 1) {
                     unset($table['toolbar']);
@@ -156,5 +165,17 @@ class optimize extends adminbase
                 require LCMS::template("own/optimize/index");
                 break;
         }
+    }
+    private function checkRepair($string = "")
+    {
+        $text = '<span class="need-repair" style="color:red">疑似损坏</span>';
+        if (
+            $string === "null" ||
+            $string === null ||
+            $string === ""
+        ) {
+            return $text;
+        }
+        return $string;
     }
 }

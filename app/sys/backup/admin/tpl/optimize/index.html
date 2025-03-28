@@ -3,5 +3,6 @@
 <div class="optimize" style="display:none;height:100%">
     <template "ui/terminal" />
 </div>
+<script type="text/javascript">var checkRepair=function(){if($(".need-repair").length>0){layer.alert(`<span style="color:red">检测到数据表疑似损坏，请选择损坏的表，点击列表最上方的“修复”按钮尝试进行修复。</span><br><br>如果修复无效，请使用宝塔里的phpmyadmin、或第三方数据库管理软件进行修复！（自行百度怎么修复表）<br><br>表损坏可能的原因：1、服务器被攻击而宕机；2、网站被恶意大量扫描请求导致服务器宕机；3、其它原因导致的服务器宕机。`,{title:"友情提示",area:"350px"})}};</script>
 <script type="text/javascript" onload>let showResult;LCMS.util.tplx("terminal",{mounted(){this.$terminal=this.$store.terminal;showResult=tables=>{LCMS.util.iframe({title:"操作记录",type:1,area:["500px","500px"],content:$(".optimize"),success:()=>{for(let i=0;i<tables.length;i++){const table=tables[i];let text={text:table.Table,info:`${table.Msg_type}:${table.Msg_text}`};switch(table.Msg_type){case"warning":text.color="warning";break;case"error":text.color="danger";break}this.$terminal.addText(text)}},end:()=>{LCMS.plugin.router(LCMS.url.now)}})}}});</script>
 <template "ui/foot" />

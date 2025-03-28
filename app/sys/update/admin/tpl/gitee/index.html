@@ -12,7 +12,6 @@
                         <i style="font-size:12px;color:#F56C6C" x-show="sysdata.ref=='beta'">（点击更新设置可切换正式版）</i>
                     </p>
                     <p>最新版本：<text x-text="lastdata.version"></text></p>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" @click="openSetting">更新设置</button>
                     <a class="layui-btn layui-btn-warm layui-btn-sm" href="https://gitee.com/luckymoke/LCMS.OPEN/releases" target="_blank">历史日志</a>
                     <button class="layui-btn layui-btn-sm" x-show="lastdata.logs.length>0" @click="startUpdate">立即更新</button>
                 </div>
