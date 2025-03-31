@@ -31,9 +31,13 @@ class AliyunApi
             $querys = http_build_query($querys);
             $querys = trim($querys, "=");
         }
-        $args['uri']                             = $urls['path'];
-        $args['query']                           = $querys;
-        $args['headers']['Host']                 = $urls['host'];
+        $args['uri']   = $urls['path'];
+        $args['query'] = $querys;
+        if (
+            $_SERVER["HTTP_X_REQUESTED_WITH"] != "XMLHttpRequest"
+        ) {
+            $args['headers']['Host'] = $urls['host'];
+        }
         $args['headers']['x-oss-date']           = $utctime;
         $args['headers']['x-oss-content-sha256'] = "UNSIGNED-PAYLOAD";
         $headers                                 = "";
