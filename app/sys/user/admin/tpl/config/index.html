@@ -1,16 +1,16 @@
 <template "ui/head" />
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action=save" method="post" target="_self">
     <ui form($form['base']) />
-    <div class="layui-tab layui-tab-card">
-        <ul class="layui-tab-title">
+    <div class="layui-tabs layui-tabs-card layui-panel">
+        <ul class="layui-tabs-header">
             <li class="layui-this">用户协议</li>
             <li>隐私声明</li>
         </ul>
-        <div class="layui-tab-content">
-            <div class="layui-tab-item layui-show">
+        <div class="layui-tabs-body">
+            <div class="layui-tabs-item layui-show">
                 <ui form($readme['user']) />
             </div>
-            <div class="layui-tab-item">
+            <div class="layui-tabs-item">
                 <ui form($readme['privacy']) />
             </div>
         </div>

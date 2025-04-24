@@ -1,0 +1,5 @@
+<div class="login-tab">
+    <loop $page['tab'],$tab,$index>
+        <a href="javascript:;" :class="tabNow==`{{$tab['by']}}`?'active':''" @click="changeTab(`{{$tab['by']}}`)">{{$tab['title']}}</a>
+    </loop>
+</div>

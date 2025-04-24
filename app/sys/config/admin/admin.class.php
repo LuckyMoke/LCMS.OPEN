@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-02-05 16:36:40
+ * @LastEditTime: 2025-04-15 12:12:41
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,10 +23,6 @@ class admin extends adminbase
         LCMS::SUPER() || LCMS::X(403, "此功能仅超级管理员可用");
         switch ($LF['action']) {
             case 'save':
-                if (in_string($LC['domain'], ["http://", "https://"])) {
-                    $LC['domain'] = parse_url($LC['domain'])['host'];
-                }
-                $LC['domain'] = realhost($LC['domain']);
                 LCMS::config([
                     "do"    => "save",
                     "type"  => "sys",
@@ -35,7 +31,7 @@ class admin extends adminbase
                     "form"  => $LC,
                     "lcms"  => true,
                 ]);
-                ajaxout(1, "保存成功");
+                ajaxout(1, "保存成功", "reload-top");
                 break;
             default:
                 $config = LCMS::config([
@@ -70,6 +66,12 @@ class admin extends adminbase
                         "width"  => 144,
                         "height" => 144,
                         "tips"   => "请上传png格式图片"],
+                    ["layui" => "upload", "title" => "后台LOGO",
+                        "name"   => "LC[logo]",
+                        "value"  => $config['logo'],
+                        "width"  => 220,
+                        "height" => 72,
+                        "tips"   => "强制尺寸220*72"],
                     ["layui" => "upload", "title" => "登录LOGO",
                         "name"   => "LC[login_logo]",
                         "value"  => $config['login_logo'],

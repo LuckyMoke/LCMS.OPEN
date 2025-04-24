@@ -3,7 +3,6 @@
 <template "ui/css" />
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}index&action={{$isadmin?'power-save':'save'}}" method="post" target="_self">
     <input type="hidden" name="token" value="{{$LF['token']}}" />
-    <input type="hidden" name="LC[uid]" value="{{$level['uid']?$level['uid']:$_L['LCMSADMIN']['id']}}" />
     <input type="hidden" name="level" value="{{$hide}}" />
     <ui form($form) />
     <div class="{{$isadmin?'hidden custom1':''}}">

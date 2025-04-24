@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2025-01-13 12:52:16
+ * @LastEditTime: 2025-04-23 12:59:11
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -24,6 +24,9 @@ class config extends adminbase
         if (!LCMS::SUPER() && $CFG['login']['mode'] == 1) {
             LCMS::X(403, "此功能仅超级管理员可用");
         }
+        if ($_L['LCMSADMIN']['lcms'] != "0") {
+            LCMS::X(403, "此功能仅管理员可用");
+        }
     }
     /**
      * @用户注册设置:
@@ -33,25 +36,16 @@ class config extends adminbase
     public function doindex()
     {
         global $_L, $LF, $LC, $CFG;
-        if ($_L['LCMSADMIN']['lcms'] != "0") {
-            LCMS::X(403, "此功能仅管理员可用");
-        }
         switch ($LF['action']) {
             case 'save':
-                $level = explode("/", $LF['admin_level']);
-                if ($level[0] !== "" && $level[1] !== "") {
-                    $LC['reg']['lcms']  = $level[0];
-                    $LC['reg']['level'] = $level[1];
-                    LCMS::config([
-                        "do"   => "save",
-                        "type" => "sys",
-                        "cate" => "admin",
-                        "form" => $LC,
-                    ]);
-                    ajaxout(1, "保存成功");
-                } else {
-                    ajaxout(0, "保存失败，请选择默认权限");
-                }
+                $LC['reg']['lcms'] = $_L['ROOTID'];
+                LCMS::config([
+                    "do"   => "save",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "form" => $LC,
+                ]);
+                ajaxout(1, "保存成功");
                 break;
             default:
                 $config = LCMS::SUPER() ? $CFG : LCMS::config([
@@ -67,7 +61,8 @@ class config extends adminbase
                             "radio"  => [
                                 ["title" => "总平台", "value" => 1],
                                 ["title" => "子平台", "value" => 0],
-                            ]],
+                            ],
+                            "tips"   => "如果已经有用户了，中途修改登录模式会导致整个用户功能彻底乱套！"],
                         ["layui" => "radio", "title" => "单点登录",
                             "name"   => "LC[login][jwt]",
                             "value"  => $config['login']['jwt'] ?? 0,
@@ -75,14 +70,19 @@ class config extends adminbase
                                 ["title" => "开启", "value" => 1],
                                 ["title" => "关闭", "value" => 0],
                             ]],
-                        ["layui" => "html", "title" => "登录地址",
+                        ["layui" => "html", "title" => "登录页",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
                             "copy"   => true],
-                        ["layui" => "html", "title" => "注册地址",
+                        ["layui" => "html", "title" => "注册页",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
                             "copy"   => true],
+                        ["layui"      => "input", "title" => "自定义登录页",
+                            "name"        => "LC[login][url]",
+                            "value"       => $config['login']['url'],
+                            "placeholder" => "仅对普通用户生效",
+                            "tips"        => "仅对普通用户生效"],
                         ["layui" => "title", "title" => "登录封禁"],
                         ["layui"  => "slider", "title" => "错误次数",
                             "name"    => "LC[login][ban_count]",
@@ -174,10 +174,18 @@ class config extends adminbase
                             "tips"   => "禁止注册的手机号段",
                         ],
                         ["layui" => "selectN", "title" => "默认权限",
-                            "name"   => "admin_level",
-                            "value"  => "{$config['reg']['lcms']}/{$config['reg']['level']}",
+                            "name"   => "LC[reg][level]",
+                            "value"  => $config['reg']['level'],
                             "verify" => "required",
                             "url"    => "select&c=admin&action=admin-level",
+                        ],
+                        ["layui" => "radio", "title" => "默认展示",
+                            "name"   => "LC[reg][defaultapp]",
+                            "value"  => $config['reg']['defaultapp'] ?: 0,
+                            "radio"  => [
+                                ["title" => "欢迎页", "value" => 0],
+                                ["title" => "第一个应用", "value" => 1],
+                            ],
                         ],
                         ["layui"   => "checkbox", "title" => "注册字段",
                             "checkbox" => [
@@ -205,7 +213,7 @@ class config extends adminbase
                     ],
                 ];
                 if (!LCMS::SUPER() && $CFG['login']['mode'] < 1) {
-                    unset($form['base'][0]);
+                    unset($form['base'][1], $form['base'][23]);
                 }
                 require LCMS::template("own/config/index");
                 break;

@@ -1,81 +1,84 @@
 <template "own/default/public/head" />
-<div class="login-body">
-    <form action="{{$_L['url']['own']}}n=login&c=index&a=check" istoken="true">
-        <if $LF['action']=="band">
-            <input type="hidden" name="band" value="1" />
-        </if>
-        <input type="hidden" name="go" value="{{$LF['go']}}" />
-        <div class="login-input">
-            <input type="text" name="name" placeholder="账号/邮箱/手机号" required="required" />
-        </div>
-        <div class="login-input">
-            <input type="password" name="pass" placeholder="密码" required="required" />
-        </div>
-        <div class="login-input login-code">
-            <input type="number" name="code" placeholder="验证码" autocomplete="off" required="required" />
-            <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
-        </div>
-        <div class="login-readme">
-            <label>
-                <input type="checkbox" checked="checked" required="required" />
-                阅读并同意
-            </label>
-            <a href="javascript:;" type="user">《用户协议》</a>
-            <a href="javascript:;" type="privacy">《隐私声明》</a>
-        </div>
-        <button class="login-btn" type="submit">{{$page['btn']}}</button>
-    </form>
-</div>
-<if $UCFG['reg']['qrcode'] gt 0>
-    <div class="login-body hide">
-        <div class="login-qr-tips">
-            <if in_array($UCFG['reg']['on'],["mobile","email"])>
-                请先 <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>微信扫码绑定</span>
-                <else />
-                请使用微信扫码
-            </if>
-        </div>
-        <div class="login-qr login-qr-qrcode" data-url="{{$_L['url']['own_form']}}getqrcode">
-            <img src="" class="hide" />
-            <div class="login-refresh login-refresh-qrcode hide">
-                二维码已过期
-                <span>刷新</span>
+<template tplx="login_index">
+    <template "own/default/public/tab" />
+    <div class="login-body" x-show="tabNow=='name'||tabNow=='band'">
+        <form @submit.prevent="goLogin">
+            <div class="login-input">
+                <input type="text" name="name" placeholder="账号/邮箱/手机号" required x-model="form.name" />
+            </div>
+            <div class="login-input">
+                <input type="password" name="pass" placeholder="密码" required x-model="form.pass" />
+            </div>
+            <div class="login-input">
+                <input type="number" placeholder="验证码" autocomplete="off" maxlength="6" autocomplete="new-input" required x-model="form.code" />
+                <img :src="$store.login.captcha" title="点击刷新" @click="$store.login.resetCaptcha()" />
+            </div>
+            <div class="login-readme">
+                <label>
+                    <input type="checkbox" checked="checked" required />
+                    阅读并同意
+                </label>
+                <a href="javascript:;" @click="$store.login.openAgree('user','用户协议')">《用户协议》</a>
+                <a href="javascript:;" @click="$store.login.openAgree('privacy','隐私声明')">《隐私声明》</a>
+            </div>
+            <button class="login-btn" type="submit">{{$page['btn']}}</button>
+        </form>
+    </div>
+    <if $UCFG['reg']['qrcode'] gt 0>
+        <div class="login-body" x-show="tabNow=='wechat'">
+            <div class="login-qr-tips">
+                <if in_array($UCFG['reg']['on'],["mobile","email"])>
+                    请先 <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>第三方登录</span>
+                    <else />
+                    请使用微信扫码
+                </if>
+            </div>
+            <div class="login-qr">
+                <block x-if="qrcode.wechat">
+                    <img :src="`${LCMS.url.qrcode}${encodeURIComponent(qrcode.wechat)}`" />
+                </block>
+                <div class="login-refresh" x-show="reload.wechat">
+                    二维码已过期
+                    <span @click="reloadQrcode('wechat')">刷新</span>
+                </div>
             </div>
         </div>
-    </div>
-</if>
-<if $UCFG['reg']['qqlogin'] gt 0>
-    <div class="login-body hide">
-        <div class="login-qr-tips">
-            <if in_array($UCFG['reg']['on'],["mobile","email"])>
-                请先 <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>QQ绑定</span><br />
-            </if>
-            请使用手机QQ扫码，或直接点击QQ登录
-        </div>
-        <div class="login-qr login-qr-qqlogin" data-url="{{$_L['url']['own_form']}}getqrcode">
-            <img src="" class="hide" />
-            <div class="login-refresh login-refresh-qqlogin hide">
-                二维码已过期
-                <span>刷新</span>
+    </if>
+    <if $UCFG['reg']['qqlogin'] gt 0>
+        <div class="login-body" x-show="tabNow=='qq'">
+            <div class="login-qr-tips">
+                <if in_array($UCFG['reg']['on'],["mobile","email"])>
+                    请先 <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>，再使用 <span>第三方登录</span>
+                    <else />
+                    请使用手机QQ扫码，或直接点击QQ登录
+                </if>
+            </div>
+            <div class="login-qr login-qr-qqlogin">
+                <block x-if="qrcode.qq">
+                    <img :src="`${LCMS.url.qrcode}${encodeURIComponent(qrcode.qq)}`" />
+                </block>
+                <div class="login-refresh" x-show="reload.qq">
+                    二维码已过期
+                    <span @click="reloadQrcode('qq')">刷新</span>
+                </div>
+            </div>
+            <div style="text-align:center;padding:20px 0 0 0">
+                <a :href="qrcode.qq" target="_blank"><img src="/public/static/images/qqlogin.png" /></a>
             </div>
         </div>
-        <div style="text-align:center;padding:20px 0 0 0">
-            <a href="{{$_L['url']['own_form']}}getqrcode&name=qqlogin&click=true" target="_blank"><img src="data:image/png;base64,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" /></a>
-        </div>
-    </div>
-</if>
+    </if>
+</template>
 <if $LF['action']!="band">
     <div class="login-link">
         <if in_array($UCFG['reg']['on'],["mobile","email"])>
-            <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
+            <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
             <if $UCFG['reg']['findpass'] gt 0>
                 <div class="login-link-line"></div>
             </if>
         </if>
         <if $UCFG['reg']['findpass'] gt 0>
-            <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
+            <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
         </if>
     </div>
 </if>
-<script type="text/javascript">function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&alert("请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。");</script>
 <template "own/default/public/foot" />

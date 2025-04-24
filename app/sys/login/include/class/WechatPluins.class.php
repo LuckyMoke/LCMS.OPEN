@@ -16,9 +16,9 @@ class WechatPluins
                         session_name("LCMSSID");
                         session_id($keys[2]);
                         session_start();
-                        $url = $_SESSION['LOGINQRCODE'];
+                        $url = $_SESSION['LCMSLOGINQRGO'];
                         if ($url) {
-                            unset($_SESSION['LOGINQRCODE']);
+                            unset($_SESSION['LCMSLOGINQRGO']);
                             return [
                                 "msgtype" => "news",
                                 "news"    => [

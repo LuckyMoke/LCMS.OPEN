@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2024-09-23 12:13:28
+ * @LastEditTime: 2025-04-16 19:59:58
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -12,75 +12,38 @@ class PUB
     /**
      * @description: 保存用户信息
      * @param array $keys
+     * @param array $form
      * @return string
      */
-    public static function userSave($keys)
+    public static function userSave($keys, $form = [])
     {
         global $_L, $LF, $LC;
-        $LC['id'] = PUB::token2id($LF['token']);
+        LOAD::sys_class("userbase");
+        $uid  = $form['id'] ?: PUB::token2id($LF['token']);
+        $user = $uid ? USERBASE::getUser($uid, "id") : [];
+        $opts = $uid ? [
+            "id" => $uid,
+        ] : [];
+        $LC = $form ?: $LC;
         foreach ($keys as $key) {
-            $LCN[$key] = $LC[$key];
+            $opts[$key] = $LC[$key];
         }
-        $LC = $LCN;
-        if ($LC['id'] == $_L['LCMSADMIN']['id']) {
-            unset($LC['status']);
+        if ($opts['id'] == $_L['LCMSADMIN']['id']) {
+            unset($opts['status'], $opts['cate']);
         }
-        if ($LC['pass']) {
-            preg_match($_L['developer']['rules']['password']['pattern'], $LC['pass']) || ajaxout(0, $_L['developer']['rules']['password']['tips']);
-            $LC['salt'] = randstr(8);
-            $LC['pass'] = md5("{$LC['pass']}{$LC['salt']}");
-        } else {
-            unset($LC['pass']);
+        $opts['lcms'] = isset($user['lcms']) ? $user['lcms'] : $_L['ROOTID'];
+        //更新用户信息
+        $user = USERBASE::update($opts, $user);
+        //更新SESSION
+        if ($user['id'] == $_L['LCMSADMIN']['id']) {
+            SESSION::set("LCMSADMIN", array_merge($_L['LCMSADMIN'], [
+                "name"    => $user['name'],
+                "title"   => $user['title'],
+                "headimg" => $user['headimg'],
+                "2fa"     => $user['2fa'],
+            ]));
         }
-        if (in_array("name", $keys)) {
-            foreach ([
-                ["name" => "name", "msg" => "账号已存在"],
-                ["name" => "email", "msg" => "邮箱已存在"],
-                ["name" => "mobile", "msg" => "手机号已存在"],
-            ] as $check) {
-                if ($LC[$check['name']] && sql_get([
-                    "table" => "admin",
-                    "where" => "(name = :value OR email = :value OR mobile = :value) AND id != :id",
-                    "order" => "id DESC",
-                    "bind"  => [
-                        ":value" => $LC[$check['name']],
-                        ":id"    => $LC['id'] ?: 0,
-                    ],
-                ])) {
-                    ajaxout(0, $check['msg']);
-                }
-            }
-        }
-        if ($LF['admin_level']) {
-            $level = explode("/", $LF['admin_level']);
-            if (!$level[1]) {
-                ajaxout(0, "请设置用户权限");
-            } else {
-                $LC['lcms'] = $level[0];
-                $LC['type'] = $level[1];
-            }
-        }
-        LCMS::form([
-            "table" => "admin",
-            "form"  => $LC,
-            "unset" => "level",
-        ]);
-        if (sql_error()) {
-            ajaxout(0, "保存失败", "", sql_error());
-        } else {
-            if ($LC['id'] == $_L['LCMSADMIN']['id']) {
-                SESSION::set("LCMSADMIN", array_merge($_L['LCMSADMIN'], [
-                    "name"    => $LC['name'] ?: $_L['LCMSADMIN']['name'],
-                    "title"   => $LC['title'] ?: $_L['LCMSADMIN']['title'],
-                    "headimg" => isset($LC['headimg']) ? $LC['headimg'] : $_L['LCMSADMIN']['headimg'],
-                ]));
-            }
-            LCMS::log([
-                "type" => "system",
-                "info" => "用户管理-" . ($LC['id'] ? "修改" : "添加") . "用户-" . ($LC['name'] ?: $_L['LCMSADMIN']['name']),
-            ]);
-            ajaxout(1, "保存成功", "close");
-        }
+        return $user;
     }
     /**
      * @description: id转token

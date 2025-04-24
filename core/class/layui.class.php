@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-01-23 18:10:26
+ * @LastEditTime: 2025-04-15 14:00:07
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -93,13 +93,14 @@ class LAY
                 $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
                 $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
             }
-            $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-            $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
-            $html           = "
+            $para['affix']        = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+            $para['filter']       = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+            $para['autocomplete'] = $para['type'] == "password" ? "new-password" : "new-input";
+            $html                 = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
-                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
+                    <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='{$para['autocomplete']}' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                 </div>
             </div>";
             if ($return) {
@@ -125,15 +126,16 @@ class LAY
                 $para['max']       = $para['max'] > 0 ? " max='{$para['max']}'" : "";
                 $para['precision'] = $para['precision'] ? " lay-precision='{$para['precision']}'" : "";
             }
-            $para['affix']  = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
-            $para['filter'] = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
-            $para['tips']   = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
-            $html           = "
+            $para['affix']        = $para['affix'] ? " lay-affix='{$para['affix']}'" : " lay-affix='" . ($para['type'] == "password" ? "eye" : "clear") . "'";
+            $para['filter']       = $para['filter'] ? " lay-filter='{$para['filter']}'" : "";
+            $para['autocomplete'] = $para['type'] == "password" ? "new-password" : "new-input";
+            $para['tips']         = $para['tips'] ? "<div class='layui-form-mid layui-word-aux'>{$para['tips']}</div>" : "";
+            $html                 = "
             <div class='layui-form-item{$para['cname']}'>
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block'>
                     <div class='layui-input-inline'>
-                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
+                        <input type='{$para['type']}' name='{$para['name']}' class='lcms-form-input layui-input{$para['tipsbox']}' autocomplete='{$para['autocomplete']}' placeholder='{$para['placeholder']}' value='{$para['value']}'{$para['step']}{$para['min']}{$para['max']}{$para['affix']}{$para['filter']}{$para['maxlength']}{$para['precision']}{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     {$para['tips']}
                 </div>
@@ -242,9 +244,9 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-colorpicker' data-value='{$para['value']}' data-format='{$para['format']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='off' placeholder='{$para['placeholder']}'{$para['verifybox']} />
+                        <input type='text' name='{$para['name']}' value='{$para['value']}' class='layui-input _input{$para['tipsbox']}' autocomplete='new-inpuut' placeholder='{$para['placeholder']}'{$para['verifybox']} />
+                        <div class=\"layui-input-suffix layui-input-split _color\"></div>
                     </div>
-                    <div class='_color'></div>
                     {$para['tips']}
                 </div>
             </div>";
@@ -286,7 +288,7 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-date' data-value='{$para['value']}' data-type='{$para['type']}' data-range='{$para['range']}' data-min='{$para['min']}' data-max='{$para['max']}'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='off' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' placeholder='点击设置{$para['title']}' autocomplete='new-inpuut' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
                     </div>
                     {$para['tips']}
                 </div>
@@ -489,9 +491,11 @@ class LAY
                 <label class='layui-form-label' title='{$para['title']}'>{$para['title']}</label>
                 <div class='layui-input-block lcms-form-icon'>
                     <div class='layui-input-inline'>
-                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='off' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                        <input type='text' name='{$para['name']}' class='layui-input{$para['disclass']}{$para['tipsbox']}' autocomplete='new-inpuut' placeholder='请选择图标' value='{$para['value']}'{$para['verifybox']}{$para['disabled']}/>
+                        <div class=\"layui-input-suffix layui-input-split _change\">
+                            <i class=\"layui-icon layui-icon-search\"></i>
+                        </div>
                     </div>
-                    <div class='_change'><i class='layui-icon layui-icon-search'></i></div>
                     {$para['tips']}
                 </div>
             </div>";

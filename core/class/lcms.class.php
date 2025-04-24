@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-02-27 12:09:58
+ * @LastEditTime: 2025-04-24 09:34:43
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -54,7 +54,8 @@ class LCMS
             $_SERVER['HTTP_X_LCMS_TOKEN'] ||
             $_SERVER['HTTP_X_LCMS_FORMAT'] == "json" ||
             $_SERVER['CONTENT_TYPE'] == "application/json" ||
-            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest" ||
+            !is_file(PATH_PUBLIC . "ui/admin/X.html")
         ) {
             ajaxout(0, $msg);
         } else {
@@ -84,7 +85,8 @@ class LCMS
             $_SERVER['HTTP_X_LCMS_TOKEN'] ||
             $_SERVER['HTTP_X_LCMS_FORMAT'] == "json" ||
             $_SERVER['CONTENT_TYPE'] == "application/json" ||
-            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+            $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest" ||
+            !is_file(PATH_PUBLIC . "ui/admin/X.html")
         ) {
             ajaxout(1, $msg);
         } else {
@@ -114,17 +116,17 @@ class LCMS
      * @description: 硬盘缓存读写操作
      * @param string $name
      * @param string|array $value
-     * @param bool $lcms
+     * @param int|bool $lcms
      * @return array
      */
-    public static function cache($name, $value = [], $lcms = false)
+    public static function cache($name, $value = [], $lcms = null)
     {
         global $_L;
         if (!in_string($name, "/")) {
             $name = L_NAME . "/{$name}";
         }
         $name  = substr(md5($name), 8, 16);
-        $lcms  = $lcms ? 0 : $_L['ROOTID'];
+        $lcms  = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
         $cache = sql_get([
             "table" => "cache",
             "where" => "name = :name AND lcms = :lcms",
@@ -174,10 +176,10 @@ class LCMS
      * @param string $name
      * @param string $value
      * @param int $time
-     * @param bool $lcms
+     * @param int|bool $lcms
      * @return string
      */
-    public static function ram($name, $value = "", $time = 0, $lcms = false)
+    public static function ram($name, $value = "", $time = 0, $lcms = null)
     {
         global $_L;
         if (!$_L['table']['ram']) {
@@ -187,7 +189,7 @@ class LCMS
             $name = L_NAME . "/{$name}";
         }
         $name = substr(md5(L_NAME . $name), 8, 16);
-        $lcms = $lcms ? 0 : $_L['ROOTID'];
+        $lcms = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
         $time = $time > 0 ? intval($time) : 86400;
         $ram  = sql_get([
             "table" => "ram",
@@ -250,14 +252,14 @@ class LCMS
      * @param int|bool $lcms
      * @return {*}
      */
-    public static function notify($title, $body = "", $time = 0, $lcms = false)
+    public static function notify($title, $body = "", $time = 0, $lcms = null)
     {
         global $_L;
         if (!$_L['table']['notify']) {
             return false;
         }
         $code   = substr(md5(L_NAME . $title), 8, 16);
-        $lcms   = $lcms ? 0 : $_L['ROOTID'];
+        $lcms   = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
         $notify = sql_get([
             "table" => "notify",
             "where" => "code = :code AND lcms = :lcms",
@@ -295,7 +297,7 @@ class LCMS
             "name"  => $paran['name'] ?: L_NAME,
             "type"  => $paran['type'] ?: "open",
             "cate"  => $paran['cate'] ?: "auto",
-            "lcms"  => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
+            "lcms"  => isset($paran['lcms']) ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : ($_L['ROOTID'] ?: 0),
             "unset" => $paran['unset'] ?: "",
         ];
         $config = sql_get([
@@ -401,7 +403,7 @@ class LCMS
     }
     /**
      * @description: 日志操作
-     * @param array $paran[user, type, ip, info, url, postdata]
+     * @param array $paran[user, type, ip, info, url, postdata, lcms]
      * @return {*}
      */
     public static function log($paran = [])
@@ -427,7 +429,7 @@ class LCMS
             "parameter" => $paran['postdata'] ? arr2sql([
                 "postdata" => $paran['postdata'],
             ]) : "",
-            "lcms"      => $paran['lcms'] ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : $_L['ROOTID'],
+            "lcms"      => isset($paran['lcms']) ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : ($_L['ROOTID'] ?: 0),
         ];
         $para['type'] && sql_insert([
             "table" => "log",

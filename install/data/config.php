@@ -37,11 +37,3 @@ $_L['developer']['lite'] = 0;
 
 // 后台显示字体，需要电脑上已安装此字体
 $_L['developer']['fontfamily'] = "";
-
-// 正则规则配置
-$_L['developer']['rules'] = [
-    "password" => [
-        "pattern" => "/^(?=.*[a-zA-Z])(?=.*\d).{10,}$/",
-        "tips"    => "密码必需包含字母+数字，长度不少于10位",
-    ],
-];

@@ -2,6 +2,11 @@
 <template "ui/css" />
 <div id="LCMS">
     <header>
+        <if $_L['config']['admin']['logo']>
+            <div class="main-logo">
+                <img src="{{$_L['config']['admin']['logo']}}"/>
+            </div>
+        </if>
         <ul class="layui-nav main-menu-mobile">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -109,10 +114,10 @@
                     <if LCMS::SUPER()||$_L['LCMSADMIN']['god']>
                         <dd>
                             <div style="cursor:pointer;" onclick="LCMS.util.iframe({
-                                title: '上帝视角 - 超级管理员可快速切换登录任意用户后台',
+                                title: '用户切换 - 超级管理员可快速切换登录任意用户后台',
                                 url: `${LCMS.url.admin}index.php?n=user&c=admin&a=god`,
                                 shade: true,
-                            })">上帝视角</div>
+                            })">用户切换</div>
                         </dd>
                     </if>
                     <if LCMS::SUPER()>

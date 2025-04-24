@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:16
- * @LastEditTime: 2024-12-18 19:48:37
+ * @LastEditTime: 2025-04-23 16:25:47
  * @Description: 全局公共类
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -25,7 +25,7 @@ class common
         header("X-Framework: e79b98e4bc81c2ae504850e5bc80e58f91e6a186e69eb6");
         $this->load_common_mysql();
         $this->load_common_form();
-        $this->load_common_tables();
+        $_L['DB'] && $this->load_common_tables();
         $this->load_common_config();
         $this->load_common_rules();
         LOAD::sys_class('developer');
@@ -43,7 +43,9 @@ class common
             if ($_L['mysql']['slave']['on'] != 1) {
                 unset($_L['mysql']['slave']);
             }
-            $_L['DB'] = new MYSQL($_L['mysql']);
+            if ($_L["mysql"]["host"] !== null) {
+                $_L['DB'] = new MYSQL($_L['mysql']);
+            }
         } else {
             okinfo("/install/");
             exit;

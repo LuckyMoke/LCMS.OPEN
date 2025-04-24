@@ -1,16 +1,16 @@
 <template "own/default/public/head" />
-<div class="login-body">
-    <form action="{{$_L['url']['now']}}&action=save">
-        <if $LF['rootsid']>
-            <input type="hidden" name="rootsid" value="{{$LF['rootsid']}}" />
-        </if>
-        <div class="login-input">
-            <input type="text" disabled value="账号：{{$number}}" />
-        </div>
-        <div class="login-input">
-            <input type="password" name="pass" placeholder="新密码" autocomplete="off" required="required" />
-        </div>
-        <button class="login-btn" type="submit">重设密码</button>
-    </form>
-</div>
+<template tplx="login_reset">
+    <template "own/default/public/tab" />
+    <div class="login-body">
+        <form @submit.prevent="goReset">
+            <div class="login-input">
+                <input type="text" disabled value="账号：{{$to}}" />
+            </div>
+            <div class="login-input">
+                <input type="password" placeholder="新密码"  autocomplete="new-password" required x-model="form.pass" />
+            </div>
+            <button class="login-btn" type="submit">重设密码</button>
+        </form>
+    </div>
+</template>
 <template "own/default/public/foot" />

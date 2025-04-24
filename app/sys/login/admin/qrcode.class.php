@@ -2,71 +2,22 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-09-18 10:48:33
+ * @LastEditTime: 2025-04-16 15:14:14
  * @Description: 扫码登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
-load::sys_class("captcha");
-load::own_class('pub');
+LOAD::sys_class("adminbase");
 class qrcode extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $WUSER;
+        global $_L, $LF, $UCFG, $OPENID;
         parent::__construct();
-        $LF   = $_L['form'];
-        $UCFG = LCMS::config([
-            "name" => "user",
-            "type" => "sys",
-            "cate" => "admin",
-            "lcms" => true,
-        ]);
-        if ($UCFG['login']['mode'] < 1) {
-            $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
-            $UCFG = $RID > 0 ? LCMS::config([
-                "name" => "user",
-                "type" => "sys",
-                "cate" => "admin",
-                "lcms" => $RID,
-            ]) : $UCFG;
-        } else {
-            $RID = $_L['ROOTID'] = 0;
-        }
-        if ($RID != 0 && !$UCFG) {
-            header("HTTP/1.1 404 Not Found");
-            exit;
-        }
-        if ($UCFG['reg'][$LF['name']] < 1) {
-            header("HTTP/1.1 404 Not Found");
-            exit;
-        }
-        SESSION::set("LOGINROOTID", $RID);
-        SESSION::get("LOGINQRCODETIME") < time() && LCMS::X(403, "请重新扫码");
-        SESSION::get("LCMSADMIN") && LCMS::Y(200, "用户已登录");
-        switch ($LF['name']) {
-            case 'qrcode':
-                load::plugin("WeChat/OA");
-                $WX    = new OA();
-                $WUSER = $WX->openid();
-                break;
-            case 'qqlogin':
-                load::plugin("Tencent/QQConnect");
-                $QQ = new QQConnect([
-                    "appid"   => $UCFG['reg']['qqlogin_appid'],
-                    "domain"  => $UCFG['reg']['qqlogin_domain'],
-                    "display" => "pc",
-                ]);
-                $openid = $QQ->openid();
-                $openid || LCMS::X(403, "登录失败");
-                $WUSER = [
-                    "openid" => "QQ{$openid}",
-                ];
-                break;
-        }
-        $WUSER['openid'] || LCMS::X(403, "登录失败");
-        SESSION::set("LOGINOPENID", $WUSER['openid']);
+        $LF = $_L['form'];
+        LOAD::sys_class("userbase");
+        $UCFG   = USERBASE::UCFG();
+        $OPENID = USERBASE::getOpenid($LF['action']);
     }
     /**
      * @description: 扫码登录页面
@@ -75,23 +26,39 @@ class qrcode extends adminbase
      */
     public function doindex()
     {
-        global $_L, $LF, $WUSER;
-        $ids = sql_get(["admin_band",
-            "openid = :openid",
-            "id ASC", [
-                ":openid" => $WUSER['openid'],
-            ], "GROUP_CONCAT(aid) ids"])['ids'];
-        $admin = $ids ? sql_getall(["admin",
-            "id IN ({$ids}) AND status = 1 AND (lasttime IS NULL OR lasttime > :lasttime)",
-            "", [
-                ":lasttime" => datenow(),
-            ],
-        ]) : [];
+        global $_L, $LF, $UCFG, $OPENID;
+        if ($UCFG['reg'][$LF['action']] < 1) {
+            header("HTTP/1.1 403 Forbidden");
+            exit;
+        }
         $page = [
             "title" => "账号列表",
         ];
-        $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
-        require LCMS::template("own/{$tplpath}/qrcode");
+        if (is_dir(PATH_APP_NOW . "admin/tpl/custom")) {
+            require LCMS::template("own/custom/qrcode");
+        } else {
+            require LCMS::template("own/default/qrcode");
+        }
+    }
+    /**
+     * @description: 获取用户列表
+     * @return {*}
+     */
+    public function dousers()
+    {
+        global $_L, $LF, $OPENID;
+        $users = USERBASE::getBand($OPENID);
+        foreach ($users as $index => $user) {
+            $users[$index] = [
+                "id"     => $user['id'],
+                "name"   => $user['name'],
+                "title"  => $user['title'],
+                "mobile" => strstar($user['mobile'], 3, 4),
+                "email"  => $user['email'],
+                "token"  => ssl_encode_gzip($user['name']),
+            ];
+        }
+        ajaxout(1, "success", "", $users);
     }
     /**
      * @description: 登录操作
@@ -100,51 +67,15 @@ class qrcode extends adminbase
      */
     public function dologin()
     {
-        global $_L, $LF, $WUSER;
-        $admin = sql_get(["admin",
-            "name = :name OR email = :name OR mobile = :name",
-            "id DESC", [
-                ":name" => $LF['account'],
-            ],
-        ]);
-        if ($admin) {
-            //todo验证账号是否绑定
-            if ($admin['status'] == '1') {
-                if ($admin['lasttime'] > "0000-00-00 00:00:00" && $admin['lasttime'] < datenow()) {
-                    LCMS::X(403, "登录失败<br/>此账号已到期，请联系客服");
-                } else {
-                    $admin = array_merge($admin, [
-                        "jwt"       => randstr(32),
-                        "logintime" => datenow(),
-                        "ip"        => CLIENT_IP,
-                        "parameter" => sql2arr($admin['parameter']),
-                    ]);
-                    sql_update([
-                        "table" => "admin",
-                        "data"  => [
-                            "logintime" => $admin['logintime'],
-                            "jwt"       => $admin['jwt'],
-                            "ip"        => $admin['ip'],
-                        ],
-                        "where" => "id = :id",
-                        "bind"  => [
-                            ":id" => $admin['id'],
-                        ],
-                    ]);
-                    unset($admin['pass']);
-                    SESSION::set("LCMSADMIN", $admin);
-                    LCMS::log([
-                        "user" => $admin['name'],
-                        "type" => "login",
-                        "info" => "登录成功-第三方登录",
-                    ]);
-                    LCMS::Y(200, "登录成功<br/>请返回网页端查看", "close");
-                }
-            } else {
-                LCMS::X(403, "登录失败<br/>此账号已停用，请联系客服");
-            }
-        } else {
-            LCMS::X(403, "登录失败<br/>请先注册账号绑定");
+        global $_L, $LF, $OPENID;
+        $LF['token'] = $LF['token'] ? ssl_decode_gzip($LF['token']) : "";
+        $LF['token'] || ajaxout(0, "登录失败");
+        if (USERBASE::login([
+            "by"     => $LF['action'] ?: "qrcode",
+            "name"   => $LF['token'],
+            "openid" => $OPENID,
+        ])) {
+            ajaxout(1, "登录成功");
         }
     }
     /**
@@ -154,23 +85,12 @@ class qrcode extends adminbase
      */
     public function dounband()
     {
-        global $_L, $LF, $WUSER;
-        $admin = sql_get(["admin",
-            "name = :name OR email = :name OR mobile = :name",
-            "id DESC", [
-                ":name" => $LF['account'],
-            ],
-        ]);
-        if ($admin) {
-            sql_delete(["admin_band",
-                "openid = :openid AND aid = :aid", [
-                    ":openid" => $WUSER['openid'],
-                    ":aid"    => $admin['id'],
-                ],
-            ]);
-            LCMS::Y(200, "解绑成功");
-        } else {
-            LCMS::X(403, "解绑失败");
+        global $_L, $LF, $OPENID;
+        if (USERBASE::unBand([
+            "name"   => $LF['name'],
+            "openid" => $OPENID,
+        ])) {
+            ajaxout(1, "解绑成功");
         }
     }
 }

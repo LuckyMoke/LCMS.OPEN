@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-11-07 12:15:00
+ * @LastEditTime: 2025-04-16 15:38:43
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -88,14 +88,26 @@ class index extends adminbase
             }
         }
         $applist = LEVEL::applist("open", true, 6);
-        if ($config['default'] && $applist) {
-            switch ($config['default']['on']) {
-                case '1':
+        if ($applist) {
+            if ($config['default']) {
+                switch ($config['default']['on']) {
+                    case '1':
+                        $homeurl = reset($applist)['url'];
+                        break;
+                    case '2':
+                        $homeurl = $applist[$config['default']['name']]['url'];
+                        break;
+                }
+            } elseif (!LCMS::SUPER()) {
+                $ucfg = LCMS::config([
+                    "name" => "user",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "lcms" => $_L['LCMSADMIN']['lcms'],
+                ]);
+                if ($ucfg['reg']['defaultapp'] > 0) {
                     $homeurl = reset($applist)['url'];
-                    break;
-                case '2':
-                    $homeurl = $applist[$config['default']['name']]['url'];
-                    break;
+                }
             }
         }
         $homeurl = $homeurl ?: "{$_L['url']['admin']}index.php?n=home";

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-08-17 17:39:57
- * @LastEditTime: 2023-08-17 18:18:25
+ * @LastEditTime: 2025-04-14 17:16:28
  * @Description: 修改密码
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -24,6 +24,7 @@ class change extends adminbase
         switch ($LF['action']) {
             case 'save':
                 PUB::userSave(["id", "headimg", "title", "pass"]);
+                ajaxout(1, "保存成功", "close");
                 break;
         }
     }

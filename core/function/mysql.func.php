@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-07-07 15:35:54
+ * @LastEditTime: 2025-04-16 14:09:21
  * @Description: Mysql数据库操作方法
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -15,6 +15,7 @@ defined('IN_LCMS') or exit('No permission');
 function sql_get($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return [];
     return $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -32,6 +33,7 @@ function sql_get($sql = [])
 function sql_getall($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return [];
     return $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -51,6 +53,7 @@ function sql_getall($sql = [])
 function sql_update($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return;
     $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -68,6 +71,7 @@ function sql_update($sql = [])
 function sql_insert($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -83,6 +87,7 @@ function sql_insert($sql = [])
 function sql_delete($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return;
     $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -100,6 +105,7 @@ function sql_delete($sql = [])
 function sql_total($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return [];
     return $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -118,6 +124,7 @@ function sql_total($sql = [])
 function sql_counter($sql = [])
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']
         ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
@@ -135,6 +142,7 @@ function sql_counter($sql = [])
 function sql_query($sql = "", $assign = "master")
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']
         ->assign($assign)
         ->query($sql);
@@ -147,6 +155,7 @@ function sql_query($sql = "", $assign = "master")
 function sql_begin($assign = "master")
 {
     global $_L;
+    if (!$_L['DB']) return;
     $_L['DB']
         ->assign($assign)
         ->begin();
@@ -159,6 +168,7 @@ function sql_begin($assign = "master")
 function sql_rollback($assign = "master")
 {
     global $_L;
+    if (!$_L['DB']) return;
     $_L['DB']
         ->assign($assign)
         ->rollback();
@@ -171,6 +181,7 @@ function sql_rollback($assign = "master")
 function sql_commit($assign = "master")
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']
         ->assign($assign)
         ->commit();
@@ -183,6 +194,7 @@ function sql_commit($assign = "master")
 function sql_insert_id()
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']->insert_id();
 }
 /**
@@ -193,6 +205,7 @@ function sql_insert_id()
 function sql_affected_rows()
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']->affected_rows();
 }
 /**
@@ -203,6 +216,7 @@ function sql_affected_rows()
 function sql_error()
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']->error();
 }
 /**
@@ -213,6 +227,7 @@ function sql_error()
 function sql_errno()
 {
     global $_L;
+    if (!$_L['DB']) return;
     return $_L['DB']->errno();
 }
 /**
@@ -223,5 +238,6 @@ function sql_errno()
 function sql_filter($sql = "")
 {
     global $_L;
+    if (!$_L['DB']) return;
     $_L['DB']->filter($sql);
 }

@@ -5,30 +5,32 @@
         <block x-for="tips in data.tips">
             <p class="lcms-form-des" x-html="tips"></p>
         </block>
-        <div class="layui-tab layui-tab-card">
-            <ul class="layui-tab-title">
-                <li class="layui-this">常用应用</li>
+        <div class="layui-tabs layui-tabs-card layui-panel">
+            <ul class="layui-tabs-header">
+                <li style="color:#000">常用应用</li>
             </ul>
-            <div class="layui-tab-content" style="padding:0;overflow:hidden">
-                <div class="tplx-loading" x-show="loading" style="height:382px"></div>
-                <div class="layui-row app-list" x-show="appshow">
-                    <block x-for="(app, name) in data.apps">
-                        <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
-                            <div class="li" x-on:mouseenter="onHover(`enter`,app)" x-on:mouseleave="onHover(`leave`,app)">
-                                <a :href="app.url" @click.prevent="onClick(app.url)">
-                                    <img :src="app.icon" />
-                                    <h3 :title="app.title" x-text="app.title"></h3>
-                                </a>
+            <div class="layui-tabs-body" style="padding:0;overflow:hidden">
+                <div class="layui-tabs-item layui-show">
+                    <div class="tplx-loading" x-show="loading" style="height:382px"></div>
+                    <div class="layui-row app-list" x-show="appshow">
+                        <block x-for="(app, name) in data.apps">
+                            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
+                                <div class="li" x-on:mouseenter="onHover(`enter`,app)" x-on:mouseleave="onHover(`leave`,app)">
+                                    <a :href="app.url" @click.prevent="onClick(app.url)">
+                                        <img :src="app.icon" />
+                                        <h3 :title="app.title" x-text="app.title"></h3>
+                                    </a>
+                                </div>
                             </div>
+                        </block>
+                    </div>
+                    <block x-if="!appshow">
+                        <div class="no-app">
+                            <p>友情提示：本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
+                            <a class="layui-btn" href="javascript:;" @click.prevent="onClick(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
                         </div>
                     </block>
                 </div>
-                <block x-if="!appshow">
-                    <div class="no-app">
-                        <p>友情提示：本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
-                        <a class="layui-btn" href="javascript:;" @click.prevent="onClick(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
-                    </div>
-                </block>
             </div>
         </div>
         <div class="layui-row layui-col-space15">
@@ -50,11 +52,11 @@
                 </table>
             </div>
             <div class="layui-col-md6 layui-col-xs12" x-show="data.gonggao?true:false">
-                <div class="layui-tab layui-tab-card">
-                    <ul class="layui-tab-title">
-                        <li class="layui-this">通知公告</li>
+                <div class="layui-tabs layui-tabs-card layui-panel">
+                    <ul class="layui-tabs-header">
+                        <li style="color:#000">通知公告</li>
                     </ul>
-                    <div class="layui-tab-content" style="height:200px;overflow-y:auto;">
+                    <div class="layui-tabs-body" style="box-sizing:border-box;height:230px;overflow-y:auto;">
                         <div class="layui-tab-item layui-show lcms-editor" x-html="data.gonggao"></div>
                     </div>
                 </div>

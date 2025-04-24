@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2024-09-21 22:22:42
+ * @LastEditTime: 2025-04-16 20:10:59
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -18,22 +18,23 @@ class power extends adminbase
         parent::__construct();
         $LF = $_L['form'];
         $LC = $LF['LC'];
+        if ($_L['LCMSADMIN']['lcms'] != "0") {
+            LCMS::X(403, "此功能仅管理员可用");
+        }
     }
     public function doindex()
     {
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'list':
-                $where = LCMS::SUPER() ? "" : "uid = :uid";
-                $data  = TABLE::set([
+                $data = TABLE::set([
                     "table"  => "admin_level",
-                    "where"  => $where,
+                    "where"  => "uid = :uid",
                     "order"  => "id DESC",
                     "fields" => "id, name, uid",
                     "bind"   => [
-                        ":uid" => $_L['LCMSADMIN']['id'],
+                        ":uid" => $_L['ROOTID'] ?: $_L['LCMSADMIN']['id'],
                     ],
-
                 ]);
                 $adminlist = [];
                 foreach ($data as $index => $val) {
@@ -82,23 +83,14 @@ class power extends adminbase
                         "name"        => "LC[name]",
                         "value"       => $level['name'],
                         "placehplder" => "请输入权限名",
-                        "verify"      => "required",
-                    ],
-                    ["layui"   => "select", "title" => "创建人",
-                        "name"     => "LC[uid]",
-                        "value"    => $level['uid'] ? $level['uid'] : $_L['LCMSADMIN']['id'],
-                        "verify"   => "required",
-                        "url"      => "select&c=admin&action=admin",
-                        "default"  => "请输入账号名搜索更多",
-                        "tips"     => "请输入账号名搜索更多",
-                        "disabled" => LCMS::SUPER() ? "" : true,
-                    ],
+                        "verify"      => "required"],
                     ["layui" => "des", "title" => "点击左侧应用名称、或者点击每个小模块的标题，均可进行全选操作！"],
                 ];
                 require LCMS::template("own/power/edit");
                 break;
             case 'save':
-                $LC['id'] = PUB::token2id($LF['token']);
+                $LC['id']  = PUB::token2id($LF['token']);
+                $LC['uid'] = $_L['ROOTID'] ?: $_L['LCMSADMIN']['id'];
                 if ($LF['level']) {
                     $level = json_decode($LF['level'], true);
                     if (is_array($level)) {
@@ -121,13 +113,13 @@ class power extends adminbase
                 }
                 break;
             case 'copy':
-                $where = LCMS::SUPER() ? "" : " AND uid = :uid";
+                $where = " AND uid = :uid";
                 $level = sql_get([
                     "table" => "admin_level",
                     "where" => "id = :id{$where}",
                     "bind"  => [
                         ":id"  => $LC['id'],
-                        ":uid" => $_L['LCMSADMIN']['id'],
+                        ":uid" => $_L['ROOTID'] ?: $_L['LCMSADMIN']['id'],
                     ],
                 ]);
                 if ($level) {

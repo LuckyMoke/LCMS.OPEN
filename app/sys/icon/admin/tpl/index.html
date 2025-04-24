@@ -8,13 +8,13 @@
         </div>
         <input type="text" placeholder="请输入关键词搜索图标" class="layui-input" x-model="keyword" @input.debounce.500ms="onSearch">
     </div>
-    <div class="layui-tab layui-tab-card icon">
-        <ul class="layui-tab-title">
+    <div class="layui-tabs layui-tabs-card layui-panel icon">
+        <ul class="layui-tabs-header">
             <li @click="changeTab('fas')" :class="active.type=='fas'?'layui-this':''">实心图标<i></i></li>
             <li @click="changeTab('far')" :class="active.type=='far'?'layui-this':''">常规图标<i></i></li>
             <li @click="changeTab('fab')" :class="active.type=='fab'?'layui-this':''">品牌图标<i></i></li>
         </ul>
-        <div class="layui-tab-content" x-show="active.list.length>0">
+        <div class="layui-tabs-body" x-show="active.list.length>0">
             <ul class="list">
                 <block x-for="icon in active.list" :key="`${active.type}-${icon}`">
                     <li @click="onClick(icon)" :title="icon">

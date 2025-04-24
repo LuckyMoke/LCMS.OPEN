@@ -2,53 +2,27 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2024-10-24 11:53:06
+ * @LastEditTime: 2025-04-17 15:41:33
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
-load::sys_class('adminbase');
-load::sys_class("captcha");
-load::own_class('pub');
+LOAD::sys_class("adminbase");
 class reg extends adminbase
 {
     public function __construct()
     {
-        global $_L, $LF, $UCFG, $PLG, $RID;
+        global $_L, $LF, $UCFG;
         parent::__construct();
-        $LF   = $_L['form'];
-        $UCFG = LCMS::config([
-            "name" => "user",
-            "type" => "sys",
-            "cate" => "admin",
-            "lcms" => true,
-        ]);
-        if ($UCFG['login']['mode'] < 1) {
-            $RID  = $_L['ROOTID']  = $LF['rootid'] != null ? $LF['rootid'] : (SESSION::get("LOGINROOTID") ?: 0);
-            $UCFG = $RID > 0 ? LCMS::config([
-                "name" => "user",
-                "type" => "sys",
-                "cate" => "admin",
-                "lcms" => $RID,
-            ]) : $UCFG;
-        } else {
-            $RID = $_L['ROOTID'] = 0;
-        }
-        if ($RID != 0 && !$UCFG) {
-            header("HTTP/1.1 404 Not Found");
+        $LF = $_L['form'];
+        LOAD::sys_class("userbase");
+        $UCFG = USERBASE::UCFG();
+        if (!in_array($UCFG['reg']['on'], [
+            "mobile", "email",
+        ])) {
+            header("HTTP/1.1 403 Forbidden");
             exit;
         }
-        if (!in_array($UCFG['reg']['on'], ["mobile", "email"])) {
-            header("HTTP/1.1 404 Not Found");
-            exit;
-        }
-        $PLG = LCMS::config([
-            "name" => "config",
-            "type" => "sys",
-            "cate" => "plugin",
-            "lcms" => $RID == 0 ? true : $RID,
-        ]);
-        SESSION::set("LOGINROOTID", $RID);
     }
     /**
      * @description: 注册页面
@@ -57,19 +31,23 @@ class reg extends adminbase
      */
     public function doindex()
     {
-        global $_L, $LF, $UCFG, $PLG, $RID;
-        $admin = $_L['LCMSADMIN'];
-        if ($admin && $admin['id'] && $admin['name']) {
+        global $_L, $LF, $UCFG;
+        if ($_L['LCMSADMIN']) {
+            USERBASE::createJWT($_L['LCMSADMIN']);
             okinfo($LF['go'] ?: $_L['url']['admin']);
         }
         $page = [
             "title" => "注册 - {$_L['config']['admin']['title']}",
-            "tab"   => [
-                ["title" => "用户注册", "name" => "reg"],
-            ],
+            "tab"   => [[
+                "title" => "用户注册",
+                "by"    => "reg",
+            ]],
         ];
-        $tplpath = is_dir(PATH_APP_NOW . "admin/tpl/custom") ? "custom" : "default";
-        require LCMS::template("own/{$tplpath}/reg");
+        if (is_dir(PATH_APP_NOW . "admin/tpl/custom")) {
+            require LCMS::template("own/custom/reg");
+        } else {
+            require LCMS::template("own/default/reg");
+        }
     }
     /**
      * @description: 发送验证码
@@ -78,40 +56,16 @@ class reg extends adminbase
      */
     public function dosendcode()
     {
-        global $_L, $LF, $UCFG, $PLG, $RID;
-        //得到号码
-        $number = $LF['value'][$LF['action']];
-        //判断验证码是否正确
-        CAPTCHA::check($LF['code']) || ajaxout(0, "验证码错误");
-        //判断是否已发送过验证码
-        $time = SESSION::get("LOGINCODETIME");
-        if ($time > time()) {
-            ajaxout(0, "请 " . ($time - time()) . " 秒后再试");
-        }
-        //判断邮箱或手机号是否存在
-        PUB::ishave($LF['action'], $number);
-        $text = randstr(6, "num");
-        switch ($LF['action']) {
-            case 'email':
-                $number = $LF['value']['email'];
-                PUB::sendemail($number, $text);
-                break;
-            case 'mobile':
-                $number = $LF['value']['mobile'];
-                if ($UCFG['reg']['sms_tplcode']) {
-                    PUB::sendsms($number, $text);
-                } else {
-                    ajaxout(0, "未开启短信功能");
-                }
-                break;
-        }
-        //缓存验证号码
-        SESSION::set("LOGINNUMBER", $number);
-        //缓存验证码
-        SESSION::set("LOGINSENDCODE", $text);
-        //缓存验证时间
-        SESSION::set("LOGINCODETIME", time() + 120);
-        ajaxout(1, "验证码已发送");
+        global $_L, $LF, $UCFG;
+        //检测用户信息格式
+        USERBASE::checkFormat($LF);
+        //发送验证码
+        $vcode = USERBASE::sendCode([
+            "by"   => $LF['by'],
+            "to"   => $LF['to'],
+            "code" => $LF['code'],
+        ]);
+        $vcode && ajaxout(1, "验证码已发送");
     }
     /**
      * @description: 注册流程
@@ -120,63 +74,26 @@ class reg extends adminbase
      */
     public function docheck()
     {
-        global $_L, $LF, $UCFG, $PLG, $RID;
-        //判断短信邮箱验证码是否正确
-        $code = SESSION::get("LOGINSENDCODE");
-        if (!$code || $code != strtoupper($LF['code'])) {
-            ajaxout(0, "验证码错误");
-        }
-        //检测账号是否合规
-        PUB::ishave("name", $LF['name']);
-        //检测密码是否合规
-        preg_match($_L['developer']['rules']['password']['pattern'], $LF['pass']) || ajaxout(0, $_L['developer']['rules']['password']['tips']);
-        //生成盐
-        $salt  = randstr(8);
-        $admin = [
-            "name"    => $LF['name'],
-            "title"   => $LF['title'] ?: $LF['name'],
-            "pass"    => md5("{$LF['pass']}{$salt}"),
-            "salt"    => $salt,
-            "status"  => $UCFG['reg']['status'],
-            "addtime" => datenow(),
-            "type"    => $UCFG['reg']['level'],
-            "lcms"    => $UCFG['reg']['lcms'],
-        ];
-        $number = SESSION::get("LOGINNUMBER");
-        if (is_email($number)) {
-            //如果是邮件验证
-            if ($number) {
-                $admin['email'] = $number;
-            } else {
-                ajaxout(0, "缺少邮箱地址");
-            }
+        global $_L, $LF, $UCFG;
+        //添加用户信息
+        $user = USERBASE::register([
+            "by"     => "vcode",
+            "name"   => $LF['name'],
+            "title"  => $LF['title'],
+            "pass"   => $LF['pass'],
+            "status" => $UCFG['reg']['status'],
+            "type"   => $UCFG['reg']['level'],
+            "cate"   => 1,
+            "lcms"   => $UCFG['reg']['lcms'],
+            "vcode"  => $LF['vcode'],
+        ]);
+        if ($user['status'] > 0) {
+            //注册成功登录
+            USERBASE::loginSuccess($user, "注册登录");
+            ajaxout(1, "注册成功", $_L['url']['admin']);
         } else {
-            //如果是手机号验证
-            if ($number) {
-                $admin['mobile'] = $number;
-            } else {
-                ajaxout(0, "缺少手机号");
-            }
+            ajaxout(1, "注册成功，请等待管理员审核");
         }
-        //删除缓存数据
-        SESSION::del("LOGINSENDCODE");
-        SESSION::del("LOGINNUMBER");
-        //写入数据库
-        sql_insert(["admin", $admin]);
-        if (sql_error()) {
-            LCMS::log([
-                "user" => $admin['name'],
-                "type" => "login",
-                "info" => "用户注册-注册失败-" . sql_error(),
-            ]);
-            ajaxout(0, "注册失败，请联系管理员");
-        } else {
-            LCMS::log([
-                "user" => $admin['name'],
-                "type" => "login",
-                "info" => "用户注册-注册成功",
-            ]);
-            ajaxout(1, "注册成功，请登录", "{$_L['url']['own']}rootid={$RID}&n=login");
-        }
+
     }
 }

@@ -1,57 +1,50 @@
 <template "own/default/public/head" />
-<div class="login-body">
-    <form action="{{$_L['url']['own']}}n=login&c=reg&a=check">
-        <div class="login-input">
-            <input type="text" name="name" placeholder="账号" required="required" />
-        </div>
-        <div class="login-input">
-            <input type="password" name="pass" placeholder="密码" required="required" />
-        </div>
-        <if $UCFG['reg']['input_title']>
+<template tplx="login_reg">
+    <template "own/default/public/tab" />
+    <div class="login-body">
+        <form @submit.prevent="goReg">
             <div class="login-input">
-                <input type="text" name="title" placeholder="姓名" autocomplete="off" />
+                <input type="text" placeholder="账号" autocomplete="new-input" required x-model="form.name" />
             </div>
-        </if>
-        <if $UCFG['reg']['on']=="mobile">
             <div class="login-input">
-                <input type="phone" name="mobile" placeholder="手机号" maxlength="11" required="required" />
-                <div name="mobile">发送验证码</div>
+                <input type="password" placeholder="密码" autocomplete="new-password" required x-model="form.pass" />
             </div>
-        </if>
-        <if $UCFG['reg']['on']=="email">
+            <if $UCFG['reg']['input_title']>
+                <div class="login-input">
+                    <input type="text" placeholder="姓名"  autocomplete="new-input" x-model="form.title" />
+                </div>
+            </if>
+            <if $UCFG['reg']['on']=="mobile">
+                <div class="login-input">
+                    <input type="phone" placeholder="手机号" maxlength="11" autocomplete="new-input" required x-model="form.mobile" />
+                </div>
+            </if>
+            <if $UCFG['reg']['on']=="email">
+                <div class="login-input">
+                    <input type="email" placeholder="邮箱" autocomplete="new-input" required x-model="form.email" />
+                </div>
+            </if>
             <div class="login-input">
-                <input type="email" name="email" placeholder="邮箱" required="required" />
-                <div name="email">发送验证码</div>
+                <input type="number" placeholder="验证码" autocomplete="off" maxlength="6" autocomplete="new-input" required x-model="form.code" />
+                <img :src="$store.login.captcha" title="点击刷新" @click="$store.login.resetCaptcha()" />
             </div>
-        </if>
-        <div class="login-input">
-            <input type="number" name="code" placeholder="验证码" autocomplete="off" required="required" />
-        </div>
-        <div class="login-readme">
-            <label>
-                <input type="checkbox" checked="checked" required="required" />
-                阅读并同意
-            </label>
-            <a href="javascript:;" type="user">《用户协议》</a>
-            <a href="javascript:;" type="privacy">《隐私声明》</a>
-        </div>
-        <button class="login-btn" type="submit">注册</button>
-    </form>
-</div>
+            <div class="login-readme">
+                <label>
+                    <input type="checkbox" checked="checked" required />
+                    阅读并同意
+                </label>
+                <a href="javascript:;" @click="$store.login.openAgree('user','用户协议')">《用户协议》</a>
+                <a href="javascript:;" @click="$store.login.openAgree('privacy','隐私声明')">《隐私声明》</a>
+            </div>
+            <button class="login-btn" type="submit">发送验证码</button>
+        </form>
+    </div>
+</template>
 <div class="login-link">
-    <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
+    <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
     <if $UCFG['reg']['findpass'] gt 0>
         <div class="login-link-line"></div>
-        <a href="{{$_L['url']['own']}}rootid={{$RID}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
+        <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
     </if>
 </div>
-<script type="text/html" class="tplcode">
-    <div style="padding:0 20px 0 20px;">
-        <div class="login-input">
-            <input type="number" class="login-send-code" placeholder="验证码" autocomplete="off" />
-            <img src="{{$_L['url']['captcha']}}" title="点击刷新" onclick="this.src=LCMS.url.captcha+'&'+Math.random()" />
-        </div>
-        <a class="login-btn login-send" data-url="{{$_L['url']['own']}}n=login&c=reg&a=sendcode">发送验证码</a>
-    </div>
-</script>
 <template "own/default/public/foot" />

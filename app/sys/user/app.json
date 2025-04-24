@@ -1,1 +1,1 @@
-{"info":{"title":"用户中心","title_sort":"用户中心"},"class":{"admin":{"title":"用户管理","level":{"index":{"title":"用户列表","menu":1}}},"power":{"title":"权限管理","level":{"index":{"title":"权限列表","menu":1}}},"config":{"title":"登录/注册","level":{"index":{"title":"登录/注册","menu":1}}}}}
+{"info":{"title":"用户中心","title_sort":"用户中心"},"class":{"admin":{"title":"用户管理","level":{"index":{"title":"管理员用户","menu":1},"user":{"title":"普通用户","menu":1}}},"power":{"title":"权限管理","level":{"index":{"title":"权限列表","menu":1}}},"config":{"title":"登录/注册","level":{"index":{"title":"登录/注册","menu":1}}}}}

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-09-22 12:01:29
+ * @LastEditTime: 2025-04-23 16:24:18
  * @Description: Mysql数据库操作类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -35,7 +35,7 @@ class MYSQL
      * @param string $type
      * @return {*}
      */
-    public function assign($type)
+    public function assign($type = "")
     {
         switch ($type) {
             case 'slave':
