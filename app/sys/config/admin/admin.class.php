@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-04-15 12:12:41
+ * @LastEditTime: 2025-04-25 18:37:10
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -71,6 +71,7 @@ class admin extends adminbase
                         "value"  => $config['logo'],
                         "width"  => 220,
                         "height" => 72,
+                        "local"  => true,
                         "tips"   => "强制尺寸220*72"],
                     ["layui" => "upload", "title" => "登录LOGO",
                         "name"   => "LC[login_logo]",

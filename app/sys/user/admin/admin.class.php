@@ -43,8 +43,10 @@ class admin extends adminbase
                         $where[] = "(id = :id OR name LIKE :name OR title LIKE :name)";
                     }
                 }
-                $where   = array_filter($where);
-                $where[] = "id != :ownid";
+                $where = array_filter($where);
+                if (!LCMS::SUPER()) {
+                    $where[] = "id != :ownid";
+                }
                 $where[] = "lcms = :lcms";
                 $where   = implode(" AND ", $where);
                 $data    = TABLE::set([

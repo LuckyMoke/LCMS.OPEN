@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2024-12-07 21:00:54
+ * @LastEditTime: 2025-04-28 15:52:56
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -88,12 +88,16 @@ class index extends adminbase
                 "slave"  => $_L['DB']->assign("slave")->version(),
             ],
         ]);
-        if (version_compare($info['php'], "8.1", "lt")) {
-            $info['php'] .= " (推荐PHP8.1及以上)";
+        if (version_compare($info['php'], "7.3", "lt")) {
+            $phpban = true;
         }
-        $info['php'] = "PHP/{$info['php']} 主数据库/{$info['mysql']['master']}";
+        $php = $info['php'];
+        if (version_compare($php, "8.2", "lt")) {
+            $php .= " (推荐PHP8.2及以上)";
+        }
+        $php = "PHP/{$php} 主数据库/{$info['mysql']['master']}";
         if ($info['mysql']['slave']) {
-            $info['php'] .= "从数据库/{$info['mysql']['slave']}";
+            $php .= "从数据库/{$info['mysql']['slave']}";
         }
         if (
             LCMS::SUPER() &&
@@ -107,13 +111,14 @@ class index extends adminbase
             "info"    => [
                 "服务器系统"   => $info['os'],
                 "服务器环境"   => $info['sys'],
-                "运行环境"    => $info['php'],
+                "运行环境"    => $php,
                 "Opcache" => $info['opcache'] ?? "未开启opcache扩展，开启有助于降低CPU使用率，但会增加内存使用量",
                 "PHP扩展"   => $this->getComs(),
                 "开源组件"    => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari、Alpine.js",
             ],
             "update"  => $update ? true : false,
             "gonggao" => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,
+            "phpban"  => $phpban ? $info['php'] : false,
         ]);
     }
     private function getComs()

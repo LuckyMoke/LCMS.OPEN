@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-02-27 13:50:06
+ * @LastEditTime: 2025-04-28 15:33:03
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -216,11 +216,11 @@ class TABLE
                             if (!empty($option['children'])) {
                                 $opts = "";
                                 foreach ($option['children'] as $opt) {
-                                    $opts .= "<option value='{$opt['value']}'" . ($val['value'] == $opt['value'] ? " selected" : "") . ">{$opt['title']}</option>";
+                                    $opts .= "<option value='{$opt['value']}'" . ($val['value'] === $opt['value'] ? " selected" : "") . ">{$opt['title']}</option>";
                                 }
                                 $options .= "<optgroup label='{$option['title']}'>{$opts}</optgroup>";
                             } else {
-                                $options .= "<option value='{$option['value']}'" . ($val['value'] == $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
+                                $options .= "<option value='{$option['value']}'" . ($val['value'] === $option['value'] ? " selected" : "") . ">{$option['title']}</option>";
                             }
                         }
                         $html .= '<div class="layui-input-inline layui-input-wrap" title="' . $val['title'] . '"><div class="layui-input-prefix">
