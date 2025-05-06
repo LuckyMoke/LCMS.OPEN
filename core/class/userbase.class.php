@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-04-24 16:47:21
+ * @LastEditTime: 2025-05-06 10:55:10
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -1045,7 +1045,7 @@ class USERBASE
         if (array_key_exists("level", $opts)) {
             $data['level'] = $opts['level'];
         }
-        if (array_key_exists("type", $opts)) {
+        if (array_key_exists("type", $opts) && $opts['type']) {
             $data['type'] = $opts['type'];
         }
         //如果修改积分
@@ -1110,6 +1110,9 @@ class USERBASE
         }
         if (array_key_exists("2fa", $opts)) {
             $data['2fa'] = $opts['2fa'];
+        }
+        if (array_key_exists("lasttime", $opts)) {
+            $data['lasttime'] = $opts['lasttime'];
         }
         $data['lcms'] = array_key_exists("lcms", $opts) ? $opts['lcms'] : (array_key_exists("lcms", $user) ? $user['lcms'] : ($_L['ROOTID'] ?: 0));
         if ($user && $user['id']) {
