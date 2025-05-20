@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2025-04-16 15:38:43
+ * @LastEditTime: 2025-05-09 11:28:19
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -58,6 +58,22 @@ class index extends adminbase
             }
             if (!is_file(PATH_CORE . "asynced")) {
                 $async = 1;
+            }
+            if (
+                $_L['config']['admin']['development'] > 0 &&
+                $_L['config']['admin']['development_time'] < time()
+            ) {
+                LCMS::config([
+                    "do"   => "save",
+                    "type" => "sys",
+                    "name" => "config",
+                    "cate" => "admin",
+                    "form" => [
+                        "development" => 0,
+                    ],
+                    "lcms" => true,
+                ]);
+                $_L['config']['admin']['development'] = 0;
             }
         } else {
             unset($config['sys']['update']);

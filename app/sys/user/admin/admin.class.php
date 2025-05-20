@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-04-21 12:30:35
+ * @LastEditTime: 2025-05-09 20:36:15
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -576,12 +576,31 @@ class admin extends adminbase
                 foreach ($data as $index => $val) {
                     unset($val['pass'], $val['salt'], $val['parameter']);
                     if (!$adminlist[$val['lcms']]) {
-                        $adminlist[$val['lcms']] = sql_get(["admin", "id = '{$val['lcms']}'"]);
+                        if ($val['lcms'] == 0) {
+                            $adminlist[$val['lcms']] = sql_get([
+                                "table" => "admin",
+                                "where" => "type = 'lcms' AND lcms = 0",
+                            ]);
+                        } else {
+                            $adminlist[$val['lcms']] = sql_get([
+                                "table" => "admin",
+                                "where" => "id = :id",
+                                "bind"  => [
+                                    ":id" => $val['lcms'],
+                                ],
+                            ]);
+                        }
                     }
-                    $admin        = $adminlist[$val['lcms']];
+                    $admin = $adminlist[$val['lcms']];
+                    $tname = "<span style=\"color:#E6A23C\">[ID:{$admin['id']}]-{$admin['title']}</span>";
+                    if ($val['lcms'] == 0) {
+                        if ($val['type'] == "lcms") {
+                            $tname = "<span style=\"color:#b1b3b8\">无</span>";
+                        }
+                    }
                     $data[$index] = array_merge($val, [
                         "name"    => "{$val['name']}<span style=\"color:#b1b3b8\">-{$val['title']}</span>",
-                        "lcms"    => "<span style=\"color:#E6A23C\">" . ($val['lcms'] == 0 ? "超级管理员" : "{$admin['title']}-{$admin['name']}") . "</span>",
+                        "lcms"    => $tname,
                         "headimg" => [
                             "type"   => "image",
                             "width"  => "auto",

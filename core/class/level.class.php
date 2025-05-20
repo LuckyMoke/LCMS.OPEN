@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-03-24 15:22:00
+ * @LastEditTime: 2025-05-18 20:18:34
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -86,7 +86,7 @@ class LEVEL
         if (
             $ckv &&
             $name == "comsite" &&
-            $appinfo['info']['ver'] < "3.1.8"
+            $appinfo['info']['ver'] < "3.2.4"
         ) {
             LCMS::X(403, "&#x8BF7;&#x5347;&#x7EA7;&#x5E94;&#x7528;&#x7248;&#x672C;&#xFF01;");
         }

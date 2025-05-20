@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2025-04-23 13:21:54
+ * @LastEditTime: 2025-05-07 10:44:48
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -201,10 +201,9 @@ class index extends adminbase
         $form || LCMS::X(403, "验证失败");
         $form['time'] < time() && LCMS::X(403, "验证失败");
         $islogin = SESSION::get("LCMSADMIN");
-        if ($islogin && $islogin['name'] == $form['name']) {
-            okinfo($_L['url']['admin']);
+        if ($islogin) {
+            LCMS::Y(200, "用户{$islogin['name']}已登录<br>将直接进入后台", $_L['url']['admin']);
         } else {
-
             $user = USERBASE::checkUser([
                 "name" => $form['name'],
                 "pass" => $form['pass'],

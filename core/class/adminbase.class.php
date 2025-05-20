@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-04-16 14:53:16
+ * @LastEditTime: 2025-05-14 17:35:09
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -183,12 +183,20 @@ class adminbase extends common
     protected function check_level()
     {
         global $_L;
-        if (L_NAME === "appstore" && L_CLASS === "store" && ($_L['form']['action'] === "content" || $_L['form']['apply'])) {
+        if (
+            L_NAME === "appstore" &&
+            L_CLASS === "store" &&
+            ($_L['form']['action'] === "content" || $_L['form']['apply'])
+        ) {
             return;
         }
         $fun = str_replace("do", "", L_ACTION);
         if ($_L['APP']['power'][L_CLASS][$fun]) {
-            LCMS::X(403, "没有权限，禁止访问");
+            if ($_L['APP']['class'][L_CLASS]['level'][$fun]['title']) {
+                LCMS::X(403, "没有“{$_L['APP']['class'][L_CLASS]['level'][$fun]['title']}”权限，禁止访问");
+            } else {
+                LCMS::X(403, "没有权限，禁止访问");
+            }
         }
     }
     public function domain($domain = "", $scheme = "", $autodomain = false)

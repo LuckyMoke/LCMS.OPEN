@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-04-25 18:37:10
+ * @LastEditTime: 2025-05-09 11:29:31
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -191,6 +191,11 @@ class admin extends adminbase
                 }
                 if ($LC['mimelist']) {
                     $LC['mimelist'] = str_replace([".", ","], "", $LC['mimelist']);
+                }
+                if ($LC['development'] > 0) {
+                    $LC['development_time'] = time() + 604800;
+                } else {
+                    $LC['development_time'] = 0;
                 }
                 LCMS::config([
                     "do"   => "save",

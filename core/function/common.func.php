@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-02-12 12:20:13
+ * @LastEditTime: 2025-05-13 12:35:32
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -1116,8 +1116,8 @@ function html_editor($body = "", $lazyload = false)
             $body = str_replace($match[0], $tags, $body);
         }
         if ($lazyload) {
-            $body = preg_replace('/(<video[^>]*)src="(.*?)"(.*?)<\/video>/', '<video class="video-js" data-src="$2"$3></video>', $body);
-            $body = preg_replace('/(<iframe[^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe frameborder="no" border="0" data-src="$2"$3></iframe>', $body);
+            $body = preg_replace('/<video([^>]*)src="(.*?)"(.*?)><\/video>/', '<video class="video-js" data-src="$2"$3></video>', $body);
+            $body = preg_replace('/<iframe([^>]*)src="(.*?)"(.*?)><\/iframe>/', '<iframe frameborder="no" border="0" data-src="$2"$3></iframe>', $body);
         }
         $body = str_replace([
             "<p><br /></p>",

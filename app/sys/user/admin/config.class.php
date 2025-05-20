@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2025-04-23 12:59:11
+ * @LastEditTime: 2025-05-17 17:40:44
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -176,7 +176,6 @@ class config extends adminbase
                         ["layui" => "selectN", "title" => "默认权限",
                             "name"   => "LC[reg][level]",
                             "value"  => $config['reg']['level'],
-                            "verify" => "required",
                             "url"    => "select&c=admin&action=admin-level",
                         ],
                         ["layui" => "radio", "title" => "默认展示",

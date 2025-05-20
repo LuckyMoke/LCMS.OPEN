@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2025-04-28 15:52:56
+ * @LastEditTime: 2025-05-09 11:21:28
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -56,16 +56,13 @@ class index extends adminbase
         global $_L, $ACFG;
         if (LCMS::SUPER()) {
             if ($ACFG['dir'] == "admin") {
-                $tips[] = "系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，点击 <a href=\"javascript:LCMS.plugin.router(LCMS.url.admin+`index.php?t=sys&n=config&c=admin&a=safe`)\">修改后台目录</a>，以提高安全性！";
+                $tips[] = "系统提示：检测到您的后台目录为默认的 admin ，为了后台安全，可在<a href=\"javascript:LCMS.plugin.router(LCMS.url.admin+`index.php?t=sys&n=config&c=admin&a=safe`)\">“设置->安全性能->后台目录</a>中修改，以提高安全性！";
             }
             if (is_dir(PATH_WEB . "install")) {
                 $tips[] = "系统提示：检测到您未删除安装目录，请尽快删除<code>/install</code>目录，以提高安全性！";
             }
             if (is_file(PATH_WEB . "install.php")) {
                 $tips[] = "系统提示：检测到您未删除安装文件，请尽快删除<code>/install.php</code>文件，以提高安全性！";
-            }
-            if ($ACFG['development'] > 0) {
-                $tips[] = "系统提示：检测到您开启了<code>开发模式</code>，此模式仅在开发阶段使用，会严重降低程序运行性能，还会泄露数据，请勿在正式运行环境中开启！可在“设置->安全性能->开发模式”中关闭。";
             }
         } else {
             if (
