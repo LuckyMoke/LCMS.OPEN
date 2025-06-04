@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2025-04-15 13:10:40
+ * @LastEditTime: 2025-05-25 10:07:39
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -29,39 +29,10 @@ class index extends adminbase
         $PLG   = $aicfg[$aicfg['type']];
         switch ($aicfg['type']) {
             case 'wenxin':
-                $cname = md5(json_encode($PLG));
-                $token = LCMS::cache($cname);
-                if ($token['expires'] < time()) {
-                    LOAD::plugin("Baidu/libs/Baidu.Api");
-                    $BD = new BaiduApi([
-                        "AccessKey" => $PLG['access_key'],
-                        "SecretKey" => $PLG['secret_key'],
-                    ]);
-                    $iam    = "https://iam.bj.baidubce.com/v1/BCE-BEARER/token?expireInSeconds=86400";
-                    $sign   = $BD->sign("GET", $iam);
-                    $result = HTTP::request([
-                        "type"    => "GET",
-                        "url"     => $iam,
-                        "headers" => [
-                            "Content-Type"  => "application/json",
-                            "Authorization" => $sign['sign'],
-                        ],
-                    ]);
-                    $result = json_decode($result, true);
-                    if ($result['token']) {
-                        $token = [
-                            "token"   => $result['token'],
-                            "expires" => time() + 86000,
-                        ];
-                        LCMS::cache($cname, $token);
-                    } else {
-                        ajaxout(0, "获取BearerToken失败");
-                    }
-                }
                 $result = [
                     "api"   => "https://qianfan.baidubce.com/v2/chat/completions",
                     "model" => $PLG['model'],
-                    "token" => $token['token'],
+                    "token" => $PLG['token'],
                 ];
                 break;
             case 'aliyun':

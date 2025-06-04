@@ -114,7 +114,7 @@ class TencentOSS
     }
     public function sign($method, $path, $params, $headers)
     {
-        $KeyTime        = time() . ";" . time() + 3600;
+        $KeyTime        = time() . ";" . (time() + 3600);
         $SignKey        = hash_hmac("sha1", $KeyTime, $this->cfg['SecretKey']);
         $UrlParamList   = $this->arr2key($params);
         $HttpParameters = $this->arr2str($params);

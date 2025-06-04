@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-01-12 16:51:41
+ * @LastEditTime: 2025-06-02 23:14:13
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -47,6 +47,9 @@ class EMAIL
     {
         global $_L;
         $init = self::init($config);
+        if (!$init['cfg']) {
+            return $init;
+        }
         $cfg  = array_merge($init['cfg'], $Param);
         switch ($init['type']) {
             case 'smtp':

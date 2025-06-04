@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-04-15 13:09:00
+ * @LastEditTime: 2025-05-25 10:06:50
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -492,13 +492,9 @@ class web extends adminbase
                         "min"    => 100,
                         "max"    => 2048,
                         "tips"   => "单次请求最大输出tokens数"],
-                    ["layui" => "input", "title" => "Access Key",
-                        "name"   => "LC[wenxin][access_key]",
-                        "value"  => $PLG['wenxin']['access_key'],
-                        "cname"  => "hidden type_wenxin"],
-                    ["layui" => "input", "title" => "Secret Key",
-                        "name"   => "LC[wenxin][secret_key]",
-                        "value"  => $PLG['wenxin']['secret_key'],
+                    ["layui" => "input", "title" => "API Key",
+                        "name"   => "LC[wenxin][token]",
+                        "value"  => $PLG['wenxin']['token'],
                         "cname"  => "hidden type_wenxin"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[wenxin][model]",

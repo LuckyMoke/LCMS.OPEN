@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2025-05-05 12:31:50
+ * @LastEditTime: 2025-06-02 23:25:31
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -41,6 +41,8 @@ class PUB
                 "title"   => $user['title'],
                 "headimg" => $user['headimg'],
                 "2fa"     => $user['2fa'],
+                "email"   => $user['email'],
+                "mobile"  => $user['mobile'],
             ]));
         }
         return $user;

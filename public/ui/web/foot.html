@@ -7,7 +7,7 @@
     </loop>
 </if>
 <if $_L['ui']['xhr']>
-    <script type="text/javascript">!(function(){let xhrs =JSON.parse('{{json_encode(array_unique($_L["ui"]["xhr"]))}}');setTimeout(function(){for(let i=0;i<xhrs.length;i++){let script=document.createElement('script');script.type='text/javascript';script.src=xhrs[i];script.defer='defer';document.body.appendChild(script)}},500);})();</script>
+    <script type="text/javascript">!(function(){let xhrs=JSON.parse(`{{json_encode(array_unique($_L["ui"]["xhr"]))}}`);setTimeout((function(){for(let i=0;i<xhrs.length;i++){let tag,src=xhrs[i].split("?"),mime=src[0].slice(-3);switch(mime){case'css':tag=document.createElement("link");tag.rel="stylesheet";tag.href=xhrs[i];document.head.appendChild(tag);break;default:tag=document.createElement("script");tag.type="text/javascript";tag.src=xhrs[i];tag.defer="defer";document.body.appendChild(tag);break}}}),500)})();</script>
 </if>
 <if $_L['ui']['htmlfoot']>
     {{implode(PHP_EOL, $_L['ui']['htmlfoot'])}}

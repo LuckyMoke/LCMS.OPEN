@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-07-26 17:56:47
- * @LastEditTime: 2023-08-23 18:14:39
+ * @LastEditTime: 2025-06-02 23:14:37
  * @Description: 短信发送类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -39,6 +39,9 @@ class SMS
     {
         global $_L;
         $init = self::init($config);
+        if (!$init['cfg']) {
+            return $init;
+        }
         $cfg  = array_merge($init['cfg'], $Param);
         switch ($init['type']) {
             case 'aliyun':

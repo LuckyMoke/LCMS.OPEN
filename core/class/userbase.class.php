@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-05-06 14:32:40
+ * @LastEditTime: 2025-06-04 11:19:39
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -24,7 +24,10 @@ class USERBASE
                 "lcms" => true,
             ]);
             //判断是总平台还是子平台
-            self::$MODE = self::$UCFG['login']['mode'] < 1 ? 0 : 1;
+            self::$MODE = 1;
+            if (self::$UCFG['login']['mode'] === "0") {
+                self::$MODE = 0;
+            }
             if (L_MODULE == 'admin') {
                 if (isset($_L['ROOTID'])) {
                     $_L['ROOTID'] = intval($_L['ROOTID']);

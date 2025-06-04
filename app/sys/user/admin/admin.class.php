@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-05-09 20:36:15
+ * @LastEditTime: 2025-06-04 11:09:44
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -496,9 +496,73 @@ class admin extends adminbase
                 $_L['APP']['info'] = [];
                 LCMS::Y(200, "关闭成功");
                 break;
+            case 'verify':
+                switch ($LF['by']) {
+                    case 'email':
+                        $form = [
+                            ["layui" => "input", "title" => "邮箱", "name" => "LC[email]", "verify" => "required"],
+                        ];
+                        break;
+                    case 'mobile':
+                        $form = [
+                            ["layui" => "input", "title" => "手机号", "name" => "LC[mobile]", "verify" => "required"],
+                        ];
+                        break;
+                }
+                $form = array_merge($form, [
+                    ["layui" => "input", "title" => "by",
+                        "name"   => "by",
+                        "value"  => $LF['by'],
+                        "type"   => "hidden"],
+                    ["layui"    => "input", "title" => "验证码",
+                        "name"      => "LC[code]",
+                        "verify"    => "required",
+                        "maxlength" => 6,
+                        "cname"     => "user-admin-profile-code"],
+                    ["layui" => "btn", "title" => "发送验证码"],
+                ]);
+                require LCMS::template("own/admin/verify");
+                break;
+            case 'verify-send':
+                $uid = $_L['LCMSADMIN']['id'];
+                LOAD::sys_class("userbase");
+                switch ($LF['by']) {
+                    case 'email':
+                        USERBASE::isHave("email", $LC['email'], $uid);
+                        USERBASE::sendCode([
+                            "by"   => "email",
+                            "to"   => $LC['email'],
+                            "code" => $LC['code'],
+                        ]);
+                        break;
+                    case 'mobile':
+                        USERBASE::isHave("mobile", $LC['mobile'], $uid);
+                        USERBASE::sendCode([
+                            "by"   => "mobile",
+                            "to"   => $LC['mobile'],
+                            "code" => $LC['code'],
+                        ]);
+                        break;
+                }
+                ajaxout(2, "success", "openCode", [
+                    "by" => $LF['by'],
+                ]);
+                break;
+            case 'verify-save':
+                LOAD::sys_class("userbase");
+                $to = USERBASE::checkSendCode($LF['code']);
+                PUB::userSave(["id", $LF['by']], [
+                    "id"      => $_L['LCMSADMIN']['id'],
+                    $LF['by'] => $to,
+                ]);
+                ajaxout(1, "保存成功");
+                break;
+            case 'save':
+                PUB::userSave(["id", "headimg", "title", "pass"]);
+                ajaxout(1, "保存成功", "close");
+                break;
             default:
-                $nopower = true;
-                $admin   = LCMS::form([
+                $admin = LCMS::form([
                     "do"    => "get",
                     "table" => "admin",
                     "id"    => $_L['LCMSADMIN']['id'],
@@ -525,12 +589,22 @@ class admin extends adminbase
                     ["layui" => "html", "title" => "邮箱",
                         "name"   => "email",
                         "value"  => $admin['email'] ?: "无",
-                        "nodrop" => true],
+                        "nodrop" => true,
+                        "cname"  => "user-admin-edit-htmlbox"],
                     ["layui" => "html", "title" => "手机",
                         "name"   => "mobile",
                         "value"  => $admin['mobile'] ?: "无",
-                        "nodrop" => true],
+                        "nodrop" => true,
+                        "cname"  => "user-admin-edit-htmlbox"],
                 ];
+                LOAD::sys_class("email");
+                if (EMAIL::init()['type']) {
+                    $form['base'][4]['value'] = $admin['email'] ? "{$admin['email']}<a href=\"javascript:openVerify(`email`)\">修改邮箱</a>" : "无<a href=\"javascript:openVerify(`email`)\">立即绑定</a>";
+                }
+                LOAD::sys_class("sms");
+                if (SMS::init()['type']) {
+                    $form['base'][5]['value'] = $admin['mobile'] ? "{$admin['mobile']}<a href=\"javascript:openVerify(`mobile`)\">修改手机</a>" : "无<a href=\"javascript:openVerify(`mobile`)\">立即绑定</a>";
+                }
                 $LF['token'] = PUB::id2token($admin['id']);
                 require LCMS::template("own/admin/edit");
                 break;
