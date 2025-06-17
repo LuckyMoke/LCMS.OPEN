@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-05-09 11:29:31
+ * @LastEditTime: 2025-06-17 11:13:03
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -321,11 +321,11 @@ class admin extends adminbase
                             ["title" => "关闭", "value" => 0],
                         ],
                         "tips"   => "使用完请及时关闭，只建议本地开发时开启"],
-                    ["layui" => "on", "title" => "SESSION",
+                    ["layui" => "on", "title" => "Redis缓存",
                         "name"   => "LC[session_type]",
                         "value"  => $config['session_type'] ?: "0",
-                        "text"   => "Redis存储|文件存储",
-                        "tips"   => "SESSION的存储方式",
+                        "text"   => "启用|未启用",
+                        "tips"   => "是否启用Redis缓存",
                         "url"    => "checkredis"],
                     ["layui" => "btn", "title" => "立即保存"],
                 ];
@@ -381,7 +381,7 @@ class admin extends adminbase
     {
         global $_L, $LF, $LC;
         if ($LF['checked'] == "1") {
-            $redisid = "lcms-sys-redistest-" . md5($_L['url']['site']);
+            $redisid = "lcms-sys-" . md5(PATH_WEB . "redistest");
             LOAD::plugin("Redis/rds");
             $redis = new RDS();
             $redis->do->setex($redisid, 60, "success");

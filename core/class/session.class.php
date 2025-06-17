@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 21:55:10
+ * @LastEditTime: 2025-06-17 10:40:36
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -67,7 +67,7 @@ class SESSION
                 LOAD::plugin("Redis/rds");
                 $_L['SESSION'] = array_merge($_L['SESSION'], [
                     "redis"   => new RDS(),
-                    "redisid" => "session-{$SESSION['id']}",
+                    "redisid" => $SESSION['id'],
                 ]);
                 $SESSION['redis']   = $_L['SESSION']['redis'];
                 $SESSION['redisid'] = $_L['SESSION']['redisid'];
@@ -77,6 +77,7 @@ class SESSION
                 $SESSION['redis']->do->hDel($SESSION['redisid'], "LCMSADMIN");
             }
             $SESSION['redis']->do->hSet($SESSION['redisid'], "LCMSSIDTIME", $SESSION['time']);
+            $SESSION['redis']->do->expire($SESSION['redisid'], 604800);
         } else {
             session_name("LCMSSID");
             session_id($SESSION['id']);

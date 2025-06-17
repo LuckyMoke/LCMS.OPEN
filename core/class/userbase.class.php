@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-06-04 11:19:39
+ * @LastEditTime: 2025-06-14 00:42:36
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -181,9 +181,9 @@ class USERBASE
             case 'sms':
             case 'mobile':
                 //验证码检测
-                $to = USERBASE::checkSendCode($opts['vcode']);
+                $to = self::checkSendCode($opts['vcode']);
                 //获取用户信息
-                $user = USERBASE::getUser($to, "mobile");
+                $user = self::getUser($to, "mobile");
                 //登录成功
                 if ($user) {
                     self::loginSuccess($user, "手机号登录");
@@ -192,9 +192,9 @@ class USERBASE
                 break;
             case 'email':
                 //验证码检测
-                $to = USERBASE::checkSendCode($opts['vcode']);
+                $to = self::checkSendCode($opts['vcode']);
                 //获取用户信息
-                $user = USERBASE::getUser($to, "email");
+                $user = self::getUser($to, "email");
                 //登录成功
                 if ($user) {
                     self::loginSuccess($user, "邮箱登录");
@@ -277,7 +277,7 @@ class USERBASE
             case 'vcode':
                 if ($opts['vcode'] !== false) {
                     //判断验证码是否正确
-                    $to = USERBASE::checkSendCode($opts['vcode']);
+                    $to = self::checkSendCode($opts['vcode']);
                     if (is_email($to)) {
                         $opts['email'] = $to;
                     } else {
@@ -922,20 +922,13 @@ class USERBASE
             }
         }
         $where = implode(" OR ", $where);
-        $where = "($where)";
-        if (!in_array("id", $limits)) {
-            if (self::$MODE < 1) {
-                //开启子平台
-                if ($_L['ROOTID'] > 0) {
-                    $where .= " AND (id = :lcms OR lcms = :lcms)";
-                } else {
-                    $where .= " AND lcms = :lcms";
-                }
+        if (!in_array("id", $limits) && self::$MODE < 1) {
+            //开启子平台
+            $where = "($where)";
+            if ($_L['ROOTID'] > 0) {
+                $where .= " AND (id = :lcms OR lcms = :lcms)";
             } else {
-                //强制总平台
-                if ($_L['ROOTID'] > 0) {
-                    $where .= " OR id = :lcms";
-                }
+                $where .= " AND lcms = :lcms";
             }
         }
         $user = $data ? sql_get([

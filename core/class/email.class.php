@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-02 23:14:13
+ * @LastEditTime: 2025-06-05 20:32:15
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,21 +20,70 @@ class EMAIL
     public static function init($config = [])
     {
         global $_L;
-        $config = $config ?: LCMS::config([
-            "type" => "sys",
-            "name" => "config",
-            "cate" => "plugin",
-        ])['email'];
-        $type = $config['type'];
-        if (!$type) {
-            return [
-                "code" => 0,
-                "msg"  => "未配置邮箱接口",
-            ];
+        if (!$config) {
+            $config = LCMS::config([
+                "type" => "sys",
+                "name" => "config",
+                "cate" => "plugin",
+            ])['email'];
+        }
+        $config = $config ?: [];
+        switch ($config['type']) {
+            case 'smtp':
+                if (
+                    $config['smtp']['Smtp'] &&
+                    $config['smtp']['Pass']
+                ) {
+                    return [
+                        "type" => "smtp",
+                        "cfg"  => $config['smtp'],
+                    ];
+                }
+                break;
+            case 'aliyun':
+                if (
+                    $config['aliyun']['AccessKeyId'] &&
+                    $config['aliyun']['AccessKeySecret']
+                ) {
+                    return [
+                        "type" => "aliyun",
+                        "cfg"  => $config['aliyun'],
+                    ];
+                }
+                break;
+            case 'tencent':
+                if (
+                    $config['tencent']['secretId'] &&
+                    $config['tencent']['secretkey']
+                ) {
+                    return [
+                        "type" => "tencent",
+                        "cfg"  => $config['tencent'],
+                    ];
+                }
+                break;
+        }
+        if (
+            !$config['lcms'] &&
+            !LCMS::SUPER() &&
+            $_L['LCMSADMIN'] &&
+            $_L['LCMSADMIN']['lcms'] == 0
+        ) {
+            $config = LCMS::config([
+                "type" => "sys",
+                "name" => "config",
+                "cate" => "plugin",
+                "lcms" => true,
+            ]);
+            if ($config && $config['email']) {
+                return self::init(array_merge($config['email'], [
+                    "lcms" => true,
+                ]));
+            }
         }
         return [
-            "type" => $type,
-            "cfg"  => $config[$type],
+            "code" => 0,
+            "msg"  => "未配置邮箱接口",
         ];
     }
     /**
@@ -50,7 +99,7 @@ class EMAIL
         if (!$init['cfg']) {
             return $init;
         }
-        $cfg  = array_merge($init['cfg'], $Param);
+        $cfg = array_merge($init['cfg'], $Param);
         switch ($init['type']) {
             case 'smtp':
                 LOAD::plugin("PHPMailer/Exception");
