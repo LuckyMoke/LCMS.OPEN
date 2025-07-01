@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-06-17 11:13:03
+ * @LastEditTime: 2025-06-27 17:30:35
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -283,11 +283,17 @@ class admin extends adminbase
                     ["layui" => "input_sort", "title" => "图片大小限制",
                         "name"   => "LC[attsize]",
                         "value"  => $config['attsize'] ?: 300,
+                        "type"   => "number",
+                        "min"    => 10,
+                        "step"   => 10,
                         "tips"   => "KB，限制上传图片的大小，超过的图片会自动压缩",
                         "verify" => "required"],
                     ["layui" => "input_sort", "title" => "文件大小限制",
                         "name"   => "LC[attsize_file]",
                         "value"  => $config['attsize_file'] ?: 300,
+                        "type"   => "number",
+                        "min"    => 100,
+                        "step"   => 100,
                         "tips"   => "KB，限制上传文件的大小，上传视频等大文件请开启云存储",
                         "verify" => "required"],
                     ["layui" => "des", "title" => "特别注意：为了后台安全，请在上传完文件后，及时删除不常用的后缀。"],

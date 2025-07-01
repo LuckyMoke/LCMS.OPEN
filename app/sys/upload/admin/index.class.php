@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-02-05 15:36:32
+ * @LastEditTime: 2025-06-27 18:40:39
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -46,66 +46,87 @@ class index extends adminbase
     public function dodelimg()
     {
         global $_L, $LF, $LC;
-        if ($LC && $LC['src']) {
-            $files = is_array($LC['src']) ? $LC['src'] : [$LC['src']];
-        } elseif ($LC && $LC[0] && $LC[0]['src']) {
-            $ids   = implode(",", array_column($LC, "id"));
-            $files = array_column($LC, "src");
-        } else {
-            $files = is_array($LF['dir']) ? $LF['dir'] : [$LF['dir']];
-        }
-        foreach ($files as $index => $file) {
-            $file = path_relative($file);
-            if (in_string($file, "upload/{$_L['ROOTID']}/")) {
-                $files[$index] = $file;
-            } else {
-                unset($files[$index]);
+        $ids = [];
+        if ($LC['id']) {
+            $id = intval($LC['id']);
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        } elseif ($LC['src']) {
+            $src = trim($LC['src'], "./ ");
+            if (stripos($src, "upload/{$_L['ROOTID']}/") === 0) {
+                $ids = $src;
+            }
+        } elseif ($LC[0]['id']) {
+            foreach ($LC as $val) {
+                $id = intval($val['id']);
+                if ($id > 0) {
+                    $ids[] = $id;
+                }
             }
         }
-        $files = array_values($files);
-        if ($files) {
-            switch ($_L['plugin']['oss']['type']) {
-                case 'qiniu':
-                    load::plugin("Qiniu/QiniuOSS");
-                    $OSS = new QiniuOSS($_L['plugin']['oss']['qiniu']);
-                    break;
-                case 'tencent':
-                    load::plugin("Tencent/TencentOSS");
-                    $OSS = new TencentOSS($_L['plugin']['oss']['tencent']);
-                    break;
-                case 'aliyun':
-                    load::plugin("Aliyun/AliyunOSS");
-                    $OSS = new AliyunOSS($_L['plugin']['oss']['aliyun']);
-                    break;
-                case 'baidu':
-                    load::plugin("Baidu/BaiduOSS");
-                    $OSS = new BaiduOSS($_L['plugin']['oss']['baidu']);
-                    break;
-            }
-        } else {
-            ajaxout(0, "无可删除文件");
+        $files = $this->sql("get", $ids);
+        $files || ajaxout(0, "无可删除文件");
+        $ids   = array_column($files, "id");
+        $sizes = array_column($files, "size");
+        $files = array_column($files, "src");
+        switch ($_L['plugin']['oss']['type']) {
+            case 'qiniu':
+                load::plugin("Qiniu/QiniuOSS");
+                $OSS = new QiniuOSS($_L['plugin']['oss']['qiniu']);
+                break;
+            case 'tencent':
+                load::plugin("Tencent/TencentOSS");
+                $OSS = new TencentOSS($_L['plugin']['oss']['tencent']);
+                break;
+            case 'aliyun':
+                load::plugin("Aliyun/AliyunOSS");
+                $OSS = new AliyunOSS($_L['plugin']['oss']['aliyun']);
+                break;
+            case 'baidu':
+                load::plugin("Baidu/BaiduOSS");
+                $OSS = new BaiduOSS($_L['plugin']['oss']['baidu']);
+                break;
         }
+        //云存储删除
         if ($OSS) {
-            $OSS->delete($files);
+            $osfiles = [];
+            foreach ($files as $file) {
+                $osfiles[] = ltrim($file, "./");
+            }
+            $OSS->delete($osfiles);
         }
+        //本地文件删除
         foreach ($files as $file) {
-            delfile("../{$file}");
-            $ids || $this->sql("delete", $file);
+            delfile($file);
         }
-        if ($ids) {
-            $this->sql("deletebyid", $ids);
-        }
-        sql_error() && ajaxout(0, "删除失败");
+        //数据库删除
+        $this->sql("delete", $ids);
+        //记录删除日志
         LCMS::log([
             "type" => "system",
-            "info" => "删除文件-" . implode(",", $files),
+            "info" => "删除文件：" . implode(",", $files),
         ]);
+        //更新用户存储大小
         if ($_L['ROOTID'] > 0) {
+            $sizes = array_sum($sizes);
+            $sizes = intval($sizes / 1024);
             $admin = sql_get([
                 "table" => "admin",
                 "where" => "id = {$_L['ROOTID']}",
             ]);
-            if ($admin['storage_used'] < 0) {
+            if ($admin['storage_used'] >= $sizes) {
+                sql_update([
+                    "table" => "admin",
+                    "data"  => [
+                        "storage_used" => $sizes,
+                    ],
+                    "where" => "id = {$admin['id']}",
+                    "math"  => [
+                        "storage_used" => "-",
+                    ],
+                ]);
+            } else {
                 sql_update([
                     "table" => "admin",
                     "data"  => [
@@ -276,45 +297,37 @@ class index extends adminbase
     {
         global $_L, $LF, $LC;
         switch ($type) {
-            case 'delete':
-                $data = explode("/", $datey);
-                $data = sql_get([
-                    "table"  => "upload",
-                    "where"  => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
-                    "bind"   => [
-                        ":type"  => $data[2],
-                        ":datey" => $data[3],
-                        ":name"  => $data[4],
-                        ":lcms"  => $_L['ROOTID'],
-                    ],
-                    "fields" => "id, size",
-                ]);
-                $data && sql_delete([
-                    "table" => "upload",
-                    "where" => "id = {$data['id']}",
-                ]);
-                $_L['ROOTID'] > 0 && $data['size'] > 0 && sql_update([
-                    "table" => "admin",
-                    "data"  => [
-                        "storage_used" => intval($data['size'] / 1024),
-                    ],
-                    "where" => "id = {$_L['ROOTID']}",
-                    "math"  => [
-                        "storage_used" => "-",
-                    ],
-                ]);
-                break;
-            case 'deletebyid':
-                if ($datey) {
-                    $ids  = $datey;
-                    $data = sql_get([
+            case 'get':
+                if (is_array($datey)) {
+                    $ids   = implode(",", $datey);
+                    $files = sql_getall([
                         "table"  => "upload",
                         "where"  => "id IN({$ids}) AND lcms = :lcms",
                         "bind"   => [
                             ":lcms" => $_L['ROOTID'],
                         ],
-                        "fields" => "SUM(size) AS size",
+                        "fields" => "id, src, size",
                     ]);
+                } else {
+                    $date  = explode("/", trim($datey, "./"));
+                    $files = sql_get([
+                        "table"  => "upload",
+                        "where"  => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
+                        "bind"   => [
+                            ":type"  => $date[2],
+                            ":datey" => $date[3],
+                            ":name"  => $date[4],
+                            ":lcms"  => $_L['ROOTID'],
+                        ],
+                        "fields" => "id, src, size",
+                    ]);
+                    $files = $files ? [$files] : [];
+                }
+                return $files ?: [];
+                break;
+            case 'delete':
+                if (is_array($datey)) {
+                    $ids = implode(",", $datey);
                     sql_delete([
                         "table" => "upload",
                         "where" => "id IN({$ids}) AND lcms = :lcms",
@@ -322,14 +335,25 @@ class index extends adminbase
                             ":lcms" => $_L['ROOTID'],
                         ],
                     ]);
-                    $_L['ROOTID'] > 0 && $data['size'] > 0 && sql_update([
-                        "table" => "admin",
-                        "data"  => [
-                            "storage_used" => intval($data['size'] / 1024),
+                } elseif (is_numeric($datey)) {
+                    sql_delete([
+                        "table" => "upload",
+                        "where" => "id = :id AND lcms = :lcms",
+                        "bind"  => [
+                            ":id"   => $datey,
+                            ":lcms" => $_L['ROOTID'],
                         ],
-                        "where" => "id = {$_L['ROOTID']}",
-                        "math"  => [
-                            "storage_used" => "-",
+                    ]);
+                } else {
+                    $date = explode("/", trim($datey, "./"));
+                    sql_delete([
+                        "table" => "upload",
+                        "where" => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
+                        "bind"  => [
+                            ":type"  => $date[2],
+                            ":datey" => $date[3],
+                            ":name"  => $date[4],
+                            ":lcms"  => $_L['ROOTID'],
                         ],
                     ]);
                 }

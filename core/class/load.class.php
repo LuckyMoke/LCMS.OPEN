@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-02-26 12:59:35
+ * @LastEditTime: 2025-07-01 12:38:04
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -113,7 +113,7 @@ class LOAD
      * @param string $action
      * @return {*}
      */
-    private static function loadClass($file, $action = "")
+    private static function loadClass($file, $action = null)
     {
         $file = "{$file}.class.php";
         if (is_file($file)) {
@@ -121,27 +121,29 @@ class LOAD
         } else {
             LCMS::X(404, "文件不存在");
         }
-        if ($action) {
-            $cname = explode("/", $file);
-            $cname = end($cname);
-            $cname = str_replace(".class.php", "", $cname);
-            try {
-                $class = $cname ? new $cname : null;
-                if ($action != "new") {
-                    if (substr($action, 0, 2) != 'do') {
-                        LCMS::X(403, "方法禁止访问");
-                    }
-                    if (method_exists($class, $action)) {
-                        call_user_func([$class, $action]);
-                    } else {
-                        LCMS::X(404, "方法未找到");
-                    }
-                }
-                return $class;
-            } catch (\Throwable $th) {
-                LCMS::X(500, $th->getMessage());
+        if (!$action) return;
+        $cname = explode("/", $file);
+        $cname = end($cname);
+        $cname = str_replace(".class.php", "", $cname);
+        $cname || LCMS::X(404, "类不存在");
+        $class = null;
+        try {
+            $class = new $cname;
+        } catch (\Throwable $th) {
+            LCMS::X(404, "{$cname}类不存在");
+        }
+        if ($action != "new") {
+            if (substr($action, 0, 2) != 'do') {
+                header("HTTP/1.1 403 Forbidden");
+                LCMS::X(403, "方法禁止访问");
+            }
+            if (method_exists($class, $action)) {
+                call_user_func([$class, $action]);
+            } else {
+                LCMS::X(404, "方法不存在");
             }
         }
+        return $class;
     }
     /**
      * @description: 加载方法

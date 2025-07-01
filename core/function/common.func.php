@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-05-13 12:35:32
+ * @LastEditTime: 2025-07-01 13:04:46
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -275,6 +275,30 @@ function getunit($size, $unit = null)
             break;
     }
     return $size . $unit;
+}
+/**
+ * @description: 带单位的字符串转换为字节
+ * @param string $size
+ * @return int
+ */
+function getbytes($size)
+{
+    $size = trim($size);
+    $size = strtolower($size);
+    $size = rtrim($size, "b");
+    $unit = substr($size, -1);
+    switch ($unit) {
+        case 'g':
+            $size *= 1073741824;
+            break;
+        case 'm':
+            $size *= 1048576;
+            break;
+        case 'k':
+            $size *= 1024;
+            break;
+    }
+    return intval($size);
 }
 /**
  * @description: 获取两数之间的随机数，含小数
@@ -810,6 +834,27 @@ function jwt_decode($jwt, $key = "LCMS")
     return false;
 }
 /**
+ * @description: 创建UUID-V7
+ * @return string
+ */
+function uuid_create()
+{
+    $time    = (int) (microtime(true) * 1000);
+    $timeHex = str_pad(dechex($time), 12, "0", STR_PAD_LEFT);
+    $version = "7";
+    $variant = "a";
+    $rand    = bin2hex(random_bytes(74 / 8));
+    return substr($timeHex, 0, 8)
+    . "-"
+    . substr($timeHex, 8, 4)
+    . "-"
+    . $version . substr($rand, 0, 3)
+    . "-"
+    . $variant . substr($rand, 3, 3)
+    . "-"
+    . substr($rand, 6);
+}
+/**
  * @description: 替换富文本中图片懒加载
  * @param string $str
  * @return string
@@ -1260,7 +1305,10 @@ function server_info()
     if (extension_loaded("Zend OPcache")) {
         $opcache = opcache_get_status();
         if ($opcache['memory_usage']) {
-            $serverinfo['opcache'] = "内存用量/" . sprintf("%.2f", $opcache['memory_usage']['used_memory'] / 1048576) . "M 缓存命中率/" . sprintf("%.2f", $opcache['opcache_statistics']['opcache_hit_rate']) . "%";
+            $serverinfo['opcache'] = [
+                "used_memory"      => sprintf("%.2f", $opcache['memory_usage']['used_memory'] / 1048576) . "M",
+                "opcache_hit_rate" => sprintf("%.2f", $opcache['opcache_statistics']['opcache_hit_rate']) . "%",
+            ];
         }
     }
     return $serverinfo;

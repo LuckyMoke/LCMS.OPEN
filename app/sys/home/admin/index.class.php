@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2025-05-09 11:21:28
+ * @LastEditTime: 2025-06-17 13:09:36
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -102,16 +102,32 @@ class index extends adminbase
         ) {
             $update = true;
         }
+        if ($info['opcache']) {
+            $ram[] = "opcache/{$info['opcache']['used_memory']}";
+        } else {
+            $ram[] = "opcache/未开启";
+        }
+        if ($_L['config']['admin']['session_type'] > 0) {
+            LOAD::plugin("Redis/rds");
+            $redis = new RDS();
+            $redis = $redis->do->info();
+        }
+        if ($redis['used_memory_rss']) {
+            $ram[] = "redis/" . sprintf("%.2f", $redis['used_memory_rss'] / 1048576) . "M";
+        } else {
+            $ram[] = "redis/未开启";
+        }
+        $ram = implode("、", $ram);
         ajaxout(1, "success", "", [
             "tips"    => $tips ?: [],
             "apps"    => LEVEL::applist("open", true, 12),
             "info"    => [
-                "服务器系统"   => $info['os'],
-                "服务器环境"   => $info['sys'],
-                "运行环境"    => $php,
-                "Opcache" => $info['opcache'] ?? "未开启opcache扩展，开启有助于降低CPU使用率，但会增加内存使用量",
-                "PHP扩展"   => $this->getComs(),
-                "开源组件"    => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari、Alpine.js",
+                "服务器系统" => $info['os'],
+                "服务器环境" => $info['sys'],
+                "运行环境"  => $php,
+                "内存用量"  => $ram,
+                "PHP扩展" => $this->getComs(),
+                "开源组件"  => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari、Alpine.js",
             ],
             "update"  => $update ? true : false,
             "gonggao" => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,

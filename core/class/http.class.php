@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-04-16 11:10:16
+ * @LastEditTime: 2025-06-28 11:45:19
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -86,6 +86,7 @@ class HTTP
         $args['type'] = strtoupper($args['type'] ?: "GET");
         switch ($args['type']) {
             case 'GET':
+            case 'HEAD':
             case 'DELETE':
                 if (is_array($args['data'])) {
                     $query = http_build_query($args['data']);
@@ -112,34 +113,6 @@ class HTTP
                         $args['headers']['Content-Type'] = "application/json; charset=utf-8";
                     }
                 }
-                break;
-            case 'HEAD':
-                if (is_array($args['data'])) {
-                    $query = http_build_query($args['data']);
-                    if (in_string($args['url'], "?")) {
-                        $args['url'] = trim($args['url'], "&");
-                        $args['url'] .= "&{$query}";
-                    } else {
-                        $args['url'] .= "?{$query}";
-                    }
-                    unset($args['data']);
-                }
-                $reinfo = get_headers($args['url'], true, stream_context_create([
-                    "http" => [
-                        "method"     => "GET",
-                        "header"     => $args['headers'],
-                        "user_agent" => $args['ua'],
-                        "timeout"    => $args['timeout'],
-                    ],
-                ]));
-                if ($reinfo) {
-                    $args['success'] && $args['success']($reinfo, $reinfo, []);
-                } else {
-                    $args['error'] && $args['error']($reinfo);
-                }
-                $args['complete'] && $args['complete']($reinfo);
-                $response_headers = $reinfo;
-                return $reinfo;
                 break;
         }
         $CURL = curl_init($args['url']);
@@ -201,6 +174,13 @@ class HTTP
                 curl_setopt($CURL, CURLOPT_POSTFIELDS, $args['data']);
                 $return = true;
                 break;
+            case 'HEAD':
+                curl_setopt($CURL, CURLOPT_HEADER, true);
+                curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "HEAD");
+                curl_setopt($CURL, CURLOPT_NOBODY, true);
+                $return = true;
+                break;
             case 'PUT':
                 curl_setopt($CURL, CURLOPT_HEADER, true);
                 curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
@@ -250,6 +230,7 @@ class HTTP
                 }
                 switch ($args['type']) {
                     case 'POST':
+                    case 'HEAD':
                     case 'PUT':
                     case 'DELETE':
                         if (in_array($reinfo['http_code'], [
@@ -263,13 +244,19 @@ class HTTP
                         }
                         break;
                 }
-                $result = substr($body, $reinfo['header_size'], strlen($body));
+                switch ($args['type']) {
+                    case 'HEAD':
+                        $result = $rehead;
+                        break;
+                    default:
+                        $result = substr($body, $reinfo['header_size'], strlen($body));
+                        break;
+                }
                 $args['success'] && $args['success']($result, $reinfo, $rehead);
                 $response_headers = $rehead;
             } else {
                 $args['error'] && $args['error']($reinfo);
             }
-
         } else {
             curl_exec($CURL);
             $reinfo = curl_getinfo($CURL);

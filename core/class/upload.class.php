@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-02-22 18:40:19
+ * @LastEditTime: 2025-06-27 19:16:37
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -31,7 +31,8 @@ class UPLOAD
             "attsize_file" => intval((self::$CFG['attsize_file'] ?: 300) * 1024),
         ]);
         if ($dir == "image" || $dir == "file" || $dir == "user") {
-            $dir = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
+            $insql = true;
+            $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
         }
         $osscfg = $_L['plugin']['oss'];
         if (in_array($osscfg['type'], [
@@ -113,7 +114,7 @@ class UPLOAD
             return self::out(0, "upload文件夹没有写权限");
         }
         //强制本地存储
-        if ($force) {
+        if ($force && $insql) {
             self::sql_save($dir, $return, true);
             return $return;
         }
@@ -150,7 +151,7 @@ class UPLOAD
                 }
             }
         }
-        self::sql_save($dir, $return, false, $cid);
+        $insql && self::sql_save($dir, $return, false, $cid);
         return $return;
     }
     /**

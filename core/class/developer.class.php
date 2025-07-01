@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2024-10-10 10:19:44
+ * @LastEditTime: 2025-06-30 23:43:29
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -93,7 +93,7 @@ class DEVELOPER
     private function getLine($filename = "", $line = 0)
     {
         global $_L;
-        if (!$filename || is_file($filename)) {
+        if (!$filename || !is_file($filename)) {
             return [];
         }
         $file  = new SplFileObject($filename, "r+");

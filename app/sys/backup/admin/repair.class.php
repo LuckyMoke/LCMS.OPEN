@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-08-05 19:46:40
+ * @LastEditTime: 2025-07-01 12:35:59
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -242,10 +242,25 @@ class repair extends adminbase
                 } else {
                     $index = null;
                 }
+                $default = "";
+                if ($key['Extra'] == "auto_increment") {
+                    $default = "AUTO_INCREMENT";
+                } elseif (stripos($key['Type'], "decimal") !== false) {
+                    $default = "0.00";
+                }
+                if ($default === "") {
+                    if ($key['Default'] != "") {
+                        $default = $key['Default'];
+                    } elseif ($key['Null'] == "NO") {
+                        $default = "NOT NULL";
+                    } else {
+                        $default = "NULL";
+                    }
+                }
                 $result[$name][$key['Field']] = [
                     "type"    => $key['Type'],
                     "index"   => $index,
-                    "default" => $key['Extra'] === "auto_increment" ? "AUTO_INCREMENT" : ($key['Default'] != "" ? $key['Default'] : "NULL"),
+                    "default" => $default,
                 ];
             }
             if ($indexs) {
@@ -323,6 +338,8 @@ class repair extends adminbase
             $sql .= " NOT NULL AUTO_INCREMENT";
         } elseif ($data['default'] === "NULL") {
             $sql .= " NULL";
+        } elseif ($data['default'] === "NOT NULL") {
+            $sql .= " NOT NULL";
         } elseif ($data['default'] !== "") {
             $sql .= " NOT NULL DEFAULT";
             if (is_numeric($data['default'])) {
@@ -342,7 +359,12 @@ class repair extends adminbase
     private function setVal($key, $data)
     {
         global $_L, $LF, $LC, $PRE;
-        if (!$data['add'] && $data['default'] !== "" && $data['default'] !== "NULL") {
+        if (
+            !$data['add'] &&
+            $data['default'] !== "" &&
+            $data['default'] !== "NULL" &&
+            $data['default'] !== "NOT NULL"
+        ) {
             if (is_numeric($data['default'])) {
                 $val = $data['default'];
             } else {

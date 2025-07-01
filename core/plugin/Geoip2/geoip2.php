@@ -154,7 +154,7 @@ class Geoip2
                     break;
             }
             $province = str_replace(["省", "市"], "", $province);
-            $city     = str_replace("市", "", $city);
+            $city     = str_replace(["市", "县"], "", $city);
             if ($dbtype == "city") {
                 $address = $city ?: $province;
                 if (!preg_match("/[\x{4e00}-\x{9fff}\x{3400}-\x{4dbf}]/u", $city)) {
@@ -209,7 +209,7 @@ class Geoip2
             $region   = explode("	", $record);
             $array    = explode("–", $region[0]);
             $array[1] = str_replace(["省", "市"], "", $array[1]);
-            $array[2] = str_replace("市", "", $array[2]);
+            $array[2] = str_replace(["市", "县"], "", $array[2]);
             $array[3] = str_replace("市", "", $array[3]);
             if ($array[2]) {
                 $addrsss = "{$array[0]}{$array[2]}{$array[3]}";

@@ -14,6 +14,14 @@
         <meta name="referrer" content="no-referrer-when-downgrade" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
+        <if $_L['url']['scheme']=="https://">
+            <if in_string($_SERVER['HTTP_USER_AGENT'], "firefox")>
+                <meta http-equiv="X-Content-Security-Policy" content="upgrade-insecure-requests" />
+                <else/>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            </if>
+        </if>
+        <link rel="shortcut icon" href="data:image/ico;base64,aWNv" />
         <link rel="stylesheet" href="/public/static/layui/css/layui.css?lcmsver={{$_L['config']['ver']}}" />
         <link rel="stylesheet" href="/public/ui/admin/static/style.css?lcmsver={{$_L['config']['ver']}}" />
     </head>

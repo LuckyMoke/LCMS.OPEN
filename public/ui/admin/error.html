@@ -9,6 +9,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="framework" content="55uY5LyBwq5QSFDlvIDlj5HmoYbmnrY" />
+    <link rel="shortcut icon" href="data:image/ico;base64,aWNv" />
     <link rel="stylesheet" href="{{$_L['url']['static']}}prettify/prettify.css?{{$_L['config']['ver']}}" />
     <style>body{font-size:14px;background:#ffffff;}pre{letter-spacing:1px;}h2{margin:0 10px 10px 10px;padding:20px 10px 10px 0;font-size:18px;color:#409eff;font-weight:400;border-bottom:1px #ebeef5 solid;line-height:1.6}ol li:nth-child({{$error['this']['line']-$error['this']['start']}}){background:#fbd7d7 !important;}.list li:hover{background:#f4f4f4}</style>
 </head>
@@ -40,6 +41,16 @@
         <h2>表单：</h2>
         <ul class="list" style="list-style:none;margin:10px 10px 20px 40px;padding:0;font-size:12px;">
             <loop $_L['form'],$val,$key>
+                <li style="border-bottom:1px dashed #DCDFE6;padding: 8px;">
+                    <div style="width:150px;float:left;word-break:break-all;">{{$key}}</div>
+                    <div style="padding-left:160px;color:#909399;word-break:break-all;">{{$val}}</div>
+                    <div style="clear:both"></div>
+                </li>
+            </loop>
+        </ul>
+        <h2>Cookie：</h2>
+        <ul class="list" style="list-style:none;margin:10px 10px 20px 40px;padding:0;font-size:12px;">
+            <loop $_L['cookie'],$val,$key>
                 <li style="border-bottom:1px dashed #DCDFE6;padding: 8px;">
                     <div style="width:150px;float:left;word-break:break-all;">{{$key}}</div>
                     <div style="padding-left:160px;color:#909399;word-break:break-all;">{{$val}}</div>
