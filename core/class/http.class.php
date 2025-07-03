@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-28 11:45:19
+ * @LastEditTime: 2025-07-02 22:41:14
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -207,10 +207,17 @@ class HTTP
                 break;
         }
         $args['setopt'] && $args['setopt']($CURL);
+        $body  = curl_exec($CURL);
+        $cinfo = curl_getinfo($CURL);
+        curl_close($CURL);
+        $cinfo  = $cinfo ?: [];
+        $reinfo = [];
+        foreach ($cinfo as $key => $val) {
+            if ($key) {
+                $reinfo[strtolower($key)] = $val;
+            }
+        }
         if ($return) {
-            $body   = curl_exec($CURL);
-            $reinfo = curl_getinfo($CURL);
-            curl_close($CURL);
             if ($body) {
                 $hinfo = substr($body, 0, $reinfo['header_size']);
                 $hinfo = str_replace("\r\n", "\n", $hinfo);
@@ -224,7 +231,7 @@ class HTTP
                     $infos[1] = trim($infos[1]);
                     if ($infos[1]) {
                         $rehead = array_merge($rehead, [
-                            trim($infos[0]) => $infos[1],
+                            strtolower(trim($infos[0])) => $infos[1],
                         ]);
                     }
                 }
@@ -256,11 +263,13 @@ class HTTP
                 $response_headers = $rehead;
             } else {
                 $args['error'] && $args['error']($reinfo);
+                switch ($args['type']) {
+                    case 'HEAD':
+                        $result = [];
+                        break;
+                }
             }
         } else {
-            curl_exec($CURL);
-            $reinfo = curl_getinfo($CURL);
-            curl_close($CURL);
             switch ($args['type']) {
                 case 'DOWNLOAD':
                     fclose($downfile);
@@ -273,13 +282,21 @@ class HTTP
                     } else {
                         delfile($args['file']);
                         $args['error'] && $args['error']($reinfo);
-                        $result = "";
+                        $result = [];
                     }
                     break;
             }
         }
         $args['complete'] && $args['complete']($reinfo);
         $curl_info = $reinfo;
-        return $result ?: "";
+        if ($result) return $result;
+        switch (gettype($result)) {
+            case 'array':
+                return [];
+                break;
+            default:
+                return "";
+                break;
+        }
     }
 }

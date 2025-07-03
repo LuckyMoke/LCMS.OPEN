@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 23:26:01
+ * @LastEditTime: 2025-07-02 21:27:46
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -127,7 +127,7 @@ class MP
                 "env_version" => $env,
             ]),
         ], $curl_info, $curl_head);
-        if (in_string($curl_head['Content-Type'], "application/json")) {
+        if (in_string($curl_head['content-type'], "application/json")) {
             $result = json_decode($result, true);
             return $result ?: [];
         } else {

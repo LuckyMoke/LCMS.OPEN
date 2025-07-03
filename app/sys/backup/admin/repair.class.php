@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2025-07-01 12:35:59
+ * @LastEditTime: 2025-07-01 16:22:22
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -337,7 +337,7 @@ class repair extends adminbase
         if ($data['default'] === "AUTO_INCREMENT") {
             $sql .= " NOT NULL AUTO_INCREMENT";
         } elseif ($data['default'] === "NULL") {
-            $sql .= " NULL";
+            $sql .= " DEFAULT NULL";
         } elseif ($data['default'] === "NOT NULL") {
             $sql .= " NOT NULL";
         } elseif ($data['default'] !== "") {
