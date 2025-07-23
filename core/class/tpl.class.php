@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2024-03-12 16:34:42
+ * @LastEditTime: 2025-07-08 11:30:33
  * @Description: 前端模板静态文件处理
  * @Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -13,6 +13,7 @@ class TPL
     public static $cname   = "";
     public static $ver     = "";
     public static $tplpath = "";
+    public static $tpath   = "";
     public static function init($paths = [])
     {
         global $_L;
@@ -24,8 +25,8 @@ class TPL
             "js"      => [],
             "xhr"     => [],
         ], $_L['ui'] ?? []);
-        $cname = self::setCname();
-        $tpath = PATH_APP_NOW . "web/tpl" . (self::$tplpath ? "/" . self::$tplpath : "");
+        $cname       = self::setCname();
+        self::$tpath = PATH_APP_NOW . "web/tpl" . (self::$tplpath ? "/" . self::$tplpath : "");
         switch (self::$cache) {
             case 2:
                 $_L['ui']['nocache'] = 1;
@@ -33,7 +34,7 @@ class TPL
                     if ($val) {
                         $val = explode("?", $val)[0];
                         if (!is_url($val) && !in_string($val, PATH_WEB)) {
-                            $val = "{$tpath}/{$val}";
+                            $val = self::$tpath . "/{$val}";
                         }
                         $suffix = substr($val, strrpos($val, ".") + 1);
                         switch ($suffix) {
@@ -56,10 +57,10 @@ class TPL
                 break;
             default:
                 if (!self::$cache || !is_file("{$cname}.css") || !is_file("{$cname}.js")) {
-                    $files = self::scanAll($tpath);
+                    $files = self::scanAll(self::$tpath);
                     foreach ($paths as $index => $val) {
                         if (!in_string($val, PATH_WEB)) {
-                            $paths[$index] = "{$tpath}/{$val}";
+                            $paths[$index] = self::$tpath . "/{$val}";
                         }
                     }
                     $files = array_diff($files, $paths);
@@ -163,6 +164,9 @@ class TPL
     private static function scanAll($path, $files = [])
     {
         global $_L;
+        if ($path == (self::$tpath . "/static/nocache")) {
+            return $files ?: [];
+        }
         $files = array_merge_recursive($files, glob("{$path}/*.css"), glob("{$path}/*.js"));
         foreach (scandir($path) as $file) {
             if ($file !== "." && $file !== ".." && is_dir("{$path}/{$file}")) {
