@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-27 19:16:37
+ * @LastEditTime: 2025-07-26 01:14:35
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -216,6 +216,9 @@ class UPLOAD
     private static function img2watermark($img, $times = 1)
     {
         global $_L;
+        if ($times == 1 && $_L['form']['noexif'] != 1) {
+            $img = self::removeExif($img);
+        }
         $cfgwat = $_L['plugin']['watermark'] ?: [];
         if (self::$CFG['attwebp'] > 0 && in_array(self::$MIME, [
             "jpeg", "jpg", "png", "bmp", "wpng", "wbmp",
@@ -409,5 +412,54 @@ class UPLOAD
                 ]);
             }
         }
+    }
+    /**
+     * @description: 移除图片信息
+     * @param string $imgstring
+     * @return {*}
+     */
+    private static function removeExif($img)
+    {
+        global $_L;
+        if (!in_array(self::$MIME, [
+            "jpeg", "jpg", "png", "webp",
+        ]) || !in_string($img, [
+            "<x:xmpmeta", "Adobe",
+        ])) {
+            return $img;
+        }
+        ob_start();
+        $src   = imagecreatefromstring($img);
+        $srcwh = getimagesizefromstring($img);
+        switch (self::$MIME) {
+            case 'png':
+            case 'webp':
+                $thumb = imagecreatetruecolor($srcwh[0], $srcwh[1]);
+                imagealphablending($thumb, true);
+                imagesavealpha($thumb, true);
+                $bgcolor = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
+                imagefill($thumb, 0, 0, $bgcolor);
+                imagecopyresampled($thumb, $src, 0, 0, 0, 0, $srcwh[0], $srcwh[1], $srcwh[0], $srcwh[1]);
+                break;
+        }
+        switch (self::$MIME) {
+            case 'jpg':
+            case 'jpeg':
+                imagejpeg($src, null, 100);
+                break;
+            case 'png':
+                imagepng($thumb);
+                imagedestroy($thumb);
+                break;
+            case 'webp':
+                imagewebp($thumb, null, 90);
+                imagedestroy($thumb);
+                break;
+        }
+        imagedestroy($src);
+        $img = ob_get_contents();
+        ob_clean();
+        self::$SIZE = strlen($img);
+        return $img;
     }
 }
