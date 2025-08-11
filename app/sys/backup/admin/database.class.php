@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2024-12-18 20:28:36
+ * @LastEditTime: 2025-08-05 11:22:25
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -56,14 +56,14 @@ class database extends adminbase
                         delfile($cache);
                         LCMS::log([
                             "type" => "system",
-                            "info" => "数据备份-备份成功-{$bname}.LCMS",
+                            "info" => "数据备份：备份成功/{$bname}.LCMS",
                         ]);
                         ajaxout(1, "备份成功");
                     }
                 }
                 LCMS::log([
                     "type" => "system",
-                    "info" => "数据备份-备份失败",
+                    "info" => "数据备份：备份失败",
                 ]);
                 ajaxout(0, "压缩失败");
                 break;
@@ -88,7 +88,7 @@ class database extends adminbase
                             delfile($cache);
                             LCMS::log([
                                 "type" => "system",
-                                "info" => "数据恢复-恢复成功-{$LC['name']}",
+                                "info" => "数据恢复：恢复成功/{$LC['name']}",
                             ]);
                             ajaxout(1, "恢复成功");
                         }
@@ -105,7 +105,7 @@ class database extends adminbase
                 if (delfile("/backup/data/{$LC['name']}")) {
                     LCMS::log([
                         "type" => "system",
-                        "info" => "数据备份-删除备份-{$LC['name']}",
+                        "info" => "数据备份：删除备份/{$LC['name']}",
                     ]);
                     ajaxout(1, "删除成功", "reload");
                 } else {

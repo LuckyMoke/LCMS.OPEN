@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-07-01 13:04:46
+ * @LastEditTime: 2025-08-07 18:54:42
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -639,6 +639,7 @@ function realhost($host = "")
  */
 function roothost($domain = "")
 {
+    $domain = trim($domain);
     if (in_string($domain, "://")) {
         $domain = parse_url($domain);
         $domain = $domain['host'];
@@ -673,7 +674,7 @@ function roothost($domain = "")
                 $match = array_reverse($match);
                 $host  = implode(".", $match);
                 $host  = explode(":", $host);
-                $host  = $host[0];
+                $host  = trim($host[0]);
                 break;
         }
     }

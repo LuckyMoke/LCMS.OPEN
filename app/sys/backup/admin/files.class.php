@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-09-28 14:32:25
- * @LastEditTime: 2024-01-17 11:00:58
+ * @LastEditTime: 2025-08-05 12:05:22
  * @Description: 文件管理
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -26,16 +26,26 @@ class files extends adminbase
                 $doamin = $_L['plugin']['oss']['type'] != "local" ? $_L['plugin']['oss']['domain'] : $_L['url']['site'];
                 $where  = $LC['name'] ? " AND name LIKE :name" : "";
                 $where .= $LC['type'] ? " AND type = :type" : "";
-                $data = TABLE::set("upload", "lcms = :lcms AND uid = :uid{$where}", "id DESC", [
-                    ":lcms" => $_L['ROOTID'],
-                    ":uid"  => $_L['LCMSADMIN']['id'],
-                    ":name" => "%{$LC['name']}%",
-                    ":type" => $LC['type'],
+                $data = TABLE::set([
+                    "table" => "upload",
+                    "where" => "lcms = :lcms AND uid = :uid{$where}",
+                    "order" => "id DESC",
+                    "bind"  => [
+                        ":lcms" => $_L['ROOTID'],
+                        ":uid"  => $_L['LCMSADMIN']['id'],
+                        ":name" => "%{$LC['name']}%",
+                        ":type" => $LC['type'],
+                    ],
                 ]);
+                $types = [
+                    "file"  => "后端/文件",
+                    "image" => "后端/图片",
+                    "user"  => "前端/用户",
+                ];
                 foreach ($data as $index => $val) {
                     $src          = str_replace("../", "", $val['src']);
                     $data[$index] = array_merge($val, [
-                        "type"  => $val['type'] === "file" ? "文件" : "图片",
+                        "type"  => $types[$val['type']],
                         "size"  => getunit($val['size']),
                         "oname" => $val['oname'] ?: '<span style="color:#cccccc">无</span>',
                         "href"  => [
@@ -56,7 +66,7 @@ class files extends adminbase
                         ["title" => "ID", "field" => "id",
                             "width"  => 80,
                             "align"  => "center"],
-                        ["title" => "文件类型", "field" => "type",
+                        ["title" => "上传渠道", "field" => "type",
                             "width"  => 100,
                             "align"  => "center"],
                         ["title" => "文件目录", "field" => "datey",
@@ -92,13 +102,15 @@ class files extends adminbase
                             "tips"   => "确认删除？无法恢复！"],
                     ],
                     "search"  => [
-                        ["title" => "文件类型", "name" => "type",
+                        ["title" => "上传渠道", "name" => "type",
                             "type"   => "select",
                             "option" => [
-                                ["title" => "文件",
+                                ["title" => "后端/文件",
                                     "value"  => "file"],
-                                ["title" => "图片",
+                                ["title" => "后端/图片",
                                     "value"  => "image"],
+                                ["title" => "前端/用户",
+                                    "value"  => "user"],
                             ]],
                         ["title" => "存储文件名", "name" => "name"],
                     ],

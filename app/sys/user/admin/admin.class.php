@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-06-04 11:09:44
+ * @LastEditTime: 2025-08-05 11:24:00
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -184,7 +184,7 @@ class admin extends adminbase
                 ])) {
                     LCMS::log([
                         "type" => "system",
-                        "info" => "用户管理-停用用户-{$names}",
+                        "info" => "用户管理：停用用户/{$names}",
                     ]);
                     ajaxout(1, "停用成功", "reload");
                 } else {

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-04-14 18:26:29
+ * @LastEditTime: 2025-08-05 11:22:14
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -174,7 +174,7 @@ class local extends adminbase
         deldir($dir);
         LCMS::log([
             "type" => "system",
-            "info" => "卸载应用-{$app}",
+            "info" => "卸载应用：{$app}",
         ]);
         ajaxout(1, '卸载成功');
     }

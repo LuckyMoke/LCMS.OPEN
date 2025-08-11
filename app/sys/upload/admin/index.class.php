@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-27 18:40:39
+ * @LastEditTime: 2025-08-05 12:45:12
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -52,11 +52,6 @@ class index extends adminbase
             if ($id > 0) {
                 $ids[] = $id;
             }
-        } elseif ($LC['src']) {
-            $src = trim($LC['src'], "./ ");
-            if (stripos($src, "upload/{$_L['ROOTID']}/") === 0) {
-                $ids = $src;
-            }
         } elseif ($LC[0]['id']) {
             foreach ($LC as $val) {
                 $id = intval($val['id']);
@@ -65,75 +60,12 @@ class index extends adminbase
                 }
             }
         }
-        $files = $this->sql("get", $ids);
-        $files || ajaxout(0, "无可删除文件");
-        $ids   = array_column($files, "id");
-        $sizes = array_column($files, "size");
-        $files = array_column($files, "src");
-        switch ($_L['plugin']['oss']['type']) {
-            case 'qiniu':
-                load::plugin("Qiniu/QiniuOSS");
-                $OSS = new QiniuOSS($_L['plugin']['oss']['qiniu']);
-                break;
-            case 'tencent':
-                load::plugin("Tencent/TencentOSS");
-                $OSS = new TencentOSS($_L['plugin']['oss']['tencent']);
-                break;
-            case 'aliyun':
-                load::plugin("Aliyun/AliyunOSS");
-                $OSS = new AliyunOSS($_L['plugin']['oss']['aliyun']);
-                break;
-            case 'baidu':
-                load::plugin("Baidu/BaiduOSS");
-                $OSS = new BaiduOSS($_L['plugin']['oss']['baidu']);
-                break;
-        }
-        //云存储删除
-        if ($OSS) {
-            $osfiles = [];
-            foreach ($files as $file) {
-                $osfiles[] = ltrim($file, "./");
-            }
-            $OSS->delete($osfiles);
-        }
-        //本地文件删除
-        foreach ($files as $file) {
-            delfile($file);
-        }
-        //数据库删除
-        $this->sql("delete", $ids);
-        //记录删除日志
-        LCMS::log([
-            "type" => "system",
-            "info" => "删除文件：" . implode(",", $files),
-        ]);
-        //更新用户存储大小
-        if ($_L['ROOTID'] > 0) {
-            $sizes = array_sum($sizes);
-            $sizes = intval($sizes / 1024);
-            $admin = sql_get([
-                "table" => "admin",
-                "where" => "id = {$_L['ROOTID']}",
-            ]);
-            if ($admin['storage_used'] >= $sizes) {
-                sql_update([
-                    "table" => "admin",
-                    "data"  => [
-                        "storage_used" => $sizes,
-                    ],
-                    "where" => "id = {$admin['id']}",
-                    "math"  => [
-                        "storage_used" => "-",
-                    ],
-                ]);
-            } else {
-                sql_update([
-                    "table" => "admin",
-                    "data"  => [
-                        "storage_used" => 0,
-                    ],
-                    "where" => "id = {$admin['id']}",
-                ]);
+        if ($ids) {
+            UPLOAD::del($ids);
+        } elseif ($LC['src']) {
+            $src = trim($LC['src'], "./ ");
+            if (stripos($src, "upload/{$_L['ROOTID']}/") === 0) {
+                UPLOAD::del($src);
             }
         }
         ajaxout(1, "删除成功", "reload");
@@ -296,94 +228,28 @@ class index extends adminbase
     private function sql($type = "image", $datey, $data = [])
     {
         global $_L, $LF, $LC;
-        switch ($type) {
-            case 'get':
-                if (is_array($datey)) {
-                    $ids   = implode(",", $datey);
-                    $files = sql_getall([
-                        "table"  => "upload",
-                        "where"  => "id IN({$ids}) AND lcms = :lcms",
-                        "bind"   => [
-                            ":lcms" => $_L['ROOTID'],
-                        ],
-                        "fields" => "id, src, size",
-                    ]);
-                } else {
-                    $date  = explode("/", trim($datey, "./"));
-                    $files = sql_get([
-                        "table"  => "upload",
-                        "where"  => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
-                        "bind"   => [
-                            ":type"  => $date[2],
-                            ":datey" => $date[3],
-                            ":name"  => $date[4],
-                            ":lcms"  => $_L['ROOTID'],
-                        ],
-                        "fields" => "id, src, size",
-                    ]);
-                    $files = $files ? [$files] : [];
-                }
-                return $files ?: [];
-                break;
-            case 'delete':
-                if (is_array($datey)) {
-                    $ids = implode(",", $datey);
-                    sql_delete([
-                        "table" => "upload",
-                        "where" => "id IN({$ids}) AND lcms = :lcms",
-                        "bind"  => [
-                            ":lcms" => $_L['ROOTID'],
-                        ],
-                    ]);
-                } elseif (is_numeric($datey)) {
-                    sql_delete([
-                        "table" => "upload",
-                        "where" => "id = :id AND lcms = :lcms",
-                        "bind"  => [
-                            ":id"   => $datey,
-                            ":lcms" => $_L['ROOTID'],
-                        ],
-                    ]);
-                } else {
-                    $date = explode("/", trim($datey, "./"));
-                    sql_delete([
-                        "table" => "upload",
-                        "where" => "type = :type AND datey = :datey AND name = :name AND lcms = :lcms",
-                        "bind"  => [
-                            ":type"  => $date[2],
-                            ":datey" => $date[3],
-                            ":name"  => $date[4],
-                            ":lcms"  => $_L['ROOTID'],
-                        ],
-                    ]);
-                }
-                break;
-            default:
-                if ($data) {
-                    sql_insert(["upload", [
-                        "type"    => $type,
-                        "cid"     => $data['cid'],
-                        "datey"   => $datey,
-                        "oname"   => $data['oname'],
-                        "name"    => $data['name'],
-                        "size"    => $data['size'],
-                        "src"     => $data['src'],
-                        "addtime" => datenow(),
-                        "uid"     => $_L['LCMSADMIN']['id'],
-                        "lcms"    => $_L['ROOTID'],
-                    ]]);
-                    $_L['ROOTID'] > 0 && sql_update([
-                        "table" => "admin",
-                        "data"  => [
-                            "storage_used" => intval($data['size'] / 1024),
-                        ],
-                        "where" => "id = {$_L['ROOTID']}",
-                        "math"  => [
-                            "storage_used" => "+",
-                        ],
-                    ]);
-                }
-                break;
-        }
+        if (!$data) return;
+        sql_insert(["upload", [
+            "type"    => $type,
+            "cid"     => $data['cid'],
+            "datey"   => $datey,
+            "oname"   => $data['oname'],
+            "name"    => $data['name'],
+            "size"    => $data['size'],
+            "src"     => $data['src'],
+            "addtime" => datenow(),
+            "uid"     => $_L['LCMSADMIN']['id'],
+            "lcms"    => $_L['ROOTID'],
+        ]]);
+        $_L['ROOTID'] > 0 && sql_update([
+            "table" => "admin",
+            "data"  => [
+                "storage_used" => intval($data['size'] / 1024),
+            ],
+            "where" => "id = {$_L['ROOTID']}",
+            "math"  => [
+                "storage_used" => "+",
+            ],
+        ]);
     }
 }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-08-16 10:25:43
+ * @LastEditTime: 2025-08-05 11:43:05
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -146,7 +146,6 @@ class THUMB
             $white = $cfgthumb['type'] > 0 ? true : false;
         }
         $img_info = getimagesize($path);
-        $img_data = file_get_contents($path);
         ob_clean();
         if (!$img_info || !in_array($img_info['mime'], [
             "image/jpeg",
@@ -154,15 +153,38 @@ class THUMB
             "image/gif",
             "image/png",
             "image/x-png",
+            "image/bmp",
             "image/webp",
             "image/vnd.wap.wbmp",
             "image/x-up-wpng",
         ]) || ($x == 0 && $y == 0)) {
             header("content-type: {$img_info['mime']}");
-            echo $img_data;
+            echo file_get_contents($path);
             exit;
         }
-        $img   = imagecreatefromstring($img_data);
+        switch ($img_info['mime']) {
+            case 'image/jpeg':
+            case 'image/pjpeg':
+                $img = imagecreatefromjpeg($path);
+                break;
+            case 'image/png':
+            case 'image/x-png':
+                $img = imagecreatefrompng($path);
+                break;
+            case 'image/bmp':
+                $img = imagecreatefrombmp($path);
+                break;
+            case 'image/gif':
+                $img = imagecreatefromgif($path);
+                break;
+            case 'image/webp':
+            case 'image/x-up-wpng':
+                $img = imagecreatefromwebp($path);
+                break;
+            case 'image/vnd.wap.wbmp':
+                $img = imagecreatefromwbmp($path);
+                break;
+        }
         $scale = $img_info[0] / $img_info[1];
         $x     = $x == 0 ? $y * $scale : ($x > 1920 ? 1920 : $x);
         $y     = $y == 0 ? $x / $scale : ($y > 1000 ? 1000 : $y);
@@ -203,19 +225,22 @@ class THUMB
         header("content-type: {$img_info['mime']}");
         imageinterlace($thumb, true);
         switch ($img_info['mime']) {
+            case 'image/jpeg':
+            case 'image/pjpeg':
+                imagejpeg($thumb, null, 90);
+                break;
+            case 'image/png':
+            case 'image/x-png':
+                imagepng($thumb);
+                break;
+            case 'image/bmp':
+                imagebmp($thumb);
+                break;
             case 'image/gif':
                 imagegif($thumb);
                 break;
-            case 'image/pjpeg':
-            case 'image/jpeg':
-                imagejpeg($thumb, null, 90);
-                break;
-            case 'image/x-up-wpng':
-            case 'image/x-png':
-            case 'image/png':
-                imagepng($thumb);
-                break;
             case 'image/webp':
+            case 'image/x-up-wpng':
                 imagewebp($thumb);
                 break;
             case 'image/vnd.wap.wbmp':

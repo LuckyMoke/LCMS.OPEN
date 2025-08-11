@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-05 20:32:15
+ * @LastEditTime: 2025-08-05 11:24:28
  * @Description:邮件发送类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -192,7 +192,7 @@ class EMAIL
         }
         LCMS::log([
             "type"     => "email",
-            "info"     => "{$Param['TO']}-{$result['msg']}",
+            "info"     => "{$Param['TO']}/{$result['msg']}",
             "postdata" => [
                 "title" => $Param['Title'],
                 "body"  => $Param['Body'],

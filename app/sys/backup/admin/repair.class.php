@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2025-07-01 16:22:22
+ * @LastEditTime: 2025-08-05 11:23:48
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -87,13 +87,13 @@ class repair extends adminbase
             if (sql_error()) {
                 LCMS::log([
                     "type" => "system",
-                    "info" => "数据{$title}-{$title}失败",
+                    "info" => "数据{$title}：{$title}失败",
                 ]);
                 ajaxout(0, "{$title}失败：" . sql_error());
             }
             LCMS::log([
                 "type" => "system",
-                "info" => "数据{$title}-{$title}成功",
+                "info" => "数据{$title}：{$title}成功",
             ]);
             ajaxout(1, "{$title}成功");
         } else {

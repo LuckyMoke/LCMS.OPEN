@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2025-03-22 18:03:20
+ * @LastEditTime: 2025-08-05 11:23:07
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -65,7 +65,7 @@ class optimize extends adminbase
                 $names = implode("、", $names);
                 $names && LCMS::log([
                     "type" => "system",
-                    "info" => "数据优化-{$LF['action']}-{$names}",
+                    "info" => "数据优化：{$LF['action']}/{$names}",
                 ]);
                 ajaxout(2, "数据表操作完成", "showResult", $result ?: [[
                     "Table"    => "操作完成",
@@ -93,7 +93,7 @@ class optimize extends adminbase
                 $names = implode("、", $names);
                 $names && LCMS::log([
                     "type" => "system",
-                    "info" => "数据优化-{$LF['action']}-{$names}",
+                    "info" => "数据优化：{$LF['action']}/{$names}",
                 ]);
                 ajaxout(2, "数据表操作完成", "showResult", $result ?: [[
                     "Table"    => "操作完成",

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-06-14 00:42:36
+ * @LastEditTime: 2025-08-05 11:25:17
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -431,7 +431,7 @@ class USERBASE
         LCMS::log([
             "user" => $user['name'],
             "type" => "login",
-            "info" => "绑定账号-{$openid}",
+            "info" => "绑定账号：{$openid}",
         ]);
         return $user;
     }

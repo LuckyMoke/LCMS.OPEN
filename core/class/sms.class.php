@@ -110,7 +110,7 @@ class SMS
         }
         LCMS::log([
             "type"     => "sms",
-            "info"     => "{$Param['Phone']}-{$result['msg']}",
+            "info"     => "{$Param['Phone']}/{$result['msg']}",
             "postdata" => $Param['Param'],
         ]);
         return $result ?: [];
