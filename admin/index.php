@@ -11,7 +11,8 @@ if (
     is_array($form['t']) ||
     is_array($form['n']) ||
     is_array($form['c']) ||
-    is_array($form['a'])
+    is_array($form['a']) ||
+    !file_exists("../core/route.php")
 ) {
     header("HTTP/1.1 404 Not Found");
     exit();
@@ -21,4 +22,4 @@ define("L_NAME", strip_tags($form['n']));
 define("L_CLASS", strip_tags($form['c']));
 define("L_MODULE", "admin");
 define("L_ACTION", "do" . strip_tags($form['a']));
-require_once '../core/route.php';
+require_once "../core/route.php";

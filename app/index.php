@@ -10,7 +10,8 @@ if (
     !$form['n'] ||
     is_array($form['n']) ||
     is_array($form['c']) ||
-    is_array($form['a'])
+    is_array($form['a']) ||
+    !file_exists("../core/route.php")
 ) {
     header("HTTP/1.1 404 Not Found");
     exit();

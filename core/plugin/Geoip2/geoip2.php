@@ -212,7 +212,11 @@ class Geoip2
             $array[2] = str_replace(["市", "县"], "", $array[2]);
             $array[3] = str_replace("市", "", $array[3]);
             if ($array[2]) {
-                $addrsss = "{$array[0]}{$array[2]}{$array[3]}";
+                if ($array[2] == $array[3]) {
+                    $addrsss = "{$array[0]}{$array[2]}";
+                } else {
+                    $addrsss = "{$array[0]}{$array[2]}{$array[3]}";
+                }
             } else {
                 $addrsss = "{$array[0]}{$array[1]}";
             }

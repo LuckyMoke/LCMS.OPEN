@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-07-08 11:30:33
+ * @LastEditTime: 2025-08-16 13:45:26
  * @Description: 前端模板静态文件处理
  * @Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -90,11 +90,6 @@ class TPL
         return self::$cname;
     }
     /**
-     * @description: 初始化css，js文件
-     * @param array $paths
-     * @return {*}
-     */
-    /**
      * @description: 对文件进行合并处理
      * @param array $paths
      * @param string $suffix
@@ -164,14 +159,9 @@ class TPL
     private static function scanAll($path, $files = [])
     {
         global $_L;
-        if ($path == (self::$tpath . "/static/nocache")) {
-            return $files ?: [];
-        }
-        $files = array_merge_recursive($files, glob("{$path}/*.css"), glob("{$path}/*.js"));
-        foreach (scandir($path) as $file) {
-            if ($file !== "." && $file !== ".." && is_dir("{$path}/{$file}")) {
-                $files = self::scanAll("{$path}/{$file}", $files);
-            }
+        $files = traversal_all($path, "\.(js|css)", "static\/nocache");
+        foreach ($files as $index => $file) {
+            $files[$index] = path_absolute($file);
         }
         return $files ?: [];
     }
