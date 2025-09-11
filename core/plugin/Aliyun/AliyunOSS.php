@@ -38,11 +38,11 @@ class AliyunOSS
             "url"     => "https://{$this->cfg['Host']}/{$this->cfg['Bucket']}/{$args['path']}",
         ]);
         return [
-            "api"         => "https://{$this->cfg['Host']}/{$args['path']}",
+            "api" => "https://{$this->cfg['Host']}/{$args['path']}",
             "AccessKeyId" => $this->cfg['AccessKeyId'],
-            "Bucket"      => $this->cfg['Bucket'],
-            "Region"      => $this->cfg['Region'],
-            "headers"     => $sign,
+            "Bucket" => $this->cfg['Bucket'],
+            "Region" => $this->cfg['Region'],
+            "headers" => $sign,
         ];
     }
     /**
@@ -59,10 +59,12 @@ class AliyunOSS
             ];
         }
         $body  = file_get_contents($file);
-        $file  = str_replace(PATH_WEB, "", $file);
         $token = $this->token([
-            "method" => "PUT",
-            "path"   => $file,
+            "method"  => "PUT",
+            "path"    => str_replace(PATH_WEB, "", $file),
+            "headers" => [
+                "Content-Type" => mime_content_type($file),
+            ],
         ]);
         $result = HTTP::request([
             "type"    => "PUT",
@@ -97,14 +99,48 @@ class AliyunOSS
             "url"     => "https://{$this->cfg['Host']}/{$this->cfg['Bucket']}/?delete",
         ]);
         HTTP::request([
-            "type"    => "POST",
-            "url"     => "https://{$this->cfg['Host']}/?delete",
+            "type" => "POST",
+            "url"  => "https://{$this->cfg['Host']}/?delete",
             "data"    => $body,
             "headers" => $sign,
         ], $http_info);
         return [
             "code" => $http_info['http_code'] == 200 ? 1 : 0,
             "msg"  => "SUCCESS",
+        ];
+    }
+    /**
+     * @description: 表单上传
+     * @param string $dir 上传目录
+     * @return array
+     */
+    public function policy($dir)
+    {
+        $expiration = str_replace("+00:00", ".000Z", gmdate("c", time() + 30));
+        $conditions = [
+            [
+                0 => "content-length-range",
+                1 => 0,
+                2 => 1048576000,
+            ], [
+                0 => "starts-with",
+                1 => "\$key",
+                2 => $dir,
+            ],
+        ];
+        $policy = json_encode([
+            "expiration" => $expiration,
+            "conditions" => $conditions,
+        ]);
+        $base64_policy  = base64_encode($policy);
+        $string_to_sign = $base64_policy;
+        $signature      = base64_encode(hash_hmac("sha1", $string_to_sign, $this->cfg['AccessKeySecret'], true));
+        return [
+            "api" => "https://{$this->cfg['Host']}/",
+            "OSSAccessKeyId" => $this->cfg['AccessKeyId'],
+            "policy"         => $base64_policy,
+            "signature"      => $signature,
+            "dir"            => $dir,
         ];
     }
 }

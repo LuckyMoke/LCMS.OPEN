@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-06-17 10:40:36
+ * @LastEditTime: 2025-09-08 10:37:35
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,11 +17,12 @@ class SESSION
     public static function init()
     {
         global $_L;
+        $stime = time() + ($_L['config']['admin']['sessiontime'] > 0 ? $_L['config']['admin']['sessiontime'] * 60 : 21600);
         ini_set("session.sid_length", 32);
         ini_set("session.sid_bits_per_character", 5);
         ini_set("session.use_cookies", 0);
-        ini_set('session.gc_maxlifetime', 86400);
-        $stime = time() + ($_L['config']['admin']['sessiontime'] > 0 ? $_L['config']['admin']['sessiontime'] * 60 : 21600);
+        ini_set("session.gc_maxlifetime", $stime);
+        ini_set("session.gc_divisor", 100);
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
             $userid  = strtolower($_L['form']['rootsid']);
@@ -185,7 +186,7 @@ class SESSION
      * @param bool $type
      * @return string
      */
-    public static function getid($type = false)
+    public static function getid()
     {
         $SESSION = self::start();
         return $SESSION['id'];

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-08-05 11:22:14
+ * @LastEditTime: 2025-09-10 11:04:04
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -177,6 +177,50 @@ class local extends adminbase
             "info" => "卸载应用：{$app}",
         ]);
         ajaxout(1, '卸载成功');
+    }
+    /**
+     * @description: 内部API操作
+     * @return {*}
+     */
+    public function doapi()
+    {
+        global $_L, $LF, $LC;
+        switch ($LF['action']) {
+            case 'down':
+                ignore_user_abort(true);
+                set_time_limit(120);
+                $path = PATH_CACHE . "update/app/";
+                $file = "{$path}{$LF['name']}";
+                makedir($path);
+                delfile($file);
+                $result = HTTP::request([
+                    "type"    => "DOWNLOAD",
+                    "url"     => ssl_decode($LF['url']),
+                    "file"    => $file,
+                    "timeout" => 120,
+                ]);
+                if ($result['code'] == 1) {
+                    ajaxout(1, "success");
+                } else {
+                    ajaxout(0, "error");
+                }
+                break;
+            case 'unzip':
+                $path = PATH_CACHE . "update/app/";
+                $file = "{$path}{$LF['name']}";
+                if (
+                    $LF['name'] &&
+                    unzipfile($file, "{$path}local")
+                ) {
+                    movedir("{$path}local", path_absolute($LF['path']));
+                    delfile($file);
+                    ajaxout(1, "success");
+                } else {
+                    deldir($path);
+                    ajaxout(0, "解压文件失败");
+                }
+                break;
+        }
     }
     /**
      * @description: 更新数据库

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-08-05 12:45:12
+ * @LastEditTime: 2025-09-08 18:10:13
  * @Description:文件上传功能
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -166,10 +166,7 @@ class index extends adminbase
         $Aliyun = new AliyunOSS($_L['plugin']['oss']['aliyun']);
         switch ($LF['action']) {
             case 'token':
-                $token = $Aliyun->token([
-                    "method" => "PUT",
-                    "path"   => $LF['path'],
-                ]);
+                $token = $Aliyun->policy($LF['dir']);
                 ajaxout(1, "success", "", $token);
                 break;
             case 'success':
@@ -247,7 +244,7 @@ class index extends adminbase
                 "storage_used" => intval($data['size'] / 1024),
             ],
             "where" => "id = {$_L['ROOTID']}",
-            "math"  => [
+            "math" => [
                 "storage_used" => "+",
             ],
         ]);

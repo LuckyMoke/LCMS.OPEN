@@ -1,8 +1,9 @@
 <template "ui/head_base" />
 <if $_L['APP']['menu']>
     <div id="APPIFRAME" style="padding-left:150px">
-        <template tplx="lcms_head_appnav" data-app="{{htmlspecialchars(json_encode($_L['APP']))}}">
+        <template tplx="lcms_head_appnav">
             <div id="APPNAV">
+                <section x-ref="appdata" x-show="false">{{json_encode_ex($_L['APP'])}}</section>
                 <div class="mobile">
                     <div class="background" :style="css.background" @click="onBgClick"></div>
                     <div class="button" :class="css.button" @click="onBtnClick">

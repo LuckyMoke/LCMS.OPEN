@@ -29,11 +29,5 @@ $_L['memcached']['pconnect'] = 1;
 $_L['memcached']['timeout']  = 30;
 $_L['memcached']['session']  = 1;
 
-// 是否显示应用商店和更新 1 OR 0
-$_L['developer']['appstore'] = 1;
-
-// 是否禁用卸载应用、清空表等一些危险操作 1 OR 0
-$_L['developer']['lite'] = 0;
-
 // 后台显示字体，需要电脑上已安装此字体
 $_L['developer']['fontfamily'] = "";

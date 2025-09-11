@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-04-15 14:00:07
+ * @LastEditTime: 2025-09-11 14:06:22
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -13,12 +13,12 @@ class LAY
     {
         $para = is_array($para) ? $para : [];
         return array_merge($para, [
-            "title"     => $para['title'] ?: "&nbsp;",
-            "cname"     => $para['cname'] ? " {$para['cname']}" : "",
+            "title" => $para['title'] ?: "&nbsp;",
+            "cname" => $para['cname'] ? " {$para['cname']}" : "",
             "disabled"  => $para['disabled'] ? " disabled" : "",
             "disclass"  => $para['disabled'] ? " layui-disabled" : "",
             "verifybox" => $para['verify'] ? " required lay-verify='{$para['verify']}' lay-reqtext='{$para['title']}为必填项'" : "",
-            "tipsbox"   => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
+            "tipsbox" => $para['tips'] ? " lcms-form-tips' data-tips='" . strip_tags($para['tips']) : "",
         ]);
     }
     public static function form($list = "", $return = false)
@@ -586,6 +586,80 @@ class LAY
                                     </template>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>";
+        if ($return) {
+            return $html;
+        }
+        echo $html;
+    }
+    public static function para($para, $return = false)
+    {
+        $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = " data-value='" . base64_encode(json_encode($para['value'])) . "'";
+        }
+        if ($para['config']) {
+            $para['config'] = " data-config='" . base64_encode(json_encode($para['config'])) . "'";
+        }
+        if ($para['display'] == "block") {
+            $para['display'] = " layui-form-text";
+        } else {
+            $para['margin'] = ' style="margin-left:10px;"';
+        }
+        $para['tips']  = $para['tips'] ? " - {$para['tips']}" : "";
+        $para['title'] = $para['title'] == "&nbsp;" ? "" : "<label class='layui-form-label' title='{$para['title']}'>{$para['title']}{$para['tips']}</label>";
+        $html          = "
+            <div class='layui-form-item {$para['display']}{$para['cname']}'>
+                {$para['title']}
+                <div class='layui-input-block lcms-form-para' data-name='{$para['name']}'{$para['value']}{$para['config']}>
+                    <div class='lcms-form-para-box'>
+                        <div class=\"lcms-form-para-table\">
+                            <table class='layui-table' lay-size='sm'  x-show=\"config.cols\">
+                                <thead>
+                                    <tr>
+                                        <td width=\"30\" align=\"center\">排序</td>
+                                        <template x-for=\"col in config.cols\">
+                                            <td :width=\"col.width||''\" :align=\"col.align||'left'\" x-text=\"col.title\"></td>
+                                        </template>
+                                        <td width=\"60\" align=\"center\">操作</td>
+                                    </tr>
+                                </thead>
+                                <tbody x-ref=\"paralist\">
+                                    <template x-for=\"(item, tridx) in form\">
+                                        <tr>
+                                            <td align=\"center\">
+                                                <i class=\"layui-icon layui-icon-slider lcms-form-para-handle\"></i>
+                                            </td>
+                                            <template x-for=\"col in config.cols\">
+                                                <td>
+                                                    <div :data-type=\"col.type\">
+                                                        <input :name=\"name+'['+tridx+']['+col.name+']'\" :type=\"col.input_type\" :lay-verify=\"col.verify||''\" class=\"layui-input\" :placeholder=\"col.placeholder||'点击输入'\" :checked=\"col.type=='checkbox'?(item[col.name]>0?true:false):false\" x-model=\"item[col.name]\" @click=\"onInputClick(col,tridx)\" @change=\"onInput(col,tridx)\" />
+                                                        <a class=\"lcms-form-para-choose\" x-show=\"col.type=='choose'\" @click=\"onChoose(col,tridx)\">
+                                                            <span x-show=\"col.onpreview?true:false\" x-html=\"col.type=='choose'&&previews[tridx]&&previews[tridx][col.name]?previews[tridx][col.name]:''\"></span>
+                                                            选择
+                                                        </a>
+                                                        <a class=\"lcms-form-para-image\" x-show=\"col.type=='image'\">
+                                                            <img :src=\"col.type=='image'&&previews[tridx]&&previews[tridx][col.name]?previews[tridx][col.name]:'/public/static/images/icons/upload.svg'\" @click=\"openGallery(col,tridx)\" />
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </template>
+                                            <td align=\"center\">
+                                                <a class=\"layui-btn comsite-para-del\" @click=\"onDel(tridx)\">删除</a>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class=\"lcms-form-para-btngroup\">
+                            <a class=\"layui-btn layui-btn-sm layui-btn-normal\"{$para['margin']} @click=\"onAdd\" x-text=\"config.btn\"></a>
+                            <a class=\"layui-btn layui-btn-sm layui-btn-warm\" x-show=\"config.batch?true:false\" @click=\"onBatch\">批量添加</a>
+                            <a class=\"layui-btn layui-btn-sm layui-btn-danger\" @click=\"onDelAll\">删除所有</a>
+                            <a class=\"layui-btn layui-btn-sm layui-btn-primary\" x-show=\"iscache?true:false\" @click=\"useCache\">使用上次数据</a>
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2025-05-07 10:44:48
+ * @LastEditTime: 2025-09-08 10:37:18
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -132,7 +132,9 @@ class index extends adminbase
         global $_L, $LF, $UCFG, $USER;
         if ($USER) {
             USERBASE::createJWT($USER);
-            ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
+            ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin'], [
+                "cid" => SESSION::getid(),
+            ]);
         }
         ajaxout(0, "failed");
     }
