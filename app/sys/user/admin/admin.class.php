@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-08-05 11:24:00
+ * @LastEditTime: 2025-11-07 11:12:58
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -50,13 +50,13 @@ class admin extends adminbase
                 $where[] = "lcms = :lcms";
                 $where   = implode(" AND ", $where);
                 $data    = TABLE::set([
-                    "table" => "admin",
-                    "where" => $where,
-                    "order" => "id ASC",
-                    "bind"  => [
-                        ":id"     => $LC['name'],
-                        ":ownid"  => $_L['LCMSADMIN']['id'],
-                        ":name"   => "%{$LC['name']}%",
+                    "table"   => "admin",
+                    "where"   => $where,
+                    "order"   => "id ASC",
+                    "bind"    => [
+                        ":id"    => $LC['name'],
+                        ":ownid" => $_L['LCMSADMIN']['id'],
+                        ":name"  => "%{$LC['name']}%",
                         ":cate"   => $LF['cate'],
                         ":status" => $LC['status'],
                         ":lcms"   => $_L['ROOTID'],
@@ -120,32 +120,32 @@ class admin extends adminbase
                             break;
                     }
                     $data[$index] = array_merge($val, [
-                        "token"    => $token,
-                        "headimg"  => [
+                        "token"   => $token,
+                        "headimg" => [
                             "type"   => "image",
                             "width"  => "auto",
                             "height" => "100%",
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
-                        "lcms"     => $val['lcms'] == 0 ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
-                        "type"     => $val['type'] === "lcms" ? "超级权限" : [
+                        "lcms"    => $val['lcms'] == 0 ? "超级管理员" : "{$admin['title']} - [{$admin['name']}]",
+                        "type" => $val['type'] === "lcms" ? "超级权限" : [
                             "type"  => "link",
                             "title" => $val['level'] ? "自定义权限" : "{$level['name']} - [ID:{$level['id']}]",
-                            "icon"  => '<img src="/public/static/images/icons/power.svg"/>',
-                            "url"   => "javascript:setPower('{$token}')",
+                            "icon" => '<img src="/public/static/images/icons/power.svg"/>',
+                            "url" => "javascript:setPower('{$token}')",
                         ],
-                        "statusT"  => [
-                            "type"  => "switch",
-                            "url"   => "index&action=list-save&token={$token}",
-                            "text"  => "启用|停用",
+                        "statusT" => [
+                            "type" => "switch",
+                            "url"  => "index&action=list-save&token={$token}",
+                            "text" => "启用|停用",
                             "value" => $val['status'],
                         ],
-                        "email"    => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
-                        "mobile"   => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
+                        "email" => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
+                        "mobile" => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                         "lasttime" => $val['lasttime'] ? ($val['lasttime'] > datenow() ? $val['lasttime'] : '<span style="color:red">' . $val['lasttime'] . '</span>') : '<span style="color:#cccccc">永久</span>',
-                        "storage"  => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
+                        "storage" => $storage ? '<div class="layui-progress" style="top:70%;transform:translateY(-50%)">
                         <div class="layui-progress-bar" style="background:#909399;width:' . $storage . '"><span class="layui-progress-text" style="cursor:pointer;top:-24px" onclick="changeStorage(\'' . $token . '\')">' . ($val['storage'] == 0 ? "无限" : intval($val['storage_used'] / 1024) . "/" . intval($val['storage'] / 1024) . "MB") . '</span></div></div>' : '<span style="color:#cccccc">同上级</span>',
-                        "defapp"   => $val['type'] === "lcms" ? '<span style="color:#cccccc">欢迎页</span>' : ($val['lcms'] == 0 ? [
+                        "defapp" => $val['type'] === "lcms" ? '<span style="color:#cccccc">欢迎页</span>' : ($val['lcms'] == 0 ? [
                             "type"  => "link",
                             "title" => $appdef,
                             "icon"  => '<img src="/public/static/images/icons/config.svg"/>',
@@ -356,8 +356,8 @@ class admin extends adminbase
                 break;
             default:
                 $table = [
-                    "url"     => "index&cate={$cate}&action=list",
-                    "cols"    => [
+                    "url" => "index&cate={$cate}&action=list",
+                    "cols" => [
                         ["checkbox" => "checkbox", "width" => 40],
                         ["title" => "ID", "field" => "id",
                             "width"  => 60,
@@ -409,13 +409,13 @@ class admin extends adminbase
                     "toolbar" => [
                         ["title" => $cate ? "添加用户" : "添加管理员", "event" => "iframe",
                             "url"    => "index&action=edit&cate={$cate}",
-                            "color"  => "default"],
+                            "color" => "default"],
                         ["title" => "批量停用", "event" => "ajax",
                             "url"    => "index&action=del",
                             "color"  => "danger",
                             "tips"   => "停用用户不会删除用户信息，只是禁止登录和使用！"],
                     ],
-                    "search"  => [
+                    "search" => [
                         ["title" => "ID/账号/姓名/邮箱/手机", "name" => "name"],
                         ["title" => "用户状态", "name" => "status",
                             "type"   => "select",
@@ -464,7 +464,7 @@ class admin extends adminbase
                 LOAD::plugin("2FA/TOTP");
                 $TOTP   = new TOTP();
                 $secret = $TOTP->createSecret("uid:{$_L['LCMSADMIN']['id']}");
-                $qrcode = "{$_L['url']['qrcode']}" . urlencode($TOTP->getQRCode("{$_L['LCMSADMIN']['name']}@" . parse_url($_L['url']['site'])['host'], $secret));
+                $qrcode = "{$_L['url']['qrcode']}" . urlencode($TOTP->getQRCode($_L['LCMSADMIN']['name'], $secret, $_L['url']['site']));
                 $form   = [
                     ["layui" => "des", "title" => "▲ 开启两步验证后，在登录时会弹出验证窗口，输入APP中的6位两步验证码即可登录！"],
                     ["layui"      => "input", "title" => "验证码",
@@ -673,16 +673,16 @@ class admin extends adminbase
                         }
                     }
                     $data[$index] = array_merge($val, [
-                        "name"    => "{$val['name']}<span style=\"color:#b1b3b8\">-{$val['title']}</span>",
-                        "lcms"    => $tname,
+                        "name" => "{$val['name']}<span style=\"color:#b1b3b8\">-{$val['title']}</span>",
+                        "lcms" => $tname,
                         "headimg" => [
                             "type"   => "image",
                             "width"  => "auto",
                             "height" => "100%",
                             "src"    => $val['headimg'] ?: "../public/static/images/headimg.png",
                         ],
-                        "email"   => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
-                        "mobile"  => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
+                        "email" => $val['email'] ? $val['email'] : '<span style="color:#cccccc">无</span>',
+                        "mobile" => $val['mobile'] ? $val['mobile'] : '<span style="color:#cccccc">无</span>',
                     ]);
                 }
                 TABLE::out($data);

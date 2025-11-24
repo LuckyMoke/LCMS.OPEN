@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-07-01 12:38:04
+ * @LastEditTime: 2025-11-23 15:33:24
  * @Description:文件加载类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -49,13 +49,13 @@ class LOAD
         return self::loadPlugin(PATH_CORE_PLUGIN . $pname);
     }
     /**
-     * @description: 加载系统Phar
+     * @description: 加载系统盘企文件
      * @param string $pname
      * @return {*}
      */
-    public static function sys_phar($pname)
+    public static function sys_pqfile($pname)
     {
-        return self::loadPhar(PATH_CORE_PHAR . $pname);
+        return self::loadPqfile(PATH_CORE_PQFILE . $pname);
     }
     /**
      * @description: 加载自有类
@@ -91,21 +91,21 @@ class LOAD
         return self::loadFun($file);
     }
     /**
-     * @description: 加载自有Phar
+     * @description: 加载自有盘企文件
      * @param string $pname
      * @param string $action
      * @return {*}
      */
-    public static function own_phar($pname)
+    public static function own_pqfile($pname)
     {
         if (in_string($pname, PATH_WEB)) {
             $file = $pname;
         } elseif (in_string($pname, "/")) {
             $file = PATH_APP_NOW . $pname;
         } else {
-            $file = PATH_APP_NOW . "include/phar/{$pname}";
+            $file = PATH_APP_NOW . "include/pqfile/{$pname}";
         }
-        return self::loadPhar($file);
+        return self::loadPqfile($file);
     }
     /**
      * @description: 加载类
@@ -160,13 +160,12 @@ class LOAD
         }
     }
     /**
-     * @description: 加载Phar
+     * @description: 加载盘企文件
      * @param string $file
      * @return {*}
      */
-    private static function loadPhar($file)
+    private static function loadPqfile($file)
     {
-        $file = "{$file}.phar";
         if (is_file($file)) {
             require_once $file;
         } else {

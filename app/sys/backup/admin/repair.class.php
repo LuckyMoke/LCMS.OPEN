@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2025-08-05 11:23:48
+ * @LastEditTime: 2025-11-21 14:05:17
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -98,6 +98,56 @@ class repair extends adminbase
             ajaxout(1, "{$title}成功");
         } else {
             ajaxout(1, "数据结构不需要{$title}");
+        }
+    }
+    /**
+     * @description: 内部接口操作
+     * @return {*}
+     */
+    public function doapi()
+    {
+        global $_L, $LF, $LC, $PRE;
+        switch ($LF['action']) {
+            case 'down':
+                ignore_user_abort(true);
+                set_time_limit(120);
+                $token = ssl_decode($LF['token']);
+                $token || ajaxout(0, "token错误");
+                $token = json_decode($token, true);
+                $token || ajaxout(0, "token错误");
+                $file = "{$token['path']}{$token['name']}";
+                makedir($token['path']);
+                delfile($file);
+                $result = HTTP::request([
+                    "type"    => "DOWNLOAD",
+                    "url"     => $token['url'],
+                    "file"    => $file,
+                    "timeout" => 120,
+                ]);
+                if ($result['code'] == 1) {
+                    ajaxout(1, "success");
+                } else {
+                    ajaxout(0, "error");
+                }
+                break;
+            case 'unzip':
+                $token = ssl_decode($LF['token']);
+                $token || ajaxout(0, "token错误");
+                $token = json_decode($token, true);
+                $token || ajaxout(0, "token错误");
+                $file = "{$token['path']}{$token['name']}";
+                if (
+                    $token['name'] &&
+                    unzipfile($file, "{$token['path']}unzip")
+                ) {
+                    movedir("{$token['path']}unzip", path_absolute($token['unpath']));
+                    delfile($file);
+                    ajaxout(1, "success");
+                } else {
+                    deldir($token['path']);
+                    ajaxout(0, "解压文件失败");
+                }
+                break;
         }
     }
     /**

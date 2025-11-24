@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-09-10 11:04:04
+ * @LastEditTime: 2025-11-21 14:05:46
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -179,23 +179,26 @@ class local extends adminbase
         ajaxout(1, '卸载成功');
     }
     /**
-     * @description: 内部API操作
+     * @description: 内部接口操作
      * @return {*}
      */
     public function doapi()
     {
-        global $_L, $LF, $LC;
+        global $_L, $LF, $LC, $PRE;
         switch ($LF['action']) {
             case 'down':
                 ignore_user_abort(true);
                 set_time_limit(120);
-                $path = PATH_CACHE . "update/app/";
-                $file = "{$path}{$LF['name']}";
-                makedir($path);
+                $token = ssl_decode($LF['token']);
+                $token || ajaxout(0, "token错误");
+                $token = json_decode($token, true);
+                $token || ajaxout(0, "token错误");
+                $file = "{$token['path']}{$token['name']}";
+                makedir($token['path']);
                 delfile($file);
                 $result = HTTP::request([
                     "type"    => "DOWNLOAD",
-                    "url"     => ssl_decode($LF['url']),
+                    "url"     => $token['url'],
                     "file"    => $file,
                     "timeout" => 120,
                 ]);
@@ -206,17 +209,20 @@ class local extends adminbase
                 }
                 break;
             case 'unzip':
-                $path = PATH_CACHE . "update/app/";
-                $file = "{$path}{$LF['name']}";
+                $token = ssl_decode($LF['token']);
+                $token || ajaxout(0, "token错误");
+                $token = json_decode($token, true);
+                $token || ajaxout(0, "token错误");
+                $file = "{$token['path']}{$token['name']}";
                 if (
-                    $LF['name'] &&
-                    unzipfile($file, "{$path}local")
+                    $token['name'] &&
+                    unzipfile($file, "{$token['path']}unzip")
                 ) {
-                    movedir("{$path}local", path_absolute($LF['path']));
+                    movedir("{$token['path']}unzip", path_absolute($token['unpath']));
                     delfile($file);
                     ajaxout(1, "success");
                 } else {
-                    deldir($path);
+                    deldir($token['path']);
                     ajaxout(0, "解压文件失败");
                 }
                 break;

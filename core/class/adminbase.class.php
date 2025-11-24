@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-05-14 17:35:09
+ * @LastEditTime: 2025-10-28 11:43:35
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -39,18 +39,18 @@ class adminbase extends common
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
         $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url'] = [
-            "scheme"   => $scheme,
-            "site"     => $url_site,
-            "now"      => $url_now,
-            "admin"    => $url_admin,
-            "public"   => "{$url_site}public/",
-            "static"   => "{$url_site}public/static/",
-            "upload"   => "{$url_site}upload/",
-            "cache"    => "{$url_site}cache/",
-            "app"      => "{$url_site}app/",
-            "captcha"  => "{$url_site}quick/captcha.php?{$rootsid}",
-            "qrcode"   => "{$url_site}quick/qrcode.php?token=" . ssl_encode_gzip(time() + 86400, "qrcode") . "&text=",
-            "own"      => "{$url_admin}index.php?{$rootsid}",
+            "scheme" => $scheme,
+            "site"   => $url_site,
+            "now"    => $url_now,
+            "admin"  => $url_admin,
+            "public" => "{$url_site}public/",
+            "static" => "{$url_site}public/static/",
+            "upload" => "{$url_site}upload/",
+            "cache" => "{$url_site}cache/",
+            "app" => "{$url_site}app/",
+            "captcha" => "{$url_site}quick/captcha.php?{$rootsid}",
+            "qrcode" => "{$url_site}quick/qrcode.php?token=" . ssl_encode_gzip(time() + 86400, "qrcode") . "&text=",
+            "own" => "{$url_admin}index.php?{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
             "own_form" => "{$url_admin}index.php?{$rootsid}t=" . L_TYPE . "&n=" . L_NAME . "&c=" . L_CLASS . "&a=",
         ];
@@ -133,15 +133,15 @@ class adminbase extends common
             $rootid = $_L['ROOTID'] ? intval($_L['ROOTID']) : 0;
         }
         $_L['url']['web'] = [
-            "scheme"   => $scheme,
-            "site"     => $url_site,
-            "api"      => $_L['config']['web']['domain_api'],
-            "public"   => "{$url_site}public/",
-            "static"   => "{$url_site}public/static/",
-            "upload"   => "{$url_site}upload/",
-            "cache"    => "{$url_site}cache/",
-            "app"      => "{$url_site}app/",
-            "own"      => "{$url_site}app/index.php?rootid={$rootid}&{$rootsid}",
+            "scheme" => $scheme,
+            "site"   => $url_site,
+            "api"    => $_L['config']['web']['domain_api'],
+            "public" => "{$url_site}public/",
+            "static" => "{$url_site}public/static/",
+            "upload" => "{$url_site}upload/",
+            "cache" => "{$url_site}cache/",
+            "app" => "{$url_site}app/",
+            "own" => "{$url_site}app/index.php?rootid={$rootid}&{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
         ];
     }
@@ -197,6 +197,16 @@ class adminbase extends common
             } else {
                 LCMS::X(403, "没有权限，禁止访问");
             }
+        }
+        $bansuper = $_L['APP']['info']['bansuper'] ?: false;
+        $bansuper = $bansuper ?: ($_L['APP']['class'][L_CLASS]['bansuper'] ?: false);
+        $bansuper = $bansuper ?: ($_L['APP']['class'][L_CLASS]['level'][$fun]['bansuper'] ?: false);
+        if (
+            $bansuper &&
+            LCMS::SUPER() &&
+            $_L['config']['admin']['development'] != 1
+        ) {
+            LCMS::X(403, $bansuper === true ? "请登录/切换到下级用户使用应用" : $bansuper);
         }
     }
     public function domain($domain = "", $scheme = "", $autodomain = false)

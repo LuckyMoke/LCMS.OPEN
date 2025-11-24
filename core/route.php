@@ -17,7 +17,7 @@ define("PATH_PUBLIC", PATH_WEB . "public/");
 define("PATH_UPLOAD", PATH_WEB . "upload/");
 define("PATH_CORE", PATH_WEB . "core/");
 define("PATH_CORE_CLASS", PATH_WEB . "core/class/");
-define("PATH_CORE_PHAR", PATH_WEB . "core/phar/");
+define("PATH_CORE_PQFILE", PATH_WEB . "core/pqfile/");
 define("PATH_CORE_FUNC", PATH_WEB . "core/function/");
 define("PATH_CORE_PLUGIN", PATH_WEB . "core/plugin/");
 define("PATH_APP_NOW", PATH_APP . L_TYPE . "/" . L_NAME . "/");

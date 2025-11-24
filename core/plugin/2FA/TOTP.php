@@ -49,9 +49,10 @@ class TOTP
      * @param string} $secret
      * @return string
      */
-    public function getQRCode($name, $secret)
+    public function getQRCode($name, $secret, $issuer = "")
     {
-        return "otpauth://totp/{$name}?secret={$secret}&algorithm=SHA1&digits={$this->_codeLength}&period={$this->_interval}";
+        $issuer = urlencode($issuer ?: "LCMS");
+        return "otpauth://totp/{$name}?secret={$secret}&issuer={$issuer}&algorithm=SHA1&digits={$this->_codeLength}&period={$this->_interval}";
     }
     /**
      * @description: 检测验证码

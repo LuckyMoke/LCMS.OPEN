@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-08-07 18:54:42
+ * @LastEditTime: 2025-11-20 11:06:41
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -754,8 +754,22 @@ function rsa_create($bit = 2048)
         $pubKey = openssl_pkey_get_details($res);
         $pubKey = $pubKey["key"];
         return [
-            "pubKey"  => $pubKey,
-            "privKey" => $privKey,
+            "pubKey"     => $pubKey,
+            "privKey"    => $privKey,
+            "pubKeyStr"  => str_replace([
+                "-----BEGIN PUBLIC KEY-----",
+                "-----END PUBLIC KEY-----",
+                " ",
+                "\r\n",
+                "\n",
+            ], "", $pubKey),
+            "privKeyStr" => str_replace([
+                "-----BEGIN PRIVATE KEY-----",
+                "-----END PRIVATE KEY-----",
+                " ",
+                "\r\n",
+                "\n",
+            ], "", $privKey),
         ];
     }
 }
