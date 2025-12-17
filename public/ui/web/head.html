@@ -1,8 +1,8 @@
 <!DOCTYPE html>
     <html>
     <head>
-        <title>{{htmlspecialchars($page['title']?$page['title']:$_L['config']['web']['title'])}}</title>
-        <meta name="keywords" content="{{htmlspecialchars($page['keywords']?$page['keywords']:'')}}" />
+        <title>{{htmlspecialchars($page['title']?:$_L['config']['web']['title'])}}</title>
+        <meta name="keywords" content="{{htmlspecialchars($page['keywords']?:'')}}" />
         <meta name="description" content="{{htmlspecialchars($page['description']?$page['description']:'')}}" />
         <meta name="renderer" content="webkit" />
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />

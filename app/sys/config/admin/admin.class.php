@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-06-27 17:30:35
+ * @LastEditTime: 2025-12-11 21:38:28
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -135,12 +135,12 @@ class admin extends adminbase
                             ["title" => "限制域名", "value" => 1],
                             ["title" => "不限制域名", "value" => 0],
                         ]],
-                    ["layui"      => "input", "title" => "默认前端域名",
-                        "name"        => "LC[domain]",
-                        "value"       => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
+                    ["layui" => "input", "title" => "默认前端域名",
+                        "name"   => "LC[domain]",
+                        "value"  => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
                         "placeholder" => "http://www.domain.com/",
-                        "tips"        => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
-                        "verify"      => "required"],
+                        "tips" => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
+                        "verify" => "required"],
                     ["layui"      => "input", "title" => "默认API域名",
                         "name"        => "LC[domain_api]",
                         "value"       => $config['domain_api'],
@@ -360,7 +360,7 @@ class admin extends adminbase
                 }
                 if ($LF['cfg']) {
                     delfile(PATH_CORE . "asynced");
-                    sql_query("TRUNCATE {$_L['table']['cache']}");
+                    deldir(PATH_CACHE . "system");
                 }
                 if ($LF['static']) {
                     deldir(PATH_CACHE . "static");

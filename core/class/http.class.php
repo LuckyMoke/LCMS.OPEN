@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-07-02 22:41:14
+ * @LastEditTime: 2025-12-02 13:46:21
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -117,7 +117,9 @@ class HTTP
         }
         $CURL = curl_init($args['url']);
         if ($args['header']) {
-            $args['headers'] = array_merge($args['headers'] || [], $args['header'] || []);
+            $args['headers'] = $args['headers'] ?: [];
+            $args['header']  = $args['header'] ?: [];
+            $args['headers'] = array_merge($args['headers'], $args['header']);
             unset($args['header']);
         }
         if ($args['headers'] && is_array($args['headers'])) {
@@ -198,6 +200,7 @@ class HTTP
                 if (!$args['file']) {
                     return "";
                 }
+                $args['file'] = path_absolute($args['file']);
                 delfile($args['file']);
                 $downfile = fopen($args['file'], "w+");
                 curl_setopt($CURL, CURLOPT_CUSTOMREQUEST, "GET");

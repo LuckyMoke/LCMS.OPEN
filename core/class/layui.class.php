@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-09-11 14:06:22
+ * @LastEditTime: 2025-12-08 11:19:41
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -79,6 +79,9 @@ class LAY
     public static function input($para, $return = false)
     {
         $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = htmlentities($para['value']);
+        }
         if ($para['type'] == "hidden") {
             echo "<input type='hidden' name='{$para['name']}' value='{$para['value']}' />";
         } else {
@@ -112,6 +115,9 @@ class LAY
     public static function input_sort($para, $return = false)
     {
         $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = htmlentities($para['value']);
+        }
         if ($para['type'] == "hidden") {
             echo "<input type='hidden' name='{$para['name']}' value='{$para['value']}' />";
         } else {
@@ -148,7 +154,10 @@ class LAY
     }
     public static function textarea($para, $return = false)
     {
-        $para                = self::start($para);
+        $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = htmlentities($para['value']);
+        }
         $para['maxlength']   = $para['maxlength'] ? " maxlength='{$para['maxlength']}'" : "";
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "请输入{$para['title']}";
         $html                = "
@@ -212,7 +221,10 @@ class LAY
     }
     public static function tags($para, $return = false)
     {
-        $para                = self::start($para);
+        $para = self::start($para);
+        if ($para['value']) {
+            $para['value'] = htmlentities($para['value']);
+        }
         $para['placeholder'] = $para['placeholder'] ? $para['placeholder'] : "回车添加，拖动排序";
         $html                = "
             <div class='layui-form-item{$para['cname']}' pane>

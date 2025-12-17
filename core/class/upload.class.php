@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-08-06 10:48:03
+ * @LastEditTime: 2025-12-17 13:34:59
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -50,10 +50,13 @@ class UPLOAD
             "attsize"      => intval((self::$CFG['attsize'] ?: 300) * 1024),
             "attsize_file" => intval((self::$CFG['attsize_file'] ?: 300) * 1024),
         ]);
-        if ($dir == "image" || $dir == "file" || $dir == "user") {
+        if (in_array($dir, [
+            "image", "file", "user",
+        ])) {
             $insql = true;
-            $dir   = PATH_UPLOAD . "{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
+            $dir   = "/upload/{$_L['ROOTID']}/{$dir}/" . date("Ym") . "/";
         }
+        $dir    = path_absolute($dir);
         $osscfg = $_L['plugin']['oss'];
         self::getType($force);
         if (makedir($dir)) {
@@ -284,7 +287,7 @@ class UPLOAD
                         "storage_used" => $sizes,
                     ],
                     "where" => "id = {$admin['id']}",
-                    "math"  => [
+                    "math" => [
                         "storage_used" => "-",
                     ],
                 ]);
@@ -318,7 +321,7 @@ class UPLOAD
             "filename" => $filename,
             "src"      => "{$dir}{$filename}",
             "original" => "{$dir}{$filename}",
-            "size"     => $size,
+            "size" => $size,
         ];
     }
     /**
@@ -547,8 +550,8 @@ class UPLOAD
         if (is_array($datas)) {
             $ids   = implode(",", $datas);
             $files = sql_getall([
-                "table"  => "upload",
-                "where"  => "id IN({$ids}) AND lcms = :lcms",
+                "table" => "upload",
+                "where" => "id IN({$ids}) AND lcms = :lcms",
                 "bind"   => [
                     ":lcms" => $_L['ROOTID'],
                 ],
@@ -609,7 +612,7 @@ class UPLOAD
                         "storage_used" => intval($data['size'] / 1024),
                     ],
                     "where" => "id = {$_L['ROOTID']}",
-                    "math"  => [
+                    "math" => [
                         "storage_used" => "+",
                     ],
                 ]);
@@ -629,7 +632,7 @@ class UPLOAD
         sql_delete([
             "table" => "upload",
             "where" => "id IN({$ids}) AND lcms = :lcms",
-            "bind"  => [
+            "bind" => [
                 ":lcms" => $_L['ROOTID'],
             ],
         ]);

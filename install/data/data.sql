@@ -53,16 +53,6 @@ CREATE TABLE `[_PRE]admin_level` (
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='管理员权限';
 
-CREATE TABLE `[_PRE]cache` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) DEFAULT NULL COMMENT '名称',
-  `parameter` longtext,
-  `lcms` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `lcms` (`lcms`),
-  KEY `name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='硬盘缓存';
-
 CREATE TABLE `[_PRE]config` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL COMMENT '模块名字',

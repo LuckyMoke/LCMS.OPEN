@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-05-14 17:36:45
+ * @LastEditTime: 2025-12-17 12:44:37
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -122,53 +122,27 @@ class LCMS
     public static function cache($name, $value = [], $lcms = null)
     {
         global $_L;
+        $path = PATH_CACHE . "system/";
         if (!in_string($name, "/")) {
             $name = L_NAME . "/{$name}";
         }
-        $name  = substr(md5($name), 8, 16);
-        $lcms  = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
-        $cache = sql_get([
-            "table" => "cache",
-            "where" => "name = :name AND lcms = :lcms",
-            "bind"  => [
-                ":name" => $name,
-                ":lcms" => $lcms,
-            ],
-        ]);
+        $name = substr(md5($name), 8, 16);
+        $lcms = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
+        $path = "{$path}{$lcms}/";
+        $file = "{$path}{$name}.dat";
+        if (is_file($file)) {
+            $cache = file_get_contents($file);
+        } else {
+            makedir($path);
+        }
         if ($value === "clear") {
-            sql_delete([
-                "table" => "cache",
-                "where" => "name = :name AND lcms = :lcms",
-                "bind"  => [
-                    ":name" => $name,
-                    ":lcms" => $lcms,
-                ],
-            ]);
+            delfile($file);
         } elseif ($value && is_array($value)) {
-            if ($cache) {
-                sql_update([
-                    "table" => "cache",
-                    "data"  => [
-                        "parameter" => arr2sql($value),
-                    ],
-                    "where" => "name = :name AND lcms = :lcms",
-                    "bind"  => [
-                        ":name" => $name,
-                        ":lcms" => $lcms,
-                    ],
-                ]);
-            } else {
-                sql_insert([
-                    "table" => "cache",
-                    "data"  => [
-                        "name"      => $name,
-                        "parameter" => arr2sql($value),
-                        "lcms"      => $lcms,
-                    ],
-                ]);
+            if (!file_put_contents($file, json_encode_ex($value))) {
+                LCMS::X(500, "本地缓存写入失败");
             }
         } else {
-            return $cache ? sql2arr($cache['parameter']) : [];
+            return $cache ? json_decode($cache, true) : [];
         }
     }
     /**

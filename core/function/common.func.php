@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-11-20 11:06:41
+ * @LastEditTime: 2025-12-16 13:05:27
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -150,7 +150,7 @@ function datenow()
  */
 function datetime($date, $type = "")
 {
-    $date = in_string($date, ["-", ":"]) ? strtotime($date) : $date;
+    $date = in_string($date, ["-", ":", "/"]) ? strtotime($date) : $date;
     switch ($type) {
         case 'date':
             $type = "Y-m-d";
@@ -1229,12 +1229,12 @@ function oss($url = "", $watermark = true)
         if (preg_match("/[a-zA-Z0-9]\.(jpg|jpeg|png|gif|webp)/i", $url) && in_string($url, $cfgoss['domain'])) {
             switch ($cfgoss['type']) {
                 case 'qiniu':
-                    $url .= "?imageMogr2/interlace/1/quality/75";
+                    $url .= "?imageMogr2/interlace/1";
                     $url .= $webp ? "/format/webp" : "";
                     $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/V2VuUXVhbllpIE1pY3JvIEhlaQ/fontsize/" . ($cfgwat['size'] * 20) . "/fill" . "/" . urlsafe_base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/gravity/{$cfgwat['gravity']}/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
                     break;
                 case 'tencent':
-                    $url .= "?imageMogr2/interlace/1/quality/75";
+                    $url .= "?imageMogr2/interlace/1";
                     $url .= $webp ? "/format/webp" : "";
                     $url .= $cfgwat['on'] ? "|watermark/2/text/{$cfgwat['text']}/font/c2ltaGVp6buR5L2TLnR0Zg/fontsize/{$cfgwat['size']}/fill" . "/" . urlsafe_base64_encode($cfgwat['fill']) . "/dissolve/{$cfgwat['dissolve']}/shadow/{$cfgwat['shadow']}/gravity/" . (strtolower($cfgwat['gravity'])) . "/dx/{$cfgwat['dx']}/dy/{$cfgwat['dy']}" : "";
                     break;
@@ -1253,7 +1253,7 @@ function oss($url = "", $watermark = true)
                             $cfgwat['gravity'] = "se";
                             break;
                     }
-                    $url .= "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_75";
+                    $url .= "?x-oss-process=image/auto-orient,1/interlace,1";
                     $url .= $webp ? "/format,webp" : "";
                     $url .= $cfgwat['on'] ? "/watermark,text_{$cfgwat['text']},type_d3F5LW1pY3JvaGVp,color_" . str_replace("#", "", $cfgwat['fill']) . ",size_{$cfgwat['size']},shadow_{$cfgwat['shadow']},g_" . (strtolower($cfgwat['gravity'])) . ",x_{$cfgwat['dx']},y_{$cfgwat['dy']}" : "";
                     break;
@@ -1287,7 +1287,7 @@ function oss($url = "", $watermark = true)
                             $cfgwat['gravity'] = 9;
                             break;
                     }
-                    $url .= "?x-bce-process=image/auto-orient,o_1/interlace,i_progressive/quality,q_75";
+                    $url .= "?x-bce-process=image/auto-orient,o_1/interlace,i_progressive";
                     $url .= $webp ? "/format,f_webp" : "";
                     $url .= $cfgwat['on'] ? "/watermark,text_{$cfgwat['text']},type_RlpIZWk,color_" . str_replace("#", "", $cfgwat['fill']) . ",size_{$cfgwat['size']},g_{$cfgwat['gravity']},x_{$cfgwat['dx']},y_{$cfgwat['dy']}" : "";
                     break;

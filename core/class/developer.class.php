@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2025-06-30 23:43:29
+ * @LastEditTime: 2025-12-11 22:04:39
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -21,7 +21,7 @@ class DEVELOPER
                 if (stripos($message, "Too few arguments to") !== false) {
                     $msg  = $traces[0]['class'] ? "{$traces[0]['class']}{$traces[0]['type']}{$traces[0]['function']}" : $traces[0]['function'];
                     $main = [
-                        "msg"  => "Too few arguments to function {$msg}()",
+                        "msg" => "Too few arguments to function {$msg}()",
                         "path" => $traces[0]['path'],
                         "file" => $traces[0]['file'],
                         "line" => $traces[0]['line'],
@@ -50,7 +50,12 @@ class DEVELOPER
                     ],
                     "trace" => $traces,
                 ];
-                require LCMS::template(PATH_PUBLIC . "ui/admin/error");
+                $file = PATH_PUBLIC . "ui/admin/error";
+                if (is_file("{$file}.html")) {
+                    require LCMS::template($file);
+                } else {
+                    ajaxout(0, "error", "", $error);
+                }
                 exit();
             } else {
                 LCMS::X(500, "出现了一些错误<br/>开启开发者模式查看详情");
