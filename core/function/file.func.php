@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-03-27 11:43:52
+ * @LastEditTime: 2025-12-18 20:56:19
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -20,7 +20,11 @@ function path_absolute($path)
     $path = in_string($path, [
         "../", "./", "..\\", ".\\",
     ]) ? path_absolute($path) : $path;
-    $path = str_replace("\/", "\\", $path);
+    $path = str_replace([
+        "\/", "//",
+    ], [
+        "\\", "/",
+    ], $path);
     return is_dir($path) ? path_standard($path) : $path;
 }
 /**
@@ -39,7 +43,13 @@ function path_relative($path, $relative = "")
     ])) {
         $path = path_relative($path);
     } else {
-        return $relative . $path;
+        $path = "{$relative}{$path}";
+        $path = str_replace([
+            "\/", "//",
+        ], [
+            "\\", "/",
+        ], $path);
+        return $path;
     }
     return $path;
 }

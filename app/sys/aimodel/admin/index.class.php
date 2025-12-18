@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2025-05-25 10:07:39
+ * @LastEditTime: 2025-12-18 20:30:38
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -27,6 +27,14 @@ class index extends adminbase
         global $_L, $LF, $LC;
         $aicfg = $_L['plugin']['aimodel'];
         $PLG   = $aicfg[$aicfg['type']];
+        $model = $PLG['model'];
+        $model = explode("|", $model);
+        if ($model[1] && $model[1] == "thinking") {
+            $PLG['model'] = $model[0];
+            $thinking     = true;
+        } else {
+            $thinking = false;
+        }
         switch ($aicfg['type']) {
             case 'wenxin':
                 $result = [
@@ -72,19 +80,19 @@ class index extends adminbase
                         $api = "https://api.openai.com";
                         break;
                 }
-                $api = $PLG['api'] ?: $api;
-                ajaxout(1, "success", "", [
+                $result = [
                     "type"  => $PLG['type'],
-                    "api"   => $api,
+                    "api"   => $PLG['api'] ?: $api,
                     "model" => $PLG['model'],
                     "token" => $PLG['token'],
-                ]);
+                ];
                 break;
             default:
                 ajaxout(0, "AI助手未开启，请到设置->接口设置->AI接口中开启！");
                 break;
         }
         $result['max_tokens'] = intval($aicfg['max_tokens']);
+        $result['thinking']   = $thinking;
         ajaxout(1, "success", "", $result);
     }
 }

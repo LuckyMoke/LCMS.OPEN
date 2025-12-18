@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-05-25 10:06:50
+ * @LastEditTime: 2025-12-18 20:40:48
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -459,7 +459,7 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务<br>▲ 有<code>多家永久免费接口</code>可使用，具体请查看AI模型中，标注为“免费”的模型"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[type]",
                         "value"  => $PLG['type'] ?: "",
