@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2025-06-17 13:09:36
+ * @LastEditTime: 2025-12-24 16:00:31
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -75,35 +75,29 @@ class index extends adminbase
                 }
             }
         }
-        $info = server_info();
-        if (in_string(strtoupper($info['sys']), "IIS")) {
-            $info['sys'] = "<span style='color:red'>{$info['sys']} (请使用Apache或Nginx)</span>";
+        $server = server_info();
+        if (in_string(strtoupper($server['sys']), "IIS")) {
+            $server['sys'] = "<span style='color:red'>{$server['sys']} (请使用Apache或Nginx)</span>";
         }
-        $info = array_merge($info, [
+        $server = array_merge($server, [
             "mysql" => [
                 "master" => $_L['DB']->assign("master")->version(),
                 "slave"  => $_L['DB']->assign("slave")->version(),
             ],
         ]);
-        if (version_compare($info['php'], "7.3", "lt")) {
+        if (version_compare($server['php'], "7.3", "lt")) {
             $phpban = true;
         }
-        $php = $info['php'];
+        $php = $server['php'];
         if (version_compare($php, "8.2", "lt")) {
             $php .= " (推荐PHP8.2及以上)";
         }
-        $php = "PHP/{$php} 主数据库/{$info['mysql']['master']}";
-        if ($info['mysql']['slave']) {
-            $php .= "从数据库/{$info['mysql']['slave']}";
+        $php = "PHP/{$php} 主数据库/{$server['mysql']['master']}";
+        if ($server['mysql']['slave']) {
+            $php .= "从数据库/{$server['mysql']['slave']}";
         }
-        if (
-            LCMS::SUPER() &&
-            $_L['developer']['appstore'] !== 0
-        ) {
-            $update = true;
-        }
-        if ($info['opcache']) {
-            $ram[] = "opcache/{$info['opcache']['used_memory']}";
+        if ($server['opcache']) {
+            $ram[] = "opcache/{$server['opcache']['used_memory']}";
         } else {
             $ram[] = "opcache/未开启";
         }
@@ -119,19 +113,28 @@ class index extends adminbase
         }
         $ram = implode("、", $ram);
         ajaxout(1, "success", "", [
-            "tips"    => $tips ?: [],
-            "apps"    => LEVEL::applist("open", true, 12),
-            "info"    => [
-                "服务器系统" => $info['os'],
-                "服务器环境" => $info['sys'],
+            "super"    => LCMS::SUPER(),
+            "appstore" => $_L['developer']['appstore'] !== 0 ? true : false,
+            "tips"     => $tips ?: [],
+            "server"   => [
+                "服务器系统" => $server['os'],
+                "服务器环境" => $server['sys'],
                 "运行环境"  => $php,
                 "内存用量"  => $ram,
                 "PHP扩展" => $this->getComs(),
                 "开源组件"  => "Layui、Amazeui、Neditor、FontAwesome、霞鹜尚智黑、Gantari、Alpine.js",
             ],
-            "update"  => $update ? true : false,
-            "gonggao" => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,
-            "phpban"  => $phpban ? $info['php'] : false,
+            "gonggao"  => $ACFG['gonggao'] ? html_editor($ACFG['gonggao']) : null,
+            "notice"   => sql_getall([
+                "table"  => "notify",
+                "where"  => "lcms = :lcms",
+                "order"  => "id DESC",
+                "bind"   => [
+                    ":lcms" => $_L['ROOTID'],
+                ],
+                "fields" => "id, title, isread, addtime, lcms",
+                "limit"  => 10,
+            ]),
         ]);
     }
     private function getComs()

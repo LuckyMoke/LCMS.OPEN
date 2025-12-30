@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-18 20:42:13
+ * @LastEditTime: 2025-12-26 12:00:06
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -109,7 +109,12 @@ class UPLOAD
                     }
                     return self::out(0, "上传失败:{$file['error']}");
                 }
-                self::$MIME  = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
+                if (in_string($file['name'], ".")) {
+                    self::$MIME = strtolower(substr($file['name'], strrpos($file['name'], ".") + 1));
+                } else {
+                    self::$MIME   = self::mime($file['type']);
+                    $file['name'] = "{$file['name']}." . self::$MIME;
+                }
                 self::$SIZE  = $file['size'];
                 self::$ONAME = $file['name'];
                 self::$CACHE = PATH_CACHE . "upload/" . md5($file['tmp_name']) . ".dat";

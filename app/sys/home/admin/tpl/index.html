@@ -1,67 +1,95 @@
 <template "ui/head" />
 <template "ui/css" />
-<template tplx="home">
-    <div class="layui-fluid" style="padding:0">
-        <block x-for="tips in data.tips">
-            <p class="lcms-form-des" x-html="tips"></p>
-        </block>
-        <div class="layui-tabs layui-tabs-card layui-panel">
-            <ul class="layui-tabs-header">
-                <li style="color:#000">常用应用</li>
-            </ul>
-            <div class="layui-tabs-body" style="padding:0;overflow:hidden">
-                <div class="layui-tabs-item layui-show">
-                    <div class="tplx-loading" x-show="loading" style="height:382px"></div>
-                    <div class="layui-row app-list" x-show="appshow">
-                        <block x-for="(app, name) in data.apps">
-                            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 box">
-                                <div class="li" x-on:mouseenter="onHover(`enter`,app)" x-on:mouseleave="onHover(`leave`,app)">
-                                    <a :href="app.url" @click.prevent="onClick(app.url)">
-                                        <img :src="app.icon" />
-                                        <h3 :title="app.title" x-text="app.title"></h3>
-                                    </a>
-                                </div>
-                            </div>
-                        </block>
-                    </div>
-                    <block x-if="!appshow">
-                        <div class="no-app">
-                            <p>友情提示：本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，安装好应用后，请创建子用户并设置好权限，去子用户中使用具体功能！</p>
-                            <a class="layui-btn" href="javascript:;" @click.prevent="onClick(`${LCMS.url.admin}index.php?t=sys&n=appstore&c=store&a=index`)">应用商店</a>
-                        </div>
-                    </block>
-                </div>
-            </div>
-        </div>
-        <div class="layui-row layui-col-space15">
-            <div :class="`layui-col-md${data.gonggao?'6':'12'} layui-col-xs12`">
-                <table class="layui-table home-info">
-                    <thead>
-                        <tr>
-                            <th colspan="2">环境信息</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <block x-for="(info, title) in data.info">
-                            <tr>
-                                <td width="80px" x-text="title"></td>
-                                <td x-html="info"></td>
-                            </tr>
-                        </block>
-                    </tbody>
-                </table>
-            </div>
-            <div class="layui-col-md6 layui-col-xs12" x-show="data.gonggao?true:false">
+<div class="home-index">
+    <div class="home-tips"></div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs-12 layui-col-sm-12 layui-col-md9">
+            <div class="app-box">
                 <div class="layui-tabs layui-tabs-card layui-panel">
                     <ul class="layui-tabs-header">
-                        <li style="color:#000">通知公告</li>
+                        <li>应用列表</li>
                     </ul>
-                    <div class="layui-tabs-body" style="box-sizing:border-box;height:230px;overflow-y:auto;">
-                        <div class="layui-tab-item layui-show lcms-editor" x-html="data.gonggao"></div>
+                    <div class="layui-tabs-body">
+                        <template "app/sys/appstore/admin/tpl/local/list" />
                     </div>
                 </div>
             </div>
         </div>
+        <template tplx="home_index">
+            <div class="layui-col-xs-12 layui-col-sm-12 layui-col-md3">
+                <section class="sticky">
+                    <block x-if="data.super && data.appstore">
+                        <div class="info-box">
+                            <div class="info-appstore">
+                                <img src="{{$_L['url']['own_path']}}admin/tpl/static/appstore.jpg" />
+                                <div class="-text">
+                                    <h3>盘企®</h3>
+                                    <p>SaaS应用商店</p>
+                                    <a @click="openAppstore">点击进入</a>
+                                </div>
+                            </div>
+                        </div>
+                    </block>
+                    <div class="info-box">
+                        <div class="layui-tabs layui-tabs-card layui-panel">
+                            <ul class="layui-tabs-header">
+                                <li>通知公告</li>
+                            </ul>
+                            <div class="layui-tabs-body">
+                                <div class="layui-tab-item layui-show">
+                                    <div class="home-nodata" x-show="data.gonggao?false:true">暂无公告</div>
+                                    <div class="lcms-editor" x-show="data.gonggao?true:false" x-html="data.gonggao"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box info-notice">
+                        <div class="layui-tabs layui-tabs-card layui-panel">
+                            <ul class="layui-tabs-header">
+                                <li>系统通知</li>
+                            </ul>
+                            <div class="layui-tabs-body">
+                                <div class="layui-tab-item layui-show">
+                                    <div class="home-nodata" x-show="data.notice.length>0?false:true">暂无通知</div>
+                                    <ul x-show="data.notice.length>0?true:false" class="-list">
+                                        <block x-for="notice in data.notice">
+                                            <li>
+                                                <a x-html="(notice.isread==0?`<i>[未读]</i>`:``)+notice.title" @click="openNoticeDetail(notice.id)"></a>
+                                                <span x-text="getDate(notice.addtime)"></span>
+                                            </li>
+                                        </block>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="-more" @click="openNotice">查看所有</a>
+                    </div>
+                    <block x-if="data.super">
+                        <div class="info-box">
+                            <div class="layui-tabs layui-tabs-card layui-panel">
+                                <ul class="layui-tabs-header">
+                                    <li>环境信息</li>
+                                </ul>
+                                <div class="layui-tabs-body info-server">
+                                    <div class="layui-tab-item layui-show">
+                                        <table class="layui-table">
+                                            <tbody>
+                                                <block x-for="(server, title) in data.server">
+                                                    <tr>
+                                                        <td width="80px" x-text="title"></td>
+                                                        <td x-html="server"></td>
+                                                    </tr>
+                                                </block>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </block>
+                </section>
+            </div>
+        </template>
     </div>
-</template>
+</div>
 <template "ui/foot" />

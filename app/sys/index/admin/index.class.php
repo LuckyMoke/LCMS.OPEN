@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2025-05-09 11:28:19
+ * @LastEditTime: 2025-12-21 00:42:43
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -30,23 +30,19 @@ class index extends adminbase
             "cate" => "admin",
         ]);
         $config['sys'] = [
-            "appstore" => [
-                "local" => 1,
-                "store" => 1,
-            ],
-            "user"     => [
+            "user"   => [
                 "admin" => 1,
             ],
-            "config"   => [
+            "config" => [
                 "admin" => 1,
                 "web"   => 1,
             ],
-            "backup"   => [
+            "backup" => [
                 "database" => 1,
                 "optimize" => 1,
                 "files"    => 1,
             ],
-            "update"   => [
+            "update" => [
                 "gitee" => 1,
             ],
         ];
@@ -103,7 +99,8 @@ class index extends adminbase
                 ];
             }
         }
-        $applist = LEVEL::applist("open", true, 6);
+        $applist = LEVEL::applist("open", true);
+        $homeurl = "{$_L['url']['admin']}index.php?n=home";
         if ($applist) {
             if ($config['default']) {
                 switch ($config['default']['on']) {
@@ -126,7 +123,6 @@ class index extends adminbase
                 }
             }
         }
-        $homeurl = $homeurl ?: "{$_L['url']['admin']}index.php?n=home";
         require LCMS::template("own/index");
     }
     public function donotify()
@@ -139,9 +135,9 @@ class index extends adminbase
                 ], "id, title, isread, addtime, lcms");
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [
-                        "title"  => [
-                            "type"  => "link",
-                            "url"   => "javascript:openNotify({$val['id']})",
+                        "title" => [
+                            "type" => "link",
+                            "url"  => "javascript:openNotify({$val['id']})",
                             "title" => $val["title"],
                         ],
                         "isread" => $val["isread"] == 1 ? "已读" : '<span style="color:red">未读</span>',

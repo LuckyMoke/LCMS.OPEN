@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-12-08 11:19:41
+ * @LastEditTime: 2025-12-25 15:55:49
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -408,7 +408,7 @@ class LAY
                     <input type='hidden' name='{$para['name']}' :value='value'{$para['verifybox']}/>
                     <div class='layui-upload-list lcms-form-upload-img-list' x-ref='imglist'>
                         <template x-for='(item,index) in imgList' :key='item.original'>
-                            <div class='_li'><a :href='item.src' target='_blank'><img class='layui-upload-img' :src='item.isload?item.src:``' :data-lazy='item.src' :class='item.isload?``:`lazyload`' @load='onImgload(index)' /></a><div class='_icon'><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div></div>
+                            <div class='_li'><a href='javascript:;' @click='previewImage(index)'><img class='layui-upload-img' :src='item.isload?item.src:``' :data-lazy='item.src' :class='item.isload?``:`lazyload`' @load='onImgload(index)' /></a><div class='_icon'><div class='_del' @click='onDel(index)'><i class='layui-icon layui-icon-close'></i></div></div></div>
                         </template>
                     </div>
                     <div class='layui-btn-group lcms-form-upload-btn' x-cloak>

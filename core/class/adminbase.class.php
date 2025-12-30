@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-10-28 11:43:35
+ * @LastEditTime: 2025-12-21 13:53:22
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -106,6 +106,24 @@ class adminbase extends common
             }
             $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
             $_L['ROOTID'] = LCMS::SUPER() ? 0 : $_L['ROOTID'];
+            if (!LCMS::SUPER()) {
+                if ($_L['LCMSADMIN']['webuser']) {
+                    LCMS::X(403, "无权限访问");
+                }
+                if (
+                    $_L['developer']['whitelist'] &&
+                    $_L['developer']['whitelist']['admin']
+                ) {
+                    $slist = [
+                        L_TYPE . "/" . L_NAME,
+                        L_TYPE . "/" . L_NAME . "/" . L_CLASS,
+                        L_TYPE . "/" . L_NAME . "/" . L_CLASS . "/" . L_ACTION,
+                    ];
+                    $wlist = $_L['developer']['whitelist']['admin'];
+                    $slist = array_intersect($slist, $wlist);
+                    $slist || LCMS::X(403, "无权限访问");
+                }
+            }
         } else {
             if (PHP_SELF == HTTP_URI . "index.php") {
                 okinfo(str_replace("&a=loginout", "", $loginurl));

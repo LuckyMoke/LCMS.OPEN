@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-08-05 11:25:17
+ * @LastEditTime: 2025-12-19 12:32:11
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -145,15 +145,20 @@ class USERBASE
     }
     /**
      * @description: 用户登录检测
-     * @param string $opts [by、name、pass、code、2fa、jwt、band、go、openid]
+     * @param string $opts [by、name、pass、code、2fa、jwt、band、go、openid、webuser]
      * @return {*}
      */
     public static function login($opts = [])
     {
         global $_L;
+        $opts = is_array($opts) ? $opts : [];
         $opts = array_merge([
             "by" => "pass",
         ], $opts);
+        //是否前端用户
+        if ($opts['webuser']) {
+            $_L['_tmp_webuser'] = true;
+        }
         switch ($opts['by']) {
             case 'wechat':
             case 'qrcode':
@@ -491,7 +496,7 @@ class USERBASE
         $users = $aids ? sql_getall([
             "table" => "admin",
             "where" => "id IN ({$aids}) AND status = 1 AND (lasttime IS NULL OR lasttime > :lasttime)",
-            "bind"  => [
+            "bind" => [
                 ":lasttime" => datenow(),
             ],
         ]) : [];
@@ -741,6 +746,9 @@ class USERBASE
             ],
         ]);
         unset($user['pass']);
+        if ($_L['_tmp_webuser']) {
+            $user['webuser'] = true;
+        }
         SESSION::set("LCMSADMIN", $user);
         self::createJWT($user);
         setcookie("LCMSUSERCATE", $user['cate'], time() + 15552000, "/", "", 0, true);

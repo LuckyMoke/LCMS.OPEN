@@ -1,0 +1,45 @@
+<template tplx="local_list">
+    <div class="local-list">
+        <block x-if="!appshow">
+            <div class="-noapp">本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，请到应用商店安装应用，然后创建用户，切换到用户账号使用具体功能！</div>
+        </block>
+        <div class="tplx-loading" x-show="loading" style="height:300px"></div>
+        <div x-show="!loading && appshow">
+            <div class="layui-form layui-input-wrap" style="margin-bottom:15px">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-search"></i>
+                </div>
+                <input type="text" placeholder="输入关键词搜索应用" class="layui-input" x-model.debounce.500ms="keyword" @input.debounce.500ms="onSearch">
+            </div>
+            <div class="tplx-loading-own" style="height:130px" x-show="Object.keys(data.apps).length==0">未找到相关应用</div>
+        </div>
+        <div class="-list" x-ref="appbox">
+            <block x-if="uptotal>0&&!isappstore&&Object.keys(applist).length==Object.keys(data.apps).length">
+                <div class="-upbox">
+                    <div class="-icon">
+                        <img src="{{$_L['url']['app']}}sys/appstore/admin/tpl/static/upicon.jpg" />
+                    </div>
+                    <div class="-tips">
+                        <span x-text="`当前有${uptotal}个应用待更新`"></span>
+                        <a @click="onClick(`update`)">立即更新</a>
+                    </div>
+                </div>
+            </block>
+            <block x-for="(app,name) in data.apps">
+                <div class="-li">
+                    <a :href="app.url" @click.prevent="onClick('open',app)">
+                        <img :src="app.icon" />
+                        <h3 :title="app.title" x-text="app.title"></h3>
+                        <span :class="isappstore&&data.super?`-t1`:`-t2`" x-text="app.description"></span>
+                    </a>
+                    <block x-if="data.super&&isappstore">
+                        <div class="layui-btn-group">
+                            <a class="layui-btn layui-btn-xs layui-btn-warm" @click="onClick('repair',app,name)">修复</a>
+                        </div>
+                    </block>
+                    <div class="-version" x-text="`V${app.ver}`"></div>
+                </div>
+            </block>
+        </div>
+    </div>
+</template>

@@ -4,7 +4,7 @@
     <header>
         <if $_L['config']['admin']['logo']>
             <div class="main-logo">
-                <img src="{{$_L['config']['admin']['logo']}}"/>
+                <img src="{{$_L['config']['admin']['logo']}}" />
             </div>
         </if>
         <ul class="layui-nav main-menu-mobile">
@@ -22,12 +22,16 @@
                         <i class="layui-icon layui-icon-home"></i>首页
                     </a>
                 </li>
+                <if count($applist) gt 1>
+                    <li class="no-active">
+                        <a href="javascript:;" onclick="LCMS.util.iframe({title:`应用列表`,url:`${LCMS.url.admin}index.php?n=appstore&c=local`,shade:true});">
+                            <i class="layui-icon layui-icon-app"></i>应用
+                        </a>
+                    </li>
+                </if>
                 <loop $sys,$info>
                     <li>
                         <a href="javascript:;" data-url="{{$info['url']}}">
-                            <if $info['name']=="appstore">
-                                <i class="layui-icon layui-icon-app"></i>应用
-                            </if>
                             <if $info['name']=="user">
                                 <i class="layui-icon layui-icon-user"></i>用户
                             </if>
@@ -41,23 +45,6 @@
                                 <i class="layui-icon layui-icon-upload-drag"></i>升级
                             </if>
                         </a>
-                        <if $info['name']=="appstore" && $applist && count($applist) gt 1>
-                            <ol>
-                                <loop $applist,$app>
-                                    <li>
-                                        <a href="javascript:;" data-url="{{$app['url']}}">
-                                            <img src="{{$app['icon']}}" />
-                                            <h3>{{$app['title']}} <i>V{{$app['ver']}}</i></h3>
-                                        </a>
-                                    </li>
-                                </loop>
-                                <li>
-                                    <a href="javascript:;" data-url="{{$info['url']}}">
-                                        <h3>更多应用...</h3>
-                                    </a>
-                                </li>
-                            </ol>
-                        </if>
                     </li>
                 </loop>
             </ul>
@@ -160,5 +147,5 @@
         </a>
     </li>
 </script>
-<script type="text/javascript">function isIE(){var userAgent=navigator.userAgent,isIE=userAgent.indexOf("compatible")>-1&&userAgent.indexOf("MSIE")>-1,isIE11=userAgent.indexOf("Trident")>-1&&userAgent.indexOf("rv:11.0")>-1;return!!isIE||(!!isIE11||void 0)}isIE()&&(document.body.innerHTML=`<h1 style="text-align:center"><br><br><br>请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。</h1>`);localStorage.setItem("LCMS_user","{{$_L['LCMSADMIN']['name']}}")</script>
+<script type="text/javascript">function isIE() {var userAgent = navigator.userAgent, isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1, isIE11 = userAgent.indexOf("Trident") > -1 && userAgent.indexOf("rv:11.0") > -1; return !!isIE || (!!isIE11 || void 0);} isIE() && (document.body.innerHTML = `<h1 style="text-align:center"><br><br><br>请不要使用IE或者IE内核的浏览器，可使用Chrome浏览器或者其它浏览器极速模式。</h1>`); localStorage.setItem("LCMS_user", "{{$_L['LCMSADMIN']['name']}}")</script>
 <template "ui/foot_base" />

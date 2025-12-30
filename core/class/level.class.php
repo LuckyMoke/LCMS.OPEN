@@ -2,13 +2,14 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-11-23 16:11:24
+ * @LastEditTime: 2025-12-24 14:19:36
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class LEVEL
 {
+    private static $_APPS = [];
     /**
      * @description: 获取APP信息
      * @param string $name
@@ -18,142 +19,216 @@ class LEVEL
     public static function app($name = "", $type = "", $ckv = false)
     {
         global $_L;
-        $name    = $name ?: L_NAME;
-        $type    = $type ?: L_TYPE;
-        $appinfo = [];
-        $path    = PATH_APP . $type . "/" . $name . "/";
-        if (is_file("{$path}app.json")) {
-            $appinfo = json_decode(file_get_contents("{$path}app.json"), true);
-            if ($name === "appstore" && $_L['developer']['appstore'] === 0) {
-                unset($appinfo['class']['store']);
-            }
-            $appinfo['menu'] = $appinfo['class'];
-        };
-        if (L_MODULE == "admin") {
-            if (is_file("{$path}admin/tpl/static/fun.js")) {
-                $js = "fun.js";
-            }
-            $appinfo['info']['js'] = $js ?: "";
+        $name = $name ?: L_NAME;
+        $type = $type ?: L_TYPE;
+        if (self::$_APPS) {
+            $apps = self::$_APPS;
+        } else {
+            $apps = self::getAppAll();
         }
-        if (!$appinfo['info']['title']) {
-            return $appinfo;
+        $app = [];
+        if ($apps[$type] && $apps[$type][$name]) {
+            $app = $apps[$type][$name];
         }
-        $applevel = $_L['LCMSADMIN']['level'][$type][$name];
+        if (!$app['info']['title']) {
+            return $app;
+        }
+        if ($app['base']) {
+            unset($app['base']);
+        }
+        $level = $_L['LCMSADMIN']['level'][$type][$name];
         if ($_L['LCMSADMIN']['type'] != "lcms") {
-            if (empty($applevel) && !empty($appinfo['class'])) {
-                foreach ($appinfo['class'] as $key => $val) {
-                    if (!empty($val['level'])) {
-                        foreach ($val['level'] as $fun => $power) {
-                            $appinfo['power'][$key][$fun] = "no";
-                            unset($appinfo['menu'][$key]['level'][$fun]);
+            foreach ($app['class'] as $cls => $arr) {
+                if (!empty($arr['level'])) {
+                    foreach ($arr['level'] as $fun => $_v) {
+                        if (
+                            (empty($level) && !empty($app['class'])) ||
+                            (!$level[$cls] || $level[$cls][$fun] != 1)
+                        ) {
+                            $app['power'][$cls][$fun] = "no";
+                            unset($app['menu'][$cls]['level'][$fun]);
+                            unset($app['url']["{$cls}:{$fun}"]);
                         }
                     }
                 }
-            } else {
-                foreach ($appinfo['menu'] as $cls => $arr) {
-                    if (!empty($arr['level'])) {
-                        foreach ($arr['level'] as $fun => $val) {
-                            if (!$applevel[$cls] || $applevel[$cls][$fun] != "1") {
-                                $appinfo['power'][$cls][$fun] = "no";
-                                unset($appinfo['menu'][$cls]['level'][$fun]);
-                            }
-                        }
-                    }
+                if (empty($app['menu'][$cls]['level'])) {
+                    unset($app['menu'][$cls]);
+                    unset($app['url'][$cls]);
                 }
             }
         }
-        foreach ($appinfo['menu'] as $key => $val) {
-            if (!empty($val['level'])) {
-                foreach ($val['level'] as $fun => $arr) {
-                    if (!$arr['menu'] || $arr['menu'] == "0") {
-                        unset($appinfo['menu'][$key]['level'][$fun]);
-                    }
-                }
-            } else {
-                unset($appinfo['menu'][$key]);
-            }
-        }
-        $fristclass            = !empty($appinfo['menu']) ? array_key_first($appinfo['menu']) : "";
-        $fristfun              = !empty($appinfo['menu'][$fristclass]['level']) ? array_key_first($appinfo['menu'][$fristclass]['level']) : "";
-        $appinfo['url']['all'] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$fristclass}&a={$fristfun}";
-        foreach ($appinfo['menu'] as $cname => $menu) {
-            $fristfun               = !empty($appinfo['menu'][$cname]['level']) ? array_key_first($appinfo['menu'][$cname]['level']) : "";
-            $appinfo['url'][$cname] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$cname}&a={$fristfun}";
-            foreach ($menu['level'] as $aname => $menu2) {
-                $appinfo['url'][$cname . ':' . $aname] = "{$_L['url']['admin']}index.php?t={$type}&n={$name}&c={$cname}&a={$aname}";
-            }
+        if (count($app['url']) > 1) {
+            unset($app['url']['all']);
+            $app['url'] = [
+                "all" => array_values($app['url'])[0],
+            ] + $app['url'];
         }
         if (
             $ckv &&
             $name == "comsite" &&
-            $appinfo['info']['ver'] < "3.4.3"
+            $app['info']['ver'] < "3.4.3"
         ) {
             LCMS::X(403, "&#x8BF7;&#x5347;&#x7EA7;&#x6B64;&#x5E94;&#x7528;&#x7248;&#x672C;&#xFF01;");
             exit;
         }
-        return $appinfo;
+        return $app;
     }
     /**
-     * @description: 获取所有APP信息
-     * @param {*}
+     * @description: 获取APP列表
+     * @param string $type
+     * @param bool $base
+     * @param int $count
      * @return array
      */
     public static function applist($type = "all", $base = false, $count = 0)
     {
         global $_L;
-        if ($type === "all" || $type === "sys") {
-            $sys = traversal_one(PATH_APP . "sys");
-            $sys && sort($sys['dir']);
-            foreach ($sys['dir'] as $dir) {
-                $info = self::app($dir, "sys");
-                if ($info) {
-                    $applist['sys'][$dir] = $info;
-                }
-            }
-        }
-        if ($type === "all" || $type === "open") {
-            $open = traversal_one(PATH_APP . "open");
-            $open && sort($open['dir']);
-            foreach ($open['dir'] as $dir) {
-                $info = self::app($dir, "open");
-                if ($info && $info['info']['title']) {
-                    $applist['open'][$dir] = $info;
-                }
-            }
-        }
-        if ($type === "open" && $base) {
-            $config = LCMS::config([
-                "name" => "menu",
-                "type" => "sys",
-                "cate" => "admin",
-            ]);
-            $index = 0;
-            $cache = [];
-            foreach ($applist['open'] as $name => $app) {
-                if ($app['menu']) {
-                    $icon = "{$_L['url']['static']}images/appicon.gif?ver={$_L['config']['ver']}";
-                    if (is_file(PATH_APP . "open/{$name}/icon.gif")) {
-                        $icon = "{$_L['url']['app']}open/{$name}/icon.gif?ver={$app['info']['ver']}";
+        $apps        = self::getAppAll();
+        self::$_APPS = $apps;
+        switch ($type) {
+            case 'sys':
+                $apps['open'] = [];
+                break;
+            case 'open':
+                $apps['sys'] = [];
+                if ($base) {
+                    if ($count > 0) {
+                        $apps['open'] = array_slice($apps['open'], 0, $count);
                     }
-                    $cache[$name] = [
-                        "title"       => $app['info']['title'],
-                        "ver"         => $app['info']['ver'],
-                        "description" => $app['info']['description'],
-                        "icon"        => $icon,
-                        "uninstall"   => $app['info']['uninstall'] === false ? false : true,
-                        "url"         => $app['url']['all'],
-                    ];
-                    $index++;
+                    foreach ($apps['open'] as $name => $app) {
+                        $apps['open'][$name] = $app['base'];
+                    }
                 }
-            }
-            if ($config['open'] && !$config['open'][0]) {
-                $cache = array_intersect_key(array_merge($config['open'], $cache), $cache);
-            }
-            if ($count > 0) {
-                $cache = array_slice($cache, 0, $count);
-            }
-            $applist['open'] = $cache;
+                break;
+            default:
+                if (!$base) {
+                    foreach ($apps['open'] as $name => $app) {
+                        unset($apps['open'][$name]['base']);
+                    }
+                }
+                break;
         }
-        return $type === "all" ? $applist : $applist[$type];
+        foreach ($apps['sys'] as $name => $app) {
+            $apps['sys'][$name] = self::app($name, "sys");
+        }
+        foreach ($apps['open'] as $name => $app) {
+            $napp = self::app($name, "open");
+            if (!$napp['menu']) {
+                unset($apps['open'][$name]);
+                continue;
+            }
+            if ($app['ver']) {
+                $app['url'] = $napp['url']['all'];
+            }
+            $apps['open'][$name] = $app;
+        }
+        return $type == "all" ? $apps : $apps[$type];
+    }
+    /**
+     * @description: 更新缓存数据
+     * @return {*}
+     */
+    public static function update()
+    {
+        global $_L;
+        LCMS::cache("system/applist", "clear", true);
+        self::getAppAll();
+    }
+    /**
+     * @description: 获取所有应用信息
+     * @return array
+     */
+    private static function getAppAll()
+    {
+        global $_L;
+        $apps = LCMS::cache("system/applist", [], true);
+        if ($apps) return $apps;
+        $sys = traversal_one(PATH_APP . "sys");
+        $sys && sort($sys['dir']);
+        foreach ($sys['dir'] as $name) {
+            $app = self::getAppInfo("sys", $name);
+            if ($app) {
+                $apps['sys'][$name] = $app;
+            }
+        }
+        $open = traversal_one(PATH_APP . "open");
+        $open && sort($open['dir']);
+        foreach ($open['dir'] as $name) {
+            $app = self::getAppInfo("open", $name);
+            if ($app && $app['info']['title']) {
+                $apps['open'][$name] = $app;
+            }
+        }
+        $apps = $apps ?: [];
+        LCMS::cache("system/applist", $apps, true);
+        return $apps;
+    }
+    /**
+     * @description: 获取应用详细信息
+     * @param string $type
+     * @param string $name
+     * @return array
+     */
+    private static function getAppInfo($type, $name)
+    {
+        global $_L;
+        $path = PATH_APP . "{$type}/{$name}/";
+        if (is_file("{$path}app.json")) {
+            $app         = file_get_contents("{$path}app.json");
+            $app         = json_decode($app, true);
+            $app['menu'] = $app['class'];
+        };
+        if (is_file("{$path}admin/tpl/static/fun.js")) {
+            $js = "fun.js";
+        }
+        $app['info']['js'] = $js ?: "";
+        if ($type == "sys" && !$app['info']['title']) {
+            return $app ?: [];
+        }
+        foreach ($app['menu'] as $key => $val) {
+            if (empty($val['level'])) {
+                unset($app['menu'][$key]);
+            }
+        }
+        if (!empty($app['menu'])) {
+            $class1 = array_key_first($app['menu']);
+        } else {
+            $class1 = "index";
+        }
+        if (!empty($app['menu'][$class1]['level'])) {
+            $func1 = array_key_first($app['menu'][$class1]['level']);
+        } else {
+            $func1 = "index";
+        }
+        $app['url']['all'] = "index.php?t={$type}&n={$name}&c={$class1}&a={$func1}";
+        foreach ($app['menu'] as $cname => $menu) {
+            if (!empty($app['menu'][$cname]['level'])) {
+                $func1 = array_key_first($app['menu'][$cname]['level']);
+            } else {
+                $func1 = "index";
+            }
+            $app['url'][$cname] = "index.php?t={$type}&n={$name}&c={$cname}&a={$func1}";
+            foreach ($menu['level'] as $aname => $menu2) {
+                $app['url']["{$cname}:{$aname}"] = "index.php?t={$type}&n={$name}&c={$cname}&a={$aname}";
+            }
+        }
+        switch ($type) {
+            case 'open':
+                if (is_file("{$path}icon.gif")) {
+                    $icon = "/app/open/{$name}/icon.gif?ver={$app['info']['ver']}";
+                } else {
+                    $icon = "/public/static/images/appicon.gif?ver={$_L['config']['ver']}";
+                }
+                $app['base'] = [
+                    "title"       => $app['info']['title'],
+                    "ver"         => $app['info']['ver'],
+                    "description" => $app['info']['description'],
+                    "icon"        => $icon,
+                    "uninstall"   => $app['info']['uninstall'] === false ? false : true,
+                    "url"         => $app['url']['all'],
+                ];
+                break;
+        }
+        return $app ?: [];
     }
 }

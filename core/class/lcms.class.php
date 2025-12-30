@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-17 12:44:37
+ * @LastEditTime: 2025-12-29 20:55:42
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -139,7 +139,7 @@ class LCMS
             delfile($file);
         } elseif ($value && is_array($value)) {
             if (!file_put_contents($file, json_encode_ex($value))) {
-                LCMS::X(500, "本地缓存写入失败");
+                LCMS::X(500, "数据写入失败，请检查程序目录权限");
             }
         } else {
             return $cache ? json_decode($cache, true) : [];
@@ -447,13 +447,16 @@ class LCMS
         } elseif ($postion === 'ui') {
             $file  = PATH_PUBLIC . "ui/" . L_MODULE . "/{$fpath}.html";
             $fpath = str_replace(PATH_WEB, "", $file);
+        } elseif ($postion === 'app') {
+            $file  = PATH_APP . "/{$fpath}.html";
+            $fpath = str_replace(PATH_WEB, "", $file);
         } else {
             $file  = "{$path}.html";
             $fpath = str_replace(PATH_WEB, "", $file);
         }
         if (!is_file($file)) {
             if ($_L['config']['admin']['development'] > 0) {
-                LCMS::X(404, "模板文件未找到<br/>" . str_replace(PATH_WEB, "", $file));
+                LCMS::X(404, "模板文件未找到{$file}<br/>" . str_replace(PATH_WEB, "", $file));
             } else {
                 LCMS::X(404, "模板文件未找到");
             }
