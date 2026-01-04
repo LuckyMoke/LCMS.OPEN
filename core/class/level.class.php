@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-24 14:19:36
+ * @LastEditTime: 2026-01-02 12:35:45
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -51,9 +51,17 @@ class LEVEL
                         }
                     }
                 }
-                if (empty($app['menu'][$cls]['level'])) {
-                    unset($app['menu'][$cls]);
-                    unset($app['url'][$cls]);
+            }
+        }
+        foreach ($app['menu'] as $cls => $arr) {
+            if (empty($arr['level'])) {
+                unset($app['menu'][$cls]);
+                unset($app['url'][$cls]);
+            } else {
+                foreach ($arr['level'] as $fun => $_v) {
+                    if (!$_v['menu'] || $_v['menu'] == 0) {
+                        unset($app['menu'][$cls]['level'][$fun]);
+                    }
                 }
             }
         }
@@ -143,6 +151,10 @@ class LEVEL
         global $_L;
         $apps = LCMS::cache("system/applist", [], true);
         if ($apps) return $apps;
+        $apps = [
+            "sys"  => [],
+            "open" => [],
+        ];
         $sys = traversal_one(PATH_APP . "sys");
         $sys && sort($sys['dir']);
         foreach ($sys['dir'] as $name) {
@@ -159,7 +171,6 @@ class LEVEL
                 $apps['open'][$name] = $app;
             }
         }
-        $apps = $apps ?: [];
         LCMS::cache("system/applist", $apps, true);
         return $apps;
     }

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2025-12-21 00:42:43
+ * @LastEditTime: 2025-12-31 13:34:17
  * @Description: Index页面
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -100,6 +100,7 @@ class index extends adminbase
             }
         }
         $applist = LEVEL::applist("open", true);
+        $applist = $applist ?: [];
         $homeurl = "{$_L['url']['admin']}index.php?n=home";
         if ($applist) {
             if ($config['default']) {
