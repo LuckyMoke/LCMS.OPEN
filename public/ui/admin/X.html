@@ -52,12 +52,10 @@
                     </loop>
                 </div>
                 <elseif ($go=="close" )>
-                    <script type="text/javascript">
-                        setTimeout(function () {
-                            window.opener = null;
-                            window.close();
-                        }, 2000);
-                    </script>
+                    <p style="font-size:12px;color:#909399;">
+                        页面即将关闭
+                        <span id="lasttime">3s</span>
+                    </p>
                 </elseif>
                 <else>
                     <p style="font-size:12px;color:#909399;">
@@ -72,7 +70,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">var html=document.getElementById("lasttime"),second=3,showLoad=function(){var loading=document.getElementById("loading");loading.style.display="block"};if(html!=null){var lasttime=setInterval(function(){second=second-1;if(second<=0){clearInterval(lasttime);window.location.href="{{$go}}"}else{html.innerHTML=second+"s"}},1000)}var LCMSX=document.getElementsByClassName("LCMSX")[0],TAB=document.getElementById("APPTAB"),Xh=LCMSX.offsetHeight,Fh=140,Pt=70;if(TAB){(Fh=200),(Pt=100)}try{if(document.body.offsetWidth<992&&!parent.document.getElementById("LCMS")){(Fh=40),(Pt=20)}}catch(e){}if(!document.getElementById("APPIFRAME")){(Fh=0),(Pt=0)}LCMSX.style.height="calc(100vh - "+Fh+"px)";LCMSX.style.opacity=1;</script>
+<script type="text/javascript">!(function(){let html=document.getElementById("lasttime"),second=3;if(null!=html){const lasttime=setInterval((function(){second-=1;if(second<=0){clearInterval(lasttime);if("{{$go}}"=="close"){window.opener=null;window.close()}else{window.location.href="{{$go}}"}}else{html.innerHTML=second+"s"}}),1000)}let LCMSX=document.getElementsByClassName("LCMSX")[0],TAB=document.getElementById("APPTAB"),Fh=(LCMSX.offsetHeight,140),Pt=70;if(TAB){Fh=200,Pt=100}try{if(document.body.offsetWidth<992&&!parent.document.getElementById("LCMS")){Fh=40,Pt=20}}catch(e){}if(!document.getElementById("APPIFRAME")){Fh=0,Pt=0}LCMSX.style.height="calc(100vh - "+Fh+"px)";LCMSX.style.opacity=1})();</script>
 <if $_L['APP']['info']>
     <template "ui/foot" />
     <else />

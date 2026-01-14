@@ -22,7 +22,7 @@
                         <i class="layui-icon layui-icon-home"></i>首页
                     </a>
                 </li>
-                <if count($applist) gt 1>
+                <if LCMS::SUPER() || count($applist) gt 1>
                     <li class="no-active">
                         <a href="javascript:;" onclick="LCMS.util.iframe({title:`应用列表`,url:`${LCMS.url.admin}index.php?n=appstore&c=local`,shade:true});">
                             <i class="layui-icon layui-icon-app"></i>应用

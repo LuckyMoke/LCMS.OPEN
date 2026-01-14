@@ -14,10 +14,7 @@ class AliyunOSS
             "Alg"     => "OSS4-HMAC-SHA256",
             "Service" => "oss",
         ]);
-        $this->api = new AliyunApi(array_merge($this->cfg, [
-            "Alg"     => "OSS4-HMAC-SHA256",
-            "Service" => "oss",
-        ]));
+        $this->api         = new AliyunApi($this->cfg);
         $this->cfg['Host'] = "{$this->cfg['Bucket']}.oss-{$this->cfg['Region']}.aliyuncs.com";
     }
     /**

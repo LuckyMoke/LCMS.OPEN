@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-02 13:46:21
+ * @LastEditTime: 2026-01-04 16:49:37
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -76,7 +76,7 @@ class HTTP
             "timeout"  => 30,
             "headers"  => [],
             "proxy"    => [],
-            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+            "ua"       => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PanQiFramework/2026 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
             "setopt"   => null,
             "success"  => null,
             "error"    => null,

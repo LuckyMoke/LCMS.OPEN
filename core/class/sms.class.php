@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-07-26 17:56:47
- * @LastEditTime: 2025-06-05 20:31:08
+ * @LastEditTime: 2026-01-05 13:30:43
  * @Description: 短信发送类
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -87,17 +87,33 @@ class SMS
         $cfg = array_merge($init['cfg'], $Param);
         switch ($init['type']) {
             case 'aliyun':
-                load::plugin('Aliyun/AliyunSMS');
-                $SMS = new AliyunSMS([
-                    "AccessKeyId"     => $cfg['AccessKeyId'],
-                    "AccessKeySecret" => $cfg['AccessKeySecret'],
-                    "TemplateCode"    => $Param['ID'],
-                    "SignName"        => $Param['Name'],
-                ]);
-                $result = $SMS->send($Param['Phone'], $Param['Param']);
+                if (
+                    in_array($Param['ID'], [
+                        "100001", "100002", "100003", "100004", "100005",
+                    ]) &&
+                    $Param['Param']['code']
+                ) {
+                    LOAD::plugin("Aliyun/AliyunDYPNS");
+                    $SMS = new AliyunDYPNS([
+                        "AccessKeyId"     => $cfg['AccessKeyId'],
+                        "AccessKeySecret" => $cfg['AccessKeySecret'],
+                        "TemplateCode"    => $Param['ID'],
+                        "SignName"        => $Param['Name'],
+                    ]);
+                    $result = $SMS->SmsSend($Param['Phone'], $Param['Param']['code']);
+                } else {
+                    LOAD::plugin('Aliyun/AliyunSMS');
+                    $SMS = new AliyunSMS([
+                        "AccessKeyId"     => $cfg['AccessKeyId'],
+                        "AccessKeySecret" => $cfg['AccessKeySecret'],
+                        "TemplateCode"    => $Param['ID'],
+                        "SignName"        => $Param['Name'],
+                    ]);
+                    $result = $SMS->send($Param['Phone'], $Param['Param']);
+                }
                 break;
             case 'tencent':
-                load::plugin('Tencent/TencentSMS');
+                LOAD::plugin('Tencent/TencentSMS');
                 $SMS = new TencentSMS([
                     "secretId"    => $cfg['secretId'],
                     "secretkey"   => $cfg['secretkey'],
@@ -109,8 +125,8 @@ class SMS
                 break;
         }
         LCMS::log([
-            "type"     => "sms",
-            "info"     => "{$Param['Phone']}/{$result['msg']}",
+            "type" => "sms",
+            "info" => "{$Param['Phone']}/{$result['msg']}",
             "postdata" => $Param['Param'],
         ]);
         return $result ?: [];

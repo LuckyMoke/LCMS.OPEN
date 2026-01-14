@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2025-12-19 12:32:11
+ * @LastEditTime: 2026-01-11 11:14:53
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -449,9 +449,6 @@ class USERBASE
     public static function checkBand($opts, $user)
     {
         global $_L;
-        if ($opts['by'] == "qq" || $opts['by'] == "qqlogin") {
-            $opts['openid'] = "QQ{$opts['openid']}";
-        }
         $band = sql_get([
             "table" => "admin_band",
             "where" => "openid = :openid AND aid = :aid" . (self::$MODE > 0 ? "" : " AND lcms = :lcms"),
@@ -628,7 +625,7 @@ class USERBASE
             return SESSION::get("LCMSLOGINOPENID");
         }
         if (SESSION::get("LCMSADMIN")) {
-            LCMS::Y(200, "用户已登录");
+            LCMS::Y(200, "用户已登录", "close");
         }
         if (SESSION::get("LCMSLOGINQRTIME") < time()) {
             LCMS::X(403, "请重新扫码");

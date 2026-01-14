@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-07-02 21:27:46
+ * @LastEditTime: 2026-01-08 17:57:18
  * @Description:微信小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -51,19 +51,20 @@ class MP
     public function access_token()
     {
         if (!$this->CFG['access_token'] || $this->CFG['access_token']['expires_in'] < time()) {
-            $query = http_build_query(array(
-                "appid"      => $this->CFG['appid'],
-                "secret"     => $this->CFG['appsecret'],
-                "grant_type" => "client_credential",
-            ));
-            $token = json_decode(HTTP::request([
-                "type" => "GET",
-                "url"  => "https://api.weixin.qq.com/cgi-bin/token?{$query}",
-            ]), true);
+            $token = HTTP::request([
+                "type" => "POST",
+                "url"  => "https://api.weixin.qq.com/cgi-bin/stable_token",
+                "data" => json_encode([
+                    "grant_type" => "client_credential",
+                    "appid"      => $this->CFG['appid'],
+                    "secret"     => $this->CFG['appsecret'],
+                ]),
+            ]);
+            $token = json_decode($token, true);
             if ($token['access_token']) {
                 $this->CFG['access_token'] = [
                     "access_token" => $token['access_token'],
-                    "expires_in"   => time() + 3600,
+                    "expires_in"   => $token['expires_in'] + time(),
                 ];
                 $this->cache("save");
             } else {

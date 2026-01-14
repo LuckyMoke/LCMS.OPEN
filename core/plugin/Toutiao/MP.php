@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-09-21 23:22:39
+ * @LastEditTime: 2026-01-12 10:52:55
  * @Description: 头条小程序接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -69,7 +69,7 @@ class MP
                 $token                     = $token['data'];
                 $this->CFG['access_token'] = [
                     "access_token" => $token['access_token'],
-                    "expires_in"   => $token['expires_in'] + time() - 300,
+                    "expires_in"   => $token['expires_in'] + time(),
                 ];
                 $this->cache("save");
             } else {
