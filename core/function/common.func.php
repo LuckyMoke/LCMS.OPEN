@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-12-16 13:05:27
+ * @LastEditTime: 2026-01-19 12:58:06
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -743,16 +743,25 @@ function ssl_decode_gzip($string, $token = "LCMS")
  */
 function rsa_create($bit = 2048)
 {
-    $res = openssl_pkey_new([
+    global $_L;
+    $options = [
+        "digest_alg"       => "sha256",
         "private_key_bits" => $bit,
         "private_key_type" => OPENSSL_KEYTYPE_RSA,
-    ]);
+    ];
+    if ($_L['openssl']['config']) {
+        $options['config'] = $_L['openssl']['config'];
+    }
+    $res = openssl_pkey_new($options);
     if ($res === false) {
         return false;
     } else {
         openssl_pkey_export($res, $privKey);
         $pubKey = openssl_pkey_get_details($res);
         $pubKey = $pubKey["key"];
+        if (!$privKey || !$pubKey) {
+            return false;
+        }
         return [
             "pubKey"     => $pubKey,
             "privKey"    => $privKey,
@@ -847,6 +856,71 @@ function jwt_decode($jwt, $key = "LCMS")
         return $payload;
     }
     return false;
+}
+/**
+ * @description: 国密SM3加密
+ * @return {*}
+ */
+function sm3_encode($string)
+{
+    try {
+        $hash = openssl_digest($string, "sm3", false);
+        return $hash;
+    } catch (\Throwable $th) {
+        return false;
+    }
+}
+/**
+ * @description: 国密SM4加密-生成密钥和向量
+ * @return {*}
+ */
+function sm4_create($isbyte = false)
+{
+    try {
+        $key = openssl_random_pseudo_bytes(16);
+        $iv  = openssl_random_pseudo_bytes(16);
+    } catch (\Throwable $th) {}
+    $key = $key ?: "";
+    $iv  = $iv ?: "";
+    if ($isbyte) {
+        return [
+            "key" => $key,
+            "iv"  => $iv,
+        ];
+    } else {
+        return [
+            "key" => urlsafe_base64_encode($key),
+            "iv"  => urlsafe_base64_encode($iv),
+        ];
+    }
+}
+/**
+ * @description: 国密SM4加密
+ * @param string $string
+ * @param string $key
+ * @param string $iv
+ * @return string
+ */
+function sm4_encode($string, $key, $iv)
+{
+    $key    = urlsafe_base64_decode($key);
+    $iv     = urlsafe_base64_decode($iv);
+    $encode = openssl_encrypt($string, "sm4-cbc", $key, OPENSSL_RAW_DATA, $iv);
+    return urlsafe_base64_encode($encode);
+}
+/**
+ * @description: 国密SM4解密
+ * @param string $string
+ * @param string $key
+ * @param string $iv
+ * @return string
+ */
+function sm4_decode($string, $key, $iv)
+{
+    $key    = urlsafe_base64_decode($key);
+    $iv     = urlsafe_base64_decode($iv);
+    $string = urlsafe_base64_decode($string);
+    return openssl_decrypt($string, "sm4-cbc", $key, OPENSSL_RAW_DATA, $iv);
 }
 /**
  * @description: 创建UUID-V7

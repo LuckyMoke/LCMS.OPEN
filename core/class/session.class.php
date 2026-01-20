@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-09-08 10:37:35
+ * @LastEditTime: 2026-01-16 17:07:53
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,7 +17,10 @@ class SESSION
     public static function init()
     {
         global $_L;
-        $stime = time() + ($_L['config']['admin']['sessiontime'] > 0 ? $_L['config']['admin']['sessiontime'] * 60 : 21600);
+        $expire = $_L['config']['admin']['sessiontime'];
+        $expire = $expire > 0 ? $expire * 60 : 21600;
+        $expire = intval($expire);
+        $stime  = intval(time() + $expire);
         ini_set("session.sid_length", 32);
         ini_set("session.sid_bits_per_character", 5);
         ini_set("session.use_cookies", 0);
@@ -25,16 +28,15 @@ class SESSION
         ini_set("session.gc_divisor", 100);
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
-            $userid  = strtolower($_L['form']['rootsid']);
-            $userid  = str_replace("lcms-", "", $userid);
-            $userid  = preg_replace("/[^a-z0-9]/", "", $userid);
-            $uidlong = strlen($userid);
+            $cookie  = strtolower($_L['form']['rootsid']);
+            $cookie  = str_replace("lcms-", "", $cookie);
+            $cookie  = preg_replace("/[^a-z0-9]/", "", $cookie);
+            $uidlong = strlen($cookie);
             if ($uidlong < 32) {
                 ajaxout(0, "rootsid仅支持字母、数字，长度不能小于32位，并且每个用户唯一。");
             } elseif ($uidlong > 32) {
-                $userid = substr(md5($userid . PATH_WEB), 8, 16) . substr($userid, -16);
+                $cookie = substr(md5($cookie . PATH_WEB), 8, 16) . substr($cookie, -16);
             }
-            $userid = "lcms-{$userid}";
         } else {
             $ltime = time() + 15552000;
             if ($_COOKIE['LCMSCID']) {
@@ -46,12 +48,13 @@ class SESSION
                 $cookie = session_create_id();
                 setcookie("LCMSCID", ssl_encode_gzip($cookie, PATH_WEB), $ltime, "/", "", 0, true);
             }
-            $userid = "lcms-{$cookie}";
         }
         $_L['SESSION'] = [
-            "id"   => strtolower($userid),
-            "type" => $_L['config']['admin']['session_type'],
-            "time" => intval($stime),
+            "id" => strtolower("lcms-{$cookie}"),
+            "redisid" => strtolower("lcms:sess:{$cookie}"),
+            "type"   => intval($_L['config']['admin']['session_type']),
+            "expire" => $expire,
+            "stime"  => $stime,
         ];
     }
     /**
@@ -62,34 +65,27 @@ class SESSION
     public static function start()
     {
         global $_L;
-        $SESSION = $_L['SESSION'];
-        if ($SESSION['type'] == "1") {
-            if (!$_L['SESSION']['redisid']) {
+        $init = $_L['SESSION'];
+        if ($init['type'] == 1) {
+            if (!$init['redis']) {
                 LOAD::plugin("Redis/rds");
-                $_L['SESSION'] = array_merge($_L['SESSION'], [
-                    "redis"   => new RDS(),
-                    "redisid" => $SESSION['id'],
+                $init = $_L['SESSION'] = array_merge($init, [
+                    "redis" => new RDS(),
                 ]);
-                $SESSION['redis']   = $_L['SESSION']['redis'];
-                $SESSION['redisid'] = $_L['SESSION']['redisid'];
             }
-            $etime = $SESSION['redis']->do->hGet($SESSION['redisid'], "LCMSSIDTIME");
-            if ($etime && $etime < time()) {
-                $SESSION['redis']->do->hDel($SESSION['redisid'], "LCMSADMIN");
-            }
-            $SESSION['redis']->do->hSet($SESSION['redisid'], "LCMSSIDTIME", $SESSION['time']);
-            $SESSION['redis']->do->expire($SESSION['redisid'], 604800);
+            $init['redis']->do->hSet($init['redisid'], "LCMSSIDTIME", $init['stime']);
+            $init['redis']->do->expire($init['redisid'], $init['expire']);
         } else {
             session_name("LCMSSID");
-            session_id($SESSION['id']);
+            session_id($init['id']);
             session_start();
             $etime = $_SESSION['LCMSSIDTIME'];
             if ($etime && $etime < time()) {
                 unset($_SESSION["LCMSADMIN"]);
             }
-            $_SESSION['LCMSSIDTIME'] = $SESSION['time'];
+            $_SESSION['LCMSSIDTIME'] = $init['stime'];
         }
-        return $SESSION;
+        return $init;
     }
     /**
      * @description: 设置SESSION
@@ -99,12 +95,12 @@ class SESSION
      */
     public static function set($name, $value)
     {
-        $SESSION = self::start();
-        if ($SESSION['type'] == "1") {
+        $init = self::start();
+        if ($init['type'] == 1) {
             if (is_object($value) || is_array($value)) {
                 $value = arr2sql($value);
             }
-            $SESSION['redis']->do->hSet($SESSION['redisid'], $name, $value);
+            $init['redis']->do->hSet($init['redisid'], $name, $value);
         } else {
             $_SESSION[$name] = $value;
             session_write_close();
@@ -118,9 +114,9 @@ class SESSION
      */
     public static function get($name)
     {
-        $SESSION = self::start();
-        if ($SESSION['type'] == "1") {
-            $value = $SESSION['redis']->do->hGet($SESSION['redisid'], $name);
+        $init = self::start();
+        if ($init['type'] == 1) {
+            $value = $init['redis']->do->hGet($init['redisid'], $name);
             if (is_serialize($value)) {
                 return sql2arr($value);
             }
@@ -137,9 +133,9 @@ class SESSION
      */
     public static function getall()
     {
-        $SESSION = self::start();
-        if ($SESSION['type'] == "1") {
-            $arr = $SESSION['redis']->do->hGetAll($SESSION['redisid']);
+        $init = self::start();
+        if ($init['type'] == 1) {
+            $arr = $init['redis']->do->hGetAll($init['redisid']);
             foreach ($arr as $key => $val) {
                 if (is_serialize($val)) {
                     $val = sql2arr($val);
@@ -159,9 +155,9 @@ class SESSION
      */
     public static function del($name)
     {
-        $SESSION = self::start();
-        if ($SESSION['type'] == "1") {
-            $SESSION['redis']->do->hDel($SESSION['redisid'], $name);
+        $init = self::start();
+        if ($init['type'] == 1) {
+            $init['redis']->do->hDel($init['redisid'], $name);
         } else {
             unset($_SESSION[$name]);
             session_write_close();
@@ -174,9 +170,9 @@ class SESSION
      */
     public static function delall()
     {
-        $SESSION = self::start();
-        if ($SESSION['type'] == "1") {
-            $SESSION['redis']->do->delete($SESSION['redisid']);
+        $init = self::start();
+        if ($init['type'] == 1) {
+            $init['redis']->do->delete($init['redisid']);
         } else {
             session_destroy();
         }
@@ -188,7 +184,7 @@ class SESSION
      */
     public static function getid()
     {
-        $SESSION = self::start();
-        return $SESSION['id'];
+        $init = self::start();
+        return $init['id'];
     }
 }

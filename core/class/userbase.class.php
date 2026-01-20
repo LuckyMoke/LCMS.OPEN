@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2026-01-11 11:14:53
+ * @LastEditTime: 2026-01-20 16:20:10
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -114,17 +114,14 @@ class USERBASE
             case 'check':
                 $cert = SESSION::get("LCMSLOGINTOKEN");
                 $cert || ajaxout(0, "签名错误", "reload");
-                if ($cert['expires'] > time()) {
-                    $token = md5($cert['token']);
-                } else {
+                if ($cert['expire'] <= time()) {
                     ajaxout(0, "登录超时", "reload");
                 }
-                return $token;
+                return $cert['privKey'];
                 break;
             case 'decode':
                 $cert   = SESSION::get("LCMSLOGINTOKEN");
-                $token  = md5($cert['token']);
-                $decode = openssl_decrypt($encode, "AES-256-CBC", $token, 0, $token);
+                $decode = rsa_decode($encode, $cert['privKey']);
                 $decode || ajaxout(0, "签名错误", "reload");
                 return $decode;
                 break;
@@ -133,13 +130,19 @@ class USERBASE
                 setcookie("LCMSLOGINTOKEN", "", time());
                 break;
             default:
-                $cert = [
-                    "token"   => randstr(32),
-                    "expires" => time() + 300,
-                ];
-                SESSION::set("LCMSLOGINTOKEN", $cert);
-                setcookie("LCMSLOGINTOKEN", $cert['token'], $cert['expires']);
-                return $cert['token'];
+                $cert = rsa_create();
+                if (!$cert) {
+                    LCMS::X(500, "签名证书生成失败");
+                }
+                $expire = time() + 300;
+                SESSION::set("LCMSLOGINTOKEN", [
+                    "privKey" => $cert['privKeyStr'],
+                    "expire"  => $expire,
+                ]);
+                setcookie("LCMSLOGINTOKEN", $cert['pubKeyStr'], [
+                    "expires" => $expire,
+                ]);
+                return $cert['pubKeyStr'];
                 break;
         }
     }
@@ -241,7 +244,10 @@ class USERBASE
                 $is2fa || self::checkCode($opts['code']);
                 //获取用户数据
                 $user = self::getUser($opts['name']);
-                $user || ajaxout(0, "用户不存在");
+                if (!$user) {
+                    self::checkAttack("login", "update");
+                    ajaxout(0, "用户不存在");
+                }
                 //判断用户类型
                 if (
                     array_key_exists("cate", $opts) &&
@@ -955,8 +961,15 @@ class USERBASE
     {
         global $_L;
         $code || ajaxout(0, "验证码错误");
-        LOAD::sys_class("captcha");
-        CAPTCHA::check($code) || ajaxout(0, "验证码错误");
+        if (is_numeric($code)) {
+            LOAD::sys_class("captcha");
+            CAPTCHA::check($code) || ajaxout(0, "验证码错误");
+        } else {
+            LOAD::plugin("Altcha/AltchaCaptcha");
+            $AC = new AltchaCaptcha();
+            $AC->verify($code) || ajaxout(0, "验证码错误");
+        }
+
     }
     /**
      * @description: 两步验证码验证

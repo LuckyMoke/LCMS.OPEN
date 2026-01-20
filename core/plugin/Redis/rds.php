@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-11-23 21:01:51
+ * @LastEditTime: 2026-01-16 16:28:19
  * @Description: Redis操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -29,7 +29,7 @@ class RDS
                     $this->do->auth($config['pass']);
                 }
             } catch (Exception $e) {
-                LCMS::X($e->getCode(), iconv('gbk', 'utf-8', $e->getMessage()));
+                LCMS::X($e->getCode(), "Redis服务连接失败<br>".$e->getMessage());
             }
         } else {
             LCMS::X(500, "redis扩展未开启");

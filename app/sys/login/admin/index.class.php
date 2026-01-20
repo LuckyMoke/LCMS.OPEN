@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2025-09-08 10:37:18
+ * @LastEditTime: 2026-01-17 23:49:21
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -50,11 +50,11 @@ class index extends adminbase
             default:
                 $page = [
                     "title" => "登录 - {$_L['config']['admin']['title']}",
-                    "tab"   => [[
+                    "tab" => [[
                         "title" => "账号登录",
                         "by"    => "name",
                     ]],
-                    "btn"   => "登录",
+                    "btn" => "登录",
                 ];
                 if ($UCFG['reg']['qrcode'] > 0) {
                     $page['tab'] = array_merge($page['tab'], [[
@@ -115,7 +115,7 @@ class index extends adminbase
                     //清除登录签名
                     USERBASE::token("clear");
                     if ($LF['band']) {
-                        ajaxout(1, "绑定成功", "back");
+                        ajaxout(1, "绑定成功", "goback");
                     }
                     ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin']);
                 }

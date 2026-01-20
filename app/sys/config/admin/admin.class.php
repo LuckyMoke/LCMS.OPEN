@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-12-11 21:38:28
+ * @LastEditTime: 2026-01-16 14:59:47
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,12 +24,11 @@ class admin extends adminbase
         switch ($LF['action']) {
             case 'save':
                 LCMS::config([
-                    "do"    => "save",
-                    "type"  => "sys",
-                    "cate"  => "admin",
-                    "unset" => "app_host",
-                    "form"  => $LC,
-                    "lcms"  => true,
+                    "do"   => "save",
+                    "type" => "sys",
+                    "cate" => "admin",
+                    "form" => $LC,
+                    "lcms" => true,
                 ]);
                 ajaxout(1, "保存成功", "reload-top");
                 break;
@@ -387,10 +386,12 @@ class admin extends adminbase
     {
         global $_L, $LF, $LC;
         if ($LF['checked'] == "1") {
-            $redisid = "lcms-sys-" . md5(PATH_WEB . "redistest");
+            $redisid = "lcms:test:" . md5(PATH_WEB);
             LOAD::plugin("Redis/rds");
             $redis = new RDS();
-            $redis->do->setex($redisid, 60, "success");
+            $redis->do->set($redisid, "success", [
+                "ex" => 60,
+            ]);
             if ($redis->do->get($redisid) === "success") {
                 ajaxout(1);
             } else {

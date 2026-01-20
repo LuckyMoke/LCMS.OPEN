@@ -13,11 +13,8 @@
                     <input type="text" name="email" placeholder="邮箱" autocomplete="new-input" required x-model="form.email" />
                 </div>
             </if>
-            <div class="login-input">
-                <input type="number" placeholder="验证码" autocomplete="off" maxlength="6" autocomplete="new-input" required x-model="form.code" />
-                <img :src="$store.login.captcha" title="点击刷新" @click="$store.login.resetCaptcha()" />
-            </div>
             <button class="login-btn" type="submit">发送验证码</button>
+            <div class="login-altcha"></div>
         </form>
     </div>
 </template>

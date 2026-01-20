@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-26 12:00:06
+ * @LastEditTime: 2026-01-14 16:13:09
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -337,29 +337,30 @@ class UPLOAD
     public static function mime($mime = "")
     {
         $allmime = [
-            "image/jpeg"               => "jpeg",
-            "image/png"                => "png",
-            "image/bmp"                => "bmp",
-            "image/gif"                => "gif",
-            "image/webp"               => "webp",
-            "image/vnd.wap.wbmp"       => "wbmp",
-            "image/x-up-wpng"          => "wpng",
-            "image/x-icon"             => "ico",
-            "image/vnd.microsoft.icon" => "ico",
-            "image/svg+xml"            => "svg",
-            "image/tiff"               => "tiff",
-            "image/avif"               => "avif",
-            "audio/mpeg"               => "mp3",
-            "audio/ogg"                => "ogg",
-            "audio/x-wav"              => "wav",
-            "audio/x-ms-wma"           => "wma",
-            "audio/x-ms-wmv"           => "wmv",
-            "video/mp4"                => "mp4",
-            "video/mpeg"               => "mpeg",
-            "video/quicktime"          => "mov",
-            "application/json"         => "json",
-            "application/pdf"          => "pdf",
-            "application/zip"          => "zip",
+            "image/jpeg"                   => "jpeg",
+            "image/png"                    => "png",
+            "image/bmp"                    => "bmp",
+            "image/gif"                    => "gif",
+            "image/webp"                   => "webp",
+            "image/vnd.wap.wbmp"           => "wbmp",
+            "image/x-up-wpng"              => "wpng",
+            "image/x-icon"                 => "ico",
+            "image/vnd.microsoft.icon"     => "ico",
+            "image/svg+xml"                => "svg",
+            "image/tiff"                   => "tiff",
+            "image/avif"                   => "avif",
+            "audio/mpeg"                   => "mp3",
+            "audio/ogg"                    => "ogg",
+            "audio/x-wav"                  => "wav",
+            "audio/x-ms-wma"               => "wma",
+            "audio/x-ms-wmv"               => "wmv",
+            "video/mp4"                    => "mp4",
+            "video/mpeg"                   => "mpeg",
+            "video/quicktime"              => "mov",
+            "application/json"             => "json",
+            "application/pdf"              => "pdf",
+            "application/zip"              => "zip",
+            "application/x-zip-compressed" => "zip",
         ];
         return $allmime[$mime] ?: "";
     }
