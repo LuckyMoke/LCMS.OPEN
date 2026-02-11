@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-29 20:55:42
+ * @LastEditTime: 2026-01-22 21:34:26
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -42,13 +42,20 @@ class LCMS
     }
     /**
      * @description: 输出错误提示页面
-     * @param int $code
-     * @param string $msg
-     * @param string $go
+     * @param array $args [code、title、msg、go]
      * @return {*}
      */
-    public static function X($code = 403, $msg = "拒绝访问", $go = "")
+    public static function X(...$args)
     {
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        $args = [
+            "code"  => $args['code'] ?: $args[0] ?: 403,
+            "title" => $args['title'] ?? "ERROR",
+            "msg"   => $args['msg'] ?: $args[1] ?: "拒绝访问",
+            "go"    => $args['go'] ?: $args[2] ?: "",
+        ];
         if (
             $_SERVER['HTTP_X_LCMS_KEY'] ||
             $_SERVER['HTTP_X_LCMS_TOKEN'] ||
@@ -57,15 +64,16 @@ class LCMS
             $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest" ||
             !is_file(PATH_PUBLIC . "ui/admin/X.html")
         ) {
-            ajaxout(0, $msg);
+            ajaxout(0, $args['msg']);
         } else {
             global $_L;
             $X = [
-                "icon"  => "layui-icon-face-cry",
+                "type"  => "error",
                 "color" => "#F56C6C",
-                "title" => "ERROR",
-                "code"  => $code,
-                "msg"   => $msg,
+                "title" => $args['title'],
+                "code"  => $args['code'],
+                "msg"   => $args['msg'],
+                "go"    => $args['go'],
             ];
             require self::template(PATH_PUBLIC . "ui/admin/X");
         }
@@ -73,13 +81,20 @@ class LCMS
     }
     /**
      * @description: 输出成功提示页面
-     * @param int $code
-     * @param string $msg
-     * @param string $go
+     * @param array $args [code、title、msg、go]
      * @return {*}
      */
-    public static function Y($code = 200, $msg = "处理完成", $go = "")
+    public static function Y(...$args)
     {
+        if (is_array($args[0])) {
+            $args = $args[0];
+        }
+        $args = [
+            "code"  => $args['code'] ?: $args[0] ?: 200,
+            "title" => $args['title'] ?? "SUCCESS",
+            "msg"   => $args['msg'] ?: $args[1] ?: "处理完成",
+            "go"    => $args['go'] ?: $args[2] ?: "",
+        ];
         if (
             $_SERVER['HTTP_X_LCMS_KEY'] ||
             $_SERVER['HTTP_X_LCMS_TOKEN'] ||
@@ -88,15 +103,16 @@ class LCMS
             $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest" ||
             !is_file(PATH_PUBLIC . "ui/admin/X.html")
         ) {
-            ajaxout(1, $msg);
+            ajaxout(1, $args['msg']);
         } else {
             global $_L;
             $X = [
-                "icon"  => "layui-icon-face-smile",
+                "type"  => "success",
                 "color" => "#67C23A",
-                "title" => "SUCCESS",
-                "code"  => $code,
-                "msg"   => $msg,
+                "title" => $args['title'],
+                "code"  => $args['code'],
+                "msg"   => $args['msg'],
+                "go"    => $args['go'],
             ];
             require self::template(PATH_PUBLIC . "ui/admin/X");
         }
@@ -327,13 +343,20 @@ class LCMS
             "id"    => $paran['id'] ?: (is_numeric($form['id']) ? $form['id'] : null),
             "key"   => $paran['key'] ?: "parameter",
             "unset" => $paran['unset'] ?: "",
+            "lcms"  => $paran['lcms'] ?: 0,
+        ];
+        $where = "id = :id";
+        if ($para['lcms'] > 0) {
+            $where .= " AND lcms = :lcms";
+        }
+        $bind = [
+            ":id"   => $para['id'],
+            ":lcms" => $para['lcms'],
         ];
         $data = $para['id'] ? sql_get([
             "table" => $para['table'],
-            "where" => "id = :id",
-            "bind"  => [
-                ":id" => $para['id'],
-            ]]) : [];
+            "where" => $where,
+            "bind"  => $bind]) : [];
         if ($para['do'] === "get") {
             $data = array_merge($data, sql2arr($data[$para['key']]));
             return $data;
@@ -360,10 +383,8 @@ class LCMS
             sql_update([
                 "table" => $para['table'],
                 "data"  => $form,
-                "where" => "id = :id",
-                "bind"  => [
-                    ":id" => $para['id'],
-                ],
+                "where" => $where,
+                "bind"  => $bind,
             ]);
         } else {
             if ($parameter) {
@@ -456,7 +477,7 @@ class LCMS
         }
         if (!is_file($file)) {
             if ($_L['config']['admin']['development'] > 0) {
-                LCMS::X(404, "模板文件未找到{$file}<br/>" . str_replace(PATH_WEB, "", $file));
+                LCMS::X(404, "模板文件未找到<br/>" . str_replace(PATH_WEB, "", $file));
             } else {
                 LCMS::X(404, "模板文件未找到");
             }

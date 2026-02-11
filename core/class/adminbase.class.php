@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-17 20:59:16
+ * @LastEditTime: 2026-02-09 02:14:25
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -126,11 +126,17 @@ class adminbase extends common
                 }
             }
         } else {
+            $loginurl = str_replace("&a=loginout", "", $loginurl);
             if (PHP_SELF == HTTP_URI . "index.php") {
-                okinfo(str_replace("&a=loginout", "", $loginurl));
+                okinfo($loginurl);
             }
             if (!in_string(HTTP_URI, "n=login")) {
-                LCMS::X(403, "请重新登录", str_replace("%26a%3Dloginout", "", $okinfourl));
+                $okinfourl = okinfo($loginurl, 0, "top", true);
+                if ($_L['cookie']['LCMSUSERJWT']) {
+                    goheader($okinfourl);
+                } else {
+                    LCMS::X(403, "请重新登录", $okinfourl);
+                }
             }
         }
         $webcfg = array_filter(LCMS::config([

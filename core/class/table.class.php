@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-05-14 17:46:18
+ * @LastEditTime: 2026-01-22 11:34:53
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -12,83 +12,82 @@ class TABLE
     public static $count;
     /**
      * @description: 获取表格数据
-     * @param array $params [table, where, order, bind, fields]
+     * @param array $args [table, where, order, bind, fields]
      * @return array
      */
-    public static function set(...$params)
+    public static function set(...$args)
     {
         global $_L;
-        if (is_array($params[0])) {
-            $params = $params[0];
-        } else {
-            $params = [
-                "table"  => $params[0],
-                "where"  => $params[1] ?: "",
-                "order"  => $params[2] ?: "",
-                "bind"   => $params[3] ?: [],
-                "fields" => $params[4] ?: "",
-            ];
+        if (is_array($args[0])) {
+            $args = $args[0];
         }
+        $args = [
+            "table"  => $args['table'] ?: $args[0],
+            "where"  => $args['where'] ?: $args[1] ?: "",
+            "order"  => $args['order'] ?: $args[2] ?: "",
+            "bind"   => $args['bind'] ?: $args[3] ?: [],
+            "fields" => $args['fields'] ?: $args[4] ?: "",
+        ];
         $page  = $_L['form']['page'] ?: 1;
         $page  = intval($page);
         $limit = intval($_L['form']['limit']);
         $count = sql_counter([
-            "table" => $params['table'],
-            "where" => $params['where'],
-            "bind"  => $params['bind'],
+            "table" => $args['table'],
+            "where" => $args['where'],
+            "bind"  => $args['bind'],
         ]);
         if ($limit > 0) {
             $page_max = ceil($count / $limit);
             if ($page <= $page_max) {
-                $params['limit'] = [($page - 1) * $limit, $limit];
+                $args['limit'] = [($page - 1) * $limit, $limit];
             }
         }
         self::$count = $count;
-        return sql_getall($params);
+        return sql_getall($args);
     }
     /**
      * @description: 删除表格数据
-     * @param array|string $params [table, form, id, fake]
+     * @param array|string $args [table, form, id, fake]
      * @return bool
      */
-    public static function del($params)
+    public static function del($args)
     {
         global $_L;
-        if ($params && is_array($params)) {
-            $params['form'] = $params['form'] ?: $_L['form']['LC'];
-            if ($params['id']) {
-                unset($params['form']);
+        if ($args && is_array($args)) {
+            $args['form'] = $args['form'] ?: $_L['form']['LC'];
+            if ($args['id']) {
+                unset($args['form']);
             }
-        } elseif ($params) {
-            $params = [
-                "table" => $params,
+        } elseif ($args) {
+            $args = [
+                "table" => $args,
                 "form"  => $_L['form']['LC'],
             ];
         } else {
             return false;
         }
-        if ($params['id'] && (bool) preg_match('/^[0-9,]+$/', $params['id'])) {
-            $ids = $params['id'];
-        } elseif ($params['form']['id']) {
-            $ids = $params['form']['id'];
-        } elseif (is_array($params['form'])) {
-            $ids = implode(",", array_column($params['form'], "id"));
+        if ($args['id'] && (bool) preg_match('/^[0-9,]+$/', $args['id'])) {
+            $ids = $args['id'];
+        } elseif ($args['form']['id']) {
+            $ids = $args['form']['id'];
+        } elseif (is_array($args['form'])) {
+            $ids = implode(",", array_column($args['form'], "id"));
         } else {
             return false;
         }
         if ($ids) {
-            if ($params['fake'] && is_string($params['fake'])) {
-                list($name, $value) = explode(":", $params['fake']);
+            if ($args['fake'] && is_string($args['fake'])) {
+                list($name, $value) = explode(":", $args['fake']);
                 sql_update([
-                    "table" => $params['table'],
+                    "table" => $args['table'],
                     "where" => "id IN ({$ids})",
-                    "data"  => [
+                    "data" => [
                         $name => $value ?? 1,
                     ],
                 ]);
             } else {
                 sql_delete([
-                    "table" => $params['table'],
+                    "table" => $args['table'],
                     "where" => "id IN ({$ids})",
                 ]);
             }

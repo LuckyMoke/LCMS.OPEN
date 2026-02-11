@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-16 17:07:53
+ * @LastEditTime: 2026-02-09 12:08:58
  * @Description:SESSION操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -18,13 +18,13 @@ class SESSION
     {
         global $_L;
         $expire = $_L['config']['admin']['sessiontime'];
-        $expire = $expire > 0 ? $expire * 60 : 21600;
+        $expire = $expire > 0 ? $expire * 60 : 2592000;
         $expire = intval($expire);
         $stime  = intval(time() + $expire);
         ini_set("session.sid_length", 32);
         ini_set("session.sid_bits_per_character", 5);
         ini_set("session.use_cookies", 0);
-        ini_set("session.gc_maxlifetime", $stime);
+        ini_set("session.gc_maxlifetime", 7200);
         ini_set("session.gc_divisor", 100);
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
@@ -43,10 +43,20 @@ class SESSION
                 $cookie = ssl_decode_gzip($_COOKIE['LCMSCID'], PATH_WEB);
             }
             if ($cookie) {
-                setcookie("LCMSCID", $_COOKIE['LCMSCID'], $ltime, "/", "", 0, true);
+                setcookie("LCMSCID", $_COOKIE['LCMSCID'], [
+                    "expires"  => $ltime,
+                    "path"     => "/",
+                    "secure"   => false,
+                    "httponly" => true,
+                ]);
             } else {
                 $cookie = session_create_id();
-                setcookie("LCMSCID", ssl_encode_gzip($cookie, PATH_WEB), $ltime, "/", "", 0, true);
+                setcookie("LCMSCID", ssl_encode_gzip($cookie, PATH_WEB), [
+                    "expires"  => $ltime,
+                    "path"     => "/",
+                    "secure"   => false,
+                    "httponly" => true,
+                ]);
             }
         }
         $_L['SESSION'] = [
@@ -73,17 +83,17 @@ class SESSION
                     "redis" => new RDS(),
                 ]);
             }
-            $init['redis']->do->hSet($init['redisid'], "LCMSSIDTIME", $init['stime']);
-            $init['redis']->do->expire($init['redisid'], $init['expire']);
+            $init['redis']->do->hSet($init['redisid'], "lcms:sys:userexpire", $init['stime']);
+            $init['redis']->do->expire($init['redisid'], 7200);
         } else {
             session_name("LCMSSID");
             session_id($init['id']);
             session_start();
-            $etime = $_SESSION['LCMSSIDTIME'];
+            $etime = $_SESSION['lcms:sys:userexpire'];
             if ($etime && $etime < time()) {
                 unset($_SESSION["LCMSADMIN"]);
             }
-            $_SESSION['LCMSSIDTIME'] = $init['stime'];
+            $_SESSION['lcms:sys:userexpire'] = $init['stime'];
         }
         return $init;
     }

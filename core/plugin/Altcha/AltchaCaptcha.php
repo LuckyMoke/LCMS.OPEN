@@ -59,7 +59,7 @@ class AltchaCaptcha
             $config[] = "{$key}=\"{$val}\"";
         }
         $config = implode(" ", $config);
-        $html   = "<style type=\"text/css\">.altcha-code-challenge-image{object-fit:fill!important}</style><altcha-widget class=\"lcms-altcha\" {$config}></altcha-widget><script src=\"{$_L['url']['site']}core/plugin/Altcha/static/lang.min.js?lcmsver={$_L['config']['ver']}\" async defer type=\"module\"></script><script src=\"{$_L['url']['site']}core/plugin/Altcha/static/altcha.min.js?lcmsver={$_L['config']['ver']}\" async defer type=\"module\"></script>{$onchange}";
+        $html   = "<style type=\"text/css\">.altcha-main{align-items:center;gap:5px;padding:5px;font-size:16px}.altcha-checkbox input{outline:none}.altcha-label{display:flex;align-items:center;gap:5px;margin:0}.altcha[data-state=\"unverified\"] .altcha-label::before,.altcha[data-state=\"expired\"] .altcha-label::before{display:block;content:\"←\";line-height:1;font-family:emoji}.altcha-error{align-items:center;gap:5px;padding:0 5px 5px;font-size:14px}.altcha-code-challenge-buttons-left{gap:5px}.altcha-code-challenge-audio,.altcha-code-challenge-reload{padding:5px}.altcha-code-challenge-verify{gap:5px;padding:5px 20px}.altcha-code-challenge-image{display:block;width:100%;height:auto;border-color:#cccccc;object-fit:fill!important}.altcha-code-challenge-input{border-color:#cccccc}</style><altcha-widget class=\"lcms-altcha\" {$config}></altcha-widget><script src=\"{$_L['url']['site']}core/plugin/Altcha/static/lang.min.js?lcmsver={$_L['config']['ver']}\" async defer type=\"module\"></script><script src=\"{$_L['url']['site']}core/plugin/Altcha/static/altcha.min.js?lcmsver={$_L['config']['ver']}\" async defer type=\"module\"></script>{$onchange}";
         return $html;
     }
     /**
@@ -74,9 +74,9 @@ class AltchaCaptcha
         if (empty($hmacKey)) return;
         $image = SESSION::get("lcms:altcha:image");
         if ($image != 1) {
-            $expire = 30;
+            $expire = 60;
         } else {
-            $expire = 10;
+            $expire = 30;
         }
         switch ($this->php) {
             case 'php7':
@@ -126,19 +126,20 @@ class AltchaCaptcha
         if (empty($hmacKey)) return;
         $image = SESSION::get("lcms:altcha:image");
         if ($image != 1) return;
+        $return = false;
         switch ($this->php) {
             case 'php7':
                 if (Altcha::verifySolution($payload, $hmacKey, true)) {
-                    return true;
+                    $return = true;
                 }
                 break;
             case 'php8':
                 $altcha = new Altcha($hmacKey);
                 if ($altcha->verifySolution($payload, true)) {
-                    return true;
+                    $return = true;
                 }
                 break;
         }
-        return;
+        return $return;
     }
 }

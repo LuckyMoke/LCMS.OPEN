@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2024-05-28 10:34:47
+ * @LastEditTime: 2026-01-28 17:20:57
  * @Description: 验证码生成类
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -74,10 +74,11 @@ class CAPTCHA
         $im_y = 55;
         $im   = imagecreatetruecolor($im_x, $im_y);
         imagefill($im, 16, 13, ImageColorAllocate($im, 226, 245, 255));
-        $font = PATH_PUBLIC . 'static/fonts/Captcha.ttf';
+        $font  = PATH_PUBLIC . 'static/fonts/Captcha.ttf';
+        $efont = PATH_PUBLIC . 'static/fonts/English.ttf';
         for ($i = 0; $i < 20; $i++) {
             $randcolor = ImageColorAllocate($im, mt_rand(100, 255), mt_rand(100, 255), mt_rand(100, 255));
-            imagettftext($im, mt_rand(10, 14), 20, mt_rand(0, $im_x), mt_rand(0, $im_y + 20), $randcolor, $font, randstr(1, "num"));
+            imagettftext($im, mt_rand(12, 14), 20, mt_rand(0, $im_x), mt_rand(0, $im_y + 20), $randcolor, $efont, randstr(1, "num"));
         }
         $pyx = mt_rand(5, 45);
         for ($i = 0; $i < strlen($pin); $i++) {

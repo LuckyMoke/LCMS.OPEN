@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 15:03:35
- * @LastEditTime: 2026-01-18 00:08:28
+ * @LastEditTime: 2026-02-08 23:24:32
  * @Description: 用户注册
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -33,7 +33,7 @@ class reg extends adminbase
     {
         global $_L, $LF, $UCFG;
         if ($_L['LCMSADMIN']) {
-            USERBASE::createJWT($_L['LCMSADMIN']);
+            USERBASE::createCookie($_L['LCMSADMIN']);
             okinfo($LF['go'] ?: $_L['url']['admin']);
         }
         $page = [

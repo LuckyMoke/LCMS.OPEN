@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-08 17:58:14
+ * @LastEditTime: 2026-02-11 10:49:05
  * @Description:微信公众号接口类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -487,6 +487,61 @@ class OA
         ]);
         $result = json_decode($result, true);
         return $result ?: [];
+    }
+    /**
+     * @description: 获取一次性订阅消息链接
+     * @param array $para
+     * @return string
+     */
+    public function get_subscribemsg($para = [])
+    {
+        global $_L, $LF;
+        $para = [
+            "scene"        => is_numeric($para['scene']) && $para['scene'] <= 10000 ? $para : 0,
+            "template_id"  => $para['template_id'] ?: "",
+            "redirect_url" => $para['redirect_url'] ? urlencode($para['redirect_url']) : "",
+            "reserved"     => ssl_encode_gzip(time() + 120, $this->CFG['appsecret']),
+        ];
+        if (!$para['template_id'] || !$para['redirect_url']) {
+            return false;
+        }
+        return "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm&appid={$this->CFG['appid']}&scene={$para['scene']}&template_id={$para['template_id']}&redirect_url={$para['redirect_url']}&reserved={$para['reserved']}#wechat_redirect";
+    }
+    /**
+     * @description: 验证一次性订阅消息是否有效
+     * @param array $para
+     * @return array
+     */
+    public function verify_subscribemsg($para = [])
+    {
+        global $_L, $LF;
+        $reserved = $para['reserved'];
+        if (!$para['reserved']) return [];
+        $reserved = ssl_decode_gzip($reserved, $this->CFG['appsecret']);
+        if (!$reserved || $reserved < time()) {
+            return [];
+        }
+        return [
+            "openid"      => $para['openid'],
+            "template_id" => $para['template_id'],
+            "scene"       => $para['scene'],
+        ];
+    }
+    /**
+     * @description: 发送一次性订阅消息
+     * @param array $para
+     * @return array
+     */
+    public function send_subscribemsg($para = [])
+    {
+        global $_L, $LF;
+        $this->access_token();
+        $result = HTTP::request([
+            "type" => "POST",
+            "url"  => "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token={$this->CFG['access_token']['access_token']}",
+            "data" => json_encode_ex($para),
+        ]);
+        return json_decode($result, true);
     }
     /**
      * @description: 发送订阅消息

@@ -3,8 +3,8 @@
     <ui form($form) />
 </form>
 <script type="text/javascript">
-    var reLoginKey = function () {
-        layer.confirm('确定生成？如有老的密钥会立即失效！', {
+    let reLoginKey = function () {
+        layer.confirm('确定生成？老的密钥会立即失效！', {
             btn: ['确定', '取消']
         }, function (index) {
             layer.close(index);
@@ -14,20 +14,24 @@
                 loading: true,
                 success: function (res) {
                     if (res.code == 1) {
-                        LCMS.util.notify({
-                            type: "success",
-                            content: "新的登录密钥已生成，请同步修改网站登录器中的密钥！"
+                        let token = res.data;
+                        token = JSON.stringify(token);
+                        token = encodeURIComponent(token);
+                        token = btoa(token);
+                        layer.open({
+                            type: 1,
+                            title: "复制密钥添加到《网站登录器》中",
+                            content: `<textarea style="box-sizing:border-box;width:calc(100% - 30px);height:270px;padding:10px;margin:0 15px 15px 15px;border:none">${token}</textarea>`,
+                            btn: 0,
+                            area: "500px",
+                            end: function () {
+                                LCMS.plugin.router(LCMS.url.now);
+                            }
                         });
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
                     }
                 }
             });
         });
-    }, copyLoginKey = function (data) {
-        data = $.base64.decode(data);
-        LCMS.util.copy(data, "数据已复制到剪贴板，请到网站登录器中一键粘贴导入！");
     }
 </script>
 <template "ui/foot" />

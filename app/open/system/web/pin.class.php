@@ -48,6 +48,7 @@ class pin extends webbase
                 };
                 break;
             default:
+                $LF['config'] || ajaxout(0, "未找到配置信息");
                 LOAD::plugin("Altcha/AltchaCaptcha");
                 $AC = new AltchaCaptcha();
                 ajaxout(1, "success", "", $AC->html(array_merge([

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2026-01-20 16:20:10
+ * @LastEditTime: 2026-02-10 17:33:40
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -209,33 +209,46 @@ class USERBASE
                 }
                 return $user ?: [];
                 break;
+            case 'cookie':
+                self::checkAttack("login");
+                //cookie信息检测
+                $user = self::checkCookie($_L['cookie']['LCMSUSERJWT']);
+                //登录成功
+                if ($user) {
+                    self::loginSuccess($user, "cookie登录");
+                    return $user;
+                }
+                self::checkAttack("login", "update");
+                return [];
+                break;
             case 'jwt':
                 if (self::UCFG()['login']['jwt'] == 1) {
-                    $opts['jwt'] || ajaxout(0, "JWT无效");
-                    $jwt = explode(".", $opts['jwt'])[1];
-                    $jwt = $jwt ? base64_decode($jwt) : "";
-                    $jwt = $jwt ? json_decode($jwt, true) : [];
-                    if ($jwt['exp'] > time()) {
-                        $user = sql_get([
-                            "table" => "admin",
-                            "where" => "id = :id" . (self::$MODE > 0 ? "" : " AND lcms = :lcms"),
-                            "bind"  => [
-                                ":id"   => $jwt['id'],
-                                ":lcms" => $_L['ROOTID'],
-                            ]]);
-                        $user || ajaxout(0, "JWT无效");
-                        if (
-                            $user['status'] == 1 &&
-                            (!$user['lasttime'] || $user['lasttime'] > datenow()) &&
-                            jwt_decode($opts['jwt'], $user['jwt'])
-                        ) {
-                            unset($user['pass'], $user['jwt'], $user['salt'], $user['parameter']);
-                            return $user;
-                        }
-                        ajaxout(0, "JWT登录失败");
-                    }
+                    self::checkAttack("login");
+                    //jwt信息检测
+                    $user = self::checkCookie($opts['jwt']);
                 }
+                if ($user) return $user;
+                self::checkAttack("login", "update");
                 ajaxout(0, "JWT登录失败");
+                break;
+            case 'rsa':
+                self::checkAttack("login");
+                $token = $opts['token'];
+                if (!$token) return [];
+                $form = rsa_decode($token, $opts['privatekey']);
+                if (!$form) return [];
+                $form = json_decode($form, true);
+                if (!$form) return [];
+                if ($form['expire'] < time()) return [];
+                $user = SESSION::get("LCMSADMIN");
+                if ($user) return $user;
+                $user = self::getUser($form['name'], "name");
+                if ($user) {
+                    self::loginSuccess($user, "rsa登录");
+                    return $user;
+                }
+                self::checkAttack("login", "update");
+                return [];
                 break;
             default:
                 self::checkAttack("login");
@@ -399,8 +412,8 @@ class USERBASE
             "type" => "login",
             "info" => "退出登录",
         ]);
-        //清理JWT
-        self::clearJWT($user);
+        //清理登录Cookie
+        self::clearCookie($user);
         if (!$go) {
             $go = "{$_L['url']['own']}rootid={$_L['ROOTID']}&n=login&go=" . urlencode($_L['form']['go']);
         }
@@ -733,14 +746,12 @@ class USERBASE
             "ip"        => CLIENT_IP,
             "parameter" => sql2arr($user['parameter']),
         ]);
-        if (self::UCFG()['login']['jwt'] == 1) {
-            $user['jwt'] = randstr(32);
-        }
+        $user['jwt'] = $user['jwt'] ?: randstr(32);
         sql_update([
             "table" => "admin",
             "data"  => [
                 "logintime" => $user['logintime'],
-                "jwt"       => $user['jwt'] ?: "",
+                "jwt"       => $user['jwt'],
                 "ip"        => $user['ip'],
             ],
             "where" => "id = :id",
@@ -753,8 +764,13 @@ class USERBASE
             $user['webuser'] = true;
         }
         SESSION::set("LCMSADMIN", $user);
-        self::createJWT($user);
-        setcookie("LCMSUSERCATE", $user['cate'], time() + 15552000, "/", "", 0, true);
+        self::createCookie($user);
+        setcookie("LCMSUSERCATE", $user['cate'], [
+            "expires"  => time() + 2592000,
+            "path"     => "/",
+            "secure"   => false,
+            "httponly" => true,
+        ]);
         LCMS::log([
             "user" => $user['name'],
             "type" => "login",
@@ -779,23 +795,32 @@ class USERBASE
         ajaxout(0, $msg);
     }
     /**
-     * @description: 生成单点登录JWT
+     * @description: 生成Cookie登录信息
      * @param array $user
      * @return {*}
      */
-    public static function createJWT($user)
+    public static function createCookie($user)
     {
         global $_L;
+        $jwt = $_L['SESSION']['stime'];
+        $jwt .= "." . ssl_encode_gzip($user['id']);
+        $jwt .= "." . jwt_encode([
+            "id"     => $user['id'],
+            "name"   => $user['name'],
+            "title"  => $user['title'],
+            "expire" => $_L['SESSION']['stime'],
+        ], $user['jwt']);
+        setcookie("LCMSUSERJWT", $jwt, [
+            "expires" => $_L['SESSION']['stime'],
+            "path"    => "/{$_L['config']['admin']['dir']}",
+            "secure"   => false,
+            "httponly" => true,
+        ]);
         if (self::UCFG()['login']['jwt'] == 1) {
-            $ltime = time() + 15552000;
-            setcookie("LCMSJWT_" . urlsafe_base64_encode(HTTP_HOST), jwt_encode([
-                "id"    => $user['id'],
-                "name"  => $user['name'],
-                "title" => $user['title'],
-                "exp"   => $ltime,
-            ], $user['jwt']), [
-                "expires"  => $ltime,
-                "domain"   => "." . roothost(HTTP_HOST),
+            $domain = roothost(HTTP_HOST);
+            setcookie("LCMSUSERJWT_" . str_replace(".", "_", $domain), $jwt, [
+                "expires" => $_L['SESSION']['stime'],
+                "domain"  => ".{$domain}",
                 "path"     => "/",
                 "secure"   => false,
                 "httponly" => true,
@@ -804,33 +829,78 @@ class USERBASE
         }
     }
     /**
-     * @description: 清理JWT
+     * @description: 清理Cookie登录信息
      * @param array $user
      * @return {*}
      */
-    public static function clearJWT($user)
+    public static function clearCookie($user)
     {
         global $_L;
-        if (self::UCFG()['login']['jwt'] == 1) {
-            sql_update([
-                "table" => "admin",
-                "data"  => [
-                    "jwt" => null,
-                ],
-                "where" => "id = :id",
-                "bind"  => [
-                    ":id" => $user['id'],
-                ],
-            ]);
-        }
-        setcookie("LCMSJWT_" . urlsafe_base64_encode(HTTP_HOST), "", [
-            "expires"  => time() - 3600,
-            "domain"   => "." . roothost(HTTP_HOST),
+        sql_update([
+            "table" => "admin",
+            "data"  => [
+                "jwt" => null,
+            ],
+            "where" => "id = :id",
+            "bind"  => [
+                ":id" => $user['id'],
+            ],
+        ]);
+        $domain = roothost(HTTP_HOST);
+        setcookie("LCMSUSERJWT_" . str_replace(".", "_", $domain), "", [
+            "expires" => time() - 1,
+            "domain"  => ".{$domain}",
             "path"     => "/",
             "secure"   => false,
             "httponly" => true,
             "samesite" => "Lax",
         ]);
+        setcookie("LCMSUSERJWT", "", [
+            "expires" => time() - 1,
+            "path"    => "/{$_L['config']['admin']['dir']}",
+            "secure"   => false,
+            "httponly" => true,
+        ]);
+    }
+    /**
+     * @description: 检查Cookie登录信息
+     * @param string $jwt
+     * @return array
+     */
+    public static function checkCookie($jwt = "")
+    {
+        global $_L;
+        if (!$jwt) return [];
+        $jwt = explode(".", $jwt);
+        if (count($jwt) != 5) return [];
+        $expire = $jwt[0];
+        if (!is_numeric($expire) || $expire < time()) return [];
+        $uid = ssl_decode_gzip($jwt[1]);
+        if (!$uid || !is_numeric($uid)) return [];
+        $where = "id = :id";
+        if (self::$MODE > 0) {
+            $where .= " AND lcms = :lcms";
+        }
+        $user = sql_get([
+            "table" => "admin",
+            "where" => $where,
+            "bind"  => [
+                ":id"   => $uid,
+                ":lcms" => $_L['ROOTID'],
+            ]]);
+        if (!$user) return [];
+        $jwt = "{$jwt[2]}.{$jwt[3]}.{$jwt[4]}";
+        $jwt = jwt_decode($jwt, $user['jwt']);
+        if (!$jwt) return [];
+        if (!is_numeric($jwt['expire']) || $jwt['expire'] < time()) return [];
+        if (
+            $user['status'] == 1 &&
+            (!$user['lasttime'] || $user['lasttime'] > datenow())
+        ) {
+            unset($user['pass'], $user['jwt'], $user['salt'], $user['parameter']);
+            return $user;
+        }
+        return [];
     }
     /**
      * @description: 账户状态检测

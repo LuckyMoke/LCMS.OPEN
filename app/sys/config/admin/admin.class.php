@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-01-16 14:59:47
+ * @LastEditTime: 2026-02-09 01:51:25
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -210,18 +210,24 @@ class admin extends adminbase
                 }
                 break;
             case 'reloginkey':
-                $loginkey = randstr(32);
+                $user = SESSION::get("LCMSADMIN");
+                $rsa  = rsa_create();
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "admin",
                     "form" => [
-                        "loginbytoken" => 1,
-                        "loginkey"     => $loginkey,
+                        "loginbyrsa"      => 1,
+                        "loginprivatekey" => $rsa['privKeyStr'],
                     ],
                     "lcms" => true,
                 ]);
-                ajaxout(1, "success", "", $loginkey);
+                ajaxout(1, "success", "", [
+                    "title"     => $_L['config']['admin']['title'],
+                    "link"      => $_L['url']['admin'],
+                    "name"      => $user['name'],
+                    "publickey" => $rsa['pubKeyStr'],
+                ]);
                 break;
             default:
                 $config = LCMS::config([
@@ -254,20 +260,15 @@ class admin extends adminbase
                         "settips" => "分钟",
                         "tips"    => "超时无操作自动登出，0为不自动登出"],
                     ["layui" => "radio", "title" => "网站登录器",
-                        "name"   => "LC[loginbytoken]",
-                        "value"  => $config['loginbytoken'] ?: 0,
+                        "name"   => "LC[loginbyrsa]",
+                        "value"  => $config['loginbyrsa'] ?: 0,
                         "tips"   => "是否开启网站登录器一键登录网站，需配合浏览器《网站登录器》扩展使用！",
                         "radio"  => [
                             ["title" => "开启", "value" => 1],
                             ["title" => "关闭", "value" => 0],
                         ]],
                     ["layui" => "html", "title" => "登录密钥",
-                        "value"  => '<span class="lcms-form-copy" data-copytext="' . $config['loginkey'] . '" style="margin-right:20px">' . strstar($config['loginkey'], 4) . '</span><a style="margin-right:20px" href="javascript:reLoginKey()">' . ($config['loginkey'] ? "重新生成" : "立即生成") . '</a>' . ($config['loginkey'] ? '</span><a href="javascript:copyLoginKey(\'' . base64_encode(json_encode_ex([
-                            "title" => $config['title'],
-                            "link"  => $_L['url']['admin'],
-                            "name"  => SESSION::get("LCMSADMIN")['name'],
-                            "token" => $config['loginkey'],
-                        ])) . '\')">一键复制</a>' : '')],
+                        "value"  => "<a href=\"javascript:reLoginKey()\">" . ($config['loginprivatekey'] ? "重新生成" : "立即生成") . "</a>"],
                     ["layui" => "title", "title" => "后台水印"],
                     ["layui" => "radio", "title" => "功能开关",
                         "name"   => "LC[admin_water]",

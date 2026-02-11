@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2026-01-17 23:49:21
+ * @LastEditTime: 2026-02-09 01:26:40
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -33,7 +33,17 @@ class index extends adminbase
         }
         //如果已经登录，跳转到后台首页
         if ($USER && $USER['id'] && $USER['name']) {
-            USERBASE::createJWT($USER);
+            USERBASE::createCookie($USER);
+            okinfo($LF['go'] ?: $_L['url']['admin']);
+        }
+        //如果有登录cookie，自动登录
+        if (
+            $_L['cookie']['LCMSUSERJWT'] &&
+            USERBASE::login([
+                "by"  => "cookie",
+                "jwt" => $_L['cookie']['LCMSUSERJWT'],
+            ])
+        ) {
             okinfo($LF['go'] ?: $_L['url']['admin']);
         }
         switch ($LF['action']) {
@@ -91,9 +101,26 @@ class index extends adminbase
             case 'jwt':
                 $user = USERBASE::login([
                     "by"  => "jwt",
-                    "jwt" => $LF['token'],
+                    "jwt" => $LF['jwt'],
                 ]);
                 ajaxout(1, "登录成功", "", $user);
+                break;
+            case 'rsa':
+                USERBASE::checkAttack("login");
+                $cfg = $_L['config']['admin'];
+                if (
+                    $cfg['loginbyrsa'] != 1 ||
+                    !$cfg['loginprivatekey']
+                ) {
+                    LCMS::X(403, "未开启此功能");
+                }
+                $user = USERBASE::login([
+                    "by"         => "rsa",
+                    "token"      => $LF['token'],
+                    "privatekey" => $cfg['loginprivatekey'],
+                ]);
+                $user || LCMS::X(403, "登录失败");
+                okinfo($_L['url']['admin']);
                 break;
             default:
                 //检查登录签名
@@ -131,7 +158,7 @@ class index extends adminbase
     {
         global $_L, $LF, $UCFG, $USER;
         if ($USER) {
-            USERBASE::createJWT($USER);
+            USERBASE::createCookie($USER);
             ajaxout(1, "登录成功", $LF['go'] ?: $_L['url']['admin'], [
                 "cid" => SESSION::getid(),
             ]);
@@ -179,39 +206,14 @@ class index extends adminbase
             $_L['cookie']['LCMSUSERCATE'] > 0 &&
             $UCFG['login']['url']
         ) {
-            setcookie("LCMSUSERCATE", "", time(), "/", "", 0, true);
+            setcookie("LCMSUSERCATE", "", [
+                "expires"  => time(),
+                "path"     => "/",
+                "secure"   => false,
+                "httponly" => true,
+            ]);
             $go = $UCFG['login']['url'];
         }
         okinfo($go);
-    }
-    /**
-     * @description: 登录byToken
-     * @return {*}
-     */
-    public function dologinbytoken()
-    {
-        global $_L, $LF, $UCFG, $USER;
-        $cfg = $_L['config']['admin'];
-        $cfg['loginbytoken'] > 0 || LCMS::X(403, "未开启此功能");
-        //攻击验证
-        USERBASE::checkAttack("login");
-        $LF['token'] || LCMS::X(403, "验证失败");
-        $key  = md5($cfg['loginkey']);
-        $form = openssl_decrypt($LF['token'], "AES-256-CBC", $key, 0, $key);
-        $form || LCMS::X(403, "验证失败");
-        $form = json_decode($form, true);
-        $form || LCMS::X(403, "验证失败");
-        $form['time'] < time() && LCMS::X(403, "验证失败");
-        $islogin = SESSION::get("LCMSADMIN");
-        if ($islogin) {
-            LCMS::Y(200, "用户{$islogin['name']}已登录<br>将直接进入后台", $_L['url']['admin']);
-        } else {
-            $user = USERBASE::checkUser([
-                "name" => $form['name'],
-                "pass" => $form['pass'],
-            ]);
-            USERBASE::loginSuccess($user, "网站登录器");
-            okinfo($_L['url']['admin']);
-        }
     }
 }
