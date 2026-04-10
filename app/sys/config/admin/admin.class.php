@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-02-09 01:51:25
+ * @LastEditTime: 2026-04-07 11:27:40
  * @Description: 全局设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -43,15 +43,6 @@ class admin extends adminbase
                         "name"   => "LC[title]",
                         "value"  => $config['title'],
                         "verify" => "required",
-                    ],
-                    ["layui" => "radio", "title" => "访问协议",
-                        "name"   => "LC[https]",
-                        "value"  => $config['https'] ?: 0,
-                        "radio"  => [
-                            ["title" => "自动判断", "value" => 0],
-                            ["title" => "https://", "value" => 1],
-                        ],
-                        "tips"   => "一般请选自动判断",
                     ],
                     ["layui" => "input", "title" => "页脚版权",
                         "name"   => "LC[developer]",
@@ -95,22 +86,30 @@ class admin extends adminbase
         global $_L, $LF, $LC;
         switch ($LF['action']) {
             case 'save':
-                if (!in_string($LC['domain'], ["http://", "https://"])) {
-                    $LC['domain'] = trim($LC['domain'], "/");
-                    $LC['domain'] = "http://{$LC['domain']}";
+                if ($LC['domain']) {
+                    if (!is_url($LC['domain'])) {
+                        ajaxout(0, "请输入正确的域名格式");
+                    }
+                    $domain = parse_url($LC['domain']);
+                    $https  = $domain['scheme'] == 'https' ? 1 : 0;
+                    $host   = realhost($domain['host']);
+                    if ($domain['port']) {
+                        $host .= ":{$domain['port']}";
+                    }
                 }
-                $domain       = parse_url($LC['domain']);
-                $LC['https']  = $domain['scheme'] === "https" ? 1 : 0;
-                $LC['domain'] = realhost($domain['host']);
-                if ($domain['port']) {
-                    $LC['domain'] .= ":{$domain['port']}";
+                if ($LC['domain_api']) {
+                    if (!is_url($LC['domain_api'])) {
+                        ajaxout(0, "请输入正确的域名格式");
+                    }
+                    $api = trim($LC['domain_api'], "/ ");
+                    $api .= "/";
+                    $api = realhost($api);
                 }
-                $LC['domain_api'] = trim($LC['domain_api'], "/");
-                if (!in_string($LC['domain_api'], ["http://", "https://"])) {
-                    $LC['domain_api'] = "http://{$LC['domain_api']}";
-                }
-                $LC['domain_api'] .= "/";
-                $LC['domain_api'] = realhost($LC['domain_api']);
+                $LC = array_merge($LC, [
+                    "https"      => $https ?: "",
+                    "domain"     => $host ?: "",
+                    "domain_api" => $api ?: "",
+                ]);
                 LCMS::config([
                     "do"   => "save",
                     "type" => "sys",
@@ -124,22 +123,14 @@ class admin extends adminbase
                     "type" => "sys",
                     "cate" => "web",
                 ]);
-                $scheme = $config['https'] == "1" ? "https://" : "http://";
+                $scheme = $config['https'] == 1 ? "https://" : "http://";
                 $form   = [
-                    ["layui" => "radio", "title" => "限制访问？",
-                        "name"   => "LC[domain_must]",
-                        "value"  => $config['domain_must'] ?: 0,
-                        "tips"   => "限制前端只能通过下方域名访问，除非你特别懂，否则请不要限制",
-                        "radio"  => [
-                            ["title" => "限制域名", "value" => 1],
-                            ["title" => "不限制域名", "value" => 0],
-                        ]],
                     ["layui" => "input", "title" => "默认前端域名",
                         "name"   => "LC[domain]",
                         "value"  => $config['domain'] ? "{$scheme}{$config['domain']}/" : "",
                         "placeholder" => "http://www.domain.com/",
-                        "tips" => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
-                        "verify" => "required"],
+                        "tips"        => "特别注意：开头的 http:// 或 https:// 和结尾的 / 斜杠，要写完整。",
+                        "verify"      => "required"],
                     ["layui"      => "input", "title" => "默认API域名",
                         "name"        => "LC[domain_api]",
                         "value"       => $config['domain_api'],

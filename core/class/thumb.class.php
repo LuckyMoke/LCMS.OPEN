@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-08-05 11:43:05
+ * @LastEditTime: 2026-04-09 11:37:57
  * @Description:缩略图生成类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -22,17 +22,19 @@ class THUMB
     public static function url($path = "", $x = 0, $y = 0, $rewrite = false, $watermark = true, $white = false)
     {
         global $_L;
+        if (!$path) return "";
         //裁剪计算
         $x = $x ? ($x == "auto" ? 0 : $x) : 0;
         $y = $y ? ($y == "auto" ? 0 : $y) : 0;
         //云存储配置
         $cfgoss   = $_L['plugin']['oss'] ?: [];
         $cfgthumb = $_L['plugin']['thumb'] ?: [];
+        $isurl    = is_url($path);
         if (!$white) {
             $white = $cfgthumb['type'] > 0 ? true : false;
         }
         //如果是完整链接，返回原图
-        if (is_url($path) && (!$cfgoss['domain'] || !in_string($path, $cfgoss['domain']))) {
+        if ($isurl && (!$cfgoss['domain'] || !in_string($path, $cfgoss['domain']))) {
             return $path;
         }
         //如果没有裁剪，返回原图
@@ -114,7 +116,7 @@ class THUMB
                 return $url;
             }
         }
-        if ($path && in_string($path, "../")) {
+        if (!$isurl) {
             //本地存储处理
             $path = str_replace("../", "", $path);
             if ($white) {

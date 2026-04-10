@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-02-09 02:14:25
+ * @LastEditTime: 2026-04-07 11:29:52
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -26,16 +26,10 @@ class adminbase extends common
     protected function load_admin_url()
     {
         global $_L;
-        switch ($_L['config']['admin']['https']) {
-            case 1:
-                $scheme = "https://";
-                break;
-            default:
-                $scheme = getscheme() ? "https://" : "http://";
-                break;
-        }
-        $url_site  = $scheme . HTTP_HOST . "/";
-        $url_now   = $scheme . HTTP_HOST . HTTP_URI;
+        $scheme    = getscheme() ? "https://" : "http://";
+        $url_host  = realhost(HTTP_HOST);
+        $url_site  = $scheme . $url_host . "/";
+        $url_now   = $scheme . $url_host . HTTP_URI;
         $url_admin = $url_site . ($_L['config']['admin']['dir'] ?: "admin") . "/";
         $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $_L['url'] = [
@@ -71,9 +65,10 @@ class adminbase extends common
         } elseif (isset($formrid)) {
             $loginrid = $formrid;
         }
-        $loginrid  = $loginrid ?: 0;
-        $loginurl  = "{$_L['url']['admin']}index.php?rootid={$loginrid}&n=login&a=loginout";
-        $okinfourl = okinfo($loginurl, 0, "top", true);
+        $loginrid     = $loginrid ?: 0;
+        $loginurl     = "{$_L['url']['admin']}index.php?rootid={$loginrid}&n=login&a=loginout";
+        $okinfourl    = okinfo($loginurl, 0, "top", true);
+        $_L['ROOTID'] = $loginrid;
         if ($_L['LCMSADMIN']) {
             $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
@@ -105,8 +100,7 @@ class adminbase extends common
                     "where" => "id = {$_L['LCMSADMIN']['tuid']}",
                 ])['lcms'];
             }
-            $_L['ROOTID'] = isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms'];
-            $_L['ROOTID'] = LCMS::SUPER() ? 0 : $_L['ROOTID'];
+            $_L['ROOTID'] = LCMS::SUPER() ? 0 : intval(isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms']);
             if (!LCMS::SUPER()) {
                 if ($_L['LCMSADMIN']['webuser']) {
                     LCMS::X(403, "无权限访问");
@@ -145,18 +139,20 @@ class adminbase extends common
             "cate" => "web",
             "lcms" => $_L['ROOTID'],
         ]));
+
         $_L['config']['web'] = $webcfg ? array_merge($_L['config']['web'], $webcfg) : $_L['config']['web'];
     }
-    protected function load_web_url($domain = "", $scheme = "")
+    protected function load_web_url($host = "", $scheme = "")
     {
         global $_L;
-        $domain   = $domain ?: ($_L['config']['web']['domain'] ?: HTTP_HOST);
-        $scheme   = $scheme ?: ($_L['config']['web']['https'] == 1 ? "https://" : "http://");
-        $url_site = "{$scheme}{$domain}/";
-        $rootsid  = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
-        if (isset($_L['ROOTID'])) {
-            $rootid = $_L['ROOTID'] ? intval($_L['ROOTID']) : 0;
+        $host = $host ?: $_L['config']['web']['domain'];
+        $host = realhost($host);
+        if (!$scheme) {
+            $scheme = $_L['config']['web']['https'] == 1 ? "https://" : "http://";
         }
+        $url_site = "{$scheme}{$host}/";
+        $rootsid  = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
+
         $_L['url']['web'] = [
             "scheme" => $scheme,
             "site"   => $url_site,
@@ -166,7 +162,7 @@ class adminbase extends common
             "upload" => "{$url_site}upload/",
             "cache" => "{$url_site}cache/",
             "app" => "{$url_site}app/",
-            "own" => "{$url_site}app/index.php?rootid={$rootid}&{$rootsid}",
+            "own" => "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}",
             "own_path" => "{$url_site}app/" . L_TYPE . "/" . L_NAME . "/",
         ];
     }
@@ -234,17 +230,19 @@ class adminbase extends common
             LCMS::X(403, $bansuper === true ? "请登录/切换到下级用户使用应用" : $bansuper);
         }
     }
-    public function domain($domain = "", $scheme = "", $autodomain = false)
+    public function domain($domain = "", $prefix = false)
     {
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $scheme = $domain['scheme'] === "https" ? "https://" : "http://";
-            $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+            $scheme = $domain['scheme'] == "https" ? "https://" : "http://";
+            $host   = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+        } else {
+            LCMS::X(403, "域名格式不正确");
         }
-        if ($domain && $autodomain) {
-            $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
+        if ($host && $prefix) {
+            $host = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $host;
         };
-        $this->load_web_url($domain, $scheme);
+        $this->load_web_url($host, $scheme);
     }
 }

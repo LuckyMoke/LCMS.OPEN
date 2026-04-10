@@ -1,7 +1,7 @@
 <template tplx="local_list">
     <div class="local-list">
         <block x-if="!appshow">
-            <div class="-noapp">本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，请到应用商店安装应用，然后创建用户，切换到用户账号使用具体功能！</div>
+            <div class="-noapp">本系统为SaaS系统，超级管理员账号一般只用来安装应用、升级系统，请到“首页->应用商店”安装应用，然后创建用户，切换到用户账号使用具体功能！</div>
         </block>
         <div class="tplx-loading" x-show="loading" style="height:300px"></div>
         <div x-show="!loading && appshow">

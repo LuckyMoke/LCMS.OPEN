@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-01-19 12:58:06
+ * @LastEditTime: 2026-03-23 11:20:46
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -1376,7 +1376,12 @@ function oss($url = "", $watermark = true)
  */
 function getscheme()
 {
-    if ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] == "on")) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == "https")) {
+    if (
+        (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] == "on")) ||
+        (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == "https") ||
+        isset($_SERVER['HTTP_SEC_FETCH_MODE']) ||
+        isset($_SERVER['HTTP_SEC_FETCH_SITE'])
+    ) {
         return true;
     }
     return false;

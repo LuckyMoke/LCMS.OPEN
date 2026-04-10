@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2026-02-09 12:20:24
+ * @LastEditTime: 2026-04-03 19:57:14
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -21,8 +21,8 @@ class index extends adminbase
     {
         global $_L, $ACFG;
         if (!$_L['config']['web']['domain']) {
-            LCMS::X(400, "检测到您是第一次安装使用<br/>请先到 框架设置 填写默认域名", [[
-                "title" => "框架设置",
+            LCMS::X(400, "检测到您是第一次安装使用<br/>请先到“设置”中填写默认域名", [[
+                "title" => "点击填写",
                 "color" => "danger",
                 "url"   => "index.php?t=sys&n=config&c=admin&a=web",
             ]]);

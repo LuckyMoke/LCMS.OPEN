@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2026-02-10 17:33:40
+ * @LastEditTime: 2026-03-18 23:39:14
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -219,6 +219,7 @@ class USERBASE
                     return $user;
                 }
                 self::checkAttack("login", "update");
+                self::clearCookie();
                 return [];
                 break;
             case 'jwt':
@@ -595,8 +596,8 @@ class USERBASE
                 ]);
                 break;
         }
+        self::checkAttack($opts['by'], "update", $opts['to']);
         if ($result['code'] == 1) {
-            self::checkAttack($opts['by'], "update", $opts['to']);
             SESSION::set("LCMSSENDTO", $opts['to']);
             SESSION::set("LCMSSENDCODE", $code);
             SESSION::set("LCMSSENDTIME", time() + 120);
@@ -833,19 +834,21 @@ class USERBASE
      * @param array $user
      * @return {*}
      */
-    public static function clearCookie($user)
+    public static function clearCookie($user = [])
     {
         global $_L;
-        sql_update([
-            "table" => "admin",
-            "data"  => [
-                "jwt" => null,
-            ],
-            "where" => "id = :id",
-            "bind"  => [
-                ":id" => $user['id'],
-            ],
-        ]);
+        if ($user) {
+            sql_update([
+                "table" => "admin",
+                "data"  => [
+                    "jwt" => null,
+                ],
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => $user['id'],
+                ],
+            ]);
+        }
         $domain = roothost(HTTP_HOST);
         setcookie("LCMSUSERJWT_" . str_replace(".", "_", $domain), "", [
             "expires" => time() - 1,
@@ -1220,6 +1223,7 @@ class USERBASE
         $UCFG = self::UCFG()['login'];
         switch ($type) {
             case 'sms':
+            case 'mobile':
             case 'email':
                 $icount = LCMS::ram("lcms_login_ip" . CLIENT_IP);
                 $ncount = LCMS::ram("lcms_login_by{$name}");

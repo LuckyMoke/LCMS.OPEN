@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-17 21:00:09
+ * @LastEditTime: 2026-04-07 11:29:59
  * @Description:前台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -23,6 +23,7 @@ class webbase extends common
     {
         global $_L;
         $_L['ROOTID'] = $_L['form']['rootid'] ?: 0;
+        $_L['ROOTID'] = intval($_L['ROOTID']);
         $webcfg       = array_filter(LCMS::config([
             "name" => "config",
             "type" => "sys",
@@ -31,22 +32,19 @@ class webbase extends common
         ]));
         $_L['config']['web'] = $webcfg ? array_merge($_L['config']['web'], $webcfg) : $_L['config']['web'];
     }
-    public function load_web_url($domain = "", $scheme = "")
+    public function load_web_url($host = "", $scheme = "")
     {
         global $_L;
-        if ($_L['config']['web']['domain'] && $_L['config']['web']['domain_must'] && !in_string(HTTP_HOST, $_L['config']['web']['domain'])) {
-            LCMS::X(403, "请通过正确域名访问");
-        }
-        // 当前域名数据
-        $domain    = $domain ?: (HTTP_HOST ?: $_L['config']['web']['domain']);
+        $host      = $host ?: HTTP_HOST;
+        $host      = realhost($host);
         $scheme    = $scheme ?: (getscheme() ? "https://" : "http://");
-        $url_site  = "{$scheme}{$domain}/";
+        $url_site  = "{$scheme}{$host}/";
         $rootsid   = $_L['form']['rootsid'] ? "rootsid={$_L['form']['rootsid']}&" : "";
         $url_own   = "{$url_site}app/index.php?rootid={$_L['ROOTID']}&{$rootsid}";
         $_L['url'] = [
             "scheme" => $scheme,
             "site"   => $url_site,
-            "now"    => "{$scheme}{$domain}" . HTTP_URI,
+            "now"    => "{$scheme}{$host}" . HTTP_URI,
             "public" => "{$url_site}public/",
             "static" => "{$url_site}public/static/",
             "upload" => "{$url_site}upload/",
@@ -60,12 +58,13 @@ class webbase extends common
             "own_form" => "{$url_own}n=" . L_NAME . "&c=" . L_CLASS . "&a=",
         ];
         // 系统URL参数
-        $scheme   = $_L['config']['web']['https'] == "1" ? "https://" : "http://";
-        $url_site = "{$scheme}{$_L['config']['web']['domain']}/";
+        $host     = realhost($_L['config']['web']['domain']);
+        $scheme   = $_L['config']['web']['https'] == 1 ? "https://" : "http://";
+        $url_site = "{$scheme}{$host}/";
 
         $_L['url']['sys'] = [
             "scheme" => $scheme,
-            "domain" => $_L['config']['web']['domain'],
+            "domain" => $host,
             "site"   => $url_site,
             "api"    => $_L['config']['web']['domain_api'],
             "app"    => "{$url_site}app/",
@@ -121,17 +120,19 @@ class webbase extends common
             TPL::init($paths);
         }
     }
-    public function domain($domain = "", $scheme = "", $autodomain = false)
+    public function domain($domain = "", $prefix = false)
     {
         global $_L;
         if (is_url($domain)) {
             $domain = parse_url($domain);
-            $scheme = $domain['scheme'] === "https" ? "https://" : "http://";
-            $domain = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+            $scheme = $domain['scheme'] == "https" ? "https://" : "http://";
+            $host   = $domain['host'] . ($domain['port'] ? ":{$domain['port']}" : "");
+        } else {
+            $host = trim($domain, "/ ");
         }
-        if ($domain && $autodomain) {
-            $domain = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $domain;
-        }
-        $this->load_web_url($domain, $scheme);
+        if ($host && $prefix) {
+            $host = substr(md5($_L['ROOTID'] + L_NAME + L_CLASS + L_ACTION), 8, 16) . "." . $host;
+        };
+        $this->load_web_url($host, $scheme);
     }
 }
