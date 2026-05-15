@@ -26,6 +26,11 @@ class Geoip2
                     return true;
                 }
                 break;
+            case 'ipip':
+                if (is_file("{$this->path}ipdb/ipip.ipdb")) {
+                    return true;
+                }
+                break;
             case 'geoip2-country':
                 if (is_file("{$this->path}ipdb/GeoLite2-Country.mmdb")) {
                     return true;
@@ -63,6 +68,9 @@ class Geoip2
             switch ($dbtype) {
                 case 'cz88':
                     return $this->cz88($iptype, $ip);
+                    break;
+                case 'ipip':
+                    return $this->ipip($iptype, $ip);
                     break;
                 case 'geoip2-country':
                     return $this->geoip2($iptype, $ip, "country");
@@ -232,6 +240,52 @@ class Geoip2
                 "address"   => $addrsss,
                 "isp"       => $region[1],
                 "original"  => $record,
+            ] : false;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+    /**
+     * @description: ipdb格式数据查询
+     * @param string $iptype
+     * @param string $ip
+     * @return array
+     */
+    private function ipip($iptype, $ip)
+    {
+        $db = "{$this->path}ipdb/ipip.ipdb";
+        if (!is_file($db)) {
+            return false;
+        }
+        require_once "{$this->path}libs/ipip.phar";
+        $ipip = new \ipip\db\City($db);
+        try {
+            $record    = $ipip->findMap($ip, "CN");
+            $province  = str_replace(["省", "市"], "", $record['region_name']);
+            $city      = str_replace(["市", "县"], "", $record['city_name']);
+            $districts = str_replace("市", "", $record['district_name']);
+            if ($city) {
+                if ($city == $districts) {
+                    $addrsss = "{$record['country_name']}{$city}";
+                } else {
+                    $addrsss = "{$record['country_name']}{$city}{$districts}";
+                }
+            } else {
+                $addrsss = "{$record['country_name']}{$province}";
+            }
+            return $record ? [
+                "ip"             => $ip,
+                "intranet"       => false,
+                "type"           => $iptype,
+                "country"        => $record['country_name'],
+                "province"       => $record['region_name'],
+                "city"           => $city,
+                "districts"      => $districts,
+                "continent_code" => $record['continent_code'],
+                "country_code"   => $record['country_code'],
+                "isp"            => $record['isp_domain'],
+                "address"        => $addrsss,
+                "original"       => $record,
             ] : false;
         } catch (\Throwable $th) {
             return false;

@@ -14,7 +14,7 @@
             <div class="tplx-loading-own" style="height:130px" x-show="Object.keys(data.apps).length==0">未找到相关应用</div>
         </div>
         <div class="-list" x-ref="appbox">
-            <block x-if="uptotal>0&&!isappstore&&Object.keys(applist).length==Object.keys(data.apps).length">
+            <block x-if="data.super&&uptotal>0&&!isappstore&&Object.keys(applist).length==Object.keys(data.apps).length">
                 <div class="-upbox">
                     <div class="-icon">
                         <img src="{{$_L['url']['app']}}sys/appstore/admin/tpl/static/upicon.jpg" />
@@ -38,6 +38,9 @@
                         </div>
                     </block>
                     <div class="-version" x-text="`V${app.ver}`"></div>
+                    <block x-if="app.update">
+                        <div class="-nodrop"><i class="layui-icon layui-icon-tips-fill"></i>此应用需要更新</div>
+                    </block>
                 </div>
             </block>
         </div>

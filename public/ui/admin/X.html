@@ -46,7 +46,7 @@
             <if is_array($X['go'])>
                 <div class="layui-btn-group">
                     <loop $X['go'],$btn>
-                        <a class="layui-btn layui-btn-{{$btn['color']?:''}}" href="{{$btn['url']}}" target="{{$btn['target']?:'_self'}}" onclick="{{$btn['target']=='_blank'?'':'showLoad()'}}">
+                        <a class="layui-btn layui-btn-{{$btn['color']?:''}}" href="{{$btn['url']}}" target="{{$btn['target']?:'_self'}}" onclick="{{$btn['target']=='_blank'?'':'document.getElementById(`loading`).style.display=`block`'}}">
                             {{$btn['title']}}
                         </a>
                     </loop>

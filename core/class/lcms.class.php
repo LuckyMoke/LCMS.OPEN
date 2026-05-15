@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-22 21:34:26
+ * @LastEditTime: 2026-04-23 12:11:39
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -22,6 +22,7 @@ class LCMS
             $args = [
                 "HTTP_ALI_CDN_REAL_IP", //阿里云
                 "HTTP_EO_CONNECTING_IP", //腾讯TEO
+                "HTTP_EO_CLIENT_IP", //腾讯EO
                 "HTTP_CF_CONNECTING_IP", //CloudFlare
                 "HTTP_TRUE_CLIENT_IP", //百度云
                 "HTTP_X_REAL_IP", //通用CDN

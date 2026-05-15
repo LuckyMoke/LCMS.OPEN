@@ -18,8 +18,8 @@ class AltchaCaptcha
     }
     /**
      * @description: 获取验证html
-     * @param {*} $args [challengeurl、onchange]
-     * @return {*}
+     * @param array $args [challengeurl、onchange]
+     * @return string
      */
     public function html($args = [])
     {
@@ -64,8 +64,7 @@ class AltchaCaptcha
     }
     /**
      * @description: 生成挑战
-     * @param string $hmacKey 密钥
-     * @return {*}
+     * @return array
      */
     public function challenge()
     {
@@ -115,9 +114,8 @@ class AltchaCaptcha
     }
     /**
      * @description: 验证
-     * @param {*} $hmacKey
-     * @param {*} $payload
-     * @return {*}
+     * @param string $payload
+     * @return bool
      */
     public function verify($payload = "")
     {
