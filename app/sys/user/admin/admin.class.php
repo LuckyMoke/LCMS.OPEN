@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-11-07 11:12:58
+ * @LastEditTime: 2026-05-25 09:37:03
  * @Description: 用户管理
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -428,7 +428,10 @@ class admin extends adminbase
                     ],
                 ];
                 $acount = sql_counter(["admin"]);
-                if ($_L['developer']['lite'] === 1) {
+                if (
+                    LCMS::SUPER() &&
+                    $_L['developer']['lite'] === 1
+                ) {
                     unset($table['toolbar']);
                 }
                 require LCMS::template("own/admin/list");

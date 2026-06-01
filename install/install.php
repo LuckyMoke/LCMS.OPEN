@@ -25,6 +25,7 @@ require_once PATH_CORE_CLASS . "lcms.class.php";
 require_once PATH_CORE_CLASS . "sqlpdo.class.php";
 is_file(PATH_CORE . "install.lock") && ajaxout(404, "此框架已经安装过了，如需重新安装，请手动删除 /core/install.lock 文件");
 PHP_SELF != "/install/install.php" && ajaxout(404, "本程序无法在二级目录下安装");
+version_compare(PHP_VERSION, "7.3", "lt") && ajaxout(404, "本程序需要PHP7.3以上版本才能运行");
 switch ($_GET['action']) {
     case 'step1':
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));
@@ -105,6 +106,11 @@ switch ($_GET['action']) {
         ajaxout($code, "success", "", [
             "server" => $serv,
             "dirs"   => $dirs,
+            "rsa"    => openssl_pkey_new([
+                "digest_alg"       => "sha256",
+                "private_key_bits" => 2048,
+                "private_key_type" => OPENSSL_KEYTYPE_RSA,
+            ]) ? true : false,
         ]);
         break;
     case 'step3':
@@ -129,6 +135,7 @@ switch ($_GET['action']) {
         }
         //导入数据表
         $sql = file_get_contents('data/data.sql');
+        $sql || ajaxout(0, "数据文件读取失败");
         $sql = str_replace("[_PRE]", $db['pre'], $sql);
         $sql = str_replace("\r", "", $sql);
         $sql = explode(";\n", trim($sql));
@@ -165,6 +172,17 @@ switch ($_GET['action']) {
             ajaxout(1, "success", "", $admin);
         } else {
             ajaxout(0, "无法生成配置文件，请检查目录权限，或着关闭防篡改之类的插件！");
+        }
+        break;
+    case 'rsa':
+        if ($_POST['public'] && $_POST['private']) {
+            file_put_contents(PATH_WEB . "core/rsa.crt", json_encode([
+                "pubKey"  => $_POST['public'],
+                "privKey" => $_POST['private'],
+            ]));
+            ajaxout(1, "success");
+        } else {
+            ajaxout(0, "签名证书生成失败");
         }
         break;
 }

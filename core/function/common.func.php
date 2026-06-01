@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-05-12 16:25:11
+ * @LastEditTime: 2026-05-29 10:49:31
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -754,7 +754,13 @@ function rsa_create($bit = 2048)
     }
     $res = openssl_pkey_new($options);
     if ($res === false) {
-        return false;
+        $crt = PATH_CORE . "rsa.crt";
+        if (!file_exists($crt)) return false;
+        $crt = file_get_contents($crt);
+        $crt = json_decode($crt, true);
+        if (!$crt) return false;
+        $pubKey  = $crt['pubKey'];
+        $privKey = $crt['privKey'];
     } else {
         openssl_pkey_export($res, $privKey);
         $pubKey = openssl_pkey_get_details($res);
@@ -762,25 +768,25 @@ function rsa_create($bit = 2048)
         if (!$privKey || !$pubKey) {
             return false;
         }
-        return [
-            "pubKey"     => $pubKey,
-            "privKey"    => $privKey,
-            "pubKeyStr"  => str_replace([
-                "-----BEGIN PUBLIC KEY-----",
-                "-----END PUBLIC KEY-----",
-                " ",
-                "\r\n",
-                "\n",
-            ], "", $pubKey),
-            "privKeyStr" => str_replace([
-                "-----BEGIN PRIVATE KEY-----",
-                "-----END PRIVATE KEY-----",
-                " ",
-                "\r\n",
-                "\n",
-            ], "", $privKey),
-        ];
     }
+    return [
+        "pubKey"     => $pubKey,
+        "privKey"    => $privKey,
+        "pubKeyStr"  => str_replace([
+            "-----BEGIN PUBLIC KEY-----",
+            "-----END PUBLIC KEY-----",
+            " ",
+            "\r\n",
+            "\n",
+        ], "", $pubKey),
+        "privKeyStr" => str_replace([
+            "-----BEGIN PRIVATE KEY-----",
+            "-----END PRIVATE KEY-----",
+            " ",
+            "\r\n",
+            "\n",
+        ], "", $privKey),
+    ];
 }
 /**
  * @description: 公钥加密
