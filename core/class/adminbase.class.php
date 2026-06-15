@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-04-07 11:29:52
+ * @LastEditTime: 2026-06-15 12:17:57
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -185,17 +185,32 @@ class adminbase extends common
             "type" => "sys",
             "cate" => "plugin",
         ]);
-        if ($_L['ROOTID'] > 0 && $_L['ROOTID'] != $_L['LCMSADMIN']['id'] && $_L['plugin']['aimodel']['subon'] == 0) {
+        if (
+            $_L['ROOTID'] > 0 &&
+            $_L['ROOTID'] != $_L['LCMSADMIN']['id'] &&
+            $_L['plugin']['aimodel']['subon'] == 0
+        ) {
             $_L['plugin']['aimodel'] = [];
-        } elseif (!$_L['plugin']['aimodel']['type'] && $plugin['aimodel']['type']) {
+        } elseif (
+            $_L['plugin']['aimodel']['on'] != 1 &&
+            $plugin['aimodel']['on'] == 1
+        ) {
+            $plugin['aimodel']['subon'] = $_L['plugin']['aimodel']['subon'];
             $_L['plugin']['aimodel'] = $plugin['aimodel'];
         }
-        $plugin['oss']['type'] = $plugin['oss']['type'] ?: "local";
-        if ($plugin['oss']['type'] != "local" && $plugin['oss']['super'] > 0) {
+        $_L['plugin']['aimodel']['on'] = $_L['plugin']['aimodel']['on'] > 0 ? 1 : 0;
+        $plugin['oss']['type']         = $plugin['oss']['type'] ?: "local";
+        if (
+            $plugin['oss']['type'] != "local" &&
+            $plugin['oss']['super'] > 0
+        ) {
             $_L['plugin']['oss'] = $plugin['oss'];
             return;
         }
-        if (!LCMS::SUPER() && $plugin['oss']['must'] > 0) {
+        if (
+            !LCMS::SUPER() &&
+            $plugin['oss']['must'] > 0
+        ) {
             $_L['plugin']['oss']['type'] = $_L['plugin']['oss']['type'] ?: "qiniu";
             return;
         }

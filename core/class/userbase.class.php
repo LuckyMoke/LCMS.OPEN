@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2025-04-11 16:27:01
- * @LastEditTime: 2026-03-18 23:39:14
+ * @LastEditTime: 2026-06-06 02:16:57
  * @Description: 用户基础类
  * Copyright 2025 运城市盘石网络科技有限公司
  */
@@ -937,7 +937,7 @@ class USERBASE
     }
     /**
      * @description: 检测账号是否存在
-     * @param string $type
+     * @param string $by
      * @param string $data
      * @param int $jump
      * @return {*}
@@ -979,7 +979,8 @@ class USERBASE
     }
     /**
      * @description: 获取用户信息
-     * @param string $name
+     * @param string $data
+     * @param string $limit
      * @return array
      */
     public static function getUser($data = "", $limit = "")
@@ -1227,17 +1228,20 @@ class USERBASE
             case 'email':
                 $icount = LCMS::ram("lcms_login_ip" . CLIENT_IP);
                 $ncount = LCMS::ram("lcms_login_by{$name}");
+                $ccount = LCMS::ram("lcms_login_sid" . SESSION::getid());
                 switch ($do) {
                     case 'update':
                         $icount = intval($icount ?: 0) + 1;
                         $ncount = intval($ncount ?: 0) + 1;
+                        $ccount = intval($ccount ?: 0) + 1;
                         LCMS::ram("lcms_login_ip" . CLIENT_IP, $icount, 43200);
                         LCMS::ram("lcms_login_by{$name}", $ncount, 43200);
+                        LCMS::ram("lcms_login_sid" . SESSION::getid(), $ccount, 43200);
                         break;
                     default:
-                        if ($icount >= 3 || $ncount >= 3) {
+                        if ($icount >= 3 || $ncount >= 3 || $ccount >= 3) {
                             LCMS::notify("注册攻击通知", "<p>疑似遇到注册攻击，已被系统拦截。攻击IP：" . CLIENT_IP . "，注册信息：{$name}。</p><p>表单数据：<pre>" . json_encode_ex($_L['form']) . "</pre></p>", 86400);
-                            ajaxout(0, "接口请求超限，请联系客服协助验证");
+                            ajaxout(0, "请求超限，请联系客服协助验证");
                         }
                         break;
                 }

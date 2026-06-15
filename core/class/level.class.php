@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-04-10 12:00:04
+ * @LastEditTime: 2026-06-12 12:08:55
  * @Description:权限计算
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -125,8 +125,10 @@ class LEVEL
                 unset($apps['open'][$name]);
                 continue;
             }
-            if ($app['ver']) {
+            if ($base) {
                 $app['url'] = $napp['url']['all'];
+            } else {
+                $app = $napp;
             }
             $apps['open'][$name] = $app;
         }

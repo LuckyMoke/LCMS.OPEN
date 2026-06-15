@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2025-06-02 23:25:31
+ * @LastEditTime: 2026-06-12 12:08:14
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -80,18 +80,18 @@ class PUB
         $level['sys'] && ksort($level['sys']);
         $level['open'] && ksort($level['open']);
         $appall = LEVEL::applist();
-        foreach ($appall as $type => $val) {
-            foreach ($val as $name => $info) {
-                if (!empty($info['class'])) {
-                    $level[$type][$name]['title'] = $info['info']['title'];
-                    foreach ($info['class'] as $class => $val) {
-                        if (!empty($val['level'])) {
-                            $level[$type][$name]['class'][$class]['title'] = $val['title'];
-                            foreach ($val['level'] as $key => $val) {
-                                if ($info['power'][$class][$key] != "no") {
+        foreach ($appall as $type => $list) {
+            foreach ($list as $name => $li) {
+                if (!empty($li['class'])) {
+                    $level[$type][$name]['title'] = $li['info']['title'];
+                    foreach ($li['class'] as $class => $cv) {
+                        if (!empty($cv['level'])) {
+                            $level[$type][$name]['class'][$class]['title'] = $cv['title'];
+                            foreach ($cv['level'] as $key => $lv) {
+                                if ($li['power'][$class][$key] != "no") {
                                     $level[$type][$name]['class'][$class]['select'][] = [
                                         "value" => $key,
-                                        "title" => $val['title'],
+                                        "title" => $lv['title'],
                                     ];
                                 } else {
                                     $hide[$type][$name][$class][$key] = 0;

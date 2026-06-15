@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2025-12-18 20:40:48
+ * @LastEditTime: 2026-06-15 12:21:19
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -452,6 +452,7 @@ class web extends adminbase
                 ajaxout(1, "保存成功", "reload-top");
                 break;
             default:
+                $super  = LCMS::SUPER();
                 $plugin = LCMS::config([
                     "type" => "sys",
                     "cate" => "plugin",
@@ -459,21 +460,28 @@ class web extends adminbase
                 $PLG    = $plugin['aimodel'] ?: [];
                 $models = json_decode(file_get_contents(PATH_APP_NOW . "include/resource/models.json"), true);
                 $form   = [
+                    ["layui" => "radio", "title" => $super ? "功能状态" : "API类型",
+                        "name"   => "LC[on]",
+                        "value"  => $PLG['on'] ?: 0,
+                        "radio"  => [
+                            ["title" => $super ? "开启" : "自有API", "value" => 1],
+                            ["title" => $super ? "关闭" : "系统API", "value" => 0],
+                        ]],
+                    ["layui" => "title", "title" => "对话模型"],
                     ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ 本服务API由第三方提供，API请求均在你本地电脑执行，请确保你本地电脑可以访问对应服务"],
                     ["layui" => "radio", "title" => "API大模型",
-                        "name"   => "LC[type]",
-                        "value"  => $PLG['type'] ?: "",
+                        "name"   => "LC[chat]",
+                        "value"  => $PLG['chat'] ?: "",
                         "radio"  => [
-                            ["title" => "关闭", "value" => "", "tab" => "type_close"],
-                            ["title" => "百度", "value" => "wenxin", "tab" => "type_wenxin"],
-                            ["title" => "阿里", "value" => "aliyun", "tab" => "type_aliyun"],
-                            ["title" => "火山", "value" => "huoshan", "tab" => "type_huoshan"],
-                            ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "type_siliconcloud"],
-                            ["title" => "DeepSeek", "value" => "deepseek", "tab" => "type_deepseek"],
-                            ["title" => "ChatGPT", "value" => "openai", "tab" => "type_openai"],
+                            ["title" => "百度", "value" => "wenxin", "tab" => "chat_wenxin"],
+                            ["title" => "阿里", "value" => "aliyun", "tab" => "chat_aliyun"],
+                            ["title" => "火山", "value" => "huoshan", "tab" => "chat_huoshan"],
+                            ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "chat_siliconcloud"],
+                            ["title" => "DeepSeek", "value" => "deepseek", "tab" => "chat_deepseek"],
+                            ["title" => "ChatGPT", "value" => "openai", "tab" => "chat_openai"],
                         ]],
                 ];
-                if (!LCMS::SUPER()) {
+                if (!$super) {
                     $form = array_merge($form, [
                         ["layui" => "radio", "title" => "子用户AI",
                             "name"   => "LC[subon]",
@@ -495,46 +503,46 @@ class web extends adminbase
                     ["layui" => "input", "title" => "API Key",
                         "name"   => "LC[wenxin][token]",
                         "value"  => $PLG['wenxin']['token'],
-                        "cname"  => "hidden type_wenxin"],
+                        "cname"  => "hidden chat_wenxin"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[wenxin][model]",
                         "value"  => $PLG['wenxin']['model'],
-                        "cname"  => "hidden type_wenxin",
+                        "cname"  => "hidden chat_wenxin",
                         "option" => $models['wenxin']],
                     ["layui" => "input", "title" => "API-KEY",
                         "name"   => "LC[aliyun][token]",
                         "value"  => $PLG['aliyun']['token'],
-                        "cname"  => "hidden type_aliyun"],
+                        "cname"  => "hidden chat_aliyun"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[aliyun][model]",
                         "value"  => $PLG['aliyun']['model'],
-                        "cname"  => "hidden type_aliyun",
+                        "cname"  => "hidden chat_aliyun",
                         "option" => $models['aliyun']],
                     ["layui" => "input", "title" => "API Key",
                         "name"   => "LC[huoshan][token]",
                         "value"  => $PLG['huoshan']['token'],
-                        "cname"  => "hidden type_huoshan"],
+                        "cname"  => "hidden chat_huoshan"],
                     ["layui" => "input", "title" => "推理节点",
                         "name"   => "LC[huoshan][model]",
                         "value"  => $PLG['huoshan']['model'],
-                        "cname"  => "hidden type_huoshan"],
+                        "cname"  => "hidden chat_huoshan"],
                     ["layui" => "input", "title" => "API密钥",
                         "name"   => "LC[siliconcloud][token]",
                         "value"  => $PLG['siliconcloud']['token'],
-                        "cname"  => "hidden type_siliconcloud"],
+                        "cname"  => "hidden chat_siliconcloud"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[siliconcloud][model]",
                         "value"  => $PLG['siliconcloud']['model'],
-                        "cname"  => "hidden type_siliconcloud",
+                        "cname"  => "hidden chat_siliconcloud",
                         "option" => $models['siliconcloud']],
                     ["layui" => "input", "title" => "API key",
                         "name"   => "LC[deepseek][token]",
                         "value"  => $PLG['deepseek']['token'],
-                        "cname"  => "hidden type_deepseek"],
+                        "cname"  => "hidden chat_deepseek"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[deepseek][model]",
                         "value"  => $PLG['deepseek']['model'],
-                        "cname"  => "hidden type_deepseek",
+                        "cname"  => "hidden chat_deepseek",
                         "option" => $models['deepseek']],
                     ["layui" => "radio", "title" => "接口提供商",
                         "name"   => "LC[openai][type]",
@@ -543,21 +551,26 @@ class web extends adminbase
                             ["title" => "API2D/境内可用", "value" => "api2d"],
                             ["title" => "OpenAI/官方原接口", "value" => "openai"],
                         ],
-                        "cname"  => "hidden type_openai"],
+                        "cname"  => "hidden chat_openai"],
                     ["layui"      => "input", "title" => "自定义接口",
                         "name"        => "LC[openai][api]",
                         "value"       => $PLG['openai']['api'],
                         "placeholder" => "不填使用默认接口地址",
-                        "cname"       => "hidden type_openai"],
+                        "cname"       => "hidden chat_openai"],
                     ["layui" => "input", "title" => "TOKEN",
                         "name"   => "LC[openai][token]",
                         "value"  => $PLG['openai']['token'],
-                        "cname"  => "hidden type_openai"],
+                        "cname"  => "hidden chat_openai"],
                     ["layui" => "select", "title" => "AI模型",
                         "name"   => "LC[openai][model]",
                         "value"  => $PLG['openai']['model'],
-                        "cname"  => "hidden type_openai",
+                        "cname"  => "hidden chat_openai",
                         "option" => $models['openai']],
+                    ["layui" => "title", "title" => "代码模型"],
+                    ["layui" => "des", "title" => "AI编程能力使用智普GLM大模型，点击注册开通-><a href=\"https://www.bigmodel.cn/invite?icode=EESRfq5hoUJJlluPTrON%2Bunfet45IvM%2BqDogImfeLyI%3D\" target=\"_blank\">智普AI大模型</a>"],
+                    ["layui" => "input", "title" => "智普API key",
+                        "name"   => "LC[code][token]",
+                        "value"  => $PLG['code']['token']],
                     ["layui" => "btn", "title" => "立即保存"],
                 ]);
                 require LCMS::template("own/web_aimodel");

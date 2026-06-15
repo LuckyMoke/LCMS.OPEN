@@ -2,12 +2,12 @@
 <template "ui/css" />
 <template "ui/iframe" />
 <template "ui/background-none" />
-<template tplx="aimodel">
+<template tplx="aimodel" data-action="{{$LF['action']}}">
     <div class="aimodel-html">
         <div class="aimodel">
             <div class="aimodel-chat">
                 <block x-for="chat in chatList" :key="`ID:${chat.id}`">
-                    <div class="layui-anim layui-anim-upbit" :class="chat.role=='user'?'aimodel-chat-right':'aimodel-chat-left'">
+                    <div class="layui-anim layui-anim-upbit" :class="chat.role=='user'?'aimodel-chat-right':'aimodel-chat-left'" x-show="chat.html?true:false">
                         <div class="aimodel-chat-reason" x-show="chat.reasoning_content?true:false">
                             <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">深度思考<i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i></div>
                             <div class="aimodel-chat-reason-body" x-html="chat.reasoning_content" x-show="chat.reasoning?false:true"></div>
@@ -19,6 +19,7 @@
                                     <span class="tips" :class="btn.class" :style="btn.style" x-text="btn.title" @click="clickChat(chat.id, btn)" @mouseenter="onHover(`enter`,btn)" @mouseleave="onHover(`leave`,btn)"></span>
                                 </block>
                             </div>
+                            <div class="aimodel-chat-replying" x-show="!chat.btns&&chat.role!='user'?true:false"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="margin-right:10px"></i>回复中</div>
                         </div>
                     </div>
                 </block>
