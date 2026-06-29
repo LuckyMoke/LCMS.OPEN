@@ -12,7 +12,7 @@
                             <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">深度思考<i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i></div>
                             <div class="aimodel-chat-reason-body" x-html="chat.reasoning_content" x-show="chat.reasoning?false:true"></div>
                         </div>
-                        <div class="aimodel-chat-body lcms-editor">
+                        <div class="aimodel-chat-body" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-code':'lcms-editor')">
                             <article x-html="chat.html"></article>
                             <div class="aimodel-chatbtns" x-show="chat.btns?true:false">
                                 <block x-for="btn in chat.btns">
