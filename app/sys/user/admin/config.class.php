@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:59:38
- * @LastEditTime: 2025-05-17 17:40:44
+ * @LastEditTime: 2026-07-30 12:57:52
  * @Description: 登录注册设置
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -73,11 +73,11 @@ class config extends adminbase
                         ["layui" => "html", "title" => "登录页",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login",
-                            "copy"   => true],
+                            "copy" => true],
                         ["layui" => "html", "title" => "注册页",
                             "name"   => "login_url",
                             "value"  => "{$_L['url']['admin']}index.php?rootid={$_L['ROOTID']}&n=login&c=reg",
-                            "copy"   => true],
+                            "copy" => true],
                         ["layui"      => "input", "title" => "自定义登录页",
                             "name"        => "LC[login][url]",
                             "value"       => $config['login']['url'],
@@ -143,7 +143,8 @@ class config extends adminbase
                             "value"  => $config['reg']['findpass'] ?? "0",
                             "radio"  => [
                                 ["title" => "关闭", "value" => "0"],
-                                ["title" => "开启", "value" => "1"],
+                                ["title" => "邮箱找回", "value" => "email"],
+                                ["title" => "手机号找回", "value" => "mobile"],
                             ],
                             "tips"   => "需配置邮箱或短信接口！",
                         ],
@@ -195,7 +196,7 @@ class config extends adminbase
                         ],
                         ["layui" => "title", "title" => "用户协议"],
                     ],
-                    "btn"  => [
+                    "btn" => [
                         ["layui" => "btn", "title" => "立即保存"],
                     ],
                 ];

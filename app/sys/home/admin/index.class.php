@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2026-04-03 19:57:14
+ * @LastEditTime: 2026-07-23 14:48:12
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -107,7 +107,7 @@ class index extends adminbase
             $redis = $redis->do->info();
         }
         if ($redis['used_memory_rss']) {
-            $ram[] = "redis/" . sprintf("%.2f", $redis['used_memory_rss'] / 1048576) . "M";
+            $ram[] = "redis/" . getunit($redis['used_memory_rss'], "M");
         } else {
             $ram[] = "redis/未开启";
         }

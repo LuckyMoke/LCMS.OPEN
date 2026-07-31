@@ -3,12 +3,12 @@
     <template "own/default/public/tab" />
     <div class="login-body">
         <form @submit.prevent="goFind">
-            <if $UCFG['reg']['on']=="mobile">
+            <if $UCFG['reg']['findpass']=="mobile">
                 <div class="login-input">
                     <input type="text" placeholder="手机号" maxlength="11" autocomplete="new-input" required x-model="form.mobile" />
                 </div>
             </if>
-            <if $UCFG['reg']['on']=="email">
+            <if $UCFG['reg']['findpass']=="email">
                 <div class="login-input">
                     <input type="text" name="email" placeholder="邮箱" autocomplete="new-input" required x-model="form.email" />
                 </div>
@@ -20,9 +20,5 @@
 </template>
 <div class="login-link">
     <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
-    <if $UCFG['reg']['findpass'] gt 0>
-        <div class="login-link-line"></div>
-        <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
-    </if>
 </div>
 <template "own/default/public/foot" />

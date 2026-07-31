@@ -39,9 +39,5 @@
 </template>
 <div class="login-link">
     <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&go={{urlencode($_L['form']['go'])}}">已有账号</a>
-    <if $UCFG['reg']['findpass'] gt 0>
-        <div class="login-link-line"></div>
-        <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
-    </if>
 </div>
 <template "own/default/public/foot" />

@@ -1,6 +1,13 @@
 <?php
 error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
 date_default_timezone_set("Asia/Shanghai");
+if (version_compare(PHP_VERSION, "7.3", "lt")) {
+    echo json_encode([
+        "code" => 404,
+        "msg"  => "当前PHP版本太低<br>需PHP7.3以上版本才能运行",
+    ]);
+    exit;
+}
 define("IN_LCMS", true);
 define("PATH_WEB", substr(dirname(__FILE__), 0, -7));
 define("PATH_APP", PATH_WEB . "app/");
@@ -25,7 +32,6 @@ require_once PATH_CORE_CLASS . "lcms.class.php";
 require_once PATH_CORE_CLASS . "sqlpdo.class.php";
 is_file(PATH_CORE . "install.lock") && ajaxout(404, "此框架已经安装过了，如需重新安装，请手动删除 /core/install.lock 文件");
 PHP_SELF != "/install/install.php" && ajaxout(404, "本程序无法在二级目录下安装");
-version_compare(PHP_VERSION, "7.3", "lt") && ajaxout(404, "本程序需要PHP7.3以上版本才能运行");
 switch ($_GET['action']) {
     case 'step1':
         ajaxout(1, "success", "", file_get_contents('data/readme.txt'));

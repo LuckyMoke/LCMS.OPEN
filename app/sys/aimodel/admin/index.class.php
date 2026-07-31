@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-07-03 13:55:10
+ * @LastEditTime: 2026-07-25 10:27:56
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -81,18 +81,9 @@ class index extends adminbase
                         ];
                         break;
                     case 'openai':
-                        switch ($plg['type']) {
-                            case 'api2d':
-                                $api = "https://oa.api2d.net";
-                                break;
-                            case 'openai':
-                                $api = "https://api.openai.com";
-                                break;
-                        }
                         $result = [
                             "name"  => "openai",
-                            "type"  => $plg['type'],
-                            "api"   => $plg['api'] ?: $api,
+                            "api"   => $plg['api'],
                             "model" => $plg['model'],
                             "token" => $plg['token'],
                         ];

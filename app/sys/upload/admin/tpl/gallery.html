@@ -21,6 +21,9 @@
                 <block x-if="!showBack">
                     <button class="layui-btn layui-btn-sm layui-btn-normal"><input type="file" accept="image/*" multiple title="批量上传" @change="chooseImg" />上传</button>
                 </block>
+                <block x-if="!showBack">
+                    <button class="layui-btn layui-btn-sm layui-btn-primary" @click="openPaste">粘贴</button>
+                </block>
                 <button class="layui-btn layui-btn-sm layui-btn-danger" title="删除所选图片" x-show="showDel" @click="onDel">删除</button>
                 <button class="layui-btn layui-btn-sm" @click="onOk">确认</button>
             </div>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2026-03-07 12:36:50
+ * @LastEditTime: 2026-07-22 17:28:09
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -68,9 +68,9 @@ class repair extends adminbase
                             }
                         }
                     }
-                    foreach ($upkey as $val) {
-                        if ($val) {
-                            $mysql[] = "UPDATE `{$PRE}{$name}` {$val};";
+                    foreach ($upkey as $v) {
+                        if ($v) {
+                            $mysql[] = "UPDATE `{$PRE}{$name}` {$v};";
                         }
                     }
                     $sqls = array_filter($sqls);
@@ -271,7 +271,7 @@ class repair extends adminbase
     }
     /**
      * @description: 获取数据库中表键
-     * @param array $table
+     * @param array $new
      * @return array
      */
     private function getKey($new)
@@ -295,12 +295,12 @@ class repair extends adminbase
                 $default = "";
                 if ($key['Extra'] == "auto_increment") {
                     $default = "AUTO_INCREMENT";
-                } elseif (stripos($key['Type'], "decimal") !== false) {
-                    $default = "0.00";
                 }
                 if ($default === "") {
                     if ($key['Default'] != "") {
                         $default = $key['Default'];
+                    } elseif (stripos($key['Type'], "decimal") !== false) {
+                        $default = "0.00";
                     } elseif ($key['Null'] == "NO") {
                         $default = "NOT NULL";
                     } else {

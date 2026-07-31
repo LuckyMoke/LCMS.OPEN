@@ -4,7 +4,10 @@
     <div class="login-body">
         <form @submit.prevent="goReset">
             <div class="login-input">
-                <input type="text" disabled value="账号：{{$to}}" />
+                <input type="text" disabled value="账号：{{$name}}" />
+            </div>
+            <div class="login-input">
+                <input type="text" disabled value="{{$to}}" />
             </div>
             <div class="login-input">
                 <input type="password" placeholder="新密码"  autocomplete="new-password" required x-model="form.pass" />

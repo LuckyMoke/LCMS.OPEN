@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-27 16:15:23
- * @LastEditTime: 2026-02-09 01:26:40
+ * @LastEditTime: 2026-07-24 13:39:45
  * @Description: 用户登录
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -39,12 +39,15 @@ class index extends adminbase
         //如果有登录cookie，自动登录
         if (
             $_L['cookie']['LCMSUSERJWT'] &&
+            !$LF['rootsid'] &&
             USERBASE::login([
                 "by"  => "cookie",
                 "jwt" => $_L['cookie']['LCMSUSERJWT'],
             ])
         ) {
             okinfo($LF['go'] ?: $_L['url']['admin']);
+        } elseif ($LF['rootsid']) {
+            USERBASE::clearCookie();
         }
         switch ($LF['action']) {
             case 'band':

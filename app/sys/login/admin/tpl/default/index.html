@@ -69,11 +69,11 @@
     <div class="login-link">
         <if in_array($UCFG['reg']['on'],["mobile","email"])>
             <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=reg&go={{urlencode($_L['form']['go'])}}">注册账号</a>
-            <if $UCFG['reg']['findpass'] gt 0>
+            <if in_array($UCFG['reg']['findpass'],["mobile","email"])>
                 <div class="login-link-line"></div>
             </if>
         </if>
-        <if $UCFG['reg']['findpass'] gt 0>
+        <if in_array($UCFG['reg']['findpass'],["mobile","email"])>
             <a href="{{$_L['url']['own']}}rootid={{$_L['ROOTID']}}&n=login&c=find&go={{urlencode($_L['form']['go'])}}">忘记密码</a>
         </if>
     </div>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-10-28 18:49:56
- * @LastEditTime: 2025-04-16 14:38:54
+ * @LastEditTime: 2026-07-30 13:18:06
  * @Description: 找回密码
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -17,13 +17,9 @@ class find extends adminbase
         $LF = $_L['form'];
         LOAD::sys_class("userbase");
         $UCFG = USERBASE::UCFG();
-        if (!in_array($UCFG['reg']['on'], [
+        if (!in_array($UCFG['reg']['findpass'], [
             "mobile", "email",
         ])) {
-            header("HTTP/1.1 403 Forbidden");
-            exit;
-        }
-        if ($UCFG['reg']['findpass'] <= 0) {
             header("HTTP/1.1 403 Forbidden");
             exit;
         }
@@ -39,9 +35,23 @@ class find extends adminbase
         switch ($LF['action']) {
             case 'reset':
                 $to   = SESSION::get("lcms_login_find");
+                $user = USERBASE::getUser($to, $UCFG['reg']['findpass']);
+                if (!$user) {
+                    header("HTTP/1.1 403 Forbidden");
+                    LCMS::X(403, "用户不存在");
+                }
+                $name = strstar($user['name'], 2, 2);
+                switch ($UCFG['reg']['findpass']) {
+                    case 'mobile':
+                        $to = "手机号：" . strstar($to, 3, 4);
+                        break;
+                    case 'email':
+                        $to = "邮箱：" . strstar($to, 3, 4);
+                        break;
+                }
                 $page = [
                     "title" => "重设密码 - {$_L['config']['admin']['title']}",
-                    "tab"   => [[
+                    "tab" => [[
                         "title" => "重设密码",
                         "by"    => "reset",
                     ]],
@@ -55,7 +65,7 @@ class find extends adminbase
             default:
                 $page = [
                     "title" => "找回密码 - {$_L['config']['admin']['title']}",
-                    "tab"   => [[
+                    "tab" => [[
                         "title" => "找回密码",
                         "by"    => "find",
                     ]],
