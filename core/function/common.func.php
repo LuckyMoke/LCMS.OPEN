@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-07-25 12:30:23
+ * @LastEditTime: 2026-08-03 14:54:31
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -779,7 +779,7 @@ function realhost($host = "")
             return $host;
         }
         $pattern = "#(^[a-zA-Z][a-zA-Z0-9+\-.]*://)" . preg_quote($originalHost, "#") . "#i";
-        return preg_replace($pattern, "$1" . $encodedHost, $host, 1);
+        return preg_replace($pattern, "\${1}" . $encodedHost, $host, 1);
     } else {
         $encodedHost = $punycode->encode(mb_strtolower($host, 'UTF-8'));
         return ($encodedHost === false) ? $host : $encodedHost;
@@ -1328,7 +1328,15 @@ function is_url($url = "")
     if (empty($url)) {
         return false;
     }
-    return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    $url      = realhost($url);
+    $temp_url = preg_replace_callback(
+        '#^(https?://)([^/]+)#i',
+        function ($matches) {
+            return $matches[1] . str_replace('_', '-', $matches[2]);
+        },
+        $url
+    );
+    return filter_var($temp_url, FILTER_VALIDATE_URL) !== false;
 }
 /**
  * @description: 验证是否为邮箱

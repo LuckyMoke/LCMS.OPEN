@@ -24,7 +24,7 @@
                 </li>
                 <if LCMS::SUPER() || count($applist) gt 1>
                     <li class="no-active">
-                        <a href="javascript:;" onclick="LCMS.util.iframe({title:`应用列表`,url:`${LCMS.url.admin}index.php?n=appstore&c=local`,shade:true});">
+                        <a href="javascript:;" onclick="LCMS.util.iframe({id:`lcms-main-applayer`,title:`应用列表`,url:`${LCMS.url.admin}index.php?n=appstore&c=local`,shade:true,hideOnClose:true});">
                             <i class="layui-icon layui-icon-app"></i>应用
                         </a>
                     </li>
