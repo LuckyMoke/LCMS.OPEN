@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-07-25 11:18:16
+ * @LastEditTime: 2026-08-03 15:19:51
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -495,7 +495,7 @@ class web extends adminbase
                 $form = array_merge($form, [
                     ["layui" => "input_sort", "title" => "最大TOKENS",
                         "name"   => "LC[max_tokens]",
-                        "value"  => $PLG['max_tokens'] ?: 1024,
+                        "value"  => $PLG['max_tokens'] ?: 2048,
                         "type"   => "number",
                         "min"    => 100,
                         "max"    => 2048,
