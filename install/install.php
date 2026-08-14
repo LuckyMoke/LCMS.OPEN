@@ -40,6 +40,10 @@ switch ($_GET['action']) {
         $code = 1;
         $dirs = [
             [
+                "name"  => "根目录",
+                "power" => getdirpower(PATH_WEB) ? 1 : 0,
+            ],
+            [
                 "name"  => "/app/open",
                 "power" => getdirpower(PATH_APP . "open") ? 1 : 0,
             ], [

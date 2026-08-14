@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-24 14:32:30
+ * @LastEditTime: 2026-08-12 20:17:19
  * @Description:文件操作方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -161,7 +161,7 @@ function movedir($olddir, $newdir, $over = true)
 }
 /**
  * @description: 移动文件
- * @param string $oldFile 原文件
+ * @param string $oldfile 原文件
  * @param string $newfile 移动后的文件
  * @param boolean $over 是否覆盖
  * @return boolean
@@ -441,8 +441,8 @@ function traversal_all($dir, $mime = null, $jump = null)
 /**
  * @description: 读取csv文件
  * @param string $file
- * @param function $success
- * @param function $error
+ * @param bool|object $success
+ * @param bool|object $error
  * @return array|null
  */
 function read_csv($file, $success = false, $error = false)

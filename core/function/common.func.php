@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-08-03 14:54:31
+ * @LastEditTime: 2026-08-12 22:06:16
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -70,12 +70,12 @@ function ajaxout(...$params)
 }
 /**
  * @description: 数组序列化
- * @param array $old
+ * @param string $old
  * @param array $new
- * @param string $unarr [a/b/c/... 支持多级]
+ * @param string $unarr [a/1|b/1|c/1... 支持多级]
  * @return string
  */
-function arr2sql($old = [], $new = [], $unarr = "")
+function arr2sql($old = "", $new = [], $unarr = "")
 {
     $old = sql2arr($old);
     if (!is_array($old)) {

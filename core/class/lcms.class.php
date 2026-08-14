@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-04-23 12:11:39
+ * @LastEditTime: 2026-08-12 23:38:30
  * @Description: LCMS操作类
  * @Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -131,43 +131,71 @@ class LCMS
     }
     /**
      * @description: 硬盘缓存读写操作
-     * @param string $name
-     * @param string|array $value
-     * @param int|bool $lcms
-     * @return array
+     * @param string $name 缓存名称
+     * @param mixed $value 写入的数组
+     * @param int|null $lcms 缓存层级ID
+     * @return array|bool 读取时返回数组，写入或删除时返回布尔值
      */
     public static function cache($name, $value = [], $lcms = null)
     {
         global $_L;
+        //静态内存缓存池
+        static $_caches = [];
+        //标准化缓存名称
         $path = PATH_CACHE . "system/";
-        if (!in_string($name, "/")) {
+        if (strpos($name, "/") === false) {
             $name = L_NAME . "/{$name}";
         }
         $name = substr(md5($name), 8, 16);
-        $lcms = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
+        $lcms = $lcms === null ? ($_L['ROOTID'] ?? 0) : (is_numeric($lcms) ? (int) $lcms : 0);
         $path = "{$path}{$lcms}/";
         $file = "{$path}{$name}.dat";
-        if (is_file($file)) {
-            $cache = file_get_contents($file);
-        } else {
-            makedir($path);
-        }
+        $ckey = "{$lcms}:{$name}";
+        //清除缓存
         if ($value === "clear") {
-            delfile($file);
-        } elseif ($value && is_array($value)) {
-            if (!file_put_contents($file, json_encode_ex($value))) {
+            if (is_file($file)) {
+                delfile($file);
+            }
+            unset($_caches[$ckey]);
+            return true;
+        }
+        //写入缓存
+        if (is_array($value) && !empty($value)) {
+            if (!is_dir($path)) {
+                makedir($path);
+            }
+            $bytes = file_put_contents($file, json_encode_ex($value), LOCK_EX);
+            if ($bytes === false) {
                 LCMS::X(500, "数据写入失败，请检查程序目录权限");
             }
-        } else {
-            return $cache ? json_decode($cache, true) : [];
+            $_caches[$ckey] = $value;
+            return true;
         }
+        //读取缓存
+        if (isset($_caches[$ckey])) {
+            return $_caches[$ckey];
+        }
+        if (is_file($file)) {
+            $cache = file_get_contents($file);
+            if ($cache) {
+                $return = json_decode($cache, true);
+            }
+            $return         = $return ?? [];
+            $_caches[$ckey] = $return;
+            return $return;
+        }
+        //首次读取且文件不存在
+        if (!is_dir($path)) {
+            makedir($path);
+        }
+        return [];
     }
     /**
-     * @description: 内存缓存读写操作
+     * @description: 数据库内存缓存读写操作
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param int $time
-     * @param int|bool $lcms
+     * @param int|null $lcms
      * @return string
      */
     public static function ram($name, $value = "", $time = 0, $lcms = null)
@@ -176,42 +204,45 @@ class LCMS
         if (!$_L['table']['ram']) {
             return "";
         }
-        if (!in_string($name, "/")) {
+        //静态内存缓存池
+        static $_caches = [];
+        //标准化缓存名称
+        if (strpos($name, "/") === false) {
             $name = L_NAME . "/{$name}";
         }
-        $name = substr(md5(L_NAME . $name), 8, 16);
-        $lcms = isset($lcms) ? (is_numeric($lcms) ? $lcms : 0) : ($_L['ROOTID'] ?: 0);
-        $time = $time > 0 ? intval($time) : 86400;
-        $ram  = sql_get([
-            "table" => "ram",
-            "where" => "name = :name AND lcms = :lcms",
-            "bind"  => [
-                ":name" => $name,
-                ":lcms" => $lcms,
-            ],
-        ]);
+        $name  = substr(md5(L_NAME . $name), 8, 16);
+        $lcms  = $lcms === null ? ($_L['ROOTID'] ?? 0) : (is_numeric($lcms) ? (int) $lcms : 0);
+        $time  = $time > 0 ? (int) $time : 86400;
+        $ckey  = "{$lcms}:{$name}";
+        $where = "name = :name AND lcms = :lcms";
+        $bind  = [":name" => $name, ":lcms" => $lcms];
+        //清除缓存
         if ($value === "clear") {
             sql_delete([
                 "table" => "ram",
-                "where" => "name = :name AND lcms = :lcms",
-                "bind"  => [
-                    ":name" => $name,
-                    ":lcms" => $lcms,
-                ],
+                "where" => $where,
+                "bind"  => $bind,
             ]);
-        } elseif ($value) {
+            unset($_caches[$ckey]);
+            return "";
+        }
+        //写入/更新缓存
+        if ($value !== "" && $value !== null) {
+            $expire = time() + $time;
+            $ram    = sql_get([
+                "table" => "ram",
+                "where" => $where,
+                "bind"  => $bind,
+            ]);
             if ($ram) {
                 sql_update([
                     "table" => "ram",
                     "data"  => [
                         "value" => $value,
-                        "time"  => time() + $time,
+                        "time"  => $expire,
                     ],
-                    "where" => "name = :name AND lcms = :lcms",
-                    "bind"  => [
-                        ":name" => $name,
-                        ":lcms" => $lcms,
-                    ],
+                    "where" => $where,
+                    "bind"  => $bind,
                 ]);
             } else {
                 sql_insert([
@@ -219,7 +250,7 @@ class LCMS
                     "data"  => [
                         "name"  => $name,
                         "value" => $value,
-                        "time"  => time() + $time,
+                        "time"  => $expire,
                         "lcms"  => $lcms,
                     ],
                 ]);
@@ -231,9 +262,28 @@ class LCMS
                     ],
                 ]);
             }
-        } else {
-            return $ram && $ram['time'] > time() ? $ram['value'] : "";
+            $_caches[$ckey] = [
+                "value" => $value,
+                "time"  => $expire,
+            ];
+            return "";
         }
+        //读取缓存
+        if (isset($_caches[$ckey])) {
+            $ram = $_caches[$ckey];
+            return $ram['time'] > time() ? $ram['value'] : "";
+        }
+        //内存没有，查询数据库
+        $ram = sql_get([
+            "table" => "ram",
+            "where" => $where,
+            "bind"  => $bind,
+        ]);
+        if ($ram && $ram['time'] > time()) {
+            $_caches[$ckey] = $ram;
+            return $ram['value'];
+        }
+        return "";
     }
     /**
      * @description: 添加系统通知
@@ -275,33 +325,43 @@ class LCMS
         return true;
     }
     /**
-     * @description: 全自动序列化配置保存操作
-     * @param array $paran[do, form, name, type, cate, lcms, unset]
-     * @return array
+     * @description: 系统配置读写操作
+     * @param array $param[do,form,name,type,cate,lcms,unset]
+     * @return array|bool
      */
-    public static function config($paran = [])
+    public static function config($param = [])
     {
         global $_L;
+        //静态内存缓存池
+        static $_caches = [];
+        //规范化参数
         $para = [
-            "do"    => $paran['do'] ?: "get",
-            "form"  => $paran['form'] ?: $_L['form']['LC'],
-            "name"  => $paran['name'] ?: L_NAME,
-            "type"  => $paran['type'] ?: "open",
-            "cate"  => $paran['cate'] ?: "auto",
-            "lcms"  => isset($paran['lcms']) ? (is_numeric($paran['lcms']) ? $paran['lcms'] : 0) : ($_L['ROOTID'] ?: 0),
-            "unset" => $paran['unset'] ?: "",
+            "do"    => $param['do'] ?? "get",
+            "form"  => $param['form'] ?? $_L['form']['LC'],
+            "name"  => $param['name'] ?? L_NAME,
+            "type"  => $param['type'] ?? "open",
+            "cate"  => $param['cate'] ?? "auto",
+            "unset" => $param['unset'] ?? "",
+            "lcms"  => $param['lcms'] ?? ($_L['ROOTID'] ?? 0),
         ];
-        $config = sql_get([
-            "table" => "config",
-            "where" => "name = :name AND type = :type AND cate = :cate AND lcms = :lcms",
-            "bind"  => [
-                ":name" => $para['name'],
-                ":type" => $para['type'],
-                ":cate" => $para['cate'],
-                ":lcms" => $para['lcms'] ?: 0,
-            ],
-        ]);
+        //确保lcms是数字类型
+        $para['lcms'] = is_numeric($para['lcms']) ? (int) $para['lcms'] : 0;
+        //通用变量
+        $where = "name = :name AND type = :type AND cate = :cate AND lcms = :lcms";
+        $bind  = [
+            ":name" => $para['name'],
+            ":type" => $para['type'],
+            ":cate" => $para['cate'],
+            ":lcms" => $para['lcms'],
+        ];
+        $ckey = md5("{$para['lcms']}:{$para['name']}{$para['type']}{$para['cate']}");
+        //保存配置
         if ($para['do'] === "save") {
+            $config = sql_get([
+                "table" => "config",
+                "where" => $where,
+                "bind"  => $bind,
+            ]);
             if ($config) {
                 sql_update([
                     "table" => "config",
@@ -321,66 +381,110 @@ class LCMS
                         "type"      => $para['type'],
                         "cate"      => $para['cate'],
                         "parameter" => arr2sql($para['form']),
-                        "lcms"      => $para['lcms'] ?: 0,
+                        "lcms"      => $para['lcms'],
                     ],
                 ]);
             }
-        } else {
-            return $config['parameter'] != "N;" ? sql2arr($config['parameter']) : [];
-        };
+            unset($_caches[$ckey]);
+            return true;
+        }
+        //读取配置逻辑
+        if (isset($_caches[$ckey])) {
+            return $_caches[$ckey];
+        }
+        //内存中不存在，从数据库中读取
+        $config = sql_get([
+            "table" => "config",
+            "where" => $where,
+            "bind"  => $bind,
+        ]);
+        $result = [];
+        if (
+            $config &&
+            $config['parameter'] !== "N;" &&
+            $config['parameter'] !== ""
+        ) {
+            $result = sql2arr($config['parameter']);
+            $result = $result ?: [];
+        }
+        // 写入内存缓存
+        $_caches[$ckey] = $result;
+        return $result;
     }
     /**
      * @description: 处理一般数据表的数据序列化保存与读取
-     * @param array $paran[do, table, form, id, key, unset]
-     * @return array
+     * @param array $param[do,table,form,id,key,unset]
+     * @return array|bool
      */
-    public static function form($paran = [])
+    public static function form($param = [])
     {
         global $_L;
-        $form = $paran['form'] ?: ($_L['form']['LC'] ?: []);
+        $form = $param['form'] ?? ($_L['form']['LC'] ?? []);
+        $id   = $param['id'] ?? (isset($form['id']) && is_numeric($form['id']) ? $form['id'] : null);
+        $lcms = $param['lcms'] ?? 0;
+        $lcms = is_numeric($lcms) ? (int) $lcms : 0;
         $para = [
-            "do"    => $paran['do'] ?: "save",
-            "table" => $paran['table'] ?: "",
-            "id"    => $paran['id'] ?: (is_numeric($form['id']) ? $form['id'] : null),
-            "key"   => $paran['key'] ?: "parameter",
-            "unset" => $paran['unset'] ?: "",
-            "lcms"  => $paran['lcms'] ?: 0,
+            "do"    => $param['do'] ?? "save",
+            "table" => $param['table'] ?? "",
+            "id"    => $id,
+            "key"   => $param['key'] ?? "parameter",
+            "unset" => $param['unset'] ?? "",
+            "lcms"  => $lcms,
         ];
         $where = "id = :id";
+        $bind  = [":id" => $para['id']];
         if ($para['lcms'] > 0) {
             $where .= " AND lcms = :lcms";
+            $bind[":lcms"] = $para['lcms'];
         }
-        $bind = [
-            ":id"   => $para['id'],
-            ":lcms" => $para['lcms'],
-        ];
-        $data = $para['id'] ? sql_get([
-            "table" => $para['table'],
-            "where" => $where,
-            "bind"  => $bind]) : [];
+        //获取旧数据
+        $data = [];
+        if ($para['id']) {
+            $data = sql_get([
+                "table" => $para['table'],
+                "where" => $where,
+                "bind"  => $bind,
+            ]) ?: [];
+        }
+        //读取数据
         if ($para['do'] === "get") {
-            $data = array_merge($data, sql2arr($data[$para['key']]));
-            return $data;
+            $_arr = [];
+            if ($data[$para['key']]) {
+                $_arr = sql2arr($data[$para['key']]);
+                $_arr = $_arr ?: [];
+            }
+            return array_merge($data, $_arr);
         }
+        //保存数据
+        $_new = [];
         foreach ($form as $key => $val) {
             if (is_array($val)) {
-                $parameter[$key] = $val;
+                $_new[$key] = $val;
                 unset($form[$key]);
             }
         }
-        if ($data) {
-            if ($parameter) {
+        //统一处理序列化字段的生成
+        if (!empty($_new)) {
+            if ($data) {
+                $_old = $data[$para['key']] ?? "";
+                // 更新逻辑
                 if ($para['unset'] === true) {
-                    //清空所有旧数据更新
-                    $form[$para['key']] = arr2sql($parameter);
+                    // 清空所有旧数据更新
+                    $form[$para['key']] = arr2sql($_new);
                 } elseif ($para['unset']) {
-                    //清空指定旧数据更新
-                    $form[$para['key']] = arr2sql($data[$para['key']], $parameter, $para['unset']);
+                    // 清空指定旧数据更新
+                    $form[$para['key']] = arr2sql($_old, $_new, $para['unset']);
                 } else {
-                    //不清空旧数据直接覆盖
-                    $form[$para['key']] = arr2sql($data[$para['key']], $parameter);
+                    // 不清空旧数据直接覆盖
+                    $form[$para['key']] = arr2sql($_old, $_new);
                 }
+            } else {
+                // 新增逻辑
+                $form[$para['key']] = arr2sql($_new);
             }
+        }
+        //数据库写入
+        if ($data) {
             sql_update([
                 "table" => $para['table'],
                 "data"  => $form,
@@ -388,14 +492,12 @@ class LCMS
                 "bind"  => $bind,
             ]);
         } else {
-            if ($parameter) {
-                $form[$para['key']] = arr2sql($parameter);
-            }
             sql_insert([
                 "table" => $para['table'],
                 "data"  => $form,
             ]);
         }
+        return true;
     }
     /**
      * @description: 日志操作
@@ -433,25 +535,7 @@ class LCMS
         ]);
     }
     /**
-     * @description: 模板标签处理
-     * @param string $tag
-     * @return string
-     */
-    private static function tpltags($tag)
-    {
-        $tags = ["php", "template", "ui", "loop", "if", "elseif", "else", "switch", "case", "default"];
-        foreach ($tags as $val) {
-            if (strpos($tag, "<" . ($val === 'else' || $val === 'default' || $val === 'php' ? $val : "{$val} ")) !== false) {
-                return $val;
-                break;
-            } elseif (strpos($tag, "</{$val}>") !== false) {
-                return "/{$val}";
-                break;
-            }
-        }
-    }
-    /**
-     * @description: 模板缓存
+     * @description: 模板缓存编译
      * @param string $path
      * @param string $ui
      * @return string
@@ -459,37 +543,44 @@ class LCMS
     public static function template($path, $ui = "")
     {
         global $_L;
-        $dir     = explode('/', $path);
-        $postion = $dir[0];
-        $fpath   = substr(stristr($path, '/'), 1);
-        if ($postion === 'own') {
-            $uipath = $ui ? "{$ui}/" : "";
-            $file   = PATH_APP_OWN . "tpl/{$uipath}{$fpath}.html";
-            $fpath  = str_replace(PATH_WEB, "", $file);
-        } elseif ($postion === 'ui') {
-            $file  = PATH_PUBLIC . "ui/" . L_MODULE . "/{$fpath}.html";
-            $fpath = str_replace(PATH_WEB, "", $file);
-        } elseif ($postion === 'app') {
-            $file  = PATH_APP . "/{$fpath}.html";
-            $fpath = str_replace(PATH_WEB, "", $file);
-        } else {
-            $file  = "{$path}.html";
-            $fpath = str_replace(PATH_WEB, "", $file);
+        $dir      = explode("/", $path);
+        $postion  = $dir[0];
+        $slashPos = strpos($path, "/");
+        $fpath    = $slashPos !== false ? substr($path, $slashPos + 1) : "";
+        $uipath   = "";
+        switch ($postion) {
+            case 'own':
+                $uipath = $ui ? "{$ui}/" : "";
+                $file   = PATH_APP_OWN . "tpl/{$uipath}{$fpath}.html";
+                $fpath  = str_replace(PATH_WEB, "", $file);
+                break;
+            case 'ui':
+                $file  = PATH_PUBLIC . "ui/" . L_MODULE . "/{$fpath}.html";
+                $fpath = str_replace(PATH_WEB, "", $file);
+                break;
+            case 'app':
+                $file  = PATH_APP . "/{$fpath}.html";
+                $fpath = str_replace(PATH_WEB, "", $file);
+                break;
+            default:
+                $file  = "{$path}.html";
+                $fpath = str_replace(PATH_WEB, "", $file);
+                break;
         }
         if (!is_file($file)) {
-            if ($_L['config']['admin']['development'] > 0) {
-                LCMS::X(404, "模板文件未找到<br/>" . str_replace(PATH_WEB, "", $file));
-            } else {
-                LCMS::X(404, "模板文件未找到");
-            }
+            $msg = $_L['config']['admin']['development'] > 0 ? "模板文件未找到<br>" . str_replace(PATH_WEB, "", $file) : "模板文件未找到";
+            LCMS::X(404, $msg);
         }
         $cname = substr(md5($fpath), 8, 16);
         $cache = PATH_CACHE . "tpl/{$cname}.php";
-        if (filemtime($file) > filemtime($cache)) {
+        $ctime = 0;
+        if (is_file($cache)) {
+            $ctime = filemtime($cache);
+        }
+        if (filemtime($file) > $ctime) {
             $html = file_get_contents($file);
             //删除注释内容
-            preg_match_all("/<!--(.*?)-->/is", $html, $notes);
-            $html = str_replace($notes[0], "", $html);
+            $html = preg_replace("/<!--.*?-->/is", "", $html);
             //批量替换固定字符串
             $html = str_replace([
                 '<script type="text/javascript" onload>',
@@ -499,60 +590,81 @@ class LCMS
                 '<script type="text/html" onload>',
             ], $html);
             //标签替换
-            preg_match_all("/{{(.*?)}}/i", $html, $match);
-            preg_match_all("/<(.*?)(\/||'')>(?!=)/i", $html, $tags);
+            preg_match_all("/<(\/?)(php|template|ui|loop|if|elseif|else|switch|case|default)(\s[^>]*?)?\/?>/is", $html, $tags);
             foreach ($tags[0] as $index => $tag) {
-                switch (self::tpltags($tag)) {
+                $slash = $tags[1][$index];
+                $name  = $tags[2][$index];
+                $attrs = trim($tags[3][$index]);
+                $tname = "{$slash}{$name}";
+                $tbody = trim("{$name} {$attrs}");
+                switch ($tname) {
                     case 'php':
                         $html = str_replace($tag, "<?php ", $html);
                         break;
                     case 'template':
-                        if (in_string($tag, [
+                        if (in_string($attrs, [
                             'class="', 'id="', 'tplx="',
                         ])) {
-                            $html = str_replace($tag, '<script type="text/html"' . str_replace("template", "", $tags[1][$index]) . ">", $html);
+                            $html = str_replace($tag, "<script type=\"text/html\" {$attrs}>", $html);
                         } else {
-                            $html = str_replace($tag, "<?php require " . str_replace("template ", "LCMS::template(", $tags[1][$index]) . ", '" . ($uipath ? $ui : "") . "');?>", $html);
+                            $restr = $uipath ? $ui : "";
+                            if (
+                                !empty($attrs) &&
+                                preg_match('/^[a-zA-Z0-9_\/]+$/', $attrs)
+                            ) {
+                                $attrs = "\"{$attrs}\"";
+                            }
+                            $html = str_replace($tag, "<?php require LCMS::template({$attrs}, \"{$restr}\");?>", $html);
                         }
                         break;
                     case 'ui':
-                        $html = str_replace($tag, "<?php " . str_replace(["ui table", "ui tree", "ui "], ["TABLE::html", "TABLE::tree", "LAY::"], $tags[1][$index]) . ";?>", $html);
+                        $restr = str_replace([
+                            "ui table", "ui tree", "ui ",
+                        ], [
+                            "TABLE::html", "TABLE::tree", "LAY::",
+                        ], $tbody);
+                        $html = str_replace($tag, "<?php {$restr};?>", $html);
                         break;
                     case 'loop':
-                        $str = str_replace("loop ", "", $tags[1][$index]);
+                        $str = $attrs;
                         preg_match("/.*[\(|\[].*[\)|\]]/i", $str, $matchs);
-                        if ($matchs && $matchs[0]) {
+                        if (!empty($matchs[0])) {
                             $str = str_replace($matchs[0], "", $str);
                         }
-                        $str = explode(",", $str);
-                        if ($matchs && $matchs[0]) {
-                            $str[0] = $matchs[0];
+                        $parts = explode(",", $str);
+                        if (!empty($matchs[0])) {
+                            $parts[0] = $matchs[0];
                         }
-                        foreach ($str as $i => $v) {
-                            $str[$i] = trim($v);
-                        }
-                        $str  = array_filter($str);
-                        $str  = array_values($str);
-                        $str  = $str[2] ? "foreach ({$str[0]} as {$str[2]}=>{$str[1]})" : "foreach ({$str[0]} as {$str[1]})";
-                        $html = str_replace($tag, '<?php ' . $str . '{ ?>', $html);
+                        $parts = array_filter(array_map('trim', $parts));
+                        $parts = array_values($parts);
+                        $restr = !empty($parts[2]) ? "foreach ({$parts[0]} as {$parts[2]}=>{$parts[1]})" : "foreach ({$parts[0]} as {$parts[1]})";
+                        $html  = str_replace($tag, "<?php {$restr}{ ?>", $html);
                         break;
                     case 'if':
-                        $str  = str_replace(["if ", " gte ", " lte ", " gt ", " lt "], ["if (", ">=", "<=", ">", "<"], $tags[1][$index]);
-                        $html = str_replace($tag, "<?php {$str}){ ?>", $html);
+                        $str = str_replace([
+                            " gte ", " lte ", " gt ", " lt ",
+                        ], [
+                            ">=", "<=", ">", "<",
+                        ], $attrs);
+                        $html = str_replace($tag, "<?php if ({$str}){ ?>", $html);
                         break;
                     case 'elseif':
-                        $str  = str_replace(["elseif ", " gte ", " lte ", " gt ", " lt "], ["elseif (", " >= ", " <= ", " > ", " < "], $tags[1][$index]);
-                        $html = str_replace($tag, "<?php } {$str}){ ?>", $html);
+                        $str = str_replace([
+                            " gte ", " lte ", " gt ", " lt ",
+                        ], [
+                            " >= ", " <= ", " > ", " < ",
+                        ], $attrs);
+                        $html = str_replace($tag, "<?php } elseif ({$str}){ ?>", $html);
                         break;
                     case 'else':
-                        $html = str_replace($tag, '<?php } else { ?>', $html);
+                        $html = str_replace($tag, "<?php } else { ?>", $html);
                         break;
                     case 'switch':
-                        $html = str_replace($tag, "<?php " . str_replace("switch ", "switch (", $tags[1][$index]) . "){ case 'LCMS" . time() . "': break;?>", $html);
+                        $html = str_replace($tag, "<?php switch ({$attrs}){ case 'LCMS" . time() . "': break;?>", $html);
                         break;
                     case 'case':
                     case 'default':
-                        $html = str_replace($tag, "<?php {$tags[1][$index]}: ?>", $html);
+                        $html = str_replace($tag, "<?php {$tbody}: ?>", $html);
                         break;
                     case '/case':
                     case '/default':
@@ -576,14 +688,15 @@ class LCMS
                         break;
                 }
             }
+            preg_match_all("/{{(.*?)}}/i", $html, $match);
             foreach ($match[0] as $key => $val) {
-                $para = $match[1][$key];
+                $para = trim($match[1][$key]);
+                $rval = null;
                 $nval = str_replace([
                     "{{  ", "{{ ", "  }}", " }}",
                 ], [
                     "{{", "{{", "}}", "}}",
                 ], $val);
-                $para = rtrim(ltrim($para, " "), " ");
                 if (stristr($nval, '{{$')) {
                     $rval = "<?php echo {$para}; ?>";
                 } elseif (stristr($nval, '{{echo')) {
@@ -595,20 +708,21 @@ class LCMS
                     $para = str_replace("echo ", "", $para);
                     $rval = "<?php echo {$para}; ?>";
                 }
-                if ($rval) {
+                if ($rval !== null) {
                     $html = str_replace($val, $rval, $html);
                 }
             }
             $html = str_replace([
-                '<block x-',
-                '</block>',
+                "<block x-", "</block>",
             ], [
-                '<template x-',
-                '</template>',
+                "<template x-", "</template>",
             ], $html);
-            $html = "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html;
-            mkdir(PATH_CACHE . "tpl/");
-            file_put_contents($cache, $html);
+            $html  = "<?php defined('IN_LCMS') or exit('No permission');?>" . PHP_EOL . $html;
+            $cpath = PATH_CACHE . "tpl/";
+            if (!is_dir($cpath)) {
+                mkdir($cpath, 0755, true);
+            }
+            file_put_contents($cache, $html, LOCK_EX);
         }
         return $cache;
     }
