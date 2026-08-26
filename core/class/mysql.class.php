@@ -2,17 +2,17 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2026-08-12 23:38:27
+ * @LastEditTime: 2026-08-25 16:34:22
  * @Description: Mysql数据库操作类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
 defined('IN_LCMS') or exit('No permission');
 class MYSQL
 {
-    public $db;
     private $config;
     private $master;
     private $slave;
+    private $lastdb;
     private $_table;
     private $_where;
     private $_order;
@@ -22,29 +22,39 @@ class MYSQL
     private $_setkey;
     private $_data;
     private $_math;
+    private $_sql;
+    private $_force_master = false;
     public function __construct($config = [])
     {
         $this->config = $config;
-        $this->db     = $this->master     = new SQLPDO("mysql:host={$config['host']};dbname={$config['name']};port={$config['port']};charset={$config['charset']}", $config['user'], $config['pass']);
+        $this->master = new SQLPDO("mysql:host={$config['host']};dbname={$config['name']};port={$config['port']};charset={$config['charset']}", $config['user'], $config['pass']);
+        $this->lastdb = $this->master;
         if ($config['slave']['host']) {
             $this->slave = new SQLPDO("mysql:host={$config['slave']['host']};dbname={$config['slave']['name']};port={$config['slave']['port']};charset={$config['charset']}", $config['slave']['user'], $config['slave']['pass']);
         }
     }
     /**
-     * @description: 指定主从数据库
-     * @param string $type
-     * @return {*}
+     * @description: 自动路由目标数据库
+     * @param string $sql
+     * @return SQLPDO
      */
-    public function assign($type = "")
+    private function getDb($sql = "")
     {
-        switch ($type) {
-            case 'slave':
-                $this->db = $this->slave;
-                break;
-            default:
-                $this->db = $this->master;
-                break;
+        if ($this->_force_master) {
+            return $this->master;
         }
+        //通过SQL首词判断是读还是写
+        $isread = preg_match('/^\s*(SELECT|SHOW|DESCRIBE|EXPLAIN)/i', $sql);
+        return ($isread && $this->slave) ? $this->slave : $this->master;
+    }
+    /**
+     * @description: 强制使用主库
+     * @param bool $flag
+     * @return self
+     */
+    public function forceMaster($flag = true)
+    {
+        $this->_force_master = $flag;
         return $this;
     }
     /**
@@ -63,6 +73,7 @@ class MYSQL
         $this->_setkey = "";
         $this->_data   = [];
         $this->_math   = [];
+        $this->_sql    = "";
         return $this;
     }
     /**
@@ -91,9 +102,9 @@ class MYSQL
      * @param array $bind
      * @return {*}
      */
-    public function bind($bind = [])
+    public function bind($bind = [], $clear = true)
     {
-        $this->bindFilter($bind);
+        $this->bindFilter($bind, $clear);
         return $this;
     }
     /**
@@ -114,30 +125,59 @@ class MYSQL
     public function data($data = [])
     {
         if (is_array($data)) {
-            $datas = $data[0] ? $data : [$data];
-            $i     = 0;
+            $datas = (isset($data[0]) && is_array($data[0])) ? $data : [$data];
+            $keys  = array_keys($datas[0]);
             $vals  = [];
-            foreach ($datas as $index => $d) {
-                foreach ($d as $key => $val) {
+            $i     = 0;
+            foreach ($datas as $row) {
+                $rvals = [];
+                foreach ($keys as $key) {
+                    $val = $row[$key];
                     if (is_array($val)) {
-                        $func = $val[0];
-                        unset($val[0]);
-                        $vals[$index][] = "{$func}(" . implode(", ", $val) . ")";
-                        foreach ($val as $nval) {
-                            if (substr($nval, 0, 1) == ":") {
-                                $this->_bind[$nval] = "[LCMS_CHECK_BIND]";
+                        $type = strtoupper($val[0]);
+                        if ($type === "EXP") {
+                            $rvals[] = $val[1];
+                        } elseif (in_array($type, [
+                            "+", "-", "*", "/", "%",
+                        ])) {
+                            $ph      = ":_val_{$i}";
+                            $rvals[] = "`{$key}` {$type} {$ph}";
+                            //绑定参数
+                            $this->_bind[$ph] = $val[1];
+                            $i++;
+                        } else {
+                            //获取参数
+                            $args = array_slice($val, 1);
+                            //生成
+                            $rvals[] = "{$type}(" . implode(", ", $args) . ")";
+                            foreach ($args as $nval) {
+                                if (
+                                    is_string($nval) &&
+                                    substr($nval, 0, 1) == ":"
+                                ) {
+                                    $this->_bind[$nval] = "@LCMS_BIND";
+                                }
                             }
                         }
                     } else {
-                        $nval               = ":_val{$i}";
-                        $vals[$index][]     = $nval;
-                        $this->_bind[$nval] = $val;
-                        $i++;
+                        if (
+                            is_string($val) &&
+                            substr($val, 0, 1) == ":"
+                        ) {
+                            $rvals[] = $val;
+                        } else {
+                            $ph      = ":_val_{$i}";
+                            $rvals[] = $ph;
+                            //绑定参数
+                            $this->_bind[$ph] = $val;
+                            $i++;
+                        }
                     }
                 }
+                $vals[] = $rvals;
             }
             $this->_data = [
-                "keys" => array_keys($datas[0]),
+                "keys" => $keys,
                 "vals" => $vals,
             ];
         } else {
@@ -152,7 +192,13 @@ class MYSQL
      */
     public function math($math = [])
     {
-        $this->_math = $math;
+        $allowed = ["+", "-", "*", "/", "%"];
+        foreach ($math as $key => $op) {
+            $op = trim($op);
+            if (in_array($op, $allowed)) {
+                $this->_math[$key] = $op;
+            }
+        }
         return $this;
     }
     /**
@@ -162,7 +208,24 @@ class MYSQL
      */
     public function limit($limit = "")
     {
-        $limit        = is_array($limit) ? implode(", ", $limit) : $limit;
+        if (
+            $limit === "" ||
+            $limit === null ||
+            $limit === false
+        ) {
+            $this->_limit = "";
+            return $this;
+        }
+        if (!is_array($limit)) {
+            $limit = explode(",", (string) $limit);
+        }
+        $larr = array_map(function ($val) {
+            return intval(trim($val));
+        }, $limit);
+        $limit = isset($larr[0]) ? $larr[0] : 0;
+        if (isset($larr[1]) && $larr[1] > 0) {
+            $limit .= ",{$larr[1]}";
+        }
         $this->_limit = $limit ? " LIMIT {$limit}" : "";
         return $this;
     }
@@ -181,14 +244,12 @@ class MYSQL
      * @param string $sql
      * @return {*}
      */
-    public function query($sql = "")
+    public function query($sql = "", $bind = [])
     {
-        if (preg_match('/^SELECT.*/i', $sql)) {
-            $this->slave && $this->assign("slave");
-        }
-        $result = $this->db->query($sql);
-        $this->assign("master");
-        return $result;
+        $this->_sql = $sql;
+        self::bind($bind, false);
+        $this->lastdb = $this->getDb($sql);
+        return $this->lastdb->query($this->_sql, $this->_bind);
     }
     /**
      * @description: 查询操作
@@ -197,17 +258,17 @@ class MYSQL
      */
     public function select($one = false)
     {
-        $query = "SELECT {$this->_fields} FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}";
-        $this->slave && $this->assign("slave");
+        $query        = "SELECT {$this->_fields} FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}";
+        $this->lastdb = $this->getDb($query);
+
         if ($one) {
-            $result = $this->db->get_one($query, $this->_bind);
+            $result = $this->lastdb->get_one($query, $this->_bind);
         } else {
-            $result = $this->db->get_all($query, $this->_bind);
+            $result = $this->lastdb->get_all($query, $this->_bind);
             if ($this->_setkey && $result) {
                 $result = array_column($result, null, $this->_setkey);
             }
         }
-        $this->assign("master");
         return $result ?: [];
     }
     /**
@@ -216,16 +277,19 @@ class MYSQL
      */
     public function update()
     {
+        if (empty($this->_data['keys'])) return false;
+        $data = [];
         foreach ($this->_data['keys'] as $index => $key) {
             $val = $this->_data['vals'][0][$index];
-            if ($this->_math[$key]) {
-                $val = "{$key} {$this->_math[$key]} {$val}";
+            if (isset($this->_math[$key])) {
+                $val = "`{$key}` {$this->_math[$key]} {$val}";
             }
             $data[] = "`{$key}` = {$val}";
         }
-        $data  = $data ? implode(", ", $data) : "";
-        $query = "UPDATE {$this->_table} SET {$data}{$this->_where}";
-        $this->db->update($query, $this->_bind);
+        $data         = $data ? implode(", ", $data) : "";
+        $query        = "UPDATE {$this->_table} SET {$data}{$this->_where}";
+        $this->lastdb = $this->getDb($query);
+        return $this->lastdb->update($query, $this->_bind);
     }
     /**
      * @description: 插入操作
@@ -233,13 +297,17 @@ class MYSQL
      */
     public function insert()
     {
-        foreach ($this->_data['vals'] as $index => $val) {
-            $vals[] = implode(", ", $val);
-        }
-        $keys  = "(" . implode(", ", $this->_data['keys']) . ")";
-        $vals  = "(" . implode("), (", $vals) . ")";
-        $query = "INSERT IGNORE INTO {$this->_table} {$keys} VALUES {$vals}";
-        $this->db->insert($query, $this->_bind);
+        $keysArr = array_map(function ($key) {
+            return "`{$key}`";
+        }, $this->_data['keys']);
+        $valsArr = array_map(function ($val) {
+            return "(" . implode(", ", $val) . ")";
+        }, $this->_data['vals']);
+        $keys         = "(" . implode(", ", $keysArr) . ")";
+        $vals         = implode(", ", $valsArr);
+        $query        = "INSERT IGNORE INTO {$this->_table} {$keys} VALUES {$vals}";
+        $this->lastdb = $this->getDb($query);
+        $this->lastdb->insert($query, $this->_bind);
         return $this->insert_id();
     }
     /**
@@ -248,8 +316,9 @@ class MYSQL
      */
     public function delete()
     {
-        $query = "DELETE FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}";
-        $this->db->delete($query, $this->_bind);
+        $query        = "DELETE FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}";
+        $this->lastdb = $this->getDb($query);
+        return $this->lastdb->delete($query, $this->_bind);
     }
     /**
      * @description: 统计条数
@@ -257,12 +326,10 @@ class MYSQL
      */
     public function count()
     {
-        $fields = $this->_fields != "*" ? $this->_fields : "";
-        $fields = $fields ? "" : "COUNT(*)";
-        $query  = "SELECT {$fields} FROM {$this->_table}{$this->_where}";
-        $this->slave && $this->assign("slave");
-        $count = $this->db->counter($query, $this->_bind);
-        $this->assign("master");
+        $fields       = $this->_fields !== "*" ? "COUNT({$this->_fields})" : "COUNT(*)";
+        $query        = "SELECT {$fields} FROM {$this->_table}{$this->_where}";
+        $this->lastdb = $this->getDb($query);
+        $count        = $this->lastdb->counter($query, $this->_bind);
         return $count ? intval($count) : 0;
     }
     /**
@@ -276,10 +343,9 @@ class MYSQL
         ], [
             "SUM(a.", "COUNT(a.", "AVG(a.", "MAX(a.", "MIN(a.",
         ], $this->_fields);
-        $query = "SELECT {$fields} FROM (SELECT * FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}) AS a";
-        $this->slave && $this->assign("slave");
-        $result = $this->db->get_all($query, $this->_bind);
-        $this->assign("master");
+        $query        = "SELECT {$fields} FROM (SELECT * FROM {$this->_table}{$this->_where}{$this->_order}{$this->_limit}) AS a";
+        $this->lastdb = $this->getDb($query);
+        $result       = $this->lastdb->get_all($query, $this->_bind);
         return $result ? $result[0] : [];
     }
     /**
@@ -288,7 +354,9 @@ class MYSQL
      */
     public function begin()
     {
-        $this->query("begin");
+        $this->_force_master = true;
+        $this->lastdb        = $this->master;
+        $this->master->query("BEGIN");
     }
     /**
      * @description: 事务回滚
@@ -296,7 +364,8 @@ class MYSQL
      */
     public function rollback()
     {
-        $this->query("rollback");
+        $this->master->query("ROLLBACK");
+        $this->_force_master = false;
     }
     /**
      * @description: 事务提交
@@ -304,11 +373,13 @@ class MYSQL
      */
     public function commit()
     {
-        if ($this->error()) {
-            $this->rollback();
+        if ($this->master->error()) {
+            $this->master->query("ROLLBACK");
+            $this->_force_master = false;
             return false;
         } else {
-            $this->query("commit");
+            $this->master->query("COMMIT");
+            $this->_force_master = false;
             return true;
         }
     }
@@ -318,10 +389,8 @@ class MYSQL
      */
     public function get_tables()
     {
-        if ($this->slave) {
-            return $this->slave->get_tables();
-        }
-        return $this->master->get_tables();
+        $this->lastdb = $this->slave ?: $this->master;
+        return $this->lastdb->get_tables();
     }
     /**
      * @description: 获取上次插入数据的ID
@@ -329,7 +398,7 @@ class MYSQL
      */
     public function insert_id()
     {
-        return $this->db->insert_id();
+        return $this->lastdb ? $this->lastdb->insert_id() : 0;
     }
     /**
      * @description: 获取上次操作受影响的条数
@@ -337,17 +406,17 @@ class MYSQL
      */
     public function affected_rows()
     {
-        return $this->db->affected_rows();
+        return $this->lastdb ? $this->lastdb->affected_rows() : 0;
     }
     /**
      * @description: 获取数据库版本
+     * @params string $assign 数据库连接对象
      * @return string
      */
-    public function version()
+    public function version($assign = "master")
     {
-        $ver = $this->db ? $this->db->version() : "";
-        $this->assign("master");
-        return $ver;
+        $db = ($assign == "master") ? $this->master : $this->slave;
+        return $db ? $db->version() : "";
     }
     /**
      * @description: 错误信息
@@ -355,7 +424,7 @@ class MYSQL
      */
     public function error()
     {
-        return $this->db->error();
+        return $this->lastdb ? $this->lastdb->error() : "";
     }
     /**
      * @description: 错误编号
@@ -363,7 +432,7 @@ class MYSQL
      */
     public function errno()
     {
-        return $this->db->errno();
+        return $this->lastdb ? $this->lastdb->errno() : "";
     }
     /**
      * @description: 数据语句过滤
@@ -372,13 +441,8 @@ class MYSQL
      */
     public function filter($sql = "")
     {
-        $result = str_ireplace([
-            "select", "sleep", "union",
-        ], [
-            "sel/ect", "sl/eep", "un/ion",
-        ], $sql);
-        if ($result != $sql) {
-            LCMS::X(0, "where语句非法");
+        if (preg_match('/\b(union|sleep|benchmark|load_file|outfile)\b/i', $sql)) {
+            LCMS::X(0, "SQL语句包含非法字符");
         }
     }
     /**
@@ -395,60 +459,94 @@ class MYSQL
     /**
      * @description: 设置参数绑定
      * @param array $bind
+     * @param bool $clear
      * @return {*}
      */
-    private function bindFilter($bind = [])
+    private function bindFilter($bind = [], $clear = true)
     {
-        $i     = 0;
-        $para  = [];
-        $match = [];
-        preg_match_all("/[\"|'|`|=| |](\:\w+)([\"|'|`| ||)]|$)/i", $this->_where, $match);
-        if ($bind && is_array($bind)) {
-            foreach ($this->_bind as $key => $val) {
-                if ($val === "[LCMS_CHECK_BIND]") {
-                    if (array_key_exists($key, $bind)) {
-                        $this->_bind[$key] = $bind[$key];
-                    } else {
-                        unset($this->_bind[$key]);
-                    }
-                }
-            }
-            foreach ($bind as $key => $vals) {
-                if (is_array($vals)) {
-                    $reval = [];
-                    foreach ($vals as $v) {
-                        $nval               = ":_where{$i}";
-                        $reval[]            = $nval;
-                        $this->_bind[$nval] = $v;
-                        $i++;
-                    }
-                    if ($reval) {
-                        $rearr[$key] = implode(", ", $reval);
-                    }
-                }
-            }
-            if ($rearr) {
-                $this->_where = str_ireplace(array_keys($rearr), array_values($rearr), $this->_where);
-            }
-        }
-        if ($match && $match[0]) {
-            foreach ($match[0] as $index => $name) {
-                $name = str_replace(")", "", trim($name));
-                if ($name != $match[1][$index]) {
-                    $names['old'][] = $name;
-                    $names['new'][] = $match[1][$index];
-                }
-                $para[$match[1][$index]] = 1;
-            }
-            if ($names) {
-                $this->_where = str_ireplace($names['old'], $names['new'], $this->_where);
-            }
-            if ($para) {
-                $bind = array_intersect_key($bind, $para);
-            }
-        } else {
+        if (empty($bind) || !is_array($bind)) {
             $bind = [];
         }
-        $this->_bind = array_merge($this->_bind, $bind ?: []);
+        $i = 0;
+        //处理 IN 查询中的数组绑定
+        foreach ($bind as $key => $val) {
+            if (is_array($val)) {
+                $placeholder = (strpos($key, ':') !== 0) ? ":{$key}" : $key;
+                $newParams   = [];
+                foreach ($val as $v) {
+                    $uniqueKey               = ":_in_" . $i;
+                    $newParams[]             = $uniqueKey;
+                    $this->_bind[$uniqueKey] = $v;
+                    $i++;
+                }
+                if ($newParams) {
+                    if ($this->_sql) {
+                        $this->_sql = str_ireplace($placeholder, implode(", ", $newParams), $this->_sql);
+                    }
+                    if ($this->_where) {
+                        $this->_where = str_ireplace($placeholder, implode(", ", $newParams), $this->_where);
+                    }
+                    if ($this->_order) {
+                        $this->_order = str_ireplace($placeholder, implode(", ", $newParams), $this->_order);
+                    }
+                }
+                unset($bind[$key]);
+            }
+        }
+        //合并用户传入的普通参数到内部绑定池
+        $this->_bind = array_merge($this->_bind, $bind);
+        //提取占位符
+        $params = [];
+        $texts  = $this->_sql . " " . $this->_where . " " . $this->_order . " " . $this->_fields;
+        //提取各种参数里的
+        if (
+            $texts &&
+            preg_match_all("/:([a-zA-Z0-9_]+)/", $texts, $matches)
+        ) {
+            $params = $matches[0];
+        }
+        //提取DATA里的
+        if (
+            !empty($this->_data['vals']) &&
+            is_array($this->_data['vals'])
+        ) {
+            array_walk_recursive($this->_data['vals'], function ($value) use (&$params) {
+                if (
+                    is_string($value) &&
+                    preg_match_all("/:([a-zA-Z0-9_]+)/", $value, $_ms)
+                ) {
+                    $params = array_merge($params, $_ms[0]);
+                }
+            });
+        }
+        $params = array_unique($params);
+        //剔除用户多传的参数
+        if (!empty($params)) {
+            foreach ($this->_bind as $key => $val) {
+                if (
+                    !in_array($key, $params) &&
+                    strpos($key, ":_val_") !== 0 &&
+                    strpos($key, ":_in_") !== 0
+                ) {
+                    unset($this->_bind[$key]);
+                }
+            }
+        } elseif ($clear) {
+            foreach ($this->_bind as $key => $val) {
+                if (
+                    strpos($key, ":_val_") !== 0 &&
+                    strpos($key, ":_in_") !== 0
+                ) {
+                    unset($this->_bind[$key]);
+                }
+            }
+        }
+
+        //处理data()方法中特殊标记的数学函数占位符
+        foreach ($this->_bind as $key => $val) {
+            if ($val === "@LCMS_BIND") {
+                unset($this->_bind[$key]);
+            }
+        }
     }
 }

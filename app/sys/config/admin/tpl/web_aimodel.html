@@ -1,6 +1,8 @@
 <template "ui/head" />
 <if LCMS::SUPER()>
     <p class="lcms-form-des">超管开启接口，子用户可以选择使用超管接口还是自己另外设置接口！</p>
+    <else />
+    <p class="lcms-form-des">自有API：使用下方填写的API信息<br>系统API：使用超管配置的API信息</p>
 </if>
 <form class="layui-form layui-form-pane" action="{{$_L['url']['own_form']}}aimodel&action=save" method="post" target="_self">
     <ui form($form) />

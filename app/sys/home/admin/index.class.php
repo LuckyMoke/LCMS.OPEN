@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2021-03-13 16:11:14
- * @LastEditTime: 2026-07-23 14:48:12
+ * @LastEditTime: 2026-08-18 14:08:10
  * @Description: 欢迎页
  * Copyright 2021 运城市盘石网络科技有限公司
  */
@@ -81,10 +81,12 @@ class index extends adminbase
         }
         $server = array_merge($server, [
             "mysql" => [
-                "master" => $_L['DB']->assign("master")->version(),
-                "slave"  => $_L['DB']->assign("slave")->version(),
+                "master" => $_L['DB']->version("master"),
             ],
         ]);
+        if ($_L['mysql']['slave']) {
+            $server["mysql"]['slave'] = $_L['DB']->version("slave");
+        }
         if (version_compare($server['php'], "7.3", "lt")) {
             $phpban = true;
         }
@@ -92,9 +94,9 @@ class index extends adminbase
         if (version_compare($php, "8.2", "lt")) {
             $php .= " (推荐PHP8.2及以上)";
         }
-        $php = "PHP/{$php} 主数据库/{$server['mysql']['master']}";
+        $php = "PHP/{$php} 主库/{$server['mysql']['master']}";
         if ($server['mysql']['slave']) {
-            $php .= "从数据库/{$server['mysql']['slave']}";
+            $php .= " 从库/{$server['mysql']['slave']}";
         }
         if ($server['opcache']) {
             $ram[] = "opcache/{$server['opcache']['used_memory']}";

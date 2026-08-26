@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-03-07 15:50:06
- * @LastEditTime: 2025-04-16 14:09:21
+ * @LastEditTime: 2026-08-25 16:21:16
  * @Description: Mysql数据库操作方法
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -17,12 +17,11 @@ function sql_get($sql = [])
     global $_L;
     if (!$_L['DB']) return [];
     return $_L['DB']
-        ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
         ->order($sql['order'] ?: $sql[2])
-        ->bind($sql['bind'] ?: $sql[3])
         ->fields($sql['fields'] ?: $sql[4])
+        ->bind($sql['bind'] ?: $sql[3])
         ->select(1);
 }
 /**
@@ -35,14 +34,13 @@ function sql_getall($sql = [])
     global $_L;
     if (!$_L['DB']) return [];
     return $_L['DB']
-        ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
         ->order($sql['order'] ?: $sql[2])
-        ->bind($sql['bind'] ?: $sql[3])
         ->setkey($sql['setkey'] ?: $sql[4])
         ->fields($sql['fields'] ?: $sql[5])
         ->limit($sql['limit'] ?: $sql[6])
+        ->bind($sql['bind'] ?: $sql[3])
         ->select();
 }
 /**
@@ -54,13 +52,12 @@ function sql_update($sql = [])
 {
     global $_L;
     if (!$_L['DB']) return;
-    $_L['DB']
-        ->assign($sql['assign'])
+    return $_L['DB']
         ->table($sql['table'] ?: $sql[0])
         ->data($sql['data'] ?: $sql[1])
         ->where($sql['where'] ?: $sql[2])
-        ->bind($sql['bind'] ?: $sql[3])
         ->math($sql['math'] ?: $sql[4])
+        ->bind($sql['bind'] ?: $sql[3])
         ->update();
 }
 /**
@@ -73,7 +70,6 @@ function sql_insert($sql = [])
     global $_L;
     if (!$_L['DB']) return;
     return $_L['DB']
-        ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
         ->data($sql['data'] ?: $sql[1])
         ->bind($sql['bind'] ?: $sql[2])
@@ -88,13 +84,12 @@ function sql_delete($sql = [])
 {
     global $_L;
     if (!$_L['DB']) return;
-    $_L['DB']
-        ->assign($sql['assign'])
+    return $_L['DB']
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
-        ->bind($sql['bind'] ?: $sql[2])
         ->order($sql['order'] ?: $sql[3])
         ->limit($sql['limit'] ?: $sql[4])
+        ->bind($sql['bind'] ?: $sql[2])
         ->delete();
 }
 /**
@@ -107,13 +102,12 @@ function sql_total($sql = [])
     global $_L;
     if (!$_L['DB']) return [];
     return $_L['DB']
-        ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
         ->order($sql['order'] ?: $sql[2])
-        ->bind($sql['bind'] ?: $sql[3])
         ->fields($sql['fields'] ?: $sql[4])
         ->limit($sql['limit'] ?: $sql[5])
+        ->bind($sql['bind'] ?: $sql[3])
         ->total();
 }
 /**
@@ -126,65 +120,60 @@ function sql_counter($sql = [])
     global $_L;
     if (!$_L['DB']) return;
     return $_L['DB']
-        ->assign($sql['assign'])
         ->table($sql['table'] ?: $sql[0])
         ->where($sql['where'] ?: $sql[1])
-        ->bind($sql['bind'] ?: $sql[2])
         ->fields($sql['fields'] ?: $sql[3])
+        ->bind($sql['bind'] ?: $sql[2])
         ->count();
 }
 /**
  * @description: 自己写SQL语句
- * @param string $sql
- * @param string $assign 主master、从slave
+ * @param array|string $sql [query, bind]
  * @return {*}
  */
-function sql_query($sql = "", $assign = "master")
+function sql_query($sql = [])
 {
     global $_L;
     if (!$_L['DB']) return;
+    if (is_string($sql)) {
+        $sql = [
+            "query" => $sql,
+            "bind"  => [],
+        ];
+    }
     return $_L['DB']
-        ->assign($assign)
-        ->query($sql);
+        ->table("@query")
+        ->query($sql['query'], $sql['bind']);
 }
 /**
  * @description: 开始事务
- * @param string $assign
  * @return {*}
  */
-function sql_begin($assign = "master")
+function sql_begin()
 {
     global $_L;
     if (!$_L['DB']) return;
-    $_L['DB']
-        ->assign($assign)
-        ->begin();
+    $_L['DB']->begin();
 }
 /**
  * @description: 事务回滚
- * @param string $assign
  * @return {*}
  */
-function sql_rollback($assign = "master")
+function sql_rollback()
 {
     global $_L;
     if (!$_L['DB']) return;
-    $_L['DB']
-        ->assign($assign)
-        ->rollback();
+    $_L['DB']->rollback();
 }
 /**
  * @description: 提交事务
- * @param string $assign
  * @return bool
  */
-function sql_commit($assign = "master")
+function sql_commit()
 {
     global $_L;
     if (!$_L['DB']) return;
-    return $_L['DB']
-        ->assign($assign)
-        ->commit();
+    return $_L['DB']->commit();
 }
 /**
  * @description: 获取插入的最后一个ID

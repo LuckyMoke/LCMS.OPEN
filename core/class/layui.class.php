@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-07-09 19:49:45
+ * @LastEditTime: 2026-08-24 17:11:54
  * @Description: UI组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -696,7 +696,7 @@ class LAY
                 </div>";
         } else {
             $display = $para['fixed'] ? " style=\"height:0;min-height:0;margin:0;\"" : "";
-            $fixed   = $para['fixed'] ? " style=\"position:fixed;bottom:20px;width:96%;left:2%;margin-left:0;z-index:99\"" : "";
+            $fixed   = $para['fixed'] ? " style=\"position:fixed;bottom:20px;width:96%;left:2%;margin-left:0;z-index:999\"" : "";
             $html    = "
                 <div class=\"layui-form-item{$para['cname']}\"{$display}>
                     <div class=\"layui-input-block\"{$display}>

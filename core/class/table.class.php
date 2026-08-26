@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-01-22 11:34:53
+ * @LastEditTime: 2026-08-16 18:31:03
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -327,6 +327,7 @@ class TABLE
             "toolbar"        => $toolbar,
             "totalRow"       => $tree['totalRow'] ? true : ($totalRow ? true : false),
             "cols"           => $tree['cols'],
+            "id"             => $tree['id'] ?: "id",
             "pid"            => $tree['pid'] ?: "pid",
             "show"           => $tree['show'] ?: "title",
             "autoSort"       => $tree['autoSort'] ?? true,

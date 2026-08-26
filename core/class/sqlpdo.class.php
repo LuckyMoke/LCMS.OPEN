@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2024-10-10 21:56:41
+ * @LastEditTime: 2026-08-25 17:49:30
  * @Description:PDO数据库操作类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -24,7 +24,8 @@ class SQLPDO
     {
         try {
             $this->pdo = new PDO($sqlinfo, $user, $pass);
-        } catch (\Throwable $th) {
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (\PDOException $th) {
             LCMS::X(500, "数据库连接失败-" . gbk2utf8($th->getMessage()));
         }
     }
@@ -46,26 +47,25 @@ class SQLPDO
     public function prepare($sql, $bind = [])
     {
         global $_L;
-        $this->psm = $this->pdo->prepare($sql);
-        if ($this->psm) {
-            try {
-                foreach ($bind as $key => $val) {
-                    if ($val === "" || $val === null) {
-                        $bind[$key] = null;
-                    }
-                }
-                $this->psm->execute($bind);
-                return $this->psm;
-            } catch (Exception $e) {
-                if ($_L['config']['admin']['development'] > 0) {
-                    $query = $e->getTrace()[1]['args'][0];
-                    $error = $this->error();
-                    $error .= $query ? " ({$query})" : "";
-                    LCMS::X($this->errno(), $error);
+        try {
+            $this->psm = $this->pdo->prepare($sql);
+            foreach ($bind as $key => $val) {
+                if ($val === "" || $val === null) {
+                    $bind[$key] = null;
                 }
             }
+            $this->psm->execute($bind);
+            return $this->psm;
+        } catch (Exception $e) {
+            if ($_L['config']['admin']['development'] > 0) {
+                $query = $e->getTrace()[1]['args'][0];
+                $error = $this->error();
+                $error .= $query ? " ({$query})" : "";
+                LCMS::X($this->errno(), $error);
+            } else {
+                LCMS::X(500, "数据库执行错误");
+            }
         }
-        LCMS::X(500, "数据库出现了一些问题");
     }
     /**
      * @description: 从结果集中获取下一行
@@ -74,7 +74,7 @@ class SQLPDO
      * @param string $result_type
      * @return array|null
      */
-    public function fetch($sql, $bind = [], $result_type = "")
+    public function fetch($sql, $bind = [], $result_type = PDO::FETCH_ASSOC)
     {
         return $this->prepare($sql, $bind)->fetch($result_type);
     }
@@ -85,7 +85,7 @@ class SQLPDO
      * @param string $result_type
      * @return array|null
      */
-    public function fetch_all($sql, $bind = [], $result_type = "")
+    public function fetch_all($sql, $bind = [], $result_type = PDO::FETCH_ASSOC)
     {
         return $this->prepare($sql, $bind)->fetchAll($result_type);
     }
@@ -167,23 +167,23 @@ class SQLPDO
      * @param {*} $result_type
      * @return array
      */
-    public function query($sql, $result_type = PDO::FETCH_ASSOC)
+    public function query($sql, $bind = [], $result_type = PDO::FETCH_ASSOC)
     {
         try {
-            $this->psm = $this->pdo->query($sql);
+            $this->psm = $this->prepare($sql, $bind);
         } catch (Exception $e) {
             $this->errorInfo = $e->getMessage();
             $this->errorCode = $e->getCode();
             return;
         }
-        if (preg_match('/^(SELECT|SHOW|ANALYZE|OPTIMIZE|CHECK|REPAIR|TRUNCATE).*/i', $sql)) {
-            $rows = $this->affected_rows();
-            if ($rows > 1) {
-                return $this->psm->fetchAll($result_type);
-            } elseif ($rows == 1) {
-                return $this->psm->fetch($result_type);
+        if (preg_match('/^(SELECT|SHOW|DESCRIBE|ANALYZE|OPTIMIZE|CHECK|REPAIR)/i', trim($sql))) {
+            $data = $this->psm->fetchAll($result_type);
+            if (count($data) === 1) {
+                return $data[0];
             }
+            return $data;
         }
+        return $this->affected_rows();
     }
     /**
      * @description: 查询数据库条数
@@ -232,7 +232,11 @@ class SQLPDO
         } else {
             $error = $this->pdo->errorInfo();
         }
-        if ($error[0] != 00000 && $error[1]) {
+        if (
+            isset($error[0]) &&
+            $error[0] !== "00000" &&
+            !empty($error[1])
+        ) {
             return "[{$error[1]}] {$error[2]}";
         }
     }

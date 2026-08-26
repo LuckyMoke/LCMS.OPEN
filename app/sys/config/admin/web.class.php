@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-08-03 15:19:51
+ * @LastEditTime: 2026-08-24 18:45:53
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -184,7 +184,10 @@ class web extends adminbase
         switch ($LF['action']) {
             case 'save':
                 $LC['oss']['domain'] = trim($LC['oss']['domain'], "/");
-                if (!in_string($LC['oss']['domain'], ["http://", "https://"])) {
+                if (
+                    !in_string($LC['oss']['domain'], [
+                        "http://", "https://",
+                    ])) {
                     $LC['oss']['domain'] = "http://{$LC['oss']['domain']}";
                 }
                 $LC['oss']['domain'] .= "/";
@@ -193,6 +196,7 @@ class web extends adminbase
                     "do"   => "save",
                     "type" => "sys",
                     "cate" => "plugin",
+                    "form" => $LC,
                 ]);
                 ajaxout(1, "保存成功");
                 break;
