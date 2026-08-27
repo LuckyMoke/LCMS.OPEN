@@ -3,8 +3,7 @@
 <ui table($table) />
 <script type="text/javascript">
 var reloadall = function() {
-    top.history.pushState(null,null,"?");
-    top.location.href = LCMS.url.admin;
+    top.location.replace(LCMS.url.admin)
 };
 </script>
 <template "ui/foot" />

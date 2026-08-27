@@ -8,9 +8,9 @@
             <div class="aimodel-chat">
                 <block x-for="chat in chatList" :key="`ID:${chat.id}`">
                     <div class="layui-anim layui-anim-upbit" :class="chat.role=='user'?'aimodel-chat-right':'aimodel-chat-left'" x-show="chat.html||chat.reasoning_html?true:false">
-                        <div class="aimodel-chat-reason" x-show="chat.reasoning_html?true:false">
+                        <div class="aimodel-chat-reason" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-reason-code':'')" x-show="chat.reasoning_html?true:false">
                             <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">深度思考<i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i></div>
-                            <div class="aimodel-chat-reason-body" x-html="chat.reasoning_html" x-show="chat.reasoning?false:true"></div>
+                            <div class="aimodel-chat-reason-body" x-html="chat.reasoning_html" x-show="chat.reasoning?false:true" :ref="`reasoning${chat.id}`"></div>
                         </div>
                         <div class="aimodel-chat-body" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-code':'lcms-editor')">
                             <article x-html="chat.html"></article>
