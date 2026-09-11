@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2026-07-22 17:28:09
+ * @LastEditTime: 2026-08-28 11:37:52
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -24,6 +24,7 @@ class repair extends adminbase
         $title = $LF['apptitle'] ?: "同步";
         $new   = $this->getNewSql($LF['appname']);
         $diff  = $this->getDiff($new, $this->getKey($new));
+        $mysql = [];
         foreach ($diff as $name => $val) {
             $sqls  = [];
             $upkey = [];
@@ -102,7 +103,7 @@ class repair extends adminbase
     }
     /**
      * @description: 内部接口操作
-     * @return {*}
+     * @return void
      */
     public function doapi()
     {
@@ -183,6 +184,14 @@ class repair extends adminbase
     private function getDiff($new, $old)
     {
         global $_L, $LF, $LC, $PRE;
+        $filterType = function (&$val, $key) {
+            if ($key === 'type' && is_string($val)) {
+                $val = preg_replace('/\b(tinyint|smallint|mediumint|int|bigint)\(\d+\)/i', '$1', $val);
+            }
+        };
+        array_walk_recursive($new, $filterType);
+        array_walk_recursive($old, $filterType);
+        $result = [];
         foreach ($new as $name => $data) {
             if ($old[$name]) {
                 foreach ($data as $key => $val) {
@@ -213,9 +222,6 @@ class repair extends adminbase
                             default:
                                 $diff = array_diff($val, $old[$name][$key]);
                                 if ($diff) {
-                                    if (!array_key_exists("default", $diff) && !array_key_exists("index", $diff) && in_string($diff['type'], "int") && !in_string($old[$name][$key]['type'], "int(") && (in_string($diff['type'], "unsigned") == in_string($old[$name][$key]['type'], "unsigned"))) {
-                                        continue;
-                                    }
                                     if (array_key_exists("index", $diff) && $old[$name][$key]['index'] && $old[$name][$key]['index'] != $diff['index']) {
                                         $diff['indexdrop'] = true;
                                     }
@@ -259,7 +265,7 @@ class repair extends adminbase
                         }
                     }
                 }
-                foreach ($data['LCMSDATAINDEX'] as $key => $val) {
+                foreach ($data['LCMSDATAINDEX'] ?? [] as $key => $val) {
                     if (!$new[$name]['LCMSDATAINDEX'][$key]) {
                         $result[$name]['data'][$key]['indexdrop'] = true;
                         $result[$name]['data'][$key]['continue']  = true;
@@ -277,6 +283,8 @@ class repair extends adminbase
     private function getKey($new)
     {
         global $_L, $LF, $LC, $PRE;
+        $tables = [];
+        $result = [];
         foreach ($_L['table'] as $name) {
             $name = str_replace($PRE, "", $name);
             if ($new[$name]) {
@@ -297,7 +305,10 @@ class repair extends adminbase
                     $default = "AUTO_INCREMENT";
                 }
                 if ($default === "") {
-                    if ($key['Default'] != "") {
+                    if (
+                        $key['Default'] !== null &&
+                        $key['Default'] !== ""
+                    ) {
                         $default = $key['Default'];
                     } elseif (stripos($key['Type'], "decimal") !== false) {
                         $default = "0.00";
@@ -332,6 +343,7 @@ class repair extends adminbase
         global $_L, $LF, $LC, $PRE;
         $indexs = sql_query("SHOW INDEX FROM {$PRE}{$table}");
         $indexs = $indexs['Table'] ? [$indexs] : $indexs;
+        $index  = [];
         foreach ($indexs as $val) {
             $kname = $val['Column_name'];
             $name  = $val['Column_name'];
@@ -409,18 +421,25 @@ class repair extends adminbase
     private function setVal($key, $data)
     {
         global $_L, $LF, $LC, $PRE;
+        $sql = "";
         if (
             !$data['add'] &&
             $data['default'] !== "" &&
-            $data['default'] !== "NULL" &&
-            $data['default'] !== "NOT NULL"
+            $data['default'] !== "AUTO_INCREMENT"
         ) {
-            if (is_numeric($data['default'])) {
-                $val = $data['default'];
+
+            if ($data['default'] === "NULL") {
+                $val = "NULL";
+            } elseif ($data['default'] === "NOT NULL") {
+                $val = in_string($data['type'], [
+                    "int", "decimal",
+                ]) ? 0 : "''";
             } else {
-                $val = "'{$data['default']}'";
+                $val = is_numeric($data['default']) ? $data['default'] : "'{$data['default']}'";
             }
-            $sql = "SET {$key} = {$val} WHERE {$key} IS NULL";
+            if (isset($val)) {
+                $sql = "SET {$key} = {$val} WHERE {$key} IS NULL";
+            }
         }
         return $sql ?: "";
     }
@@ -434,6 +453,8 @@ class repair extends adminbase
     private function setIndex($key, $data, $create = false)
     {
         global $_L, $LF, $LC, $PRE;
+        $sql = "";
+        $end = false;
         if ($data['index']) {
             switch ($data['index']) {
                 case 'PRIMARY':
@@ -445,6 +466,7 @@ class repair extends adminbase
                     $end = true;
                     break;
                 case 'BTREE':
+                    $sql = "";
                     $end = true;
                     break;
                 case 'FULLTEXT':
@@ -456,20 +478,46 @@ class repair extends adminbase
                     $end = false;
                     break;
             }
-            $sql = $create ? "{$sql} KEY" : "ADD{$sql} INDEX";
-            $sql .= $data['index'] != "PRIMARY" ? " `{$key}` " : " ";
+            if ($create) {
+                $sql = "{$sql} KEY";
+            } else {
+                if ($data['index'] == "PRIMARY") {
+                    $sql = "ADD PRIMARY KEY";
+                } else {
+                    $sql = "ADD{$sql} INDEX";
+                }
+            }
+            $sql .= $data['index'] == "PRIMARY" ? " " : " `{$key}` ";
             $sql .= "(`{$key}`)";
             $sql .= $end ? " USING BTREE" : "";
         } elseif ($data) {
+            $sql = [];
             foreach ($data as $k => $v) {
                 $name  = implode("`, `", $v['name']);
-                $sql[] = $create ? " KEY `{$k}` (`{$name}`)" : ($v['indexdrop'] ? "DROP INDEX `{$k}`, " : "") . "ADD INDEX `{$k}` (`{$name}`) USING BTREE";
+                $itype = isset($v['type']) ? $v['type'] : 'INDEX';
+                switch ($itype) {
+                    case 'PRIMARY':
+                        $sql[] = $create
+                        ? "PRIMARY KEY (`{$name}`)"
+                        : ($v['indexdrop'] ? "DROP INDEX `{$k}`, " : "") . "ADD PRIMARY KEY (`{$name}`)";
+                        break;
+                    case 'UNIQUE':
+                        $sql[] = $create
+                        ? "UNIQUE KEY `{$k}` (`{$name}`)"
+                        : ($v['indexdrop'] ? "DROP INDEX `{$k}`, " : "") . "ADD UNIQUE KEY `{$k}` (`{$name}`)";
+                        break;
+                    default:
+                        $sql[] = $create
+                        ? "KEY `{$k}` (`{$name}`) USING BTREE"
+                        : ($v['indexdrop'] ? "DROP INDEX `{$k}`, " : "") . "ADD KEY `{$k}` (`{$name}`) USING BTREE";
+                        break;
+                }
             }
             $sql = implode(",\n", $sql);
         }
         return $sql;
     }
-    private function setOther($data)
+    private function setOther($data = [])
     {
         global $_L, $LF, $LC, $PRE;
         $sql = [];
@@ -480,6 +528,6 @@ class repair extends adminbase
                     break;
             }
         }
-        return implode(",\n", $sql);
+        return $sql ? implode(",\n", $sql) : "";
     }
 }

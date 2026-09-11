@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-08-27 10:43:13
+ * @LastEditTime: 2026-09-11 13:51:29
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -27,7 +27,6 @@ class index extends adminbase
         global $_L, $LF, $LC;
         $aicfg = $_L['plugin']['aimodel'];
         if ($aicfg['on'] != 1) $this->ajaxerror();
-        $maxtoken = 2048;
         $thinking = false;
         switch ($LF['action']) {
             case 'chat':
@@ -38,7 +37,6 @@ class index extends adminbase
                     $plg['model'] = $model[0];
                     $thinking     = true;
                 }
-                $maxtoken = $aicfg['max_tokens'];
                 switch ($aicfg['chat']) {
                     case 'wenxin':
                         $result = [
@@ -96,7 +94,6 @@ class index extends adminbase
             case 'code':
                 $plg = $aicfg['code'];
                 if (!$plg['token']) $this->ajaxerror();
-                $maxtoken = 65536;
                 $result   = [
                     "name"  => "code",
                     "api"   => "https://open.bigmodel.cn/api/paas/v4/chat/completions",
@@ -105,7 +102,6 @@ class index extends adminbase
                 ];
                 break;
         }
-        $result['max_tokens'] = intval($maxtoken);
         $result['thinking']   = $thinking;
         ajaxout(1, "success", "", $result);
     }

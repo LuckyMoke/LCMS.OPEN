@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2023-06-25 12:28:04
- * @LastEditTime: 2026-06-12 12:08:14
+ * @LastEditTime: 2026-09-10 16:44:09
  * @Description: PUB公共类
  * Copyright 2023 运城市盘石网络科技有限公司
  */
@@ -77,43 +77,91 @@ class PUB
     public static function getLevelList($level)
     {
         global $_L;
-        $level['sys'] && ksort($level['sys']);
-        $level['open'] && ksort($level['open']);
+        $level = is_array($level) ? $level : [];
+        $hide  = [];
+        foreach (["sys", "open"] as $key) {
+            if (
+                !empty($level[$key]) &&
+                is_array($level[$key])
+            ) {
+                ksort($level[$key]);
+            }
+        }
         $appall = LEVEL::applist();
+        $result = $level;
         foreach ($appall as $type => $list) {
+            if (empty($list) || !is_array($list)) {
+                continue;
+            }
+            if (
+                !isset($result[$type]) ||
+                !is_array($result[$type])
+            ) {
+                $result[$type] = [];
+            }
             foreach ($list as $name => $li) {
-                if (!empty($li['class'])) {
-                    $level[$type][$name]['title'] = $li['info']['title'];
-                    foreach ($li['class'] as $class => $cv) {
-                        if (!empty($cv['level'])) {
-                            $level[$type][$name]['class'][$class]['title'] = $cv['title'];
-                            foreach ($cv['level'] as $key => $lv) {
-                                if ($li['power'][$class][$key] != "no") {
-                                    $level[$type][$name]['class'][$class]['select'][] = [
-                                        "value" => $key,
-                                        "title" => $lv['title'],
-                                    ];
-                                } else {
-                                    $hide[$type][$name][$class][$key] = 0;
-                                }
-                            }
+                if (
+                    !is_array($li) ||
+                    empty($li['class']) ||
+                    !is_array($li['class'])
+                ) {
+                    continue;
+                }
+                $classes = [];
+                foreach ($li['class'] as $class => $cv) {
+                    if (
+                        empty($cv['level']) ||
+                        !is_array($cv['level'])
+                    ) {
+                        continue;
+                    }
+                    $power = $li['power'][$class] ?? [];
+                    if (!is_array($power)) {
+                        $power = [];
+                    }
+                    $select = [];
+                    foreach ($cv['level'] as $key => $lv) {
+                        if (($power[$key] ?? null) === 'no') {
+                            $hide[$type][$name][$class][$key] = 0;
+                        } else {
+                            $select[] = [
+                                "value" => $key,
+                                "title" => $lv['title'] ?? "",
+                            ];
                         }
                     }
-                }
-            }
-        }
-        foreach ($level as $type => $list) {
-            foreach ($list as $name => $li) {
-                foreach ($li['class'] as $class => $val) {
-                    if (empty($val['select'])) {
-                        unset($level[$type][$name]['class'][$class]);
-                        if (empty($level[$type][$name]['class'])) {
-                            unset($level[$type][$name]);
-                        }
+                    if (!empty($select)) {
+                        $classes[$class] = [
+                            "title"  => $cv['title'] ?? "",
+                            "select" => $select,
+                        ];
                     }
                 }
+                if (
+                    !isset($result[$type][$name]) ||
+                    !is_array($result[$type][$name])
+                ) {
+                    $result[$type][$name] = [];
+                }
+                if (!empty($classes)) {
+                    $result[$type][$name]['title'] = $li['info']['title'] ?? "";
+                    $result[$type][$name]['class'] = $classes;
+                } else {
+                    unset($result[$type][$name]);
+                }
+            }
+            if (empty($result[$type])) {
+                unset($result[$type]);
             }
         }
-        return [$level ?: [], $hide ? htmlspecialchars(json_encode($hide)) : ""];
+        $hideJson = "";
+        if (!empty($hide)) {
+            $hideJson = htmlspecialchars(
+                json_encode($hide, JSON_UNESCAPED_UNICODE),
+                ENT_QUOTES,
+                "UTF-8"
+            );
+        }
+        return [$result ?: [], $hideJson];
     }
 }

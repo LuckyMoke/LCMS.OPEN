@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-01-14 16:13:09
+ * @LastEditTime: 2026-09-09 15:47:53
  * @Description:文件上传类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -17,7 +17,7 @@ class UPLOAD
     private static $CACHE;
     /**
      * @description: 设置存储类型
-     * @param init $force
+     * @param int $force
      * @return {*}
      */
     private static function getType($force = 0)
@@ -366,7 +366,7 @@ class UPLOAD
     }
     /**
      * @description: 图片转webp或加水印
-     * @param string $img
+     * @param string $times
      * @return string
      */
     private static function img2watermark($times = 1)

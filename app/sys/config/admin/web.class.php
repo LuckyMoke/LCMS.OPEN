@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-08-24 18:45:53
+ * @LastEditTime: 2026-09-11 13:50:56
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -497,13 +497,6 @@ class web extends adminbase
                     ]);
                 }
                 $form = array_merge($form, [
-                    ["layui" => "input_sort", "title" => "最大TOKENS",
-                        "name"   => "LC[max_tokens]",
-                        "value"  => $PLG['max_tokens'] ?: 2048,
-                        "type"   => "number",
-                        "min"    => 100,
-                        "max"    => 2048,
-                        "tips"   => "单次请求最大输出tokens数"],
                     ["layui" => "input", "title" => "API Key",
                         "name"   => "LC[wenxin][token]",
                         "value"  => $PLG['wenxin']['token'],
