@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-09-11 13:51:29
+ * @LastEditTime: 2026-09-16 10:37:40
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -58,14 +58,6 @@ class index extends adminbase
                         $result = [
                             "name"  => "huoshan",
                             "api"   => "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
-                            "model" => $plg['model'],
-                            "token" => $plg['token'],
-                        ];
-                        break;
-                    case 'siliconcloud':
-                        $result = [
-                            "name"  => "siliconcloud",
-                            "api"   => "https://api.siliconflow.cn/v1/chat/completions",
                             "model" => $plg['model'],
                             "token" => $plg['token'],
                         ];

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-09-11 13:50:56
+ * @LastEditTime: 2026-09-16 10:39:05
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -472,16 +472,15 @@ class web extends adminbase
                             ["title" => $super ? "关闭" : "系统API", "value" => 0],
                         ]],
                     ["layui" => "title", "title" => "对话模型"],
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://cloud.siliconflow.cn?referrer=clyb84b9p00eb14lc4hjghfus' target='_blank'>硅基流动</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[chat]",
-                        "value"  => $PLG['chat'] ?: "",
+                        "value"  => $PLG['chat'] ?: "chat_deepseek",
                         "radio"  => [
+                            ["title" => "DeepSeek(推荐)", "value" => "deepseek", "tab" => "chat_deepseek"],
                             ["title" => "百度", "value" => "wenxin", "tab" => "chat_wenxin"],
                             ["title" => "阿里", "value" => "aliyun", "tab" => "chat_aliyun"],
                             ["title" => "火山", "value" => "huoshan", "tab" => "chat_huoshan"],
-                            ["title" => "硅基流动", "value" => "siliconcloud", "tab" => "chat_siliconcloud"],
-                            ["title" => "DeepSeek", "value" => "deepseek", "tab" => "chat_deepseek"],
                             ["title" => "OpenAI兼容", "value" => "openai", "tab" => "chat_openai"],
                         ]],
                 ];
@@ -523,15 +522,6 @@ class web extends adminbase
                         "name"   => "LC[huoshan][model]",
                         "value"  => $PLG['huoshan']['model'],
                         "cname"  => "hidden chat_huoshan"],
-                    ["layui" => "input", "title" => "API密钥",
-                        "name"   => "LC[siliconcloud][token]",
-                        "value"  => $PLG['siliconcloud']['token'],
-                        "cname"  => "hidden chat_siliconcloud"],
-                    ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[siliconcloud][model]",
-                        "value"  => $PLG['siliconcloud']['model'],
-                        "cname"  => "hidden chat_siliconcloud",
-                        "option" => $models['siliconcloud']],
                     ["layui" => "input", "title" => "API key",
                         "name"   => "LC[deepseek][token]",
                         "value"  => $PLG['deepseek']['token'],

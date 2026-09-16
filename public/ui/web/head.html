@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html>
+    <html{{$page['lang']?" lang=\"{$page['lang']}\"":""}}>
     <head>
         <title>{{htmlspecialchars($page['title']?:$_L['config']['web']['title'])}}</title>
         <meta name="keywords" content="{{htmlspecialchars($page['keywords']?:'')}}" />
