@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-09-16 10:39:05
+ * @LastEditTime: 2026-09-28 11:16:13
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -472,13 +472,12 @@ class web extends adminbase
                             ["title" => $super ? "关闭" : "系统API", "value" => 0],
                         ]],
                     ["layui" => "title", "title" => "对话模型"],
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://cloud.baidu.com/product/wenxinworkshop' target='_blank'>百度</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
+                    ["layui" => "des", "title" => "大模型官网：<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
                     ["layui" => "radio", "title" => "API大模型",
                         "name"   => "LC[chat]",
                         "value"  => $PLG['chat'] ?: "chat_deepseek",
                         "radio"  => [
                             ["title" => "DeepSeek(推荐)", "value" => "deepseek", "tab" => "chat_deepseek"],
-                            ["title" => "百度", "value" => "wenxin", "tab" => "chat_wenxin"],
                             ["title" => "阿里", "value" => "aliyun", "tab" => "chat_aliyun"],
                             ["title" => "火山", "value" => "huoshan", "tab" => "chat_huoshan"],
                             ["title" => "OpenAI兼容", "value" => "openai", "tab" => "chat_openai"],
@@ -496,15 +495,6 @@ class web extends adminbase
                     ]);
                 }
                 $form = array_merge($form, [
-                    ["layui" => "input", "title" => "API Key",
-                        "name"   => "LC[wenxin][token]",
-                        "value"  => $PLG['wenxin']['token'],
-                        "cname"  => "hidden chat_wenxin"],
-                    ["layui" => "select", "title" => "AI模型",
-                        "name"   => "LC[wenxin][model]",
-                        "value"  => $PLG['wenxin']['model'],
-                        "cname"  => "hidden chat_wenxin",
-                        "option" => $models['wenxin']],
                     ["layui" => "input", "title" => "API-KEY",
                         "name"   => "LC[aliyun][token]",
                         "value"  => $PLG['aliyun']['token'],

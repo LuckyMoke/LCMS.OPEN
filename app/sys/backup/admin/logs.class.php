@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-02-26 20:02:30
- * @LastEditTime: 2024-11-21 00:37:20
+ * @LastEditTime: 2026-10-09 15:30:24
  * @Description: 系统日志
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -36,9 +36,12 @@ class logs extends adminbase
         $cache = " AND type IN ('{$cache}')";
         switch ($LF['action']) {
             case 'delall':
-                sql_delete(["log", "{$where}{$cache}", [
-                    ":lcms" => $_L['ROOTID'],
-                ]]);
+                sql_delete([
+                    "table" => "log",
+                    "where" => "{$where}{$cache}",
+                    "bind" => [
+                        ":lcms" => $_L['ROOTID'],
+                    ]]);
                 if (sql_error()) {
                     ajaxout(0, [
                         "title" => "清除失败",
@@ -55,11 +58,15 @@ class logs extends adminbase
             default:
                 $where .= $LC['user'] ? " AND user = :user" : "";
                 $where .= $LC['type'] ? " AND type = :type" : $cache;
-                $data = TABLE::set("log", $where, "id DESC", [
-                    ":type" => $LC['type'],
-                    ":user" => $LC['user'],
-                    ":lcms" => $_L['ROOTID'],
-                ]);
+                $data = TABLE::set([
+                    "table" => "log",
+                    "where" => $where,
+                    "order" => "id DESC",
+                    "bind"  => [
+                        ":type" => $LC['type'],
+                        ":user" => $LC['user'],
+                        ":lcms" => $_L['ROOTID'],
+                    ]]);
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [
                         "type" => $types[$val['type']]['title'],
@@ -78,6 +85,7 @@ class logs extends adminbase
             "id"    => $LF['id'],
         ]);
         switch ($LF['type']) {
+            default:
             case 'message':
                 $form = [
                     ["layui" => "html", "title" => "IP地址",
@@ -86,9 +94,14 @@ class logs extends adminbase
                         "value"  => $show['info']],
                     ["layui" => "html", "title" => "操作时间",
                         "value"  => $show['addtime']],
-                    ["layui" => "html", "title" => "发送数据",
-                        "value"  => '<pre class="layui-code" style="margin:0">' . json_encode($show['postdata'], JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>'],
                 ];
+                if ($show['postdata']) {
+                    $form[] = [
+                        "layui" => "html",
+                        "title" => "发送数据",
+                        "value" => '<pre class="layui-code" style="margin:0">' . json_encode($show['postdata'], JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>',
+                    ];
+                }
                 require LCMS::template("own/logs/show");
                 break;
         }
@@ -115,6 +128,16 @@ class logs extends adminbase
                 ["title" => "操作时间", "field" => "addtime",
                     "width"  => 170,
                     "align"  => "center"],
+                ["title"  => "操作", "field" => "do",
+                    "width"   => 70,
+                    "align"   => "center",
+                    "fixed"   => "right",
+                    "toolbar" => [
+                        ["title" => "详情",
+                            "event"  => "iframe",
+                            "url"    => "show",
+                            "area"   => "500px,500px"],
+                    ]],
             ],
             "toolbar" => [
                 ["title" => "清除日志",

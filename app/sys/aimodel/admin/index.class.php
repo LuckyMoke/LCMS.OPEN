@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-09-16 10:37:40
+ * @LastEditTime: 2026-09-28 11:17:23
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -38,14 +38,6 @@ class index extends adminbase
                     $thinking     = true;
                 }
                 switch ($aicfg['chat']) {
-                    case 'wenxin':
-                        $result = [
-                            "name"  => "wenxin",
-                            "api"   => "https://qianfan.baidubce.com/v2/chat/completions",
-                            "model" => $plg['model'],
-                            "token" => $plg['token'],
-                        ];
-                        break;
                     case 'aliyun':
                         $result = [
                             "name"  => "aliyun",

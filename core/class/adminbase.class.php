@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-06-15 12:17:57
+ * @LastEditTime: 2026-10-20 16:46:35
  * @Description:后台基类
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -185,6 +185,9 @@ class adminbase extends common
             "type" => "sys",
             "cate" => "plugin",
         ]);
+        if (!isset($_L['plugin']['aimodel']['subon'])) {
+            $_L['plugin']['aimodel']['subon'] = 1;
+        }
         if (
             $_L['ROOTID'] > 0 &&
             $_L['ROOTID'] != $_L['LCMSADMIN']['id'] &&
@@ -196,7 +199,7 @@ class adminbase extends common
             $plugin['aimodel']['on'] == 1
         ) {
             $plugin['aimodel']['subon'] = $_L['plugin']['aimodel']['subon'];
-            $_L['plugin']['aimodel'] = $plugin['aimodel'];
+            $_L['plugin']['aimodel']    = $plugin['aimodel'];
         }
         $_L['plugin']['aimodel']['on'] = $_L['plugin']['aimodel']['on'] > 0 ? 1 : 0;
         $plugin['oss']['type']         = $plugin['oss']['type'] ?: "local";

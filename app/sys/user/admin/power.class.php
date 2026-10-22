@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2022-07-11 10:46:13
- * @LastEditTime: 2026-09-10 16:35:29
+ * @LastEditTime: 2026-10-09 10:48:33
  * @Description: 权限管理
  * Copyright 2022 运城市盘石网络科技有限公司
  */
@@ -63,10 +63,6 @@ class power extends adminbase
                     ajaxout(0, "有用户使用此权限");
                 }
                 if (TABLE::del("admin_level")) {
-                    LCMS::log([
-                        "type" => "system",
-                        "info" => "用户管理：删除权限/{$LC['name']}",
-                    ]);
                     ajaxout(1, "删除成功", "reload");
                 } else {
                     ajaxout(0, "删除失败");

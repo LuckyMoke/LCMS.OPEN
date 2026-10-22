@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-08-16 18:31:03
+ * @LastEditTime: 2026-10-09 11:06:53
  * @Description: 数据表格组件
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -85,10 +85,20 @@ class TABLE
                         $name => $value ?? 1,
                     ],
                 ]);
+                LCMS::log([
+                    "type"     => "other",
+                    "info"     => "伪删数据：" . L_NAME,
+                    "postdata" => $args,
+                ]);
             } else {
                 sql_delete([
                     "table" => $args['table'],
                     "where" => "id IN ({$ids})",
+                ]);
+                LCMS::log([
+                    "type"     => "other",
+                    "info"     => "删除数据：" . L_NAME,
+                    "postdata" => $args,
                 ]);
             }
             return sql_error() ? false : true;

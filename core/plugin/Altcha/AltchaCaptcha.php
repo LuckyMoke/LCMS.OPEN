@@ -71,12 +71,8 @@ class AltchaCaptcha
         global $_L;
         $hmacKey = SESSION::get("lcms:altcha:hmacKey");
         if (empty($hmacKey)) return;
-        $image = SESSION::get("lcms:altcha:image");
-        if ($image != 1) {
-            $expire = 60;
-        } else {
-            $expire = 30;
-        }
+        $image  = SESSION::get("lcms:altcha:image");
+        $expire = 120;
         switch ($this->php) {
             case 'php7':
                 $options = new ChallengeOptions([
@@ -102,10 +98,12 @@ class AltchaCaptcha
         $challenge = json_encode($challenge);
         $challenge = json_decode($challenge, true);
         //添加验证码
-        $challenge['codeChallenge'] = [
-            "image"  => $_L['url']['captcha'] . time(),
-            "length" => 4,
-        ];
+        if ($image != 1) {
+            $challenge['codeChallenge'] = [
+                "image"  => $_L['url']['captcha'] . time(),
+                "length" => 4,
+            ];
+        }
         $count = LCMS::ram("lcms/plugin:altcha", "", 0, true);
         $count = $count ? intval($count) : 0;
         $time  = 60 - date("s");
