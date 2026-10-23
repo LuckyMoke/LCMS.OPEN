@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-09-28 11:16:13
+ * @LastEditTime: 2026-10-23 17:32:20
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -472,10 +472,10 @@ class web extends adminbase
                             ["title" => $super ? "关闭" : "系统API", "value" => 0],
                         ]],
                     ["layui" => "title", "title" => "对话模型"],
-                    ["layui" => "des", "title" => "大模型官网：<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
-                    ["layui" => "radio", "title" => "API大模型",
+                    ["layui" => "des", "title" => "点击注册开通：<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href='https://www.aliyun.com/product/bailian' target='_blank'>阿里</a>、<a href='https://www.volcengine.com/product/ark' target='_blank'>火山</a>、<a href='https://api2d.com/r/189177' target='_blank'>ChatGPT-API2D</a>、<a href='https://openai.com/' target='_blank'>ChatGPT-官方</a><br>▲ OpenAI兼容中可以使用任何兼容OpenAI API的接口"],
+                    ["layui" => "radio", "title" => "对话模型",
                         "name"   => "LC[chat]",
-                        "value"  => $PLG['chat'] ?: "chat_deepseek",
+                        "value"  => $PLG['chat'] ?: "deepseek",
                         "radio"  => [
                             ["title" => "DeepSeek(推荐)", "value" => "deepseek", "tab" => "chat_deepseek"],
                             ["title" => "阿里", "value" => "aliyun", "tab" => "chat_aliyun"],
@@ -535,8 +535,15 @@ class web extends adminbase
                         "value"  => $PLG['openai']['model'],
                         "cname"  => "hidden chat_openai"],
                     ["layui" => "title", "title" => "编程模型"],
-                    ["layui" => "des", "title" => "AI编程能力使用智普GLM大模型，点击注册开通-><a href=\"https://www.bigmodel.cn/invite?icode=EESRfq5hoUJJlluPTrON%2Bunfet45IvM%2BqDogImfeLyI%3D\" target=\"_blank\">智普AI大模型</a>"],
-                    ["layui" => "input", "title" => "智普API key",
+                    ["layui" => "des", "title" => "点击注册开通-><a href=\"https://www.bigmodel.cn/invite?icode=EESRfq5hoUJJlluPTrON%2Bunfet45IvM%2BqDogImfeLyI%3D\" target=\"_blank\">智普</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>"],
+                    ["layui" => "radio", "title" => "编程模型",
+                        "name"   => "LC[code][type]",
+                        "value"  => $PLG['code']['type'] ?: "zhipu",
+                        "radio"  => [
+                            ["title" => "智普", "value" => "zhipu"],
+                            ["title" => "DeepSeek", "value" => "deepseek"],
+                        ]],
+                    ["layui" => "input", "title" => "API key",
                         "name"   => "LC[code][token]",
                         "value"  => $PLG['code']['token']],
                     ["layui" => "btn", "title" => "立即保存"],
