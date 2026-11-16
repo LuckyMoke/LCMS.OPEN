@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2025-12-29 20:22:11
+ * @LastEditTime: 2026-10-26 10:22:21
  * @Description:本地应用列表
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -111,8 +111,10 @@ class local extends adminbase
         global $_L, $LF, $LC, $PRE;
         switch ($LF['action']) {
             case 'down':
-                ignore_user_abort(true);
-                set_time_limit(120);
+                @ignore_user_abort(true);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(120);
+                }
                 $token = ssl_decode($LF['token']);
                 $token || ajaxout(0, "token错误");
                 $token = json_decode($token, true);

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2025-08-05 11:22:25
+ * @LastEditTime: 2026-10-26 10:27:02
  * @Description: 数据库备份恢复操作
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -42,9 +42,11 @@ class database extends adminbase
                 require LCMS::template("own/database/backup");
                 break;
             case 'backup-ok':
-                ini_set("memory_limit", -1);
-                ignore_user_abort(true);
-                set_time_limit(300);
+                @ini_set("memory_limit", -1);
+                @ignore_user_abort(true);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(300);
+                }
                 $cache = "{$PATH}backup.sql";
                 if (is_file($cache)) {
                     $bpath   = "{$PATH}data/";
@@ -68,9 +70,11 @@ class database extends adminbase
                 ajaxout(0, "压缩失败");
                 break;
             case 'restore':
-                ini_set("memory_limit", -1);
-                ignore_user_abort(true);
-                set_time_limit(300);
+                @ini_set("memory_limit", -1);
+                @ignore_user_abort(true);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(300);
+                }
                 $file  = "{$PATH}data/{$LC['name']}";
                 $cache = "{$PATH}backup.sql";
                 if (is_file($file)) {
@@ -238,7 +242,10 @@ class database extends adminbase
                     "size" => getfilesize("{$bkpath}/{$li}"),
                 ];
             }
-            !empty($bklist) && array_multisort(array_column($bklist, 'time'), SORT_DESC, $bklist);
+            if (!empty($bklist)) {
+                $times = array_column($bklist, 'time');
+                array_multisort($times, SORT_DESC, $bklist);
+            }
             LCMS::cache("lcms_backuplist", [
                 "time" => $dtime,
                 "list" => $bklist,

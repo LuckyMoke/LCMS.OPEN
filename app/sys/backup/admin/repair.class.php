@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2026-08-28 11:37:52
+ * @LastEditTime: 2026-11-15 15:07:41
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -43,7 +43,7 @@ class repair extends adminbase
                         continue;
                     }
                     $engine  = $val['data']['LCMSDATAOTHER']['engine'];
-                    $engine  = $engine ? " ENGINE={$engine}" : " ENGINE=MyISAM";
+                    $engine  = $engine ? " ENGINE={$engine}" : "";
                     $mysql[] = "CREATE TABLE `{$PRE}{$name}` ( " . implode(",\n", $sqls) . "){$engine} DEFAULT CHARSET=utf8mb4;";
                     break;
                 default:
@@ -110,8 +110,10 @@ class repair extends adminbase
         global $_L, $LF, $LC, $PRE;
         switch ($LF['action']) {
             case 'down':
-                ignore_user_abort(true);
-                set_time_limit(120);
+                @ignore_user_abort(true);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(120);
+                }
                 $token = ssl_decode($LF['token']);
                 $token || ajaxout(0, "token错误");
                 $token = json_decode($token, true);

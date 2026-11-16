@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-09-18 13:34:12
- * @LastEditTime: 2025-12-11 22:04:39
+ * @LastEditTime: 2026-10-26 10:07:33
  * @Description: 全局程序错误输出
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -101,7 +101,7 @@ class DEVELOPER
         if (!$filename || !is_file($filename)) {
             return [];
         }
-        $file  = new SplFileObject($filename, "r+");
+        $file  = new SplFileObject($filename, "r");
         $start = $line - 10;
         $start = $start >= 0 ? $start : $line;
         $file->seek($start);

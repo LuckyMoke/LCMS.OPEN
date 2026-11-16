@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:43:29
- * @LastEditTime: 2025-08-05 11:23:07
+ * @LastEditTime: 2026-10-26 10:23:30
  * @Description: 数据表优化
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -44,7 +44,9 @@ class optimize extends adminbase
             case 'optimize':
             case 'check':
             case 'repair':
-                set_time_limit(300);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(300);
+                }
                 $LC || ajaxout(0, "请选择需要操作的表");
                 $names = [];
                 foreach ($LC as $table) {
@@ -74,7 +76,9 @@ class optimize extends adminbase
                 ]]);
                 break;
             case 'alter':
-                set_time_limit(300);
+                if (function_exists('set_time_limit')) {
+                    @set_time_limit(300);
+                }
                 $LC || ajaxout(0, "请选择需要操作的表");
                 $names = [];
                 foreach ($LC as $table) {

@@ -3,7 +3,7 @@
 </if>
 <if $_L['ui']['js']>
     <loop array_unique($_L['ui']['js']),$js>
-        <script type="text/javascript" src="{{str_replace(PATH_WEB, $_L['url']['site'], $js)}}?tplver={{TPL::$ver}}"></script>
+        <script type="text/javascript" src="{{url_qs($js)}}tplver={{TPL::$ver}}"></script>
     </loop>
 </if>
 <if $_L['ui']['xhr']>

@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-08-12 22:06:16
+ * @LastEditTime: 2026-11-15 15:03:04
  * @Description: 全局方法
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -434,6 +434,23 @@ function url_auto($url = "")
     }
     $url = trim($url);
     return preg_replace('#^https?://#i', '//', $url);
+}
+/**
+ * @description: 链接追加?或&
+ * @param string $url
+ * @return string
+ */
+function url_qs($url = "")
+{
+    global $_L;
+    if (!$url) return "";
+    if ($_L['url']['site']) {
+        $url = str_replace(PATH_WEB, $_L['url']['site'], $url);
+    }
+    if (strpos($url, "?") !== false) {
+        return substr($url, -1) === "&" ? $url : $url . "&";
+    }
+    return substr($url, -1) === "?" ? $url : $url . "?";
 }
 /**
  * @description: JS页面跳转

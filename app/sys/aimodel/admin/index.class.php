@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-10-23 17:35:32
+ * @LastEditTime: 2026-10-26 10:13:07
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -108,16 +108,15 @@ class index extends adminbase
     public function doproxy()
     {
         global $_L, $LF, $LC;
-        @ini_set("display_errors", "0");
+        @ini_set("display_errors", 0);
         error_reporting(0);
-        @ini_set("zlib.output_compression", "0");
-        @ini_set("output_buffering", "0");
-        @ini_set("implicit_flush", "1");
-        @ini_set("default_socket_timeout", "600");
-        if (function_exists("set_time_limit")) {
+        @ini_set("zlib.output_compression", 0);
+        @ini_set("output_buffering", 0);
+        @ini_set("implicit_flush", 1);
+        @ini_set("default_socket_timeout", 600);
+        @ini_set('max_execution_time', 0);
+        if (function_exists('set_time_limit')) {
             @set_time_limit(0);
-        } elseif (function_exists("ini_set")) {
-            @ini_set("max_execution_time", "0");
         } while (ob_get_level() > 0)@ob_end_clean();
         header("Content-Type: text/event-stream; charset=utf-8");
         header("Cache-Control: no-cache, no-store, must-revalidate");

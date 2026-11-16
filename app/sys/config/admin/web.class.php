@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-08-01 18:52:16
- * @LastEditTime: 2026-10-23 17:32:20
+ * @LastEditTime: 2026-11-09 15:57:49
  * @Description: 基本设置
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -535,13 +535,13 @@ class web extends adminbase
                         "value"  => $PLG['openai']['model'],
                         "cname"  => "hidden chat_openai"],
                     ["layui" => "title", "title" => "编程模型"],
-                    ["layui" => "des", "title" => "点击注册开通-><a href=\"https://www.bigmodel.cn/invite?icode=EESRfq5hoUJJlluPTrON%2Bunfet45IvM%2BqDogImfeLyI%3D\" target=\"_blank\">智普</a>、<a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>"],
+                    ["layui" => "des", "title" => "点击注册开通-><a href='https://platform.deepseek.com/' target='_blank'>DeepSeek</a>、<a href=\"https://www.bigmodel.cn/invite?icode=EESRfq5hoUJJlluPTrON%2Bunfet45IvM%2BqDogImfeLyI%3D\" target=\"_blank\">智普</a>"],
                     ["layui" => "radio", "title" => "编程模型",
                         "name"   => "LC[code][type]",
-                        "value"  => $PLG['code']['type'] ?: "zhipu",
+                        "value"  => $PLG['code']['type'] ?: "deepseek",
                         "radio"  => [
+                            ["title" => "DeepSeek(推荐)", "value" => "deepseek"],
                             ["title" => "智普", "value" => "zhipu"],
-                            ["title" => "DeepSeek", "value" => "deepseek"],
                         ]],
                     ["layui" => "input", "title" => "API key",
                         "name"   => "LC[code][token]",
