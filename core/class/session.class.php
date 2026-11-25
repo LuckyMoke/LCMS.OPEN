@@ -24,10 +24,14 @@ class SESSION
         ini_set("session.sid_length", 32);
         ini_set("session.sid_bits_per_character", 5);
         ini_set("session.use_cookies", 0);
+        ini_set("session.use_strict_mode", 0);
         ini_set("session.gc_maxlifetime", 7200);
         ini_set("session.gc_divisor", 100);
         if ($_L['form']['rootsid']) {
             // 请确保rootsid在每个客户端唯一
+            if (!is_scalar($_L['form']['rootsid'])) {
+                ajaxout(0, "rootsid格式错误");
+            }
             $cookie  = strtolower($_L['form']['rootsid']);
             $cookie  = str_replace("lcms-", "", $cookie);
             $cookie  = preg_replace("/[^a-z0-9]/", "", $cookie);
@@ -37,6 +41,7 @@ class SESSION
             } elseif ($uidlong > 32) {
                 $cookie = substr(md5($cookie . PATH_WEB), 8, 16) . substr($cookie, -16);
             }
+            $_L['form']['rootsid'] = $cookie;
         } else {
             $ltime = time() + 15552000;
             if ($_COOKIE['LCMSCID']) {
@@ -48,6 +53,7 @@ class SESSION
                     "path"     => "/",
                     "secure"   => false,
                     "httponly" => true,
+                    "samesite" => "Lax",
                 ]);
             } else {
                 $cookie = session_create_id();
@@ -56,6 +62,7 @@ class SESSION
                     "path"     => "/",
                     "secure"   => false,
                     "httponly" => true,
+                    "samesite" => "Lax",
                 ]);
             }
         }

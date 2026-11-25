@@ -32,15 +32,15 @@ class logs extends adminbase
                 $types = $this->getType();
                 break;
         }
-        $cache = implode("','", array_keys($types));
-        $cache = " AND type IN ('{$cache}')";
+        $typelist = array_keys($types);
         switch ($LF['action']) {
             case 'delall':
                 sql_delete([
                     "table" => "log",
-                    "where" => "{$where}{$cache}",
+                    "where" => "{$where} AND type IN (:typelist)",
                     "bind" => [
-                        ":lcms" => $_L['ROOTID'],
+                        ":lcms"     => $_L['ROOTID'],
+                        ":typelist" => $typelist,
                     ]]);
                 if (sql_error()) {
                     ajaxout(0, [
@@ -57,15 +57,16 @@ class logs extends adminbase
                 break;
             default:
                 $where .= $LC['user'] ? " AND user = :user" : "";
-                $where .= $LC['type'] ? " AND type = :type" : $cache;
+                $where .= $LC['type'] ? " AND type = :type" : " AND type IN (:typelist)";
                 $data = TABLE::set([
                     "table" => "log",
                     "where" => $where,
                     "order" => "id DESC",
                     "bind"  => [
-                        ":type" => $LC['type'],
-                        ":user" => $LC['user'],
-                        ":lcms" => $_L['ROOTID'],
+                        ":typelist" => $typelist,
+                        ":type"     => $LC['type'],
+                        ":user"     => $LC['user'],
+                        ":lcms"     => $_L['ROOTID'],
                     ]]);
                 foreach ($data as $index => $val) {
                     $data[$index] = array_merge($val, [

@@ -7,30 +7,47 @@
         <div class="aimodel">
             <div class="aimodel-chat">
                 <block x-for="chat in chatList" :key="`ID:${chat.id}`">
-                    <div class="layui-anim layui-anim-upbit" :class="chat.role=='user'?'aimodel-chat-right':'aimodel-chat-left'" x-show="chat.html||chat.reasoning_html?true:false">
-                        <div class="aimodel-chat-reason" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-reason-code':'')" x-show="chat.reasoning_html?true:false">
-                            <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">深度思考<i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i></div>
-                            <div class="aimodel-chat-reason-body" x-html="chat.reasoning_html" x-show="chat.reasoning?false:true"></div>
+                    <div class="aimodel-chat-row layui-anim layui-anim-upbit" :class="chat.role=='user'?'is-user':'is-ai'" x-show="chat.html||chat.reasoning_html||chat.loading?true:false">
+                        <div class="aimodel-avatar aimodel-avatar-ai">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l1.86 5.24 5.24 1.86-5.24 1.86L12 16.8l-1.86-5.24L4.9 9.7l5.24-1.86L12 2.6z" fill="currentColor"/><path d="M18.4 14.6l.84 2.36 2.36.84-2.36.84-.84 2.36-.84-2.36-2.36-.84 2.36-.84.84-2.36z" fill="currentColor" opacity=".75"/></svg>
                         </div>
-                        <div class="aimodel-chat-body" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-code':'lcms-editor')">
-                            <article x-html="chat.html"></article>
-                            <div class="aimodel-chatbtns" x-show="chat.btns?true:false">
-                                <block x-for="btn in chat.btns">
-                                    <span class="tips" :class="btn.class" :style="btn.style" x-text="btn.title" @click="clickChat(chat.id, btn)" @mouseenter="onHover(`enter`,btn)" @mouseleave="onHover(`leave`,btn)"></span>
-                                </block>
+                        <div class="aimodel-avatar aimodel-avatar-user">我</div>
+                        <div class="aimodel-chat-main">
+                            <div class="aimodel-chat-reason" :class="options.action=='code'?'aimodel-chat-reason-code':''" x-show="chat.reasoning_html?true:false">
+                                <div class="aimodel-chat-reason-title" @click="chat.reasoning=!chat.reasoning">
+                                    <svg class="aimodel-chat-reason-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.2 17.5h5.6"/><path d="M10.2 20.5h3.6"/><path d="M12 3.2a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2h5.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3.2z"/></svg>
+                                    <span>深度思考</span>
+                                    <i class="layui-icon" :class="chat.reasoning?'layui-icon-down':'layui-icon-up'"></i>
+                                </div>
+                                <div class="aimodel-chat-reason-body" x-html="chat.reasoning_html" x-show="chat.reasoning?false:true"></div>
                             </div>
-                            <div class="aimodel-chat-replying" x-show="chat.loading?true:false"><i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="margin-right:10px"></i>回复中</div>
+                            <div class="aimodel-chat-body" :class="chat.role=='user'?'':(options.action=='code'?'aimodel-chat-code':'lcms-editor')">
+                                <article x-html="chat.html"></article>
+                                <div class="aimodel-chatbtns" x-show="chat.btns?true:false">
+                                    <block x-for="btn in chat.btns">
+                                        <span class="tips" :class="btn.class" :style="btn.style" x-text="btn.title" @click="clickChat(chat.id, btn)" @mouseenter="onHover(`enter`,btn)" @mouseleave="onHover(`leave`,btn)"></span>
+                                    </block>
+                                </div>
+                                <div class="aimodel-chat-replying" x-show="chat.loading?true:false">
+                                    <span class="aimodel-dot"></span><span class="aimodel-dot"></span><span class="aimodel-dot"></span><em>回复中</em>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </block>
             </div>
-            <div class="layui-unselect aimodel-input">
-                <textarea placeholder="说点什么吧？[Enter发送、Shift+Enter换行]" x-model="askText" @keydown.prevent.enter="askGo"></textarea>
-                <button @click="askGo"><i class="layui-icon layui-icon-release"></i> 发送</button>
-                <div class="aimodel-plugins" x-show="pluList.length>0?true:false">
-                    <block x-for="plu in pluList">
-                        <span class="layui-unselect tips" x-text="plu.title" @click="clickPlu(plu)" @mouseenter="onHover(`enter`,plu)" @mouseleave="onHover(`leave`,plu)"></span>
-                    </block>
+            <div class="aimodel-input">
+                <div class="aimodel-input-box">
+                    <textarea placeholder="说点什么吧…" x-model="askText" @keydown.prevent.enter="askGo"></textarea>
+                    <div class="aimodel-plugins" x-show="pluList.length>0?true:false">
+                        <block x-for="plu in pluList">
+                            <span class="layui-unselect" x-text="plu.title" @click="clickPlu(plu)" @mouseenter="onHover(`enter`,plu)" @mouseleave="onHover(`leave`,plu)"></span>
+                        </block>
+                    </div>
+                    <div class="aimodel-input-bar">
+                        <span class="aimodel-input-hint">Enter 发送 · Shift + Enter 换行</span>
+                        <button type="button" @click="askGo"><i class="layui-icon layui-icon-release"></i></button>
+                    </div>
                 </div>
             </div>
         </div>

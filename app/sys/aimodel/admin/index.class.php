@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2024-05-27 11:11:38
- * @LastEditTime: 2026-10-26 10:13:07
+ * @LastEditTime: 2026-11-19 15:19:13
  * @Description: AI大模型
  * Copyright 2024 运城市盘石网络科技有限公司
  */
@@ -87,11 +87,11 @@ class index extends adminbase
                             "token" => $plg['token'],
                         ];
                         break;
-                    default:
+                    case 'openai':
                         $result = [
-                            "name" => "code",
-                            "api"  => "{$_L['url']['own_form']}proxy&api=" . urlencode("https://open.bigmodel.cn/api/paas/v4/chat/completions") . "&token=" . urlencode($plg['token']),
-                            "model" => $_L['developer']['aimodel']['code'] ?: "glm-5.3-flash",
+                            "name"  => "code",
+                            "api"   => $plg['api'],
+                            "model" => $plg['model'],
                             "token" => $plg['token'],
                         ];
                         break;

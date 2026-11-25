@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-10-10 14:20:59
- * @LastEditTime: 2026-05-06 14:48:27
+ * @LastEditTime: 2026-11-16 22:47:58
  * @Description:HTTP请求
  * @Copyright 2020 运城市盘石网络科技有限公司
  */
@@ -160,6 +160,7 @@ class HTTP
         curl_setopt($CURL, CURLOPT_USERAGENT, $args['ua']);
         curl_setopt($CURL, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($CURL, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($CURL, CURLOPT_MAXREDIRS, 3);
         switch ($args['type']) {
             case 'GET':
                 curl_setopt($CURL, CURLOPT_HEADER, true);

@@ -66,22 +66,31 @@ class TABLE
         } else {
             return false;
         }
-        if ($args['id'] && (bool) preg_match('/^[0-9,]+$/', $args['id'])) {
-            $ids = $args['id'];
-        } elseif ($args['form']['id']) {
-            $ids = $args['form']['id'];
+        if (!empty($args['id']) && preg_match('/^[0-9,]+$/', $args['id'])) {
+            $rawids = $args['id'];
         } elseif (is_array($args['form'])) {
-            $ids = implode(",", array_column($args['form'], "id"));
+            $rawids = isset($args['form']['id']) ? $args['form']['id'] : array_column($args['form'], "id");
         } else {
             return false;
         }
+        $rawids = array_filter((array) $rawids, "is_scalar");
+        $ids    = array_filter(array_map("intval", explode(",", implode(",", $rawids))));
+        $ids    = array_values(array_unique($ids));
         if ($ids) {
+            $where = "id IN (:ids)";
+            $bind  = [
+                ":ids" => $ids,
+            ];
             if ($args['fake'] && is_string($args['fake'])) {
-                list($name, $value) = explode(":", $args['fake']);
+                list($name, $value) = explode(":", $args['fake'], 2);
+                if (!preg_match('/^[a-zA-Z0-9_]+$/', $name)) {
+                    return false;
+                }
                 sql_update([
                     "table" => $args['table'],
-                    "where" => "id IN ({$ids})",
-                    "data" => [
+                    "where" => $where,
+                    "bind"  => $bind,
+                    "data"  => [
                         $name => $value ?? 1,
                     ],
                 ]);
@@ -93,7 +102,8 @@ class TABLE
             } else {
                 sql_delete([
                     "table" => $args['table'],
-                    "where" => "id IN ({$ids})",
+                    "where" => $where,
+                    "bind"  => $bind,
                 ]);
                 LCMS::log([
                     "type"     => "other",

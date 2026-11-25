@@ -80,10 +80,22 @@ class admin extends adminbase
                 foreach ($data as $index => $val) {
                     $val = array_merge($val, sql2arr($val['parameter']));
                     if (!$adminlist[$val['lcms']]) {
-                        $adminlist[$val['lcms']] = sql_get(["admin", "id = '{$val['lcms']}'"]);
+                        $adminlist[$val['lcms']] = sql_get([
+                            "table" => "admin",
+                            "where" => "id = :id",
+                            "bind"  => [
+                                ":id" => $val['lcms'],
+                            ],
+                        ]);
                     }
                     if (!$levellist[$val['type']]) {
-                        $levellist[$val['type']] = sql_get(["admin_level", "id = '{$val['type']}'"]);
+                        $levellist[$val['type']] = sql_get([
+                            "table" => "admin_level",
+                            "where" => "id = :id",
+                            "bind"  => [
+                                ":id" => $val['type'],
+                            ],
+                        ]);
                     }
                     $admin = $adminlist[$val['lcms']];
                     $level = $levellist[$val['type']];
@@ -691,10 +703,18 @@ class admin extends adminbase
                 TABLE::out($data);
                 break;
             case 'login':
+                $adminid = is_array($LC['id']) ? 0 : intval($LC['id']);
+                $adminid || ajaxout(0, "参数错误");
                 $admin = sql_get([
                     "table" => "admin",
-                    "where" => "id = {$LC['id']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => $adminid,
+                    ],
                 ]);
+                if (!$admin) {
+                    ajaxout(0, "用户不存在");
+                }
                 if ($_L['LCMSADMIN']['god']) {
                     $admin['god'] = $_L['LCMSADMIN']['god'];
                     if ($admin['type'] == "lcms") {

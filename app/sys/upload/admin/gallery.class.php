@@ -196,12 +196,19 @@ class gallery extends adminbase
     public function dodirlist()
     {
         global $_L, $LF, $LC;
-        $where = "type = 'image' AND cid = 0 AND lcms = {$_L['ROOTID']}";
-        $where .= $_L['ROOTID'] != $_L['LCMSADMIN']['id'] ? " AND uid = {$_L['LCMSADMIN']['id']}" : "";
+        $where = "type = 'image' AND cid = 0 AND lcms = :lcms";
+        $bind  = [
+            ":lcms" => intval($_L['ROOTID']),
+        ];
+        if ($_L['ROOTID'] != $_L['LCMSADMIN']['id']) {
+            $where .= " AND uid = :uid";
+            $bind[":uid"] = intval($_L['LCMSADMIN']['id']);
+        }
         if ($LF['page'] <= 1) {
             $total = sql_get([
                 "table"  => "upload",
                 "where"  => $where,
+                "bind"   => $bind,
                 "fields" => "COUNT(DISTINCT datey) AS total",
             ]);
             $total = $total['total'] ?: 0;
@@ -211,6 +218,7 @@ class gallery extends adminbase
             "table"  => "upload",
             "where"  => $where,
             "order"  => "datey DESC",
+            "bind"   => $bind,
             "fields" => "datey",
             "limit"  => [($LF['page'] - 1) * $LF['limit'], $LF['limit']],
         ]);
@@ -234,20 +242,22 @@ class gallery extends adminbase
     public function dofilelist()
     {
         global $_L, $LF, $LC;
-        $where = "type = 'image' AND lcms = {$_L['ROOTID']}";
-        $where .= $_L['ROOTID'] != $_L['LCMSADMIN']['id'] ? " AND uid = {$_L['LCMSADMIN']['id']}" : "";
+        $where = "type = 'image' AND lcms = :lcms";
+        $bind  = [
+            ":lcms" => intval($_L['ROOTID']),
+        ];
+        if ($_L['ROOTID'] != $_L['LCMSADMIN']['id']) {
+            $where .= " AND uid = :uid";
+            $bind[":uid"] = intval($_L['LCMSADMIN']['id']);
+        }
         if (in_string($LF['dir'], "custom")) {
             $cid = str_replace("custom_", "", $LF['dir']);
             $cid = intval($cid);
             $where .= " AND cid = :cid";
-            $bind = [
-                ":cid" => $cid,
-            ];
+            $bind[":cid"] = $cid;
         } else {
             $where .= " AND cid = 0 AND datey = :datey";
-            $bind = [
-                ":datey" => $LF['dir'],
-            ];
+            $bind[":datey"] = $LF['dir'];
         }
         if ($LF['page'] <= 1) {
             $total = sql_counter([

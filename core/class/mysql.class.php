@@ -126,7 +126,10 @@ class MYSQL
     {
         if (is_array($data)) {
             $datas = (isset($data[0]) && is_array($data[0])) ? $data : [$data];
-            $keys  = array_keys($datas[0]);
+            //字段名仅允许字母、数字、下划线
+            $keys  = array_values(array_filter(array_keys($datas[0]), function ($key) {
+                return is_scalar($key) && preg_match('/^[a-zA-Z0-9_]+$/', (string) $key);
+            }));
             $vals  = [];
             $i     = 0;
             foreach ($datas as $row) {

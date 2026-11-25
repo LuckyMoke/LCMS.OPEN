@@ -76,7 +76,13 @@ class webbase extends common
     {
         global $_L;
         if ($_L['ROOTID'] > 0) {
-            $admininfo = sql_get(["admin", "id = '{$_L['ROOTID']}'"]);
+            $admininfo = sql_get([
+                "table" => "admin",
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => intval($_L['ROOTID']),
+                ],
+            ]);
             if ($admininfo['status'] == "1") {
                 if ($admininfo['lasttime'] > "0000-00-00 00:00:00" && $admininfo['lasttime'] < datenow()) {
                     LCMS::X(403, "账户已到期，请联系管理员");

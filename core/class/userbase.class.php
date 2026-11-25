@@ -61,6 +61,7 @@ class USERBASE
                     "path"     => "/",
                     "secure"   => false,
                     "httponly" => true,
+                    "samesite" => "Lax",
                 ]);
             }
             if (self::$MODE < 1) {
@@ -510,10 +511,18 @@ class USERBASE
                 "fields" => "GROUP_CONCAT(aid) aids"]);
             $aids = $bands ? $bands['aids'] : "";
         }
-        $users = $aids ? sql_getall([
+        $auids = [];
+        foreach (explode(",", (string) $aids) as $one) {
+            $one = intval($one);
+            if ($one > 0 && !in_array($one, $auids, true)) {
+                $auids[] = $one;
+            }
+        }
+        $users = $auids ? sql_getall([
             "table" => "admin",
-            "where" => "id IN ({$aids}) AND status = 1 AND (lasttime IS NULL OR lasttime > :lasttime)",
+            "where" => "id IN (:ids) AND status = 1 AND (lasttime IS NULL OR lasttime > :lasttime)",
             "bind" => [
+                ":ids"      => $auids,
                 ":lasttime" => datenow(),
             ],
         ]) : [];
@@ -841,7 +850,7 @@ class USERBASE
             sql_update([
                 "table" => "admin",
                 "data"  => [
-                    "jwt" => null,
+                    "jwt" => randstr(32),
                 ],
                 "where" => "id = :id",
                 "bind"  => [
@@ -892,6 +901,7 @@ class USERBASE
                 ":lcms" => $_L['ROOTID'],
             ]]);
         if (!$user) return [];
+        if (!$user['jwt']) return [];
         $jwt = "{$jwt[2]}.{$jwt[3]}.{$jwt[4]}";
         $jwt = jwt_decode($jwt, $user['jwt']);
         if (!$jwt) return [];
@@ -1070,6 +1080,9 @@ class USERBASE
         $data = [];
         //如果修改账号
         if ($opts['name']) {
+            if (!is_scalar($opts['name'])) {
+                ajaxout(0, "账号格式不正确");
+            }
             self::isHave("name", $opts['name'], $user['id']);
             if (is_phone($opts['name'])) {
                 if ($opts['mobile']) {
@@ -1181,6 +1194,9 @@ class USERBASE
         if (!$data['title']) {
             ajaxout(0, "用户姓名不能为空");
         }
+        if (preg_match('/[<>"\']/', (string) $data['title'])) {
+            ajaxout(0, "姓名不能包含 < > \" ' 字符");
+        }
         if (array_key_exists("tuid", $opts)) {
             $data['tuid'] = $opts['tuid'] ?: 0;
         }
@@ -1191,6 +1207,12 @@ class USERBASE
             $data['status'] = $opts['status'] ? 1 : 0;
         }
         if (array_key_exists("headimg", $opts)) {
+            if (
+                $opts['headimg'] &&
+                !preg_match('#^[^"\'<>]+$#', (string) $opts['headimg'])
+            ) {
+                ajaxout(0, "头像地址格式不正确");
+            }
             $data['headimg'] = $opts['headimg'];
         }
         if (array_key_exists("storage", $opts)) {

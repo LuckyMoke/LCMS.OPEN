@@ -70,7 +70,13 @@ class adminbase extends common
         $okinfourl    = okinfo($loginurl, 0, "top", true);
         $_L['ROOTID'] = $loginrid;
         if ($_L['LCMSADMIN']) {
-            $admininfo = sql_get(["admin", "id = '{$_L['LCMSADMIN']['id']}'"]);
+            $admininfo = sql_get([
+                "table" => "admin",
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => $_L['LCMSADMIN']['id'],
+                ],
+            ]);
             if ($_L['config']['admin']['login_limit'] != "1" && $admininfo['logintime'] != $_L['LCMSADMIN']['logintime'] && !$_L['LCMSADMIN']['god']) {
                 SESSION::del("LCMSADMIN");
                 LCMS::X(403, "已在其它地方登录账号，此设备自动退出", $okinfourl);
@@ -88,7 +94,10 @@ class adminbase extends common
                 if (!$level) {
                     $level = sql_get([
                         "table" => "admin_level",
-                        "where" => "id = {$_L['LCMSADMIN']['type']}",
+                        "where" => "id = :id",
+                        "bind"  => [
+                            ":id" => $_L['LCMSADMIN']['type'],
+                        ],
                     ]);
                     $level = sql2arr($level['parameter']);
                 }
@@ -97,7 +106,10 @@ class adminbase extends common
             if ($_L['LCMSADMIN']['tuid']) {
                 $_L['LCMSADMIN']['lcms'] = sql_get([
                     "table" => "admin",
-                    "where" => "id = {$_L['LCMSADMIN']['tuid']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => $_L['LCMSADMIN']['tuid'],
+                    ],
                 ])['lcms'];
             }
             $_L['ROOTID'] = LCMS::SUPER() ? 0 : intval(isset($_L['LCMSADMIN']['lcms']) && $_L['LCMSADMIN']['lcms'] == 0 ? $_L['LCMSADMIN']['id'] : $_L['LCMSADMIN']['lcms']);

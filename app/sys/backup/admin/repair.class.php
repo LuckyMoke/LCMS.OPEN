@@ -2,7 +2,7 @@
 /*
  * @Author: 小小酥很酥
  * @Date: 2020-11-16 14:40:28
- * @LastEditTime: 2026-11-15 15:07:41
+ * @LastEditTime: 2026-11-23 15:43:54
  * @Description:数据库修复
  * @Copyright 运城市盘石网络科技有限公司
  */
@@ -110,6 +110,9 @@ class repair extends adminbase
         global $_L, $LF, $LC, $PRE;
         switch ($LF['action']) {
             case 'down':
+                if (!LCMS::SUPER()) {
+                    ajaxout(0, "permission denied");
+                }
                 @ignore_user_abort(true);
                 if (function_exists('set_time_limit')) {
                     @set_time_limit(120);
@@ -134,6 +137,9 @@ class repair extends adminbase
                 }
                 break;
             case 'unzip':
+                if (!LCMS::SUPER()) {
+                    ajaxout(0, "permission denied");
+                }
                 $token = ssl_decode($LF['token']);
                 $token || ajaxout(0, "token错误");
                 $token = json_decode($token, true);

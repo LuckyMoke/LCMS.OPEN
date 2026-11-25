@@ -26,8 +26,21 @@ class index extends adminbase
     public function dolocal()
     {
         global $_L, $LF, $LC;
+        $type = in_array($LF['type'], [
+            "image", "file", "user",
+        ], true) ? $LF['type'] : "";
+        if (!$type) {
+            if (!LCMS::SUPER()) {
+                ajaxout(0, "上传类型不正确");
+            }
+            $type = is_scalar($LF['type'] ?? "") ? trim(str_replace("\\", "/", $LF['type']), "/ ") : "";
+            if (!$type || preg_match('#(^|/)\.{1,2}(/|$)#', $type) || strpos($type, ":") !== false) {
+                ajaxout(0, "上传目录不正确");
+            }
+            $type .= "/";
+        }
         if ($_FILES['file']) {
-            $res = UPLOAD::file($LF['type'], "", "", $LF['force'] > 0 ? true : false, $LF['cid']);
+            $res = UPLOAD::file($type, "", "", $LF['force'] > 0 ? true : false, $LF['cid']);
         } elseif ($LF['url'] && is_url($LF['url'])) {
             $res = UPLOAD::file("image", $LF['url'], "", $LF['force'] > 0 ? true : false, $LF['cid']);
         }
@@ -77,38 +90,35 @@ class index extends adminbase
      */
     public function doeditor()
     {
-        global $_L, $LF, $LC;
-        $jt    = $_FILES['file'];
-        $files = $LF['files'] ?? ($jt ? [$jt] : []);
+        global $_L, $LF;
+        $jt    = $_FILES['file'] ?? null;
+        $files = (array) ($LF['files'] ?? ($jt ? [$jt] : []));
+        $oss   = $_L['plugin']['oss'];
+        $list  = [];
         foreach ($files as $url) {
-            if (!is_array($url) && $_L['plugin']['oss']['type'] != "local" && in_string($url, $_L['plugin']['oss']['domain'])) {
-                $result[] = [
-                    "state"  => "SUCCESS",
-                    "source" => $url,
-                    "url"    => $url,
-                ];
-                continue;
-            }
-            $res = UPLOAD::file("image", $url);
-            if ($res['code'] == 1) {
-                $result[] = [
-                    "state"  => "SUCCESS",
-                    "source" => $url,
-                    "url"    => $res['url'] ?: $res['src'],
+            $source = is_array($url) ? "" : $url;
+            if ($source && $oss['type'] != "local" && in_string($source, $oss['domain'])) {
+                //已在云存储，无需下载
+                $res = [
+                    "code" => 1,
+                    "src"  => $source,
                 ];
             } else {
-                $result[] = [
-                    "state"  => "FAIL",
-                    "msg"    => $res['msg'],
-                    "source" => $url,
-                ];
+                $res = UPLOAD::file("image", $url);
             }
+            //空值不输出
+            $list[] = array_filter([
+                "state"  => $res['code'] == 1 ? "SUCCESS" : "FAIL",
+                "msg"    => $res['code'] == 1 ? "" : $res['msg'],
+                "source" => $source,
+                "url"    => $res['src'] ?: "",
+            ]);
         }
         if ($jt) {
-            unset($result[0]['source']);
-            echo json_encode_ex($result[0]);
+            unset($list[0]['source']);
+            echo json_encode_ex($list[0]);
         } else {
-            echo json_encode(["list" => $result]);
+            echo json_encode(["list" => $list]);
         }
     }
     /**
@@ -201,18 +211,50 @@ class index extends adminbase
     private function ossSuccess()
     {
         global $_L, $LF, $LC;
-        $this->sql($LF['type'], $LF['datey'], [
-            "cid"   => $LF['cid'],
-            "oname" => $LF['oname'] ?: null,
-            "name"  => $LF['name'],
-            "size"  => $LF['size'],
-            "src"   => "../" . $LF['file'],
+        if ($_L['plugin']['oss']['type'] == "local") {
+            ajaxout(0, "云存储未开启");
+        }
+        foreach (["file", "type", "oname", "size", "cid"] as $key) {
+            if (isset($LF[$key]) && !is_scalar($LF[$key])) {
+                ajaxout(0, "参数格式不正确");
+            }
+        }
+        $file = str_replace("\\", "/", (string) $LF['file']);
+        $rule = '#^upload/' . intval($_L['ROOTID']) . '/(image|file|user)/(\d{6})/([a-zA-Z0-9_\-]+)\.([a-zA-Z0-9]+)$#';
+        if (!preg_match($rule, $file, $match)) {
+            ajaxout(0, "文件路径不正确");
+        }
+        $type  = $match[1];
+        $datey = $match[2];
+        $name  = $match[3];
+        $ext   = strtolower($match[4]);
+        if ($LF['type'] && $LF['type'] != $type) {
+            ajaxout(0, "上传类型不正确");
+        }
+        if ($_L['APP']['power']['index']['local'] ?? false) {
+            ajaxout(0, "没有上传权限");
+        }
+        if (!in_array($ext, explode("|", strtolower($_L['config']['admin']['mimelist'])), true)) {
+            ajaxout(0, "禁止上传此格式文件");
+        }
+        $oname = str_replace(["\\", "/"], "", (string) $LF['oname']);
+        if (preg_match('/[<>"\']/', $oname)) {
+            ajaxout(0, "文件名不能包含 < > \" ' 字符");
+        }
+        $size = intval($LF['size']);
+        $size > 0 || ajaxout(0, "文件大小不正确");
+        $this->sql($type, $datey, [
+            "cid"   => intval($LF['cid']),
+            "oname" => $oname ? mb_substr($oname, 0, 64, "UTF-8") : null,
+            "name"  => $name,
+            "size"  => $size,
+            "src"   => "../" . $file,
         ]);
         ajaxout(1, "上传成功", "", [
-            "dir"      => "../" . str_replace($LF['name'], "", $LF['file']),
-            "filename" => $LF['name'],
-            "src"      => $_L['plugin']['oss']['domain'] . $LF['file'],
-            "original" => "../" . $LF['file'],
+            "dir"      => "../upload/" . intval($_L['ROOTID']) . "/{$type}/{$datey}/",
+            "filename" => $name,
+            "src"      => $_L['plugin']['oss']['domain'] . $file,
+            "original" => "../" . $file,
         ]);
     }
     /**
@@ -222,7 +264,7 @@ class index extends adminbase
      * @param array $data
      * @return {*}
      */
-    private function sql($type = "image", $datey, $data = [])
+    private function sql($type, $datey, $data = [])
     {
         global $_L, $LF, $LC;
         if (!$data) return;
@@ -243,7 +285,10 @@ class index extends adminbase
             "data"  => [
                 "storage_used" => intval($data['size'] / 1024),
             ],
-            "where" => "id = {$_L['ROOTID']}",
+            "where" => "id = :id",
+            "bind"  => [
+                ":id" => intval($_L['ROOTID']),
+            ],
             "math" => [
                 "storage_used" => "+",
             ],

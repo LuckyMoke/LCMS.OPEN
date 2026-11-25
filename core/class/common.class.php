@@ -147,7 +147,7 @@ class common
         $mimelist = strtolower($_L['config']['admin']['mimelist']);
         $mimelist = explode("|", $mimelist);
         $mimelist = array_diff($mimelist, [
-            "exe", "bat", "cmd", "sh", "com", "scr", "pif", "cpl", "msi", "msp", "reg", "php", "php3", "php4", "php5", "php6", "php7", "phps", "phar", "pht", "phtm", "phtml", "asp", "aspx", "jsp", "cfm", "cgi", "pl", "py", "rb", "htacess", "ini",
+            "exe", "bat", "cmd", "sh", "com", "scr", "pif", "cpl", "msi", "msp", "reg", "php", "php3", "php4", "php5", "php6", "php7", "phps", "phar", "pht", "phtm", "phtml", "asp", "aspx", "jsp", "cfm", "cgi", "pl", "py", "rb", "htaccess", "ini",
         ]);
         $_L['config']['admin']['mimelist'] = implode("|", $mimelist);
     }

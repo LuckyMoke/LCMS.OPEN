@@ -50,6 +50,7 @@ class UPLOAD
             "attsize"      => intval((self::$CFG['attsize'] ?: 300) * 1024),
             "attsize_file" => intval((self::$CFG['attsize_file'] ?: 300) * 1024),
         ]);
+        $insql = false;
         if (in_array($dir, [
             "image", "file", "user",
         ])) {
@@ -135,7 +136,10 @@ class UPLOAD
             if ($_L['ROOTID'] > 0) {
                 $admin = sql_get([
                     "table" => "admin",
-                    "where" => "id = {$_L['ROOTID']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => intval($_L['ROOTID']),
+                    ],
                 ]);
                 if ($admin['storage'] > 0 && self::$SIZE > intval(($admin['storage'] - $admin['storage_used']) * 1024)) {
                     //如果上传文件超过存储空间限制
@@ -165,7 +169,7 @@ class UPLOAD
             return $return;
         }
         //云存储处理
-        if ($return['src']) {
+        if ($return['src'] && $insql) {
             switch (self::$TYPE) {
                 case 'qiniu':
                     load::plugin("Qiniu/QiniuOSS");
@@ -283,7 +287,10 @@ class UPLOAD
             $sizes = intval($sizes / 1024);
             $admin = sql_get([
                 "table" => "admin",
-                "where" => "id = {$_L['ROOTID']}",
+                "where" => "id = :id",
+                "bind"  => [
+                    ":id" => intval($_L['ROOTID']),
+                ],
             ]);
             if ($admin['storage_used'] >= $sizes) {
                 sql_update([
@@ -291,7 +298,10 @@ class UPLOAD
                     "data"  => [
                         "storage_used" => $sizes,
                     ],
-                    "where" => "id = {$admin['id']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => intval($admin['id']),
+                    ],
                     "math" => [
                         "storage_used" => "-",
                     ],
@@ -302,7 +312,10 @@ class UPLOAD
                     "data"  => [
                         "storage_used" => 0,
                     ],
-                    "where" => "id = {$admin['id']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => intval($admin['id']),
+                    ],
                 ]);
             }
         }
@@ -546,6 +559,17 @@ class UPLOAD
         return $bbox;
     }
     /**
+     * @description: ID 列表归一化
+     * @param array|string $ids
+     * @return array
+     */
+    private static function idlist($ids = [])
+    {
+        $ids = array_filter((array) $ids, "is_scalar");
+        $ids = array_filter(array_map("intval", explode(",", implode(",", $ids))));
+        return array_values(array_unique($ids));
+    }
+    /**
      * @description: 数据库操作-读取
      * @param string|array $datas
      * @return array
@@ -554,11 +578,15 @@ class UPLOAD
     {
         global $_L;
         if (is_array($datas)) {
-            $ids   = implode(",", $datas);
+            $ids = self::idlist($datas);
+            if (!$ids) {
+                return [];
+            }
             $files = sql_getall([
                 "table" => "upload",
-                "where" => "id IN({$ids}) AND lcms = :lcms",
-                "bind"   => [
+                "where" => "id IN (:ids) AND lcms = :lcms",
+                "bind"  => [
+                    ":ids"  => $ids,
                     ":lcms" => $_L['ROOTID'],
                 ],
                 "fields" => "id, src, size",
@@ -617,7 +645,10 @@ class UPLOAD
                     "data"  => [
                         "storage_used" => intval($data['size'] / 1024),
                     ],
-                    "where" => "id = {$_L['ROOTID']}",
+                    "where" => "id = :id",
+                    "bind"  => [
+                        ":id" => intval($_L['ROOTID']),
+                    ],
                     "math" => [
                         "storage_used" => "+",
                     ],
@@ -633,12 +664,13 @@ class UPLOAD
     private static function sql_del($ids = [])
     {
         global $_L;
+        $ids = self::idlist($ids);
         if (!$ids) return;
-        $ids = implode(",", $ids);
         sql_delete([
             "table" => "upload",
-            "where" => "id IN({$ids}) AND lcms = :lcms",
-            "bind" => [
+            "where" => "id IN (:ids) AND lcms = :lcms",
+            "bind"  => [
+                ":ids"  => $ids,
                 ":lcms" => $_L['ROOTID'],
             ],
         ]);
